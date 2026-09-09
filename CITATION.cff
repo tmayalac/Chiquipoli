@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Chiquipoli: interval and exact verification for the local maximality of A16"
+abstract: >-
+  Interval-arithmetic and exact-rational certification of the first-order
+  hypotheses for the Bingane-Audet equilateral small hexadecagon, with a Lean 4
+  formalisation of the criterion itself, so that the passage from the certified
+  data to strict local maximality is kernel checked end to end.
+type: software
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/TilinHub/Chiquipoli"
+keywords:
+  - computer-assisted proof
+  - interval arithmetic
+  - Lean 4
+  - discrete geometry
+  - small polygons
+authors:
+  - given-names: J.
+    family-names: "Ayala Hoffmann"
+    affiliation: "Universidad de Tarapaca, Iquique, Chile"
+    email: jayalhoff@gmail.com
+  - given-names: T.
+    family-names: "Ayala Coppola"
+    affiliation: "Universidad de Tarapaca, Iquique, Chile"
+    email: tomasayalacoppola07@gmail.com

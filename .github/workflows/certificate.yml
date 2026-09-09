@@ -1,0 +1,69 @@
+# Re-runs the certificate on every push and pull request.
+#
+# The point is not that the tests pass on a developer's laptop, which is where
+# every number in the article was produced, but that they pass on a machine
+# nobody has touched, from the pinned Manifest, with no local state. A
+# certificate that only reproduces where it was written is not reproducible.
+#
+# WHAT IS NOT HERE, and why. The Lean layer is deliberately absent: verifying it
+# needs a ~7 GB Mathlib cache, and a job that times out or gets throttled would
+# report red for reasons that have nothing to do with this repository. It is run
+# by `make lean` and recorded in `results/lean_certificate.toml`, whose contents
+# this workflow does check. So does the mutation harness, which edits tracked
+# files and restores them from git; running it in CI is possible but it takes
+# minutes and its value is in being run deliberately, not on every push.
+
+name: certificate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          # The version the released certificate was generated with. Project.toml
+          # also admits 1.10 and 1.11; reproducing the recorded run means pinning
+          # to the recorded one.
+          version: '1.12'
+
+      - uses: julia-actions/cache@v2
+
+      - name: instantiate the pinned environment
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.status()'
+
+      - name: test suite
+        run: julia --project=. test/runtests.jl
+
+      - name: the A16 certificate
+        run: |
+          julia --project=. scripts/run_all.jl | tee /tmp/run.txt
+          grep -q 'FINAL FIRST-ORDER CERTIFICATE: CERTIFIED' /tmp/run.txt
+          grep -q 'ROOT UNIQUENESS IN FULL SEARCH INTERVAL: PROVED' /tmp/run.txt
+
+      - name: the literature benchmark and its negative controls
+        run: |
+          julia --project=. scripts/run_literature.jl | tee /tmp/lit.txt
+          grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt
+
+      - name: reconcile the article's claims against the certificate and Lean
+        # a16.tex and a16.pdf are working copies and are not tracked, so the
+        # checks that read the typeset article report as skipped here. The ones
+        # that read the certificate, the sources and the Lean layer all run.
+        run: julia --project=. scripts/check_paper.jl
+
+      - name: the certificate must not have drifted from what is committed
+        run: |
+          git diff --stat -- results/ | tee /tmp/diff.txt
+          # Only provenance fields (timestamp, commit) may move on a re-run;
+          # any certified numeric value that changed is a real regression.
+          ! git diff -U0 -- results/ | grep -E '^[+-]' \
+            | grep -vE '^[+-]{3}|utc|git_commit|git_source_clean|sha256|file =' \
+            | grep -q .

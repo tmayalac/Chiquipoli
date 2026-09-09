@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude Code local settings / agent state
+.claude/
+
+# Julia
+/*.jl.cov
+/*.jl.*.cov
+/*.jl.mem
+
+# Lean / Lake build artifacts and the vendored Mathlib checkout (~7 GB).
+# `lean/lake-manifest.json` pins the exact Mathlib revision, so the build is
+# reproducible without committing any of this.
+lean/.lake/
+lean/lakefile.olean
+
+# Working copies of the article at the repository root (a16.tex / a16.pdf and
+# any future sibling). Anchored with a leading slash on purpose: a bare
+# `*.tex` would also swallow new thesis chapters, docs/ sources and
+# results/tables/, which ARE tracked. Files already tracked at the root
+# (Bigotes.pdf, SUPERVISOR_REVIEW.tex) are unaffected — .gitignore only
+# governs untracked paths.
+/*.tex
+/*.pdf
+
+# LaTeX build artifacts. Thirty of these were tracked once; never again.
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+
+# LaTeX build directory for `make paper`.
+/.texbuild/
+
+# Reference PDFs kept alongside the working copy of the article; not part of
+# the released artifact.
+/ref/
+
+# VS Code workspace file (local editor state)
+Chiquipoli.code-workspace

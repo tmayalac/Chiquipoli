@@ -1,0 +1,228 @@
+# Reproducible validation certificate — auto-generated; do not edit.
+# Reconstruct: git checkout <git_commit>; julia --project=. scripts/run_literature.jl
+[[benchmark]]
+doi = "10.1007/s00013-022-01745-x"
+expectation_met = true
+licq_defect = 1
+literature_status = "OPEN — best known construction, NOT proven optimal"
+n = 16
+name = "A16-bingane-audet"
+negative_control = false
+reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
+seconds = 3.656
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CERTIFIED"
+    exact_identities = "PROVEN"
+    existence = "CERTIFIED"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "(pre-DOI)"
+expectation_met = true
+licq_defect = 0
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 4
+name = "n4-regular-square"
+negative_control = false
+reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
+seconds = 0.071
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CERTIFIED"
+    exact_identities = "PROVEN"
+    existence = "NA"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "(pre-DOI)"
+expectation_met = true
+licq_defect = 2
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 6
+name = "n6-reinhardt-R36"
+negative_control = false
+reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
+seconds = 0.171
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CERTIFIED"
+    exact_identities = "PROVEN"
+    existence = "NA"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "10.1016/j.jcta.2004.06.009"
+expectation_met = true
+licq_defect = 0
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 8
+name = "n8-ahmp2004-H8"
+negative_control = false
+reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
+seconds = 0.217
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CERTIFIED"
+    exact_identities = "PROVEN"
+    existence = "CERTIFIED"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = ""
+expectation_met = true
+licq_defect = 1
+literature_status = "N/A (synthetic negative control)"
+n = 16
+name = "neg-broken-convexity"
+negative_control = true
+reference = "perturbation of A16 (negative control)"
+seconds = 0.104
+verdict = "REJECTED (as expected)"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "FAIL"
+    convexity = "FAIL"
+    equilaterality = "FAIL"
+    exact_identities = "—"
+    existence = "NA"
+    multipliers = "NA"
+    rank = "NA"
+[[benchmark]]
+doi = ""
+expectation_met = true
+licq_defect = 1
+literature_status = "N/A (synthetic negative control)"
+n = 16
+name = "neg-broken-equilateral"
+negative_control = true
+reference = "perturbation of A16 (negative control)"
+seconds = 0.02
+verdict = "REJECTED (as expected)"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "FAIL"
+    convexity = "CERTIFIED"
+    equilaterality = "FAIL"
+    exact_identities = "—"
+    existence = "NA"
+    multipliers = "NA"
+    rank = "NA"
+[[benchmark]]
+doi = ""
+expectation_met = true
+licq_defect = 1
+literature_status = "N/A (synthetic negative control)"
+n = 16
+name = "neg-wrong-diameter"
+negative_control = true
+reference = "perturbation of A16 (negative control)"
+seconds = 0.023
+verdict = "REJECTED (as expected)"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "FAIL"
+    convexity = "CERTIFIED"
+    equilaterality = "FAIL"
+    exact_identities = "—"
+    existence = "NA"
+    multipliers = "NA"
+    rank = "NA"
+
+[meta]
+all_expectations_met = true
+bigfloat_precision_bits = 256
+git_commit = "ab948fb4ac7f74c5ee9707d5d15045853c485394"
+git_source_clean = true
+intervalarithmetic_version = "0.22.36"
+julia_version = "1.12.6"
+total_seconds = 4.315
+utc = "2026-09-09T04:04:08Z"
+
+[[source_sha256]]
+file = "src/A16Certificate.jl"
+sha256 = "6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734"
+[[source_sha256]]
+file = "src/ExactIdentity.jl"
+sha256 = "d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f"
+[[source_sha256]]
+file = "src/SmallPolygons.jl"
+sha256 = "baa825d225ea7549c582d429cd3d2463c24997ab76928845412b045b35417886"
+[[source_sha256]]
+file = "scripts/01_nominal.jl"
+sha256 = "66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c"
+[[source_sha256]]
+file = "scripts/02_root_interval.jl"
+sha256 = "ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82"
+[[source_sha256]]
+file = "scripts/03_geometry_interval.jl"
+sha256 = "822708cf34f1471d446ddede4b6cda63b8279bf0fc3752f3721727419745b5ae"
+[[source_sha256]]
+file = "scripts/04_rank_interval.jl"
+sha256 = "cba3d53fadb0121f9c0374ec2f4c6714db45b03f480cb75d371f04ba51ed4eef"
+[[source_sha256]]
+file = "scripts/05_multipliers_interval.jl"
+sha256 = "baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897"
+[[source_sha256]]
+file = "scripts/06_exact_identities.jl"
+sha256 = "0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8"
+[[source_sha256]]
+file = "scripts/_bootstrap.jl"
+sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
+[[source_sha256]]
+file = "scripts/check_paper.jl"
+sha256 = "3eb2bdefda15c5f910d639514d057e3a394b8eb4fc4dd3bf46cee5ae2ab1ec42"
+[[source_sha256]]
+file = "scripts/run_all.jl"
+sha256 = "2e9fca8b8974cec53936b6dda91fb7c106a6ea0655f5a7a3d22fd6020227105f"
+[[source_sha256]]
+file = "scripts/run_lean_certificate.jl"
+sha256 = "78c6a8b8f5d5c11ba1456eb15425dd48ef014e0de08b3f7a3b1261f702c77afc"
+[[source_sha256]]
+file = "scripts/run_literature.jl"
+sha256 = "5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9"
+[[source_sha256]]
+file = "test/optigon_reference.jl"
+sha256 = "42e7838569a087198bdcf9b38342a28a0ded8ba8ca933894089a22091e1641ba"
+[[source_sha256]]
+file = "test/runtests.jl"
+sha256 = "c2b4b0c24acfa423ff9fa857110c2d6b377f34d4ae9bfdcd212c672ec02401c1"
+[[source_sha256]]
+file = "Project.toml"
+sha256 = "72b6c0cc368044fd39813e832a4371c1c75389db8f1a9e67cb1715ec46d719d0"
+[[source_sha256]]
+file = "Manifest.toml"
+sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
+[[source_sha256]]
+file = "examples/literature/A16_bingane_audet/candidate.jl"
+sha256 = "afee94b75f3e39148af36d42b6fa23e5fc07fb2eb816b36c5c788b38da1f5727"
+[[source_sha256]]
+file = "examples/literature/n4_regular/candidate.jl"
+sha256 = "1bd3691164445376f3aa02e7cec1729dd105b1c6a6017416ddeb6a21ccc12e82"
+[[source_sha256]]
+file = "examples/literature/n6_reinhardt/candidate.jl"
+sha256 = "de8d62b2ba22c01fe2ff9f18e19795387288b04e3070e30120c1fc550045a94a"
+[[source_sha256]]
+file = "examples/literature/n8_ahmp2004/candidate.jl"
+sha256 = "6bcda397d6ebbf5fb50fd11b8d58d374c799975b33bcbd2b2884e407aab481a0"
+[[source_sha256]]
+file = "examples/literature/negative/broken_convexity/candidate.jl"
+sha256 = "0cb434ca3922a4dde472e5412f5ef297a4477dca00b698921667ba0f38c6696e"
+[[source_sha256]]
+file = "examples/literature/negative/broken_equilateral/candidate.jl"
+sha256 = "6659a2747270a9d64b2254460ab1cb207af3f5e8e58f5dbafbb7200b1ef1600f"
+[[source_sha256]]
+file = "examples/literature/negative/wrong_diameter/candidate.jl"
+sha256 = "0f9036507c975a22a64e8faf5662feece1b13df5f363a8687ed91b170305df73"

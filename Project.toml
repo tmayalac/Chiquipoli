@@ -1,0 +1,20 @@
+name = "A16Certificate"
+uuid = "eb9ccb18-7cf9-4ef4-bad5-38e0d89d4934"
+authors = ["José Ayala Hoffmann", "Tomás Ayala Coppola"]
+version = "1.0.0"
+
+[deps]
+IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[compat]
+julia = "1.10, 1.11, 1.12"
+IntervalArithmetic = "0.22"
+
+[extras]
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "SHA", "Random"]

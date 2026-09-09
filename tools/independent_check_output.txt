@@ -1,0 +1,89 @@
+Root z0 = 0.196270372130322800862061211858053184461275535551407040690969
+Given reference z ~ 0.19627037213032280086206121185805318446
+diff: 1.27553555140704069096889636140556642410100917335727442776762e-39
+max structural-form check error (should be ~0): 9.4900982987382411033946976820146894669001345572997798779792e-60
+
+Fpoly(c) degree: 12
+Fpoly(c) = 4096*c**12 - 2048*c**11 - 12288*c**10 + 6656*c**9 + 12800*c**8 - 7680*c**7 - 4992*c**6 + 3680*c**5 + 192*c**4 - 592*c**3 + 192*c**2 - 14*c - 1
+Fpoly(c0) numeric (should be ~0): 4.04807143824867268049721366698397081850395903575311922008228e-58
+
+--- SIDE equalities |p_{i+1}-p_i| = ell ---
+side |p1-p0| : A (identically zero)   numeric D(c0)=0.0
+side |p2-p1| : A (identically zero)   numeric D(c0)=0.0
+side |p3-p2| : A (identically zero)   numeric D(c0)=0.0
+side |p4-p3| : B (divisible by Fpoly, conditional)   numeric D(c0)=4.04807143824867268049721366698397081850395903575311922008228e-58
+side |p5-p4| : A (identically zero)   numeric D(c0)=0.0
+side |p6-p5| : A (identically zero)   numeric D(c0)=0.0
+side |p7-p6| : A (identically zero)   numeric D(c0)=0.0
+side |p8-p7| : A (identically zero)   numeric D(c0)=0.0
+side |p9-p8| : A (identically zero)   numeric D(c0)=0.0
+side |p10-p9| : A (identically zero)   numeric D(c0)=0.0
+side |p11-p10| : A (identically zero)   numeric D(c0)=0.0
+side |p12-p11| : A (identically zero)   numeric D(c0)=0.0
+side |p13-p12| : B (divisible by Fpoly, conditional)   numeric D(c0)=4.04807143824867268049721366698397081850395903575311922008228e-58
+side |p14-p13| : A (identically zero)   numeric D(c0)=0.0
+side |p15-p14| : A (identically zero)   numeric D(c0)=0.0
+side |p0-p15| : A (identically zero)   numeric D(c0)=0.0
+
+--- DIAMETER equalities |p_i-p_j| = 1 ---
+diam |p0-p7| : A (identically zero)   numeric D(c0)=0.0
+diam |p0-p8| : A (identically zero)   numeric D(c0)=0.0
+diam |p0-p9| : A (identically zero)   numeric D(c0)=0.0
+diam |p1-p9| : A (identically zero)   numeric D(c0)=0.0
+diam |p2-p9| : A (identically zero)   numeric D(c0)=0.0
+diam |p2-p10| : A (identically zero)   numeric D(c0)=0.0
+diam |p3-p10| : A (identically zero)   numeric D(c0)=0.0
+diam |p3-p11| : A (identically zero)   numeric D(c0)=0.0
+diam |p3-p12| : A (identically zero)   numeric D(c0)=0.0
+diam |p4-p13| : A (identically zero)   numeric D(c0)=0.0
+diam |p5-p13| : A (identically zero)   numeric D(c0)=0.0
+diam |p6-p13| : A (identically zero)   numeric D(c0)=0.0
+diam |p6-p14| : A (identically zero)   numeric D(c0)=0.0
+diam |p7-p14| : A (identically zero)   numeric D(c0)=0.0
+diam |p7-p15| : A (identically zero)   numeric D(c0)=0.0
+
+=== SUMMARY ===
+Type A (unconditional identities): 29
+    side (0,1)
+    side (1,2)
+    side (2,3)
+    side (4,5)
+    side (5,6)
+    side (6,7)
+    side (7,8)
+    side (8,9)
+    side (9,10)
+    side (10,11)
+    side (11,12)
+    side (13,14)
+    side (14,15)
+    side (15,0)
+    diam (0,7)
+    diam (0,8)
+    diam (0,9)
+    diam (1,9)
+    diam (2,9)
+    diam (2,10)
+    diam (3,10)
+    diam (3,11)
+    diam (3,12)
+    diam (4,13)
+    diam (5,13)
+    diam (6,13)
+    diam (6,14)
+    diam (7,14)
+    diam (7,15)
+Type B (conditional on F(z)=0): 2
+    side (3,4)
+    side (12,13)
+Ambiguous: 0
+
+max |numeric residual| at root z0 across all 31: 4.04807143824867268049721366698397081850395903575311922008228e-58
+
+--- Detail check on the two Type-B sides ---
+pair (3,4): D degree = 12  remainder ==0 ? True
+   quotient q(c) = 1
+   D(c) = 4096*c**12 - 2048*c**11 - 12288*c**10 + 6656*c**9 + 12800*c**8 - 7680*c**7 - 4992*c**6 + 3680*c**5 + 192*c**4 - 592*c**3 + 192*c**2 - 14*c - 1
+pair (12,13): D degree = 12  remainder ==0 ? True
+   quotient q(c) = 1
+   D(c) = 4096*c**12 - 2048*c**11 - 12288*c**10 + 6656*c**9 + 12800*c**8 - 7680*c**7 - 4992*c**6 + 3680*c**5 + 192*c**4 - 592*c**3 + 192*c**2 - 14*c - 1

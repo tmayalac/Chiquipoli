@@ -1,0 +1,221 @@
+============================================================
+PROVENANCE / REPRODUCIBILITY HEADER
+============================================================
+UTC timestamp        = 2026-09-07T23:01:43Z
+Julia version        = 1.12.6
+IntervalArithmetic   = v0.22.36
+BigFloat precision   = 256 bits
+directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
+git commit           = 4eddb4ca40f20ab17cfee4f7243a45ba00c76c03  (source clean — log matches this commit)
+SHA256 of source files:
+  6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734  src/A16Certificate.jl
+  9d434d74bc422aa4c55484edf5b024e6faf7aa3149a1208d3a6b9531654c86c2  src/ExactIdentity.jl
+  5c41e22fca61d3eb9f87c71511eff43b78726399e047d6d4d78c66f5d531e438  src/SmallPolygons.jl
+  66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  scripts/01_nominal.jl
+  ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82  scripts/02_root_interval.jl
+  822708cf34f1471d446ddede4b6cda63b8279bf0fc3752f3721727419745b5ae  scripts/03_geometry_interval.jl
+  cba3d53fadb0121f9c0374ec2f4c6714db45b03f480cb75d371f04ba51ed4eef  scripts/04_rank_interval.jl
+  b8583d2390ac13d97b0ca5e924fe145b0e90389a3b9757442f621575ab5c406a  scripts/05_multipliers_interval.jl
+  0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8  scripts/06_exact_identities.jl
+  beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
+  c9aea630215797fd9d485fdf2fea0c198fc03b9615c27b44388f7755fbe88b80  scripts/run_all.jl
+  e4c206d4eddb3c107f1ee0b0336af8bfd973b8b34d501dd2299cbddca0b46282  scripts/run_lean_certificate.jl
+  37e818c1cebc37f66687307b8221fc598f5672d4b4fb885722d90eaa7a237567  scripts/validate_literature.jl
+  30c1d3721dc040a3078552317957abb9f8720c5727e2562b32c801fbdc58dad7  tests/runtests.jl
+  82de6c32c67a3b9d0722adeb6b2e0f87fe2fc527dba03cf55c1f6675fc57a94a  Project.toml
+  a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57  Manifest.toml
+
+Pkg.status() [project mode]:
+Project A16Certificate v2.2.0
+Status `~/Developer/Chiquipoli/Project.toml`
+⌅ [d1acc4aa] IntervalArithmetic v0.22.36
+  [37e2e46d] LinearAlgebra v1.12.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+
+Pkg.status() [manifest mode, full resolved dependency graph]:
+Project A16Certificate v2.2.0
+Status `~/Developer/Chiquipoli/Manifest.toml`
+  [96374032] CRlibm v1.0.2
+⌅ [d1acc4aa] IntervalArithmetic v0.22.36
+  [692b3bcd] JLLWrappers v1.8.0
+  [1914dd2f] MacroTools v0.5.16
+  [21216c6a] Preferences v1.5.2
+  [5eaf0fd0] RoundingEmulator v0.2.1
+  [4e9b3aee] CRlibm_jll v1.0.1+0
+  [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.33+1
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [f43a241f] Downloads v1.7.0
+  [7b1f6079] FileWatching v1.11.0
+  [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [ca575930] NetworkOptions v1.3.0
+  [44cfe95a] Pkg v1.12.1
+  [de0858da] Printf v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [f489334b] StyledStrings v1.11.0
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.3.0+1
+  [deac9b47] LibCURL_jll v8.15.0+0
+  [e37daf67] LibGit2_jll v1.9.0+0
+  [29816b5a] LibSSH2_jll v1.11.3+1
+  [14a3606d] MozillaCACerts_jll v2025.11.4
+  [4536629a] OpenBLAS_jll v0.3.29+0
+  [458c3c95] OpenSSL_jll v3.5.4+0
+  [83775a58] Zlib_jll v1.3.1+2
+  [8e850b90] libblastrampoline_jll v5.15.0+0
+  [8e850ede] nghttp2_jll v1.64.0+1
+  [3f19e933] p7zip_jll v17.7.0+0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+============================================================
+
+
+=== 01 NOMINAL ===
+z = 0.1962703721303228008620612118580531844599999999999999999999999999999999999999997
+ell = 0.1959554930055385228996085517576411062720927534544239952799163662001207713909524
+perimeter = 3.135287888088616366393736828122257700353484055270783924478661859201932342255238
+floating rank = 30
+coordinates:
+0  0.0  0.0
+1  0.1875244689598259067632474486854013874938699972611020103885286707627412328284994  0.05686060833634254191774211627781012435991654284011310729459327993033685589952149
+2  0.3603600643089266863916755466630206427487664405209760315506949212872145381815774  0.1491991821793771219189659054785718377698958375188717359726768101575943771881263
+3  0.4847268697738703590862614119531703982906436793193303635185867170103742032816338  0.3006305294542677115235066912407949808046412751396371795208219785010824561793283
+4  0.4959501446709321352102981761470223234148987380936893809356552398352779498950814  0.4962643540849502246644503913022132708572721069668030728544955345259544467447805
+5  0.4389707791708631404123822084488775704024543243007353172092360594610173282701445  0.6837527727839546817621056204457308477387516666024607381640635286952888790473941
+6  0.3465227584736150404347306716930826879822590904726989557451124678416647164995602  0.8565298508591578284879622700277484631098714233594723676098064941960350330383584
+7  0.1950126738905248311951668484797506299800386990573029215608694480237023233432031  0.9808007223804781715147000791153606763434410652221783506943620155379661969979805
+8  0.0  1.0
+9  -0.1950126738905248311951668484797506299800386990573029215608694480237023233432031  0.9808007223804781715147000791153606763434410652221783506943620155379661969979805
+10  -0.3465227584736150404347306716930826879822590904726989557451124678416647164995602  0.8565298508591578284879622700277484631098714233594723676098064941960350330383584
+11  -0.4389707791708631404123822084488775704024543243007353172092360594610173282701445  0.6837527727839546817621056204457308477387516666024607381640635286952888790473941
+12  -0.4959501446709321352102981761470223234148987380936893809356552398352779498950814  0.4962643540849502246644503913022132708572721069668030728544955345259544467447805
+13  -0.4847268697738703590862614119531703982906436793193303635185867170103742032816338  0.3006305294542677115235066912407949808046412751396371795208219785010824561793283
+14  -0.3603600643089266863916755466630206427487664405209760315506949212872145381815774  0.1491991821793771219189659054785718377698958375188717359726768101575943771881263
+15  -0.1875244689598259067632474486854013874938699972611020103885286707627412328284994  0.05686060833634254191774211627781012435991654284011310729459327993033685589952149
+
+=== 02 ROOT ===
+search interval (enclosed) = [0.1954, 0.19635]₂₅₆_com
+F'(search) = [-3.20999, -3.08592]₂₅₆_com
+strict monotonicity on search interval PASS = true
+radius = 1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30
+Z = [0.19627, 0.196271]₂₅₆_com
+F'(Z) = [-3.11097, -3.11096]₂₅₆_com
+F(m) enclosure = [3.96814e-39, 3.96816e-39]₂₅₆_com
+N(Z) = [0.19627, 0.196271]₂₅₆_com
+domain PASS = true
+derivative PASS = true
+Newton PASS = true
+unique root in box PASS = true
+unique root in whole search interval PASS = true
+
+=== 03 GEOMETRY ===
+worst support = (10, 12, 0.00748820493069892443191939871459527225467242895256826110757233187212436705247644)
+strict convexity PASS = true
+worst inactive pair = (4, 12, 0.9838661839964740583747985282971497889456110691221819137996638884534418120759314)
+inactive PASS = true
+distance margin (certified lower bound) = 0.008099710658135729579403646636631256110940816593149611293534796084192689158546785
+active squared-distance diagnostics:
+(0, 7) => [0.999999, 1.00001]₂₅₆_com
+(0, 8) => [1.0, 1.0]₂₅₆_com
+(0, 9) => [0.999999, 1.00001]₂₅₆_com
+(1, 9) => [0.999999, 1.00001]₂₅₆_com
+(2, 9) => [0.999999, 1.00001]₂₅₆_com
+(2, 10) => [0.999999, 1.00001]₂₅₆_com
+(3, 10) => [0.999999, 1.00001]₂₅₆_com
+(3, 11) => [0.999999, 1.00001]₂₅₆_com
+(3, 12) => [0.999999, 1.00001]₂₅₆_com
+(4, 13) => [0.999999, 1.00001]₂₅₆_com
+(5, 13) => [0.999999, 1.00001]₂₅₆_com
+(6, 13) => [0.999999, 1.00001]₂₅₆_com
+(6, 14) => [0.999999, 1.00001]₂₅₆_com
+(7, 14) => [0.999999, 1.00001]₂₅₆_com
+(7, 15) => [0.999999, 1.00001]₂₅₆_com
+
+=== 04 RANK ===
+minor rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+minor columns = [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+regularity bound = 1.419383643581977854225631913172196125520900245165806340342843127446912022372453e-25
+minor regular PASS = true
+rigid-motion rank upper bound = algebraic theorem
+rigid-motion explanation = Each distance row has opposite endpoint coefficients; for rotation, (p_j-p_i) dot J(p_j-p_i)=0. The ell component is zero.
+rank 30 PASS = true
+
+=== 05 MULTIPLIERS ===
+normalized matrix regularity bound = 1.825393700512575723726543533199935695787802052300361900581093726998123592821716e-25
+normalized matrix PASS = true
+Krawczyk PASS = true
+sum alpha enclosure = [-16.0001, -15.9999]₂₅₆_com
+sum alpha contains -16 (diagnostic, not a gate) = true
+minimum lambda lower bound = 0.09186677768333539974319106364941373580819523192616029488896422008211132077782075
+all lambdas positive PASS = true
+omitted residual matrix bound = 4.017187643256795323330261017635336864675640107726134759703235375984535752678053e-28
+omitted equations recovered PASS = true
+
+=== 06 EXACT IDENTITIES ===
+--- side identities (edge length == ell(z)) ---
+edge (0,1): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (1,2): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (2,3): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (3,4): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (4,5): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (5,6): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (6,7): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (7,8): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (8,9): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (9,10): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (10,11): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (11,12): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (12,13): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (13,14): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (14,15): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+edge (15,0): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+--- active diameter identities (dist == 1) ---
+diam (0,7): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (0,8): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (0,9): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (1,9): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (2,9): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (2,10): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (3,10): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (3,11): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (3,12): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (4,13): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (5,13): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (6,13): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (6,14): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (7,14): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+diam (7,15): PROVED  quotient deg=0  remainder=Rational{BigInt}[0]  reconstruction PASS=true
+Side identities completed: 16/16
+Active identities completed: 15/15
+EXACT IDENTITIES PASS = true
+
+=== BOX NESTING (CERTIFICATION_MAPPING.md, Prop 6.2: Z_root ⊂ int Z_cert) ===
+root box radius = 1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30
+geometry/rank/multiplier box radius = 9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29
+root box nested inside certificate box PASS = true
+
+============================================================
+FINAL FIRST-ORDER CERTIFICATE: CERTIFIED
+ROOT UNIQUENESS IN CERTIFIED BOX: PROVED
+ROOT UNIQUENESS IN FULL SEARCH INTERVAL: PROVED (F strictly monotone there)
+TOPOLOGICAL LOCAL MAXIMALITY: NOT CERTIFIED BY COMPUTATION
+    (given by paper Thm 6.4 from the certified hypotheses; strict,
+     modulo orientation-preserving Euclidean motions)
+GLOBAL OPTIMALITY: NOT CLAIMED
+============================================================
+
+ell enclosure over Z_root  = [0.195955, 0.195956]₂₅₆_com
+16*ell enclosure over Z_root = [3.13528, 3.13529]₂₅₆_com
+
+wrote machine-readable certificate: results/a16_certificate.toml
