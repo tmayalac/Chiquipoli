@@ -76,9 +76,9 @@ chk("box nesting: Z_root radius < Z_cert radius",
 # distributed as an archive, so this is the referee's normal path.
 if get(cert["meta"], "git_available", true) === false
     skip("the run that produced the certificate had a clean source tree")
-    println("           (not a git checkout: this is an extracted archive, so there is")
-    println("            no commit to compare against. The shipped certificate records")
-    println("            the commit and clean tree of the run that produced it.)")
+    println("           (no commit to compare against: either an extracted archive or a")
+    println("            repository whose first commit has not been made. The shipped")
+    println("            certificate records the commit of the run that produced it.)")
 else
     chk("the run that produced the certificate had a clean source tree",
     cert["meta"]["git_source_clean"] === true)

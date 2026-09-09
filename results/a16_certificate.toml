@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (scripts/run_all.jl)"
 git_available = true
-git_commit = "(unavailable: ProcessFailedException(Base.Process[Process(`git -C /Users/tilin/Developer/Chiquipoli/ rev-parse HEAD`, ProcessExited(128))]))"
+git_commit = "9aa31494ed5fdfecc860d8b0dc641e21c6d4464e"
 git_source_clean = false
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "Stability of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-09T04:32:53Z"
+utc = "2026-09-09T04:34:53Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -250,10 +250,10 @@ file = "scripts/_bootstrap.jl"
 sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
 [[source_sha256]]
 file = "scripts/check_paper.jl"
-sha256 = "3eb2bdefda15c5f910d639514d057e3a394b8eb4fc4dd3bf46cee5ae2ab1ec42"
+sha256 = "9b13ebc702ddbd8ac6dc8479fe22194f8db0a17bc03aeb3c71dac33ee937c542"
 [[source_sha256]]
 file = "scripts/run_all.jl"
-sha256 = "2e9fca8b8974cec53936b6dda91fb7c106a6ea0655f5a7a3d22fd6020227105f"
+sha256 = "24e7c4dcb71ab8c0510dfb008d848c44c1d54f859c0722a71d66d175805abc1c"
 [[source_sha256]]
 file = "scripts/run_lean_certificate.jl"
 sha256 = "78c6a8b8f5d5c11ba1456eb15425dd48ef014e0de08b3f7a3b1261f702c77afc"

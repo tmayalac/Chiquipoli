@@ -40,9 +40,15 @@ end
 # the first thing they saw. Absent provenance is not failed provenance: it is
 # reported as such, and `check_paper.jl` skips the clean-tree check rather than
 # failing it. Inside a checkout the guarantee is unchanged.
+# True only when there is a COMMIT to tie this run to. Two distinct situations
+# fail it, and both must be quiet: the distributed archive, which is not a
+# repository at all, and a freshly initialised repository whose first commit has
+# not been made. Checking `--git-dir` alone covers only the first, and the
+# second then printed `fatal: ambiguous argument 'HEAD'` and a raw Julia
+# exception dump -- which is how this was found.
 function _git_available(projroot)
     try
-        success(pipeline(`git -C $projroot rev-parse --git-dir`;
+        success(pipeline(`git -C $projroot rev-parse --verify --quiet HEAD`;
                          stdout = devnull, stderr = devnull))
     catch
         false
@@ -50,7 +56,7 @@ function _git_available(projroot)
 end
 
 function _git_state(projroot)
-    _git_available(projroot) || return "(not a git checkout: extracted archive)", false
+    _git_available(projroot) || return "(no commit: extracted archive, or a repository with no commits yet)", false
     try
         commit = strip(read(`git -C $projroot rev-parse HEAD`, String))
         src_status = read(`git -C $projroot status --porcelain -- src scripts test Project.toml Manifest.toml`, String)
@@ -85,11 +91,10 @@ function print_provenance()
     # logs/, which is the output being regenerated) so the flag genuinely
     # answers: does the committed source match the code that just ran?
     if !_git_available(projroot)
-        println("git commit           = (not a git checkout — this is the distributed")
-        println("                        archive; the shipped results/a16_certificate.toml")
-        println("                        records the commit and clean tree of the run that")
-        println("                        produced it. The SHA256 list below still ties this")
-        println("                        run to the exact sources it read.)")
+        println("git commit           = (none — this is either the distributed archive or a")
+        println("                        repository with no commits yet, so there is no")
+        println("                        commit to tie this run to. The SHA256 list below")
+        println("                        still ties it to the exact sources it read.)")
     else
         try
             commit = strip(read(`git -C $projroot rev-parse HEAD`, String))
