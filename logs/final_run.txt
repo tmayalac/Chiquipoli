@@ -1,7 +1,7 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-09T04:27:42Z
+UTC timestamp        = 2026-09-09T04:32:49Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
