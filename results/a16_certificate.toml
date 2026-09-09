@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (scripts/run_all.jl)"
 git_available = true
-git_commit = "9aa31494ed5fdfecc860d8b0dc641e21c6d4464e"
-git_source_clean = false
+git_commit = "ecba63b9c7f0dd4b6e8d44175a1d5a23728a1fd2"
+git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "Stability of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-09T04:34:53Z"
+utc = "2026-09-09T04:38:05Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
