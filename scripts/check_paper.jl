@@ -19,8 +19,8 @@
 using TOML, Printf, SHA
 
 const ROOT  = normpath(joinpath(@__DIR__, ".."))
-const PDF   = joinpath(ROOT, "a16.pdf")
-const TEX   = joinpath(ROOT, "a16.tex")
+const PDF   = joinpath(ROOT, "main.pdf")
+const TEX   = joinpath(ROOT, "main.tex")
 const CERT  = joinpath(ROOT, "results", "a16_certificate.toml")
 const LEAN  = joinpath(ROOT, "lean", "ChiquipoliLean")
 
@@ -48,10 +48,16 @@ function _pdf_text(path)
         return nothing
     end
 end
+const SUPPDF  = joinpath(ROOT, "supplement.pdf")
+const SUPTEX  = joinpath(ROOT, "supplement.tex")
 const PDFTEXT = _pdf_text(PDF)
+const SUPTEXT = _pdf_text(SUPPDF)
 const texsrc0 = isfile(TEX) ? read(TEX, String) : ""
+const supsrc0 = isfile(SUPTEX) ? read(SUPTEX, String) : ""
 const havepdf = PDFTEXT !== nothing
 pdftext = havepdf ? PDFTEXT : ""
+const havesup = SUPTEXT !== nothing
+suptext = havesup ? SUPTEXT : ""
 cert  = TOML.parsefile(CERT)
 gates = Dict(g["id"] => g for g in cert["gate"])
 
@@ -147,8 +153,8 @@ chk("the 16 alpha enclosures sum to a bracket containing -16",
 # invisible in the source until it is set.
 section("tables, read back out of the compiled PDF")
 if !havepdf
-    skip("Table 2 (active diameter multipliers) vs the certificate")
-    skip("Table 3 (side multipliers) vs the certificate")
+    skip("Table 2(b) (active diameter multipliers) vs the certificate")
+    skip("Table 2(a) (side multipliers) vs the certificate")
     skip("Table 1 (nominal coordinates) vs the certified enclosures")
     skip("no unresolved cross references in the PDF")
 else
@@ -164,7 +170,7 @@ else
         return seen
     end
     seen = lambda_rows(lam, pdftext)
-    chk("Table 2: all 15 displayed lambda match the certificate",
+    chk("Table 2(b): all 15 displayed lambda match the certificate",
         length(seen) == 15 && all(abs(lam[k] - v) <= big"5e-9" for (k, v) in seen))
     chk("every certified lambda has a strictly positive lower endpoint",
         all(parse(BigFloat, e["lower"]) > 0 for e in gates["multipliers"]["lambda_enclosure"]))
@@ -173,20 +179,24 @@ else
                for a in gates["multipliers"]["alpha_enclosure"])
     function alpha_rows(txt)
         d = Dict{Int,BigFloat}()
-        for m in eachmatch(r"(?<![\d.])(\d{1,2})\s+(-[01]\.\d{8})", txt)
-            i = parse(Int, m.captures[1]); v = parse(BigFloat, m.captures[2])
+        # The article sets these values in math mode, so pdftotext emits U+2212
+        # MINUS SIGN, not an ASCII hyphen. Accepting only the hyphen made this
+        # check silently find nothing once the two multiplier tables were merged.
+        for m in eachmatch(r"(?<![\d.])(\d{1,2})\s+([-\u2212][01]\.\d{8})", txt)
+            i = parse(Int, m.captures[1])
+            v = parse(BigFloat, replace(m.captures[2], '\u2212' => '-'))
             (0 <= i <= 15 && -1.1 < v < -0.9 && !haskey(d, i)) && (d[i] = v)
         end
         return d
     end
     shown = alpha_rows(pdftext)
-    chk("Table 3: all 16 displayed alpha match the certificate",
+    chk("Table 2(a): all 16 displayed alpha match the certificate",
         length(shown) == 16 && all(abs(alp[i] - shown[i]) <= big"5e-9" for i in 0:15))
     chk("the 16 displayed alpha sum to -16 within display rounding",
         length(shown) == 16 && abs(sum(values(shown)) + 16) < big"1e-7")
 
-    chk("no unresolved cross reference (??) anywhere in the PDF",
-        !occursin("??", pdftext))
+    chk("no unresolved cross reference (??) anywhere in either PDF",
+        !occursin("??", pdftext) && !occursin("??", suptext))
 end
 
 # ---------------------------------------------------------------------------
@@ -328,14 +338,14 @@ chk("the implicit function theorem is applied to the nonlinear Phi itself",
     occursin("implicitFunction", alll) && occursin("Phi_eq_geometric", alll))
 
 # The article's newest and largest claim: Theorem 3.5 is formalised, and
-# Theorem 6.4 with it. Nothing above touched either, so until now the paper's
+# Theorem 6.3 with it. Nothing above touched either, so until now the paper's
 # headline was the one thing this reconciler did not reconcile.
 chk("Theorem 3.5 itself, in the paper's own normalisation",
     occursin("theorem thm_3_5", alll) && occursin("theorem thm_3_5_le", alll))
 chk("the blow-up: the tangent limits, the slice normalisation, and the assembly",
     occursin("eD_eq_zero_of_blowup", alll) && occursin("dD_nonpos_of_blowup", alll) &&
     occursin("tendsto_normCfg", alll) && occursin("no_blowup_sequence", alll))
-chk("Theorem 6.4 as a Lean theorem, unconditionally",
+chk("Theorem 6.3 as a Lean theorem, unconditionally",
     occursin("theorem A16_locally_maximal", alll) &&
     occursin("exists_A16_root_in_Ioo_pi", alll))
 chk("the conclusion is congruence, not equality (modulo Euclidean motions)",
@@ -351,7 +361,7 @@ chk("Proposition 4.2: the square closed by the same route",
 section("the formal-layer table, against the recorded Lean certificate")
 let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
     if !isfile(lcpath)
-        skip("Table 6 counts vs results/lean_certificate.toml")
+        skip("formal-layer counts vs results/lean_certificate.toml")
     else
         lc = TOML.parsefile(lcpath)
         th = get(lc, "theorems", Dict{String,Any}())
@@ -359,14 +369,14 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
         nneg = get(th, "negative_controls_total", -1)
         nrej = get(th, "negative_controls_rejected", -1)
         chk("every negative control recorded was rejected", nneg == nrej && nneg > 0)
-        if isempty(texsrc0)
-            skip("Table 6: audited theorem count matches the record")
-            skip("Table 6: negative control count matches the record")
+        if isempty(supsrc0)
+            skip("supplement: audited theorem count matches the record")
+            skip("supplement: negative control count matches the record")
         else
-            chk("Table 6: audited theorem count matches the record ($naud)",
-                occursin("Audited theorems & \\($naud\\)", texsrc0))
-            chk("Table 6: negative control count matches the record ($nneg)",
-                occursin("Negative controls & \\($nneg\\)", texsrc0))
+            chk("supplement: audited theorem count matches the record ($naud)",
+                occursin("Audited theorems & \\($naud\\)", supsrc0))
+            chk("supplement: negative control count matches the record ($nneg)",
+                occursin("Negative controls & \\($nneg\\)", supsrc0))
         end
         # The article cites the package by version. Three files declare it and
         # they drifted apart once already (CITATION.cff said 1.0.0 while
@@ -397,7 +407,7 @@ end
 # nothing here noticed.
 section("every command the article prints actually exists")
 let cmds = String[]
-    texsrc = texsrc0
+    texsrc = texsrc0 * "\n" * supsrc0
     for m in eachmatch(r"\\texttt\{([^}]*)\}", texsrc)
         t = replace(m.captures[1], "\\_" => "_", "-{}-" => "--")
         for tok in split(t)

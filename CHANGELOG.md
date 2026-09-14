@@ -22,7 +22,7 @@ Small Polygons*.
   hypotheses by kernel-checked rational arithmetic, and proves the article's
   Theorem 3.5 itself — the local Euclidean slice, openness of convexity and the
   inactive margin, the first-order limits, invariance under Euclidean motions,
-  and the blow-up. `Feasible.A16_locally_maximal` is the article's Theorem 6.4
+  and the blow-up. `Feasible.A16_locally_maximal` is the article's Theorem 6.3
   and `Feasible.square_strict_local_max` its Proposition 4.2, so the passage
   from the certified data to strict local maximality is machine-checked end to
   end.

@@ -49,7 +49,7 @@ numeric literal in the source. The pipeline emits no `NG`-tagged value.
 
 ## What is *not* certified
 
-Theorem 3.5 and Theorem 6.4 used to be listed here. They no longer are:
+Theorem 3.5 and Theorem 6.3 used to be listed here. They no longer are:
 `Chiquipoli.Feasible.A16_locally_maximal` proves, kernel-checked and
 `sorry`-free, that the configuration built from the unique constructor root in
 the bracket is a strictly convex equilateral small hexadecagon and a strict
@@ -119,7 +119,7 @@ Beyond the eight gates, the Lean layer carries the article's **Theorem 3.5 in
 full** — stated for arbitrary $n$ (`thm_3_5`), with Lemma 3.4 obtained from
 Mathlib's implicit function theorem applied to the nonlinear slice map itself —
 and instantiates it twice: at $A_{16}$, with both hypotheses discharged from the
-certified data (`A16_locally_maximal`, the article's Theorem 6.4), and at the
+certified data (`A16_locally_maximal`, the article's Theorem 6.3), and at the
 square of Section 4 (`square_strict_local_max`, its Proposition 4.2). Its
 boundary is stated above and in `lean/README.md`.
 

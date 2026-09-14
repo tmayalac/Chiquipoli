@@ -1,12 +1,12 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-09T04:38:01Z
+UTC timestamp        = 2026-09-14T22:36:22Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = ecba63b9c7f0dd4b6e8d44175a1d5a23728a1fd2  (source clean — log matches this commit)
+git commit           = fa7145d5b0e1cfea0f9d66321d59c4fd2e6c2fb7  (SOURCE DIRTY — log not tied to this commit)
 SHA256 of source files:
   6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734  src/A16Certificate.jl
   d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f  src/ExactIdentity.jl
@@ -18,9 +18,9 @@ SHA256 of source files:
   baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897  scripts/05_multipliers_interval.jl
   0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8  scripts/06_exact_identities.jl
   beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
-  9b13ebc702ddbd8ac6dc8479fe22194f8db0a17bc03aeb3c71dac33ee937c542  scripts/check_paper.jl
-  24e7c4dcb71ab8c0510dfb008d848c44c1d54f859c0722a71d66d175805abc1c  scripts/run_all.jl
-  78c6a8b8f5d5c11ba1456eb15425dd48ef014e0de08b3f7a3b1261f702c77afc  scripts/run_lean_certificate.jl
+  61c9f8c4d8e729df2d76ccc1d58561816260c6b04b4cc12259f26cc93945010c  scripts/check_paper.jl
+  fb986b6ae503ac4d1a5c882a4508de9cb34d0801e960b4cd0a6be806c07a526f  scripts/run_all.jl
+  75d60bd9cc071e6d093debef0ff96eb168b7b8fb7a40d7c433dc129be9fab209  scripts/run_lean_certificate.jl
   5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9  scripts/run_literature.jl
   42e7838569a087198bdcf9b38342a28a0ded8ba8ca933894089a22091e1641ba  test/optigon_reference.jl
   c2b4b0c24acfa423ff9fa857110c2d6b377f34d4ae9bfdcd212c672ec02401c1  test/runtests.jl

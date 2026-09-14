@@ -1,11 +1,16 @@
 # docs/certificate-spec.md — canonical specification
 
 > **Paper numbering.** Every `Theorem/Lemma/Prop/Remark N.M` below refers to
-> `a16.tex` as revised on 2026-08-20 (two authors; sections 2, 3 and 6 renumbered
-> after unused material was cut). Section 3 shifted by three: what earlier
-> revisions called Theorem 3.8 and Lemma 3.7 are now **Theorem 3.5** and
-> **Lemma 3.4**; Remarks 6.5 and 6.6 no longer exist. Section 6 is otherwise
-> unchanged: Lemma 6.1, Prop 6.2, Remark 6.3 and Theorem 6.4 keep their numbers.
+> `main.tex` as revised on 2026-09-14, when Section 6 was condensed and its
+> technical detail moved to `supplement.tex`. Two earlier shifts are recorded
+> here so the anchors can be traced. On 2026-08-20 Section 3 shifted by three:
+> what earlier revisions called Theorem 3.8 and Lemma 3.7 became **Theorem 3.5**
+> and **Lemma 3.4**. On 2026-09-14 Remark 6.3 left Section 6 for the supplement,
+> so what was **Theorem 6.3** is now **Theorem 6.3**; Lemma 6.1 and
+> Proposition 6.2 keep their numbers, and Sections 2, 3, 4 and 5 are unaffected.
+> Two figures were inserted before the existing ones, so old Figures 1 and 2 are
+> now **Figures 3 and 4**, and the two multiplier tables were merged, so old
+> Table 4 is now **Table 3**. The frozen previous version is `main-1.tex`.
 > If the article is edited again, re-check these anchors before releasing.
 
 
@@ -25,7 +30,7 @@ which cites this package as **[AH26]**.
 `scripts/run_all.jl` certifies, for the exact Bingane–Audet hexadecagon
 \(A_{16}\) enclosed by the constructor root interval, the **hypotheses of the
 paper's Theorem 3.5** as instantiated for \(A_{16}\) (Lemma 6.1 +
-Proposition 6.2 (1)–(6)). By that theorem (Theorem 6.4), those hypotheses imply
+Proposition 6.2 (1)–(6)). By that theorem (Theorem 6.3), those hypotheses imply
 \(A_{16}\) is a **strict local maximiser of perimeter modulo orientation
 preserving Euclidean motions**.
 

@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (scripts/run_all.jl)"
 git_available = true
-git_commit = "ecba63b9c7f0dd4b6e8d44175a1d5a23728a1fd2"
-git_source_clean = true
+git_commit = "fa7145d5b0e1cfea0f9d66321d59c4fd2e6c2fb7"
+git_source_clean = false
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "Stability of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-09T04:38:05Z"
+utc = "2026-09-14T22:36:26Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -250,13 +250,13 @@ file = "scripts/_bootstrap.jl"
 sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
 [[source_sha256]]
 file = "scripts/check_paper.jl"
-sha256 = "9b13ebc702ddbd8ac6dc8479fe22194f8db0a17bc03aeb3c71dac33ee937c542"
+sha256 = "61c9f8c4d8e729df2d76ccc1d58561816260c6b04b4cc12259f26cc93945010c"
 [[source_sha256]]
 file = "scripts/run_all.jl"
-sha256 = "24e7c4dcb71ab8c0510dfb008d848c44c1d54f859c0722a71d66d175805abc1c"
+sha256 = "fb986b6ae503ac4d1a5c882a4508de9cb34d0801e960b4cd0a6be806c07a526f"
 [[source_sha256]]
 file = "scripts/run_lean_certificate.jl"
-sha256 = "78c6a8b8f5d5c11ba1456eb15425dd48ef014e0de08b3f7a3b1261f702c77afc"
+sha256 = "75d60bd9cc071e6d093debef0ff96eb168b7b8fb7a40d7c433dc129be9fab209"
 [[source_sha256]]
 file = "scripts/run_literature.jl"
 sha256 = "5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9"
@@ -279,4 +279,4 @@ first_order_certificate = "CERTIFIED"
 global_optimality = "not claimed (paper §7)"
 root_unique_in_certified_box = true
 root_unique_in_full_search_interval = true
-topological_local_maximality = "not certified by computation; given by paper Theorem 6.4 from these certified hypotheses (strict, modulo orientation-preserving Euclidean motions, via Theorem 3.5 / Lemma 3.4)"
+topological_local_maximality = "not certified by computation; given by paper Theorem 6.3 from these certified hypotheses (strict, modulo orientation-preserving Euclidean motions, via Theorem 3.5 / Lemma 3.4)"

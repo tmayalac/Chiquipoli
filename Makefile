@@ -52,41 +52,54 @@ archive-log:
 	tools/archive_log.sh logs/final_run.txt
 
 # --- the article ----------------------------------------------------------
-# a16.tex is a working copy at the repository root and is not tracked (see
-# .gitignore), so these two targets are how it is held to the certificate.
+# The article is main.tex, with supplement.tex beside it; main_1.tex is the
+# frozen previous version. All three are working copies at the repository root
+# and are not tracked (see .gitignore), so these targets are how they are held
+# to the certificate.
 #
-# `paper` compiles it and audits the LaTeX log. The audit is deliberately
+# `paper` compiles both and audits the LaTeX logs. The audit is deliberately
 # case-insensitive and does not key on the word "Warning": LaTeX writes
 # "Reference ... undefined" in lower case, and pdfTeX writes "Missing
 # character" with no severity word at all, so a naive grep for "Warning" or
 # "Undefined" passes a document with unresolved references and dropped glyphs.
 # Both mistakes were made here before this target existed.
+#
+# Order matters. The supplement uses `xr` to cite the article's own numbering,
+# so it reads main.aux; TEXINPUTS puts the build directory on the search path.
 paper:
-	@test -f a16.tex || { echo "a16.tex not present; nothing to compile"; exit 0; }
+	@test -f main.tex || { echo "main.tex not present; nothing to compile"; exit 0; }
 	@mkdir -p .texbuild
 	@for i in 1 2 3; do pdflatex -interaction=nonstopmode -halt-on-error \
-	    -output-directory=.texbuild a16.tex >/dev/null 2>&1 || \
-	    { echo "FAIL  pdflatex errored"; exit 1; }; done
-	@cp .texbuild/a16.pdf a16.pdf
-	@log=.texbuild/a16.log; rc=0; \
-	 n=$$(grep -icE '(reference|citation)[^.]*undefined' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n unresolved reference or citation"; rc=1; }; \
-	 n=$$(grep -c 'Missing character' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n missing character (glyph dropped)"; rc=1; }; \
-	 n=$$(grep -c 'Font shape' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n undefined font shape"; rc=1; }; \
-	 n=$$(grep -icE 'multiply.defined' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n multiply defined label"; rc=1; }; \
-	 n=$$(grep -c '^!' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n TeX error"; rc=1; }; \
-	 n=$$(grep -cE '^Overfull .hbox \([0-9]{2,}\.' $$log); \
-	   [ "$$n" -eq 0 ] || { echo "FAIL  $$n overfull hbox over 10pt"; rc=1; }; \
+	    -output-directory=.texbuild main.tex >/dev/null 2>&1 || \
+	    { echo "FAIL  pdflatex errored on main.tex"; exit 1; }; done
+	@cp .texbuild/main.pdf main.pdf
+	@if [ -f supplement.tex ]; then \
+	   for i in 1 2 3; do TEXINPUTS=.texbuild: pdflatex -interaction=nonstopmode \
+	       -halt-on-error -output-directory=.texbuild supplement.tex >/dev/null 2>&1 || \
+	       { echo "FAIL  pdflatex errored on supplement.tex"; exit 1; }; done; \
+	   cp .texbuild/supplement.pdf supplement.pdf; \
+	 fi
+	@rc=0; for f in main supplement; do \
+	   log=.texbuild/$$f.log; [ -f "$$log" ] || continue; \
+	   n=$$(LC_ALL=C grep -aicE '(reference|citation)[^.]*undefined' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n unresolved reference or citation"; rc=1; }; \
+	   n=$$(LC_ALL=C grep -ac 'Missing character' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n missing character (glyph dropped)"; rc=1; }; \
+	   n=$$(LC_ALL=C grep -ac 'Font shape' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n undefined font shape"; rc=1; }; \
+	   n=$$(LC_ALL=C grep -aicE 'multiply.defined' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n multiply defined label"; rc=1; }; \
+	   n=$$(LC_ALL=C grep -ac '^!' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n TeX error"; rc=1; }; \
+	   n=$$(LC_ALL=C grep -acE '^Overfull .hbox \([0-9]{2,}\.' $$log); \
+	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n overfull hbox over 10pt"; rc=1; }; \
+	 done; \
 	 if [ $$rc -eq 0 ]; then \
-	   echo "PAPER BUILD PASS  $$(pdfinfo a16.pdf | awk '/Pages/{print $$2}') pages, log clean"; \
+	   echo "PAPER BUILD PASS  main $$(pdfinfo main.pdf | awk '/Pages/{print $$2}') pp, supplement $$(pdfinfo supplement.pdf | awk '/Pages/{print $$2}') pp, logs clean"; \
 	 fi; exit $$rc
 
 # Reconciles every number and claim in the article against the regenerated
-# certificate and against the Lean sources. Reads the compiled PDF, since a
+# certificate and against the Lean sources. Reads the compiled PDFs, since a
 # mistyped table cell is invisible in the LaTeX source until it is typeset.
 paper-check:
 	julia --project=. scripts/check_paper.jl

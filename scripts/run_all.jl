@@ -192,7 +192,7 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
             "root_unique_in_certified_box" => r2.unique_in_box,
             "root_unique_in_full_search_interval" => r2.unique_in_search_interval,
             "topological_local_maximality" =>
-                "not certified by computation; given by paper Theorem 6.4 from " *
+                "not certified by computation; given by paper Theorem 6.3 from " *
                 "these certified hypotheses (strict, modulo orientation-preserving " *
                 "Euclidean motions, via Theorem 3.5 / Lemma 3.4)",
             "global_optimality" => "not claimed (paper §7)",

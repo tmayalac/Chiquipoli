@@ -44,7 +44,7 @@ Everything here is machine-checked. Nothing is admitted (`sorry`-free), and
 | 25 | **The first order limits** — the side equalities and active diameter inequalities pass to the blow-up limit; Taylor is exact because the constraints are quadratic | `eC_expand`, `eD_eq_zero_of_blowup`, `dD_nonpos_of_blowup` |
 | 26 | **Euclidean invariance and the slice normalisation** — the constraints and the orientation do not see a motion; `g(q)·q` stays feasible, still converges, and lands in `R(p)^⊥` | `isFeasible_move`, `tendsto_normCfg`, `eventually_phiGeom_zero`, `slice_of_generators` |
 | **27** | **Theorem 3.5 itself** — the blow-up argument, and the conclusion stated about the competitor rather than its normalised representative | **`thm_3_5`**, `thm_3_5_le`, `eventually_congruent_of_no_worse` |
-| **28** | **Theorem 6.4** — the certified configuration is a strict local maximiser of the perimeter, modulo orientation-preserving Euclidean motions | **`A16_locally_maximal`**, `A16_bridge`, `A16_isFeasibleConvex` |
+| **28** | **Theorem 6.3** — the certified configuration is a strict local maximiser of the perimeter, modulo orientation-preserving Euclidean motions | **`A16_locally_maximal`**, `A16_bridge`, `A16_isFeasibleConvex` |
 
 `A16_locally_maximal` is the statement to read first; `A16_certificate` is the
 one to read second. Everything else is a lemma feeding them. Without the
@@ -260,11 +260,11 @@ This is the honest boundary. All six *computational* gates of the certificate
 are now Lean theorems, with no residual "bracket only" caveat. What remains
 outside is:
 
-- ~~**The analytic half of Theorem 3.5, and with it Theorem 6.4.**~~
+- ~~**The analytic half of Theorem 3.5, and with it Theorem 6.3.**~~
   **This is now formalized.** `Feasible.A16_locally_maximal` proves that the
   configuration built from the unique constructor root in the bracket is a
   strictly convex equilateral small hexadecagon and a strict local maximiser of
-  the perimeter, modulo orientation-preserving Euclidean motions — Theorem 6.4
+  the perimeter, modulo orientation-preserving Euclidean motions — Theorem 6.3
   of the paper, kernel-checked, `sorry`-free, with only the three standard
   axioms. `Feasible.thm_3_5` is the general statement.
 

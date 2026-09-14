@@ -9,8 +9,8 @@ the sides $\{3,4\}$ and $\{12,13\}$ (that is, $|p_4-p_3|=\ell$ and
 $|p_{13}-p_{12}|=\ell$), are conditional, being nonzero constant multiples of
 $F_c(c)$; in fact literally equal to $F(z)$.
 
-This is the "independent SymPy verification" referred to in Remark 6.3 of the
-article.
+This is the "independent SymPy verification" referred to in Remark 5.1 of the
+supplementary material accompanying the article.
 
 ## Provenance, and what "independent" means here
 

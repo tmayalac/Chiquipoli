@@ -2,7 +2,7 @@
 
 Source: the article accompanying this package, *"Stability of Equilateral Small
 Polygons"*, **Section 6 "Certified verification of $A_{16}$"** (Lemma 6.1,
-Proposition 6.2 items (1)–(6), Theorem 6.4), which instantiates the abstract
+Proposition 6.2 items (1)–(6), Theorem 6.3), which instantiates the abstract
 criterion **Theorem 3.5** ("Strict first order criterion"). The article cites
 this package as **[AH26]**.
 
@@ -110,7 +110,7 @@ the certified strict convexity (Lemma L2 with Proposition 6.2(3)): a strictly
 convex polygon with 16 labelled vertices has all 16 distinct. L1 is the reason
 $\dim R_{\mathrm{eq}}$ is exactly 3 and not less, and it is indispensable for
 the bound $\operatorname{rank}D\le30$ (Proposition 6.2(6)) and for
-$\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$ (Theorem 6.4). The article uses the
+$\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$ (Theorem 6.3). The article uses the
 same independence in the proofs of Lemma 3.4 and Proposition 6.2(6).
 
 ### Lemma L2 — convexity by support determinants
@@ -410,9 +410,9 @@ is the analogue of the article's Remark 3.2, $\sum\alpha_i=-n$.
 
 ---
 
-## Theorem 6.4 — certified strict local maximality of $A_{16}$
+## Theorem 6.3 — certified strict local maximality of $A_{16}$
 
-> **Theorem 6.4.** "The Bingane–Audet hexadecagon $A_{16}$ is a strict local
+> **Theorem 6.3.** "The Bingane–Audet hexadecagon $A_{16}$ is a strict local
 > maximiser of perimeter modulo orientation preserving Euclidean motions among
 > convex equilateral small hexadecagons."
 
@@ -439,7 +439,7 @@ this: it computes no second-order data, because none is needed.
 
 **This document verifies that the code establishes hypotheses (i) and (ii) of
 Theorem 3.5, via Lemma 6.1 and Proposition 6.2. The implication — hypotheses
-$\Rightarrow$ strict local maximality — is Theorem 3.5 and Theorem 6.4 of the
+$\Rightarrow$ strict local maximality — is Theorem 3.5 and Theorem 6.3 of the
 article, and lies outside what the code certifies.**
 
 ---
@@ -465,7 +465,7 @@ the root interval — agrees with the OPTIGON source character for character.
 
 ## Reproducibility
 
-The article's Remark 6.3 states: "The verification uses outward rounded interval
+Remark 5.1 of the supplementary material states: "The verification uses outward rounded interval
 arithmetic at 256 bits, together with exact rational polynomial arithmetic.
 Exact equalities are never inferred merely because an interval evaluation
 contains zero."
@@ -501,7 +501,7 @@ fidelity of `coordinates(z)` to the Bingane–Audet constructor:
   identity with every $\lambda_{ij}>0$ — 6.2(5). The family is affine of
   dimension 1 because LICQ fails; one positive representative is certified.
 - **Strict topological local maximality** of perimeter modulo Euclidean motions
-  — Theorem 6.4 via Theorem 3.5. The code certifies the hypotheses; the
+  — Theorem 6.3 via Theorem 3.5. The code certifies the hypotheses; the
   implication is the article's theorem.
 
 What is **not** claimed, matching Section 7 of the article:
@@ -522,7 +522,7 @@ What is **not** claimed, matching Section 7 of the article:
 > alone** does not prove topological maximality — it certifies the hypotheses of
 > Theorem 3.5. The conclusion is proved separately and checked by the Lean
 > kernel (`Chiquipoli.Feasible.A16_locally_maximal`, the article's
-> **Theorem 6.4**). There is no contradiction;
+> **Theorem 6.3**). There is no contradiction;
 > the banner describes the scope of the computation, not that of the theorem.
 
 ---
@@ -549,7 +549,7 @@ and claims stronger than what is proved.
   $0.0080997106\ldots$, $\min\lambda$ $0.0918667776\ldots$, regularity bound
   $1.41938364\ldots\times10^{-25}$.
 - **Remaining point of faith, declared:** the correctness of the article's
-  theorems — Theorem 3.5 with Lemma 3.4, and Theorem 6.4 — is a separate
+  theorems — Theorem 3.5 with Lemma 3.4, and Theorem 6.3 — is a separate
   mathematical review, and no machine performs it.
 
 No additional mathematical errors and no undocumented logical gaps were found in
