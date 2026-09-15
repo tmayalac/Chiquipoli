@@ -25,7 +25,7 @@ of truth for what. Everything else is either machine-readable data, source,
 tests, or supplementary explanatory notes (§3). If any other document conflicts
 with this one on scope or claims, **this document wins** and the other is a bug.
 
-Paper: J. Ayala Hoffmann, *"Stability of Equilateral Small Polygons"*
+Paper: J. Ayala Hoffmann, *"First Order Geometry of Equilateral Small Polygons"*
 which cites this package as **[AH26]**.
 
 ---

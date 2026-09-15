@@ -5,8 +5,8 @@ All notable changes to this project are recorded here. The format follows
 
 ## [1.0.0] — 2026-09-09
 
-First public release: the supplementary material for *Stability of Equilateral
-Small Polygons*.
+First public release: the supplementary material for *First Order Geometry of
+Equilateral Small Polygons*.
 
 ### What it establishes
 

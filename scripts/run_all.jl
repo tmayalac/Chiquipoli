@@ -174,7 +174,7 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
     cert = Dict{String,Any}(
         "meta" => Dict{String,Any}(
             "certificate" => "dedicated A16 first-order certificate (scripts/run_all.jl)",
-            "paper" => "Stability of Equilateral Small Polygons (accompanying article)",
+            "paper" => "First Order Geometry of Equilateral Small Polygons (accompanying article)",
             "package" => "A16Certificate v$(pkg_version) [AH26]",
             "utc" => Dates.format(now(UTC), "yyyy-mm-ddTHH:MM:SS") * "Z",
             "julia_version" => string(VERSION),

@@ -1,7 +1,7 @@
 # Code to Section 6: a referee-grade mapping
 
-Source: the article accompanying this package, *"Stability of Equilateral Small
-Polygons"*, **Section 6 "Certified verification of $A_{16}$"** (Lemma 6.1,
+Source: the article accompanying this package, *"First Order Geometry of Equilateral
+Small Polygons"*, **Section 6 "Certified verification of $A_{16}$"** (Lemma 6.1,
 Proposition 6.2 items (1)–(6), Theorem 6.3), which instantiates the abstract
 criterion **Theorem 3.5** ("Strict first order criterion"). The article cites
 this package as **[AH26]**.

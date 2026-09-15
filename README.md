@@ -1,7 +1,7 @@
 # Chiquipoli — interval and exact verification package for $A_{16}$
 
-Supplementary computational material for the article *Stability of Equilateral
-Small Polygons*, which cites this package as **[AH26]**.
+Supplementary computational material for the article *First Order Geometry of
+Equilateral Small Polygons*, which cites this package as **[AH26]**.
 
 The package certifies, by rigorous interval arithmetic and exact rational
 algebra, the computational hypotheses that the article's first-order criterion
