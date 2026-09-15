@@ -9,7 +9,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 2.742
+seconds = 2.748
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 4
 name = "n4-regular-square"
 negative_control = false
 reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.051
+seconds = 0.05
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 6
 name = "n6-reinhardt-R36"
 negative_control = false
 reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
-seconds = 0.129
+seconds = 0.125
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 8
 name = "n8-ahmp2004-H8"
 negative_control = false
 reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.181
+seconds = 0.178
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -89,7 +89,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.035
+seconds = 0.034
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -144,12 +144,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "fa7145d5b0e1cfea0f9d66321d59c4fd2e6c2fb7"
+git_commit = "dfb3df2c74a3aa02c4ea09fa31161ea571cc3d5e"
 git_source_clean = false
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 3.211
-utc = "2026-09-14T22:37:38Z"
+total_seconds = 3.189
+utc = "2026-09-15T03:09:29Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -183,7 +183,7 @@ file = "scripts/_bootstrap.jl"
 sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
 [[source_sha256]]
 file = "scripts/check_paper.jl"
-sha256 = "61c9f8c4d8e729df2d76ccc1d58561816260c6b04b4cc12259f26cc93945010c"
+sha256 = "9958de5c5a29d8b216b31916fd797718d072aa66ede394fe2a05d5816686ae7b"
 [[source_sha256]]
 file = "scripts/run_all.jl"
 sha256 = "fb986b6ae503ac4d1a5c882a4508de9cb34d0801e960b4cd0a6be806c07a526f"

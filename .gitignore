@@ -17,14 +17,16 @@
 lean/.lake/
 lean/lakefile.olean
 
-# Working copies of the article at the repository root (a16.tex / a16.pdf and
-# any future sibling). Anchored with a leading slash on purpose: a bare
-# `*.tex` would also swallow new thesis chapters, docs/ sources and
-# results/tables/, which ARE tracked. Files already tracked at the root
-# (Bigotes.pdf, SUPERVISOR_REVIEW.tex) are unaffected — .gitignore only
-# governs untracked paths.
+# The article is not public. Its working copies live at the repository root
+# (main.tex, main_1.tex, supplement.tex and their PDFs) and none of them is
+# part of the released artifact. Anchored with a leading slash on purpose: a
+# bare `*.tex` would also swallow results/tables/, which IS tracked.
 /*.tex
 /*.pdf
+/*.log
+# Overleaf/latexmk configuration for building the supplement against main.aux
+/latexmkrc
+/.latexmkrc
 
 # LaTeX build artifacts. Thirty of these were tracked once; never again.
 *.aux

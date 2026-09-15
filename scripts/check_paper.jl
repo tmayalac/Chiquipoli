@@ -1,5 +1,6 @@
 # Reconciles the article against the regenerated certificate and against the
-# Lean sources. Run it after every edit to a16.tex, and before submitting.
+# Lean sources. Run it after every edit to main.tex or supplement.tex, and
+# before submitting.
 #
 #     julia --project=. scripts/check_paper.jl        # or: make paper-check
 #
@@ -13,7 +14,7 @@
 #
 # It reads the COMPILED PDF, not the LaTeX source, because a typo in a table
 # cell is invisible in the source until it is typeset, and because `\ref` only
-# resolves at compile time. If `a16.pdf` is absent the checks that need it are
+# resolves at compile time. If `main.pdf` is absent the checks that need it are
 # skipped and reported as skipped, never as passed.
 
 using TOML, Printf, SHA
@@ -283,6 +284,116 @@ let P = 16 * side_length(Zr)
         inf(P) > big"3.1347065475" && sup(P) < big"3.1365484905")
 end
 
+# ---------------------------------------------------------------------------
+# The bounds compared at the top of this file are literals typed into it, so
+# they would stay green if a number in the article were edited by hand. This
+# section reads the article's own source instead: each certified number must be
+# printed in Section 6 digit for digit, and any other long decimal there is a
+# failure, because it would be a number that nothing has contrasted with the
+# certificate. A rounded lower bound that rounds *up* was found here by hand
+# once (min lambda printed as 0.09186678 > 0.0918667776...).
+section("every number Section 6 prints, read from the article's source")
+using LinearAlgebra
+const SEC6 = let i = findfirst("\\section{Certified verification of", texsrc0),
+                 j = findfirst("\\section{Local and global questions}", texsrc0)
+    (i === nothing || j === nothing) ? "" : texsrc0[first(i):prevind(texsrc0, first(j))]
+end
+const SEC6_CHECKS = [
+    "Section 6 prints each certified bound digit for digit",
+    "Section 6 prints no long decimal that is not checked here",
+    "the printed F_c is Fc_poly() of the code, coefficient by coefficient",
+    "the critical pair, the minimal multiplier edge and the box radii",
+    "F_c: nine real roots in [-1,1], the nearest other one at z = 0.2572",
+]
+if isempty(SEC6)
+    foreach(skip, SEC6_CHECKS)
+else
+    flat6 = replace(SEC6, r"\s+" => "", "\\," => "")
+    printed = [
+        "[0.1959554930055385228,0.1959554930055385230]",   # ell, Prop 6.2(2)
+        "[3.1352878880886163663,3.1352878880886163665]",   # 16 ell, Prop 6.2(2)
+        "0.0074882049306989244",                           # Prop 6.2(3), Table 3
+        "0.0080997106581357295",                           # Prop 6.2(4), Table 3
+        "0.0918667776833353997",                           # Prop 6.2(5), Table 3
+        "1.419383643581978\\times10^{-25}",                # Prop 6.2(6), Table 3
+        "4.017187643256796\\times10^{-28}",                # Subsection 6.4, Q
+        "1.825393700512576\\times10^{-25}",                # Subsection 6.4, M_0
+        "2\\times10^{-30}",                                # Table 3, width of ell
+    ]
+    notprinted = [lit for lit in printed if !occursin(lit, flat6)]
+    isempty(notprinted) ? pass(SEC6_CHECKS[1]) :
+        fail(SEC6_CHECKS[1], "not printed: " * join(notprinted, ", "))
+    # the one bound checked above only through the log: recompute it here
+    let (_, b, _, _) = regularity_test(normalized_matrix(build_jacobian(Zc)))
+        bb = b isa Interval ? sup(b) : BigFloat(b)
+        chk("normalized-system bound <= 1.825393700512576e-25, recomputed",
+            bb <= big"1.825393700512576e-25")
+    end
+    stray = unique([m.match for m in eachmatch(r"\d+\.\d{6,}", flat6)
+                    if !any(k -> occursin(m.match, k), printed)])
+    isempty(stray) ? pass(SEC6_CHECKS[2]) :
+        fail(SEC6_CHECKS[2], "unchecked: " * join(stray, ", "))
+
+    let m = match(r"F_c\(c\)=\{\}&(.*?)\\end\{aligned\}"s, SEC6), ok = false
+        if m !== nothing
+            blk = replace(m.captures[1], "&" => "", "\\\\" => "", r"\s+" => "")
+            art = Dict{Int,BigInt}()
+            for t in eachmatch(r"([+-]?)(\d+)(c)?(?:\^\{?(\d+)\}?)?", blk)
+                d = t.captures[3] === nothing ? 0 :
+                    (t.captures[4] === nothing ? 1 : parse(Int, t.captures[4]))
+                art[d] = (t.captures[1] == "-" ? -1 : 1) * parse(BigInt, t.captures[2])
+            end
+            fc = Fc_poly()
+            ok = length(fc) == 13 && length(art) == 13 &&
+                 all(fc[k+1] == get(art, k, 0) for k in 0:12)
+        end
+        chk(SEC6_CHECKS[3], ok)
+    end
+
+    let lamenc = gates["multipliers"]["lambda_enclosure"],
+        emin = lamenc[argmin([parse(BigFloat, e["lower"]) for e in lamenc])]["edge"],
+        cp = gates["inactive_margin"]["critical_pair"],
+        rr = parse(BigFloat, cert["meta"]["z_root_radius"]),
+        rc = parse(BigFloat, cert["meta"]["z_cert_radius"])
+        chk(SEC6_CHECKS[4],
+            occursin("attainedattheedge\\(\\{$(emin[1]),$(emin[2])\\}\\)", flat6) &&
+            occursin("attainedatthepair\\(\\{$(cp[1]),$(cp[2])\\}\\)", flat6) &&
+            abs(rr / big"1e-30" - 1) < big"1e-60" && occursin("radius\\(10^{-30}\\)", flat6) &&
+            abs(rc / big"1e-28" - 1) < big"1e-60" && occursin("radius\\(10^{-28}\\)", flat6))
+    end
+
+    # A display claim of Prop 6.2(1), not a certificate pillar: the count and the
+    # approximate location explain why a sign change alone would not pin z*.
+    let fc = Float64.(Fc_poly()), n = length(fc) - 1, C = zeros(n, n)
+        for k in 2:n
+            C[k, k-1] = 1.0
+        end
+        C[:, n] .= -fc[1:n] ./ fc[end]
+        re = [real(x) for x in eigvals(C) if abs(imag(x)) < 1e-9 && -1 <= real(x) <= 1]
+        zs = acos.(re)
+        others = [z for z in zs if abs(z - Float64(z_nominal)) > 1e-6]
+        chk(SEC6_CHECKS[5],
+            length(re) == 9 && length(others) == 8 &&
+            round(others[argmin(abs.(others .- Float64(z_nominal)))], digits=4) == 0.2572 &&
+            occursin("ninerealroots", flat6) && occursin("z\\approx0.2572", flat6))
+    end
+end
+if isempty(supsrc0)
+    skip("supplement: the diagnostic sum of alpha lies in the printed bracket")
+    skip("supplement: Julia and IntervalArithmetic versions are the certificate's")
+else
+    let a = gates["multipliers"]["alpha_enclosure"],
+        lo = sum(parse(BigFloat, x["lower"]) for x in a),
+        hi = sum(parse(BigFloat, x["upper"]) for x in a)
+        chk("supplement: the diagnostic sum of alpha lies in the printed bracket",
+            big"-16.0001" <= lo && hi <= big"-15.9999" &&
+            occursin("[-16.0001,-15.9999]", replace(supsrc0, r"\s+" => "")))
+    end
+    chk("supplement: Julia and IntervalArithmetic versions are the certificate's",
+        occursin("Julia \\($(cert["meta"]["julia_version"])\\)", supsrc0) &&
+        occursin("\\texttt{IntervalArithmetic.jl} \\($(cert["meta"]["intervalarithmetic_version"])\\)", supsrc0))
+end
+
 section("IntervalArithmetic's own guarantee flag, on every certified quantity")
 chk("F, F', coordinates, Jacobian, determinants and distances are all guaranteed",
     isguaranteed(Ffun(Zc)) && isguaranteed(Fprime(Zc)) && isguaranteed(side_length(Zc)) &&
@@ -377,6 +488,10 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
                 occursin("Audited theorems & \\($naud\\)", supsrc0))
             chk("supplement: negative control count matches the record ($nneg)",
                 occursin("Negative controls & \\($nneg\\)", supsrc0))
+            lm = get(lc, "meta", Dict{String,Any}())
+            chk("supplement: Lean toolchain and Mathlib revision are the recorded ones",
+                occursin("toolchain \\texttt{$(split(get(lm, "lean_toolchain", "?"), ':')[end])}", supsrc0) &&
+                occursin("revision \\texttt{$(first(get(lm, "mathlib_rev", "?"), 8))}", supsrc0))
         end
         # The article cites the package by version. Three files declare it and
         # they drifted apart once already (CITATION.cff said 1.0.0 while
@@ -416,7 +531,7 @@ let cmds = String[]
             # which are citations, not commands the reader is told to run.
             if any(d -> startswith(tok, d),
                    ("src/", "scripts/", "tools/", "test/", "docs/", "examples/",
-                    "results/", "lean/", "./scripts/"))
+                    "results/", "logs/", "lean/", "./scripts/"))
                 push!(cmds, tok)
             end
         end
@@ -470,7 +585,7 @@ if isempty(FAILS)
     if isempty(SKIPPED)
         println("PAPER CHECK PASS — the article agrees with the certificate and with Lean")
     else
-        println("PARTIAL — the article was NOT checked: a16.tex/a16.pdf absent.")
+        println("PARTIAL — the article was NOT checked: main.tex/main.pdf absent.")
         println()
         println("  Verified: the certificate, the source hashes, and the claims about Lean.")
         println("  NOT verified ($(length(SKIPPED)) checks skipped):")
@@ -479,7 +594,7 @@ if isempty(FAILS)
         end
         println()
         println("  Nothing here says the article is consistent with the certificate.")
-        println("  Run `make paper` first, with a16.tex present, for that.")
+        println("  Run `make paper` first, with main.tex present, for that.")
     end
 else
     println("PAPER CHECK FAIL — $(length(FAILS)) discrepancies:")
