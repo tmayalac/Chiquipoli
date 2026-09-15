@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (scripts/run_all.jl)"
 git_available = true
-git_commit = "dfb3df2c74a3aa02c4ea09fa31161ea571cc3d5e"
-git_source_clean = false
+git_commit = "475492487733f747c1a93a2c5609b5d12da00902"
+git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "Stability of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-15T03:09:16Z"
+utc = "2026-09-15T03:47:37Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -250,7 +250,7 @@ file = "scripts/_bootstrap.jl"
 sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
 [[source_sha256]]
 file = "scripts/check_paper.jl"
-sha256 = "9958de5c5a29d8b216b31916fd797718d072aa66ede394fe2a05d5816686ae7b"
+sha256 = "6136f92ba80d8c0b9717885c154a5b26edd086112b9359c76a3a772cfe3073f5"
 [[source_sha256]]
 file = "scripts/run_all.jl"
 sha256 = "fb986b6ae503ac4d1a5c882a4508de9cb34d0801e960b4cd0a6be806c07a526f"

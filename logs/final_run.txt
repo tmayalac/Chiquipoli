@@ -1,12 +1,12 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-15T03:09:12Z
+UTC timestamp        = 2026-09-15T03:47:33Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = dfb3df2c74a3aa02c4ea09fa31161ea571cc3d5e  (SOURCE DIRTY — log not tied to this commit)
+git commit           = 475492487733f747c1a93a2c5609b5d12da00902  (source clean — log matches this commit)
 SHA256 of source files:
   6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734  src/A16Certificate.jl
   d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f  src/ExactIdentity.jl
@@ -18,7 +18,7 @@ SHA256 of source files:
   baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897  scripts/05_multipliers_interval.jl
   0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8  scripts/06_exact_identities.jl
   beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
-  9958de5c5a29d8b216b31916fd797718d072aa66ede394fe2a05d5816686ae7b  scripts/check_paper.jl
+  6136f92ba80d8c0b9717885c154a5b26edd086112b9359c76a3a772cfe3073f5  scripts/check_paper.jl
   fb986b6ae503ac4d1a5c882a4508de9cb34d0801e960b4cd0a6be806c07a526f  scripts/run_all.jl
   75d60bd9cc071e6d093debef0ff96eb168b7b8fb7a40d7c433dc129be9fab209  scripts/run_lean_certificate.jl
   5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9  scripts/run_literature.jl
