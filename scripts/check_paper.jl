@@ -304,6 +304,7 @@ const SEC6_CHECKS = [
     "the printed F_c is Fc_poly() of the code, coefficient by coefficient",
     "the critical pair, the minimal multiplier edge and the box radii",
     "F_c: nine real roots in [-1,1], the nearest other one at z = 0.2572",
+    "Figure 5 states the magnification its own coordinates give",
 ]
 if isempty(SEC6)
     foreach(skip, SEC6_CHECKS)
@@ -377,10 +378,28 @@ else
             round(others[argmin(abs.(others .- Float64(z_nominal)))], digits=4) == 0.2572 &&
             occursin("ninerealroots", flat6) && occursin("z\\approx0.2572", flat6))
     end
+
+    # Figure 5 is schematic, but the magnification it states is a number: the
+    # scale of the upper line (I_search between its ticks) over the scale of the
+    # lower one (Z_cert between its outer ticks). It was once stated as 10^26.
+    let tick(y) = [parse(Float64, m.captures[1])
+                   for m in eachmatch(Regex("\\\\draw\\[tick\\] \\(\\s*(-?[0-9.]+),$y\\)"), SEC6)],
+        up = tick("-0\\.11"), dn = tick("-2\\.06"), ok = false
+        if length(up) == 2 && length(dn) == 4
+            search = big(pi) / 16 - 2asin(sin(big(pi) / 16) / 2)
+            mag = (search / (maximum(up) - minimum(up))) /
+                  (2parse(BigFloat, cert["meta"]["z_cert_radius"]) / (maximum(dn) - minimum(dn)))
+            e = round(Int, log10(mag))
+            ok = occursin("{\\(\\times10^{$e}\\)}", SEC6) &&
+                 occursin("magnifiedbyabout\\(10^{$e}\\)", flat6)
+        end
+        chk(SEC6_CHECKS[6], ok)
+    end
 end
 if isempty(supsrc0)
     skip("supplement: the diagnostic sum of alpha lies in the printed bracket")
     skip("supplement: Julia and IntervalArithmetic versions are the certificate's")
+    skip("supplement: working precision, tightest margin and orders of magnitude")
 else
     let a = gates["multipliers"]["alpha_enclosure"],
         lo = sum(parse(BigFloat, x["lower"]) for x in a),
@@ -388,6 +407,23 @@ else
         chk("supplement: the diagnostic sum of alpha lies in the printed bracket",
             big"-16.0001" <= lo && hi <= big"-15.9999" &&
             occursin("[-16.0001,-15.9999]", replace(supsrc0, r"\s+" => "")))
+    end
+    # The precision paragraph of the supplement: four numbers once derived by
+    # hand. 98 is the least mantissa for which the unit in the last place at the
+    # root is at most the radius of Z_root, so its endpoints and centre are
+    # distinct floating point numbers whatever the rounding.
+    let sup1 = replace(supsrc0, r"\s+" => " "),
+        pmin = ceil(Int, log2(z_nominal / parse(BigFloat, cert["meta"]["z_root_radius"]))),
+        tight = minimum(parse(BigFloat, s) for s in (
+            gates["convexity"]["min_support_determinant"],
+            gates["inactive_margin"]["inactive_margin_lower_bound"],
+            gates["multipliers"]["min_lambda_lower_bound"])),
+        orders = round(Int, -log10(parse(BigFloat, gates["rank"]["preconditioned_regularity_bound"])))
+        chk("supplement: working precision, tightest margin and orders of magnitude",
+            occursin("at least \\($pmin\\) bits", sup1) &&
+            occursin("about \\($(round(256 / pmin, digits=1))\\)", sup1) &&
+            tight > big"7e-3" && occursin("larger than \\(7\\times10^{-3}\\)", sup1) &&
+            orders == 25 && occursin("twenty five orders of magnitude", sup1))
     end
     chk("supplement: Julia and IntervalArithmetic versions are the certificate's",
         occursin("Julia \\($(cert["meta"]["julia_version"])\\)", supsrc0) &&
