@@ -376,22 +376,26 @@ else
         chk(SEC6_CHECKS[5],
             length(re) == 9 && length(others) == 8 &&
             round(others[argmin(abs.(others .- Float64(z_nominal)))], digits=4) == 0.2572 &&
-            occursin("ninerealroots", flat6) && occursin("z\\approx0.2572", flat6))
+            occursin("ninerealroots", flat6) &&
+            occursin("z\\approx0.2572", flat6 * replace(supsrc0, r"\s+" => "", "\\," => "")))
     end
 
     # Figure 5 is schematic, but the magnification it states is a number: the
     # scale of the upper line (I_search between its ticks) over the scale of the
     # lower one (Z_cert between its outer ticks). It was once stated as 10^26.
+    # Figure 5 now lives in the supplement; look for it wherever it is.
+    FIGSRC = occursin("fig:boxes", SEC6) ? SEC6 : supsrc0
+    flatfig = replace(FIGSRC, r"\s+" => "", "\\," => "")
     let tick(y) = [parse(Float64, m.captures[1])
-                   for m in eachmatch(Regex("\\\\draw\\[tick\\] \\(\\s*(-?[0-9.]+),$y\\)"), SEC6)],
+                   for m in eachmatch(Regex("\\\\draw\\[tick\\] \\(\\s*(-?[0-9.]+),$y\\)"), FIGSRC)],
         up = tick("-0\\.11"), dn = tick("-2\\.06"), ok = false
         if length(up) == 2 && length(dn) == 4
             search = big(pi) / 16 - 2asin(sin(big(pi) / 16) / 2)
             mag = (search / (maximum(up) - minimum(up))) /
                   (2parse(BigFloat, cert["meta"]["z_cert_radius"]) / (maximum(dn) - minimum(dn)))
             e = round(Int, log10(mag))
-            ok = occursin("{\\(\\times10^{$e}\\)}", SEC6) &&
-                 occursin("magnifiedbyabout\\(10^{$e}\\)", flat6)
+            ok = occursin("{\\(\\times10^{$e}\\)}", FIGSRC) &&
+                 occursin("magnifiedbyabout\\(10^{$e}\\)", flatfig)
         end
         chk(SEC6_CHECKS[6], ok)
     end

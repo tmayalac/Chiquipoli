@@ -15,7 +15,11 @@
 > Sections 2, 3, 4 and 5 are unaffected. Two figures were inserted before the
 > existing ones, so old Figures 1 and 2 are now **Figures 3 and 4**, and the two
 > multiplier tables were merged, so old Table 4 is now **Table 3**. The frozen
-> previous version is `main_1.tex`. If the article is edited again, re-check
+> previous version is `main_1.tex`. On 2026-09-15 Section 6 was shortened again:
+> the definitions of the interval operators, the schematic figure of the two
+> boxes and two explanatory paragraphs moved to `supplement.tex`, so the article
+> now has **four figures**, and trivial displayed equations were set inline. No
+> statement, bound or proof changed. If the article is edited again, re-check
 > these anchors before releasing.
 
 
