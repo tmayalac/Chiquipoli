@@ -321,7 +321,9 @@ else
         "1.825393700512576\\times10^{-25}",                # Subsection 6.4, M_0
         "2\\times10^{-30}",                                # Table 3, width of ell
     ]
-    notprinted = [lit for lit in printed if !occursin(lit, flat6)]
+    # a certified number may be printed in the article or in the supplement
+    flatall = flat6 * replace(supsrc0, r"\s+" => "", "\\," => "")
+    notprinted = [lit for lit in printed if !occursin(lit, flatall)]
     isempty(notprinted) ? pass(SEC6_CHECKS[1]) :
         fail(SEC6_CHECKS[1], "not printed: " * join(notprinted, ", "))
     # the one bound checked above only through the log: recompute it here
