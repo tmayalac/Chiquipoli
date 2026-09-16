@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (scripts/run_all.jl)"
 git_available = true
-git_commit = "e6cd75e2b79bf737aa2831ecb01bef59b8dab053"
+git_commit = "c4d9d771c56e44403163b02e918abb98f64e426e"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-16T00:27:33Z"
+utc = "2026-09-16T00:32:41Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
