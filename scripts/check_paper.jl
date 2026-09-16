@@ -259,6 +259,55 @@ else
     skip("figure coordinates vs the certified configuration")
 end
 
+# ---------------------------------------------------------------------------
+# Section 5 prints the vertex map t -> p_k(t) in exact form: Lemma 6.1 is about
+# those formulas, and a reader must be able to rebuild them without the
+# software. Each printed formula is checked against `coordinates` at the root
+# and at two other parameters, so the printed map is the certified one.
+section("the vertex map printed in Section 5, against the code")
+let i5 = findfirst("\\section{The extracted", texsrc0),
+    j5 = findfirst("\\section{Certified verification of", texsrc0)
+    if i5 === nothing || j5 === nothing
+        skip("Section 5 prints the vertex map of the certified constructor")
+        skip("the printed vertex map is the certified constructor")
+    else
+        sec5 = texsrc0[first(i5):prevind(texsrc0, first(j5))]
+        flat5 = replace(sec5, r"\s+" => "", "\\," => "", "\\ " => "", "\\bigl" => "", "\\bigr" => "")
+        S(z, k) = sin(k * z); C(z, k) = cos(k * z)
+        formulas = [
+            ("p_0&=(0,0)",                              (z, x, y) -> (zero(z), zero(z))),
+            ("p_1&=(\\sin(2t)-\\sint,\\cost-\\cos(2t))", (z, x, y) -> (S(z,2) - S(z,1), C(z,1) - C(z,2))),
+            ("p_2&=(\\sin(3t)-\\sint,\\cost-\\cos(3t))", (z, x, y) -> (S(z,3) - S(z,1), C(z,1) - C(z,3))),
+            ("p_3&=(-x,y)",                             (z, x, y) -> (-x, y)),
+            ("p_4&=(x+\\sin(7t),y+\\cos(7t))",           (z, x, y) -> (x + S(z,7), y + C(z,7))),
+            ("p_5&=(x+\\sin(6t),y+\\cos(6t))",           (z, x, y) -> (x + S(z,6), y + C(z,6))),
+            ("p_6&=(x+\\sin(5t),y+\\cos(5t))",           (z, x, y) -> (x + S(z,5), y + C(z,5))),
+            ("p_7&=(\\sint,\\cost)",                     (z, x, y) -> (S(z,1), C(z,1))),
+            ("p_8&=(0,1)",                              (z, x, y) -> (zero(z), one(z))),
+        ]
+        others = ["x(t)=\\sint-(2\\cost-1)\\sin(4t)", "y(t)=\\cost-(2\\cost-1)\\cos(4t)",
+                  "p_{16-i}=(-x_i,y_i)", "=|p_4-p_3|^2-|p_8-p_7|^2"]
+        missing = [f for (f, _) in formulas if !occursin(f, flat5)]
+        append!(missing, [f for f in others if !occursin(f, flat5)])
+        isempty(missing) ? pass("Section 5 prints the vertex map of the certified constructor") :
+            fail("Section 5 prints the vertex map of the certified constructor", "not printed: " * join(missing, "  "))
+        ok = true
+        for z in (z_nominal, big"0.13", big"0.31")
+            x = A16Certificate.Xfun(z); y = A16Certificate.Yfun(z); p = coordinates(z)
+            for (k, (_, f)) in enumerate(formulas)
+                X, Y = f(z, x, y)
+                ok &= abs(p[k, 1] - X) < big"1e-60" && abs(p[k, 2] - Y) < big"1e-60"
+            end
+            for i in 1:7          # the reflection p_{16-i} = (-x_i, y_i)
+                ok &= abs(p[17-i, 1] + p[i+1, 1]) < big"1e-60" && abs(p[17-i, 2] - p[i+1, 2]) < big"1e-60"
+            end
+            d(a, b) = (p[a+1,1] - p[b+1,1])^2 + (p[a+1,2] - p[b+1,2])^2
+            ok &= abs(A16Certificate.Ffun(z) - (d(4, 3) - d(8, 7))) < big"1e-60"
+        end
+        chk("the printed vertex map is the certified constructor, at three parameters", ok)
+    end
+end
+
 section("structural counts the article quotes")
 chk("224 support determinants", length(support_determinants(Zc)) == 224)
 chk("105 inactive pairs (120 total minus 15 active)", length(inactive_pairs(Zc)) == 105)

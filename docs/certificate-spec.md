@@ -19,8 +19,12 @@
 > the definitions of the interval operators, the schematic figure of the two
 > boxes and two explanatory paragraphs moved to `supplement.tex`, so the article
 > now has **four figures**, and trivial displayed equations were set inline. No
-> statement, bound or proof changed. If the article is edited again, re-check
-> these anchors before releasing.
+> statement, bound or proof changed. On 2026-09-16, after the supervisor's
+> corrections, Section 5 prints the exact vertex map as equation (5.1), Table 3
+> has three panels (exact, interval, exact consequences) with the regularity of
+> both M and M0, and the invertibility of Q in Subsection 6.4 is proved exactly
+> from p0 = (0,0) and p8 = (0,1) rather than from the interval sign y8 - y1 > 0.
+> If the article is edited again, re-check these anchors before releasing.
 
 
 This is the single **authoritative** description of what this repository
