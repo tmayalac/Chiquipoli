@@ -1,12 +1,12 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-16T16:04:37Z
+UTC timestamp        = 2026-09-21T15:37:57Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = dfac51696e0312316acf5b36c5e5c1887bd8a0ae  (source clean — log matches this commit)
+git commit           = b063c707c8c2b7bfc35b537a95016b1723331f03  (source clean — log matches this commit)
 SHA256 of source files:
   6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734  src/A16Certificate.jl
   d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f  src/ExactIdentity.jl
@@ -16,7 +16,7 @@ SHA256 of source files:
   822708cf34f1471d446ddede4b6cda63b8279bf0fc3752f3721727419745b5ae  scripts/03_geometry_interval.jl
   cba3d53fadb0121f9c0374ec2f4c6714db45b03f480cb75d371f04ba51ed4eef  scripts/04_rank_interval.jl
   baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897  scripts/05_multipliers_interval.jl
-  0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8  scripts/06_exact_identities.jl
+  8529bebfb5c366c151839dfb5dbfbc215a1a9e08e4e0dd8e6dfda2d749dbb91b  scripts/06_exact_identities.jl
   beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
   610ef81f40005904089e20adc96e5f5c050f0cd6b99da41442a1a071877e96e0  scripts/check_paper.jl
   6dd28bfe741cccb51b12bdca27efbfef01e3ed70b98cdcf171b59af3b96e441f  scripts/run_all.jl
@@ -24,7 +24,7 @@ SHA256 of source files:
   5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9  scripts/run_literature.jl
   42e7838569a087198bdcf9b38342a28a0ded8ba8ca933894089a22091e1641ba  test/optigon_reference.jl
   c2b4b0c24acfa423ff9fa857110c2d6b377f34d4ae9bfdcd212c672ec02401c1  test/runtests.jl
-  72b6c0cc368044fd39813e832a4371c1c75389db8f1a9e67cb1715ec46d719d0  Project.toml
+  de9969597ef34a0c76833c870b4a3c7369d40dbbd4beff90b80e556d30ad5764  Project.toml
   a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57  Manifest.toml
 
 Pkg.status() [project mode]:
@@ -41,10 +41,10 @@ Status `~/Developer/Chiquipoli/Manifest.toml`
 ⌅ [d1acc4aa] IntervalArithmetic v0.22.36
   [692b3bcd] JLLWrappers v1.8.0
   [1914dd2f] MacroTools v0.5.16
-  [21216c6a] Preferences v1.5.2
+⌃ [21216c6a] Preferences v1.5.2
   [5eaf0fd0] RoundingEmulator v0.2.1
   [4e9b3aee] CRlibm_jll v1.0.1+0
-  [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.33+1
+⌃ [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.33+1
   [0dad84c5] ArgTools v1.1.2
   [56f22d72] Artifacts v1.11.0
   [2a0f44e3] Base64 v1.11.0
@@ -79,7 +79,7 @@ Status `~/Developer/Chiquipoli/Manifest.toml`
   [8e850b90] libblastrampoline_jll v5.15.0+0
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ============================================================
 
 

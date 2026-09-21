@@ -9,7 +9,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 2.691
+seconds = 2.678
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 4
 name = "n4-regular-square"
 negative_control = false
 reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.053
+seconds = 0.055
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 6
 name = "n6-reinhardt-R36"
 negative_control = false
 reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
-seconds = 0.13
+seconds = 0.128
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 8
 name = "n8-ahmp2004-H8"
 negative_control = false
 reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.169
+seconds = 0.172
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -89,7 +89,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.043
+seconds = 0.035
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -144,12 +144,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "dfac51696e0312316acf5b36c5e5c1887bd8a0ae"
+git_commit = "b063c707c8c2b7bfc35b537a95016b1723331f03"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 3.162
-utc = "2026-09-16T16:04:47Z"
+total_seconds = 3.143
+utc = "2026-09-21T15:38:07Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -177,7 +177,7 @@ file = "scripts/05_multipliers_interval.jl"
 sha256 = "baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897"
 [[source_sha256]]
 file = "scripts/06_exact_identities.jl"
-sha256 = "0db09ec391540c381763390199a9ac9bcced199ac9ff284cfdcaf976ae7958a8"
+sha256 = "8529bebfb5c366c151839dfb5dbfbc215a1a9e08e4e0dd8e6dfda2d749dbb91b"
 [[source_sha256]]
 file = "scripts/_bootstrap.jl"
 sha256 = "beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e"
@@ -201,7 +201,7 @@ file = "test/runtests.jl"
 sha256 = "c2b4b0c24acfa423ff9fa857110c2d6b377f34d4ae9bfdcd212c672ec02401c1"
 [[source_sha256]]
 file = "Project.toml"
-sha256 = "72b6c0cc368044fd39813e832a4371c1c75389db8f1a9e67cb1715ec46d719d0"
+sha256 = "de9969597ef34a0c76833c870b4a3c7369d40dbbd4beff90b80e556d30ad5764"
 [[source_sha256]]
 file = "Manifest.toml"
 sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
