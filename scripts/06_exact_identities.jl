@@ -18,23 +18,26 @@ include(joinpath(@__DIR__, "_bootstrap.jl"))
 # no floating point, no interval width, ever enters the proof.
 
 function run_identity_audit()
-    side_status = fill("TODO", 16)
+    # "UNPROVED", not "TODO": this is a sentinel for a division that failed
+    # (a real defect, were it ever to occur), not a marker of unfinished work.
+    # A reader grepping the log for outstanding work should not find this.
+    side_status = fill("UNPROVED", 16)
     println("--- side identities (edge length == ell(z)) ---")
     for i in 0:15
         j = mod(i+1, 16)
         cert = exact_identity_certificate(i, j, side_target_poly())
-        side_status[i+1] = cert.proved ? "PROVED" : "TODO"
+        side_status[i+1] = cert.proved ? "PROVED" : "UNPROVED"
         println("edge ($i,$j): ", side_status[i+1],
                 "  quotient deg=", max(length(cert.quotient)-1, 0),
                 "  remainder=", cert.remainder,
                 "  reconstruction PASS=", cert.reconstruction_ok)
     end
 
-    diam_status = Dict(e => "TODO" for e in ACTIVE_EDGES)
+    diam_status = Dict(e => "UNPROVED" for e in ACTIVE_EDGES)
     println("--- active diameter identities (dist == 1) ---")
     for (i,j) in ACTIVE_EDGES
         cert = exact_identity_certificate(i, j, diameter_target_poly())
-        diam_status[(i,j)] = cert.proved ? "PROVED" : "TODO"
+        diam_status[(i,j)] = cert.proved ? "PROVED" : "UNPROVED"
         println("diam ($i,$j): ", diam_status[(i,j)],
                 "  quotient deg=", max(length(cert.quotient)-1, 0),
                 "  remainder=", cert.remainder,

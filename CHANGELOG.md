@@ -3,6 +3,46 @@
 All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+Fourteen commits landed on top of the tagged `v1.0.0` (2026-09-09..2026-09-16)
+without a changelog entry; recorded here now, still untagged. The `v1.0.0`
+git tag was NOT moved — it still points at the original release commit
+(`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
+these changes, not that tag, are what a fresh checkout of `main` gets.
+
+- **Article retitled**: "Stability of Equilateral Small Polygons" -> "First
+  Order Geometry of Equilateral Small Polygons", propagated to `README.md`,
+  this changelog's own past entries being the one place it was intentionally
+  left as printed at the time, `docs/certificate-spec.md`,
+  `scripts/run_all.jl` and `scripts/run_lean_certificate.jl`.
+- **Correction to the article, supervisor round**: `Q` invertibility
+  (Subsection 6.4) is now proved *exactly*, from `det Q = y_1 - 1 < 0` using
+  the exact vertex map of equation (5.1), rather than from the interval sign
+  `y_8 - y_1 > 0`. Table 3 restructured into three panels (exact / interval /
+  exact consequences) reflecting this. `scripts/check_paper.jl` gained checks
+  for the new equation (5.1) and the restructured table.
+- **Article shortened** (supervisor request): operator definitions, the box
+  figure, the nesting counterfactual and one proof route moved from the
+  article to the supplement; Section 6 restructured 6.1-6.7; ~130 short
+  displays inlined. Net: 23 -> 15 pp article, 8.7 -> 3.2 pp of that in
+  Section 6, +6 pp supplement gaining the moved material.
+- `scripts/check_paper.jl` hardened: verifies every number Section 6 prints
+  against the certificate's own source (not a paraphrase of it), the printed
+  `F_c` coefficients against `Fc_poly()`, the Figure 5 magnification and the
+  supplement's precision paragraph, and the vertex map of equation (5.1)
+  against `coordinates()` at several parameters.
+- `docs/certificate-spec.md`: second author credited.
+- CI (`.github/workflows/certificate.yml`) fix: the drift-detection step's
+  field allowlist did not exclude `seconds`/`total_seconds`
+  (`results/validation_certificate.toml`'s wall-clock timing fields), so it
+  failed on every run since the first commit regardless of whether the
+  certificate had actually drifted. Fixed; see git blame on that file for
+  the reproduction.
+- `scripts/06_exact_identities.jl`: renamed the unproved-identity sentinel
+  from `"TODO"` to `"UNPROVED"` (cosmetic; the counting logic only ever
+  checked for `"PROVED"`, so this changed no behaviour).
+
 ## [1.0.0] — 2026-09-09
 
 First public release: the supplementary material for *First Order Geometry of

@@ -8,6 +8,10 @@ IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [compat]
+# 1.10 and 1.11 are believed compatible (no version-specific feature is used)
+# but are NOT exercised by CI, which pins 1.12 -- the version every recorded
+# certificate was produced with (see .github/workflows/certificate.yml). This
+# range is an untested claim, not a tested one; narrow it if that changes.
 julia = "1.10, 1.11, 1.12"
 IntervalArithmetic = "0.22"
 

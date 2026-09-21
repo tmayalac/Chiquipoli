@@ -62,8 +62,16 @@ jobs:
       - name: the certificate must not have drifted from what is committed
         run: |
           git diff --stat -- results/ | tee /tmp/diff.txt
-          # Only provenance fields (timestamp, commit) may move on a re-run;
-          # any certified numeric value that changed is a real regression.
+          # Only provenance fields (timestamp, commit, wall-clock timing) may
+          # move on a re-run; any certified numeric value that changed is a
+          # real regression. `seconds`/`total_seconds` (results/validation_
+          # certificate.toml) are wall-clock timings, not certified values,
+          # and vary on every run by construction -- excluded on purpose,
+          # same as utc/git_commit/git_source_clean/sha256/file. Caught by
+          # this job failing on every single run since the first commit
+          # (2026-09-09) until this fix: the allowlist below had forgotten
+          # this field, so a certificate that had not drifted at all was
+          # reported as broken, every time.
           ! git diff -U0 -- results/ | grep -E '^[+-]' \
-            | grep -vE '^[+-]{3}|utc|git_commit|git_source_clean|sha256|file =' \
+            | grep -vE '^[+-]{3}|utc|git_commit|git_source_clean|sha256|file =|seconds' \
             | grep -q .
