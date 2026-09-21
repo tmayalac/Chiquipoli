@@ -9,9 +9,16 @@
 # needs a ~7 GB Mathlib cache, and a job that times out or gets throttled would
 # report red for reasons that have nothing to do with this repository. It is run
 # by `make lean` and recorded in `results/lean_certificate.toml`, whose contents
-# this workflow does check. So does the mutation harness, which edits tracked
-# files and restores them from git; running it in CI is possible but it takes
-# minutes and its value is in being run deliberately, not on every push.
+# this workflow does check. The mutation harness lives in its own workflow,
+# mutation.yml (weekly and on demand), so that it does not slow every push.
+#
+# TWO JOBS. `certify` is the reference run: Julia 1.12, the pinned Manifest, and
+# the drift check against the committed results. `compat` backs the claim in
+# Project.toml that 1.10 and 1.11 are supported. The pinned Manifest was
+# resolved by 1.12 and cannot be instantiated on older Julia (Pkg reports the
+# stdlib JLL sources as missing), so that job re-resolves from Project.toml, and
+# it therefore does not run the drift check or the article check, which only
+# make sense against the pinned environment.
 
 name: certificate
 
@@ -75,3 +82,35 @@ jobs:
           ! git diff -U0 -- results/ | grep -E '^[+-]' \
             | grep -vE '^[+-]{3}|utc|git_commit|git_source_clean|sha256|file =|seconds' \
             | grep -q .
+
+  compat:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        julia: ['1.10', '1.11']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.julia }}
+
+      - name: re-resolve the environment (the pinned Manifest is Julia 1.12's)
+        run: |
+          rm Manifest.toml
+          julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.status()'
+
+      - name: test suite
+        run: julia --project=. test/runtests.jl
+
+      - name: the A16 certificate
+        run: |
+          julia --project=. scripts/run_all.jl | tee /tmp/run.txt
+          grep -q 'FINAL FIRST-ORDER CERTIFICATE: CERTIFIED' /tmp/run.txt
+          grep -q 'ROOT UNIQUENESS IN FULL SEARCH INTERVAL: PROVED' /tmp/run.txt
+
+      - name: the literature benchmark and its negative controls
+        run: |
+          julia --project=. scripts/run_literature.jl | tee /tmp/lit.txt
+          grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt

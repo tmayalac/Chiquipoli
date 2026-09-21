@@ -39,6 +39,17 @@ these changes, not that tag, are what a fresh checkout of `main` gets.
   failed on every run since the first commit regardless of whether the
   certificate had actually drifted. Fixed; see git blame on that file for
   the reproduction.
+- CI: new `compat` job (Julia 1.10 and 1.11, dependencies re-resolved because
+  the pinned Manifest is 1.12's and cannot be instantiated on older Julia) that
+  runs the test suite, the certificate and the literature benchmark. This backs
+  the `julia = "1.10, 1.11, 1.12"` range in `Project.toml`, which until now was
+  claimed but never tested. Checked locally first: 628/628 tests and `CERTIFIED`
+  on 1.10.12 and 1.11.9.
+- CI: new `mutation.yml` workflow runs the six Julia mutations weekly and on
+  demand, so the suite's ability to fail is checked continuously. The Lean
+  mutations still need `make mutation-check` by hand (Mathlib cache).
+- `.zenodo.json` added, so that a Zenodo deposit made from a GitHub release
+  carries the right title, authors, licence and description. No deposit exists.
 - `scripts/06_exact_identities.jl`: renamed the unproved-identity sentinel
   from `"TODO"` to `"UNPROVED"` (cosmetic; the counting logic only ever
   checked for `"PROVED"`, so this changed no behaviour).

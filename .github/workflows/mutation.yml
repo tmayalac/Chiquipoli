@@ -1,0 +1,36 @@
+# Breaks the package on purpose and requires the verification to notice.
+#
+# A test suite that has never failed is not a tested suite (see the header of
+# tools/mutation_check.sh). This runs the Julia mutations weekly, so that the
+# suite's ability to fail is checked continuously and not only on the day
+# someone thought to run it by hand.
+#
+# Julia mutations only. The Lean mutations need the ~7 GB Mathlib cache and are
+# run by hand with `make mutation-check`, for the reason given in
+# certificate.yml. The script edits tracked files and restores them from git,
+# and ends by requiring a clean working tree, so a leak fails the job.
+
+name: mutation
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+jobs:
+  mutate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.12'
+
+      - uses: julia-actions/cache@v2
+
+      - name: instantiate the pinned environment
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: plant each defect and require it to be caught
+        run: bash tools/mutation_check.sh julia

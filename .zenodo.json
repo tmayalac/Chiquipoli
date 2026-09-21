@@ -1,0 +1,25 @@
+{
+  "title": "Chiquipoli: interval and exact verification for the local maximality of A16",
+  "upload_type": "software",
+  "description": "Interval-arithmetic and exact-rational certification of the first-order hypotheses for the Bingane-Audet equilateral small hexadecagon, with a Lean 4 formalisation of the criterion itself, so that the passage from the certified data to strict local maximality is kernel checked end to end. Supplementary material for the article \"First Order Geometry of Equilateral Small Polygons\".",
+  "version": "1.0.0",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Ayala Hoffmann, José",
+      "affiliation": "Universidad de Tarapaca, Iquique, Chile"
+    },
+    {
+      "name": "Ayala Coppola, Tomás",
+      "affiliation": "Universidad de Tarapaca, Iquique, Chile"
+    }
+  ],
+  "keywords": [
+    "computer-assisted proof",
+    "interval arithmetic",
+    "Lean 4",
+    "discrete geometry",
+    "small polygons"
+  ],
+  "access_right": "open"
+}
