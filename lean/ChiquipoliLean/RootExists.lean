@@ -9,8 +9,13 @@ has nine sign changes on `[-1,1]`, but the nearest other one sits at
 `c ≈ 0.9672`, far outside `[0.9808, 0.980801]`.
 
 Scope note. What is proved here is *existence* of a root in the bracket.
-Uniqueness of the constructor root in the paper's search interval is certified
-in Julia by interval Newton and is **not** formalized here.
+Uniqueness is proved elsewhere in this development: on the bracket
+`[49/50, 491/500]` for `c = cos z` by `Fc_root_existsUnique_search`
+(`Positivity.lean`), and on the article's own search interval
+`I_search = (2 arcsin(sin(π/16)/2), π/16)`, existence included, by
+`constructor_root_existsUnique_article_search` (`SearchInterval.lean`). Julia
+certifies the same statement independently, by interval Newton and strict
+monotonicity of `F` on `I_search`.
 -/
 import ChiquipoliLean.Constructor
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse

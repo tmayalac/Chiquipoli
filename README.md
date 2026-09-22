@@ -71,8 +71,13 @@ own adversarial review of this package.
 
 ## Quick start
 
-Julia 1.10 or later. The exact dependency versions are pinned in
-`Manifest.toml`, so the environment reproduces bit for bit.
+Julia 1.12. The exact dependency versions are pinned in `Manifest.toml`, which
+was resolved by Julia 1.12 and reproduces the recorded environment bit for bit;
+every recorded certificate was produced with it. Julia 1.10 and 1.11 also work,
+but not with this Manifest (Pkg cannot instantiate a 1.12 Manifest on older
+Julia): delete `Manifest.toml` first so Pkg re-resolves from `Project.toml`. CI
+runs the test suite, the certificate and the literature benchmark that way on
+both.
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -80,8 +85,12 @@ make test        # the test suite
 make verify      # the certificate; writes results/a16_certificate.toml
 ```
 
-`make verify` is a single non-interactive run with no search or tuning between
-its steps. It completes in **under six seconds**, so the certificate can be
+`make verify` is a single non-interactive run with no tuning between its
+steps. Two operators adapt inside a step, deterministically and without
+affecting what is proved: the root step tries the radii `1e-30, …, 1e-26` and
+accepts the first that passes (it is `1e-30`), and the Krawczyk step inflates
+its box by factors of ten until the inclusion holds. Whatever box is accepted,
+the conclusion is a proof. It completes in **under six seconds**, so the certificate can be
 re-executed rather than taken on trust. It prints a provenance header (commit,
 versions, per-file SHA256), then each gate, then:
 
@@ -109,8 +118,8 @@ make lean        # the five checks
 ```
 
 The five checks are: the development builds; no source admits a goal with
-`sorry`; all 77 headline theorems depend only on Lean's three standard axioms;
-eighteen deliberately false variants **fail** to compile, so the true statements
+`sorry`; all 108 audited theorems depend only on Lean's three standard axioms;
+26 deliberately false variants **fail** to compile, so the true statements
 are not vacuous; and seven generated files reproduce byte for byte from the
 Julia source, so the Lean layer cannot silently drift from the certified
 arithmetic.
@@ -135,18 +144,19 @@ rejecting anything.
 make mutation-check
 ```
 
-This plants nine known defects and requires the verification to reject each
-one: four realistic transcription errors — in the constructor, in the
-constructor equation, in the root literal and in the active graph — which the
-Julia suite must reject; and five weakenings of the Lean layer — an admitted
+This plants 11 known defects and requires the verification to reject each
+one: six that the Julia suite must reject — a transcription error in the
+constructor, one in the constructor equation, a sign error in one vertex, one
+digit of the root literal, one wrong active edge, and a Krawczyk enclosure
+rebuilt with round-to-nearest instead of outward rounding; and five weakenings of the Lean layer — an admitted
 goal, an unresolvable name in the axiom audit, a deleted negative control, a
 wrong factor in the bridge tying the Theorem 3.5 layer to the certified
 arithmetic, and one digit off in the tight root bracket — which `verify.sh`
 must reject. Each is restored afterwards, and the run
 asserts the working tree comes back clean.
 
-All three Lean mutations were reported as PASS before the harness was fixed;
-they are in the script so that failure mode cannot return unnoticed.
+The first three Lean mutations were all reported as PASS before the harness
+was fixed; they are in the script so that failure mode cannot return unnoticed.
 
 It does not prove the harness complete. It detects blindness to the mutations
 someone thought of. A hole nobody imagined stays invisible — which is exactly

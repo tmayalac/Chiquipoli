@@ -8,8 +8,10 @@ The paper's proof opens with
    discarding finitely many terms, every `q^k` therefore has the same labelled
    cyclic order as `p`."
 
-and, through Remark 2.7, with the same statement for the strict inactive
-diameter margin. This file proves both.
+and the same openness holds for the strict inactive diameter margin
+(Definition 2.4 of the article), which the article uses implicitly when it
+builds `K_eq` from the active edges alone: an inactive pair imposes no
+first-order condition. This file proves both.
 
 Each is a finite conjunction of strict inequalities in continuous functions of
 the configuration, so each cuts out a finite intersection of preimages of
@@ -60,8 +62,10 @@ theorem eventually_convexOrdered_of_tendsto {p : Cfg n} (hp : ConvexOrdered p)
 
 /-! ## The strict inactive diameter margin
 
-Remark 2.7: a diameter that is strictly slack at `p` stays strictly slack
-nearby, so it imposes no first-order condition on the blow-up limit. This is
+The article's Definition 2.4 (the inactive diameter margin), used implicitly in
+the proof of Theorem 3.5: a diameter that is strictly slack at `p` stays
+strictly slack nearby, so it imposes no first-order condition on the blow-up
+limit. This is
 what lets `K_eq` be built from the active edges alone. -/
 
 omit [NeZero n] in

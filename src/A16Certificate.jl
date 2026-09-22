@@ -148,6 +148,18 @@ end
 sqdist(p, i, j) =
     (p[j+1,1]-p[i+1,1])^2 + (p[j+1,2]-p[i+1,2])^2
 
+# The Jacobian D(e,d) of the 16 side and 15 active diameter constraints.
+#
+# DEPENDS ON THE EXACT IDENTITIES. Each side row is divided by the common value
+# ell(z) = 2 sin(z/2), not by that side's own length, and the diameter rows are
+# not normalised at all. So this matrix is D(e,d) at z* only because, at z*,
+# every side has length ell(z*) and every declared diameter has length 1 --
+# which is Lemma 6.1, proved exactly in scripts/06_exact_identities.jl. The rank
+# and multiplier gates (04, 05) therefore certify properties of D(e,d) only in
+# conjunction with gate 06; run_all.jl's verdict is their conjunction, so the
+# certificate is sound, but a reader should not take the Jacobian gates as
+# standing alone. (Flagged in the 2026-09 external audit; the general framework
+# in SmallPolygons.jl normalises each row by its own length instead.)
 function build_jacobian(z)
     p = coordinates(z)
     ell = side_length(z)
@@ -276,6 +288,12 @@ end
 Algebraic identities proving that each Jacobian row annihilates translations
 and infinitesimal rotation. This is a theorem about the assembly, not a
 floating tolerance test.
+
+It is ARGUED here, not computed: the function returns constants and a textual
+justification, and the rank upper bound rank D(e,d) <= 30 rests on that
+argument plus the vertex distinctness supplied by the convexity gate. The same
+statement is machine-checked in the Lean layer (`dsq_rigid`, `kernel_is_rigid`,
+`rank_eq_thirty`), where it is a kernel-verified theorem.
 """
 function rigid_annihilation_identities()
     return (

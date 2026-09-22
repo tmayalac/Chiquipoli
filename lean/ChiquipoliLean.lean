@@ -13,6 +13,7 @@ import ChiquipoliLean.Constructor
 import ChiquipoliLean.Identities
 import ChiquipoliLean.RootExists
 import ChiquipoliLean.Positivity
+import ChiquipoliLean.SearchInterval
 import ChiquipoliLean.InactiveMargin
 import ChiquipoliLean.Diameter
 import ChiquipoliLean.Convexity

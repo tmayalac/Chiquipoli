@@ -12,11 +12,13 @@ here, for arbitrary `n`:
      `(a, θ)` at the identity is the Gram matrix of `T₁, T₂, T₃`, and a Gram
      matrix of independent vectors is invertible. That is `gram_injective`.
 
-The third step is the citation: the implicit function theorem then produces the
-smooth `q ↦ g(q)`. That application is **not** formalised — it needs the smooth
-structure on the orientation-preserving Euclidean group and the Fréchet
-derivative of `θ ↦ R_θ q`. See `lean/README.md`; it is part of the same analytic
-half of Theorem 3.5 that remains outstanding.
+The third step is the implicit function theorem, which then produces the
+`q ↦ g(q)`. That application **is** formalised, in `ChiquipoliLean/SliceIFT.lean`,
+via `HasStrictFDerivAt.implicitFunctionOfProdDomain`: see `g`, `g_at_p`,
+`g_hasStrictFDerivAt` and `g_eventually_iff` there, and item 22 of
+`lean/README.md`. It consumes exactly the nondegeneracy proved in this file,
+transported to the continuous-linear-map setting by `gramLM_injective` and
+`f2CLM_base_invertible`.
 
 What this file therefore establishes is that the slice equation is
 *nondegenerate at the identity* — the hypothesis the implicit function theorem

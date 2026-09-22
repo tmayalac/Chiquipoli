@@ -353,12 +353,17 @@ allows dependent rows, and Theorem 3.5 does not require LICQ.
   $Q\,\rho_{\mathrm{sup}}=0$ with
   $$Q=\begin{pmatrix}1&0&1\\0&1&0\\-y_1&x_1&-y_8\end{pmatrix},
   \qquad \det Q=y_1-y_8.$$
-  For $A_{16}$, $y_8-y_1>0$ is certified over the box, so $\det Q<0\neq0$: $Q$
-  is regular and $\rho=0$. Hence $D^{\mathsf T}y=DL$ holds on all 33 variables.
-  This is **exactly** the article's argument, with the same $Q$ and the same
-  sign. The numerical residual of about $4.02\times10^{-28}$ that the code
-  prints is a **diagnostic**; the recovery is the exact algebraic argument via
-  $\det Q$, not that number.
+  For $A_{16}$ the article proves $\det Q<0$ **exactly** (Subsection 6.4, since
+  the supervisor's 2026-09-16 corrections): $p_0=(0,0)$ and $p_8=(0,1)$ by the
+  constructor, so $\det Q=y_1-1\leq|p_1-p_0|-1=\ell-1<0$. Hence $Q$ is regular,
+  $\rho=0$, and $D^{\mathsf T}y=DL$ holds on all 33 variables. The code reaches
+  the same conclusion by a different route: `05_multipliers_interval.jl`
+  certifies $Q$ regular over the box by the preconditioned test,
+  $\|\mathrm{Id}-C_QQ\|_\infty\leq4.017187643256795\times10^{-28}<1$, and
+  that test **is** a gate (`omitted_pass` enters `final_pass`). The two routes
+  are independent proofs of the same statement. Earlier versions of this file
+  cited the interval sign $y_8-y_1>0$ instead; that sign is still checked, by
+  `scripts/check_paper.jl`, but it is no longer the argument the article uses.
 - **Positivity $\lambda_{ij}>0$:** a strict interval lower bound. This is a
   valid proof of a strict inequality; the "zero trap" concerns *equalities*, and
   does not apply.

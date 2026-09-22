@@ -22,25 +22,25 @@ Everything here is machine-checked. Nothing is admitted (`sorry`-free), and
 | 4 | **Lemma 6.1** — all 16 side equalities and all 15 active-diameter equalities | `side_*`, `diam_*` |
 | 5 | A root of the constructor equation exists, with `cos z` in a narrow certified bracket | `exists_constructor_root` |
 | 6 | **Main theorem** — such a hexadecagon exists, is exactly equilateral, and has exactly unit active diagonals | `A16_exists` |
-| 7 | The root is **unique across the paper's entire search interval**, and the same at the level of the angle `z` | `Fc_root_existsUnique_search`, `constructor_root_unique_in_search` |
-| 8 | **The inactive margin** (Prop 6.2(4)) — each of the 89 non-active diagonals is strictly shorter than 1 | `inactive_*`, `lt_one_*` |
+| 7 | **Proposition 6.2(1)** — the constructor equation has **exactly one root in the article's search interval** `I_search = (2 arcsin(sin(π/16)/2), π/16)`: uniqueness of `c = cos z` on `[49/50, 491/500]`, the inclusion `cos(I_search) ⊆ [49/50, 491/500]` (from Mathlib's bounds on `π`, `sin`, `cos` and the radical form of `cos(π/16)`), and the constructed root inside `I_search` | `Fc_root_existsUnique_search`, `constructor_root_unique_in_search`, `cos_mem_bracket_of_mem_search`, **`constructor_root_existsUnique_article_search`** |
+| 8 | **The inactive margin** (Prop 6.2(4)) — each of the 89 non-active diagonals is strictly shorter than 1 (the article's 105 inactive pairs are the same statement counted differently: they include the 16 sides; see "The paper's sharpest constants" below) | `inactive_*`, `lt_one_*` |
 | 9 | **The diameter is exactly 1** — `∀ i j : Fin 16`, no pair exceeds 1, and `(0,7)` attains it | `diameter_eq_one` |
 | 10 | **Strict convexity + labelled cyclic order** (Prop 6.2(3)) — every vertex lies strictly left of every edge, all 224 determinants | `cross_pos` |
-| 11 | **Stationarity with strictly positive multipliers** (Prop 6.2(5)) — the weighted gradient sum vanishes at every vertex, `Σαᵢ = −1`, and all 15 diameter multipliers are positive | `multipliers_certified` |
+| 11 | **Stationarity with strictly positive multipliers** (Prop 6.2(5)) — the weighted gradient sum vanishes at every vertex, `Σαᵢ = −1`, and all 15 diameter multipliers are positive. The `−1` is the squared formulation, where the objective is `t = ℓ²` and `κ = 1`; the article's `Σαᵢ = −16` is the same statement at `κ = n`, recovered by `multiplier_balance_paper` (see the header of `ChiquipoliLean/FirstOrder.lean`) | `multipliers_certified` |
 | 12 | **`R_eq ⊆ I_eq`** — every rigid infinitesimal motion is annihilated by every constraint differential | `dsq_rigid` |
 | 13 | **`I_eq ⊆ R_eq`** (Prop 6.2(6)) — a displacement killing every active differential *is* a rigid motion, and `dt = 0` | `kernel_is_rigid` |
 | **14** | **The assembled certificate** — a single `z` at which all six gates hold *simultaneously* | **`A16_certificate`** |
 | 15 | **Theorem 3.5, algebraic core** — Prop 3.1, Rem 3.2, Lem 3.3, and the contradiction step, for arbitrary `n` and arbitrary active diameter set | `no_ascent`, `multiplier_balance`, `active_equality`, `no_admissible_direction` |
 | **16** | **That core, with both its hypotheses discharged at `A16`** — no multiplier or rank assumption remains | **`A16_no_admissible_direction`** |
 | 17 | **Proposition 3.8 (first order instability)** — a positive first variation along a realising curve rules out local maximality | `increases_to_the_right`, `not_isLocalMax` |
-| 18 | **Section 4, the square** — the multiplier identity with `λ = √2 > 0`, `I_eq ⊆ R_eq`, and no admissible direction | `square_multiplier_identity`, `square_Ieq_imp_R`, `square_no_admissible_direction` |
+| 18 | **Section 4, the square** — the multiplier identity with `λ = √2 > 0`, `I_eq ⊆ R_eq`, no admissible direction, and, through `thm_3_5`, strict local maximality (Proposition 4.2) | `square_multiplier_identity`, `square_Ieq_imp_R`, `square_no_admissible_direction`, `square_strict_local_max` |
 | 19 | **Section 4, the rhombus — proved outright, without Theorem 3.5** — the deformation stays equilateral and small, and the perimeter strictly increases | `rho_equilateral`, `rho_small`, `rho_diameter`, `rhombus_perimeter_increases` |
 | 20 | **Proposition 6.2(2)** — the side length and perimeter, at the paper's nineteen digits | `cos_root_tight`, `side_length_bounds`, `perimeter_bounds` |
 | 21 | **Proposition 6.2(6)** — `rank D(e,d) = 30`, by rank–nullity from the exact kernel | `rank_eq_thirty` |
 | 22 | **Lemma 3.4, in full** — a map `g`, strictly differentiable at `p`, exists near `p`, solves the slice equation, and satisfies `g(p) = id` | `g`, `g_at_p`, `g_hasStrictFDerivAt`, `g_eventually_iff` |
 
 | 23 | **The feasible set** — the nonlinear constraints `\|q_{i+1}-q_i\| = m` and `\|q_i-q_j\| ≤ 1`, in squared form, and the proof that the linearised cone is the same set either way | `IsFeasible`, `eC_eq_zero_iff`, `dC_nonpos_iff`, `Keq_iff` |
-| 24 | **Openness** — strict convexity, the labelled cyclic order and the strict inactive margin are open conditions (Remark 2.7) | `isOpen_convexOrdered`, `eventually_dC_neg_of_tendsto` |
+| 24 | **Openness** — strict convexity, the labelled cyclic order and the strict inactive margin are open conditions (the proof of Theorem 3.5 for the first two; for the margin, Definition 2.4, used implicitly by the article when it builds `K_eq` from the active edges alone) | `isOpen_convexOrdered`, `eventually_dC_neg_of_tendsto` |
 | 25 | **The first order limits** — the side equalities and active diameter inequalities pass to the blow-up limit; Taylor is exact because the constraints are quadratic | `eC_expand`, `eD_eq_zero_of_blowup`, `dD_nonpos_of_blowup` |
 | 26 | **Euclidean invariance and the slice normalisation** — the constraints and the orientation do not see a motion; `g(q)·q` stays feasible, still converges, and lands in `R(p)^⊥` | `isFeasible_move`, `tendsto_normCfg`, `eventually_phiGeom_zero`, `slice_of_generators` |
 | **27** | **Theorem 3.5 itself** — the blow-up argument, and the conclusion stated about the competitor rather than its normalised representative | **`thm_3_5`**, `thm_3_5_le`, `eventually_congruent_of_no_worse` |
@@ -285,9 +285,10 @@ outside is:
   multipliers, in `Mathlib/Analysis/Calculus/LagrangeMultipliers.lean`, and
   lists KKT as a `TODO`. Neither is needed.)
 
-  Two consequences are worth stating plainly. `square_no_admissible_direction`
-  is still only the contradiction step for the square — `Feasible.thm_3_5` would
-  upgrade it, but that instantiation is not written. And the theorem remains
+  Two consequences are worth stating plainly. The square is closed by the same
+  route: `square_no_admissible_direction` is the contradiction step, and
+  `Feasible.square_strict_local_max` instantiates `Feasible.thm_3_5` to give the
+  article's Proposition 4.2. And the theorem remains
   **local and non-quantitative**: it excludes competitors in *some*
   neighbourhood, and since the proof is by contradiction from a convergent
   sequence it yields no lower bound on the radius.

@@ -83,9 +83,17 @@ function print_provenance()
     println("BigFloat precision   = ", precision(BigFloat), " bits")
 
     # Directed-rounding self-check: a proper enclosure must be non-thin here.
+    # Asserted, not only printed: 1/3 is not a binary number, so an interval
+    # library that rounds both endpoints the same way returns a thin interval,
+    # and every enclosure below would silently lose its guarantee. The article
+    # (Subsection 6.1) says the rounding mode is verified at run time; this
+    # assert is what makes that true.
     r = interval(BigFloat(1)) / 3
     println("directed-rounding self-check (interval(1)/3 has inf<sup) = ",
             inf(r) < sup(r), "   [", inf(r), ", ", sup(r), "]")
+    # `1//3` is the exact rational, compared exactly with the BigFloat
+    # endpoints; `big(1)/3` would not do, being itself one of the endpoints.
+    @assert inf(r) < 1//3 < sup(r) "directed rounding is not in effect: interval(1)/3 = [$(inf(r)), $(sup(r))]"
 
     # git commit + source cleanliness. We check only the source paths (not
     # logs/, which is the output being regenerated) so the flag genuinely

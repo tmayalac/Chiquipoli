@@ -571,6 +571,21 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
         nneg = get(th, "negative_controls_total", -1)
         nrej = get(th, "negative_controls_rejected", -1)
         chk("every negative control recorded was rejected", nneg == nrej && nneg > 0)
+        # The README quoted "77 headline theorems" and "eighteen" negative
+        # controls long after both had grown (2026-09 external audit, F8), and
+        # "nine" planted defects when the harness had eleven (F9). Tie all three
+        # numbers to their sources so the next drift fails here.
+        let readme = read(joinpath(ROOT, "README.md"), String)
+            mscript = read(joinpath(ROOT, "tools", "mutation_check.sh"), String)
+            nmut = count(r"^run_julia_mutation "m, mscript) +   # invocations; the definition is `run_julia_mutation()`
+                   count(r"if lean_verify_rejects; then ok "m, mscript)
+            chk("README: audited theorem count is the recorded one ($naud)",
+                occursin("all $naud audited theorems", readme))
+            chk("README: negative control count is the recorded one ($nneg)",
+                occursin("$nneg deliberately false variants", readme))
+            chk("README: planted-defect count is the harness's ($nmut)",
+                nmut > 0 && occursin("plants $nmut known defects", readme))
+        end
         if isempty(supsrc0)
             skip("supplement: audited theorem count matches the record")
             skip("supplement: negative control count matches the record")

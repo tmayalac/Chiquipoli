@@ -50,6 +50,39 @@ these changes, not that tag, are what a fresh checkout of `main` gets.
   mutations still need `make mutation-check` by hand (Mathlib cache).
 - `.zenodo.json` added, so that a Zenodo deposit made from a GitHub release
   carries the right title, authors, licence and description. No deposit exists.
+- **External audit (2026-09, report on package 1.0.0), project-side findings
+  resolved.** The report re-executed every interval gate in mpmath and found
+  no error in any certified value; its findings concern the text around them.
+  - F12, now formalised: new `lean/ChiquipoliLean/SearchInterval.lean` proves
+    `constructor_root_existsUnique_article_search`, i.e. Proposition 6.2(1) on
+    the article's own `I_search = (2 arcsin(sin(π/16)/2), π/16)`: the inclusion
+    `cos(I_search) ⊆ [49/50, 491/500]` (previously a hypothesis), and the
+    constructed root lying inside `I_search`. Audited, and added to the
+    load-bearing list of `verify.sh`: 108 audited theorems (was 107). The
+    supplement's count was updated to match.
+  - F5: `scripts/run_all.jl` now *asserts* the directed-rounding self-check
+    (`inf < 1//3 < sup`, compared exactly) instead of only printing it.
+  - F8, F9: README counts corrected (108 audited theorems, 26 negative
+    controls, 11 planted defects of which 6 in Julia), and
+    `scripts/check_paper.jl` now ties all three to their sources.
+  - F10, F11, F13: stale Lean comments corrected — the square instantiation
+    exists (`square_strict_local_max`), root uniqueness is formalised, and
+    `FeasibleOpen.lean` cited a nonexistent "Remark 2.7" (now Definition 2.4,
+    the inactive margin). The supervisor's comment corrections to
+    `FirstOrder.lean` and `Slice.lean` (from the ChiquipoliV2 review) ported,
+    without its renumbering, which belongs to the other article.
+  - F4, F7: `build_jacobian` documents that the rank and multiplier gates
+    certify `D(e,d)` only together with the exact identities;
+    `rigid_annihilation_identities` documents that the rank upper bound is
+    argued in Julia and kernel-checked in Lean.
+  - Found while fixing the above, not in the report: the recorded Lean scope
+    (`run_lean_certificate.jl`) listed `rank D(e,d) = 30` as not formalised,
+    though `rank_eq_thirty` is proved and audited; `docs/provenance-mapping.md`
+    still gave the interval sign `y_8 - y_1 > 0` as the argument for `Q`
+    invertible, superseded by the article's exact `det Q = y_1 - 1 < 0`; the
+    README said the pinned Manifest works from Julia 1.10 (it needs 1.12) and
+    that the run has "no search", although the root step and Krawczyk adapt
+    their radius. All corrected.
 - `scripts/06_exact_identities.jl`: renamed the unproved-identity sentinel
   from `"TODO"` to `"UNPROVED"` (cosmetic; the counting logic only ever
   checked for `"PROVED"`, so this changed no behaviour).

@@ -110,6 +110,7 @@ else
     # and passes every check above. Name the results whose audit is the reason
     # this file exists, and require each of them to appear by name.
     missing=""
+    nwant=0
     for want in \
       Chiquipoli.A16_certificate \
       Chiquipoli.FirstOrder.no_admissible_direction \
@@ -124,6 +125,7 @@ else
       Chiquipoli.FirstOrder.g_at_p \
       Chiquipoli.perimeter_bounds \
       Chiquipoli.constructor_root_unique_in_search \
+      Chiquipoli.constructor_root_existsUnique_article_search \
       Chiquipoli.multipliers_certified \
       Chiquipoli.all_sides \
       Chiquipoli.all_active_diameters \
@@ -143,6 +145,7 @@ else
       Chiquipoli.Feasible.A16_locally_maximal \
       Chiquipoli.Feasible.square_strict_local_max
     do
+      nwant=$((nwant + 1))
       printf '%s\n' "$axout" | grep -qF "'$want' depends on axioms" || missing="$missing $want"
     done
     if [ -n "$missing" ]; then
@@ -150,7 +153,7 @@ else
       for m in $missing; do printf '           %s\n' "$m"; done
     else
       ok "$n theorems depend only on [propext, Classical.choice, Quot.sound]"
-      ok "all 32 load-bearing theorems are present by name in the audit"
+      ok "all $nwant load-bearing theorems are present by name in the audit"
     fi
   fi
 fi

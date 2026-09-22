@@ -23,8 +23,12 @@ separable halves:
 
 The second half is what this file proves, in full and `sorry`-free. It is
 finite-dimensional linear algebra and inequality reasoning: no limits, no
-interval arithmetic, no floating point. The first half is NOT formalised; see
-`lean/README.md` for the accounting.
+interval arithmetic, no floating point. The first half is formalised elsewhere
+in this development, not here: the local Euclidean slice in
+`ChiquipoliLean/Slice.lean` and `ChiquipoliLean/SliceIFT.lean`, the openness and
+blow-up steps in `ChiquipoliLean/FeasibleOpen.lean` and
+`ChiquipoliLean/FeasibleMain.lean`, and the two halves are joined in `thm_3_5`.
+See `lean/README.md`, items 22–27, for the accounting.
 
 WHY THIS IS THE USEFUL SPLIT. Both certified hypotheses are consumed entirely
 inside the algebraic half — hypothesis (i) (the multiplier identity with
