@@ -13,7 +13,7 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib formalization of the A16 certificate's computational hypotheses"
-git_commit = "b063c707c8c2b7bfc35b537a95016b1723331f03"
+git_commit = "8bb8e3d2bb78c64de2fc3ccf1c936169b2d5681d"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
@@ -21,18 +21,18 @@ mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "kernel-checked theorems; no interval arithmetic, no floating point"
 package = "A16Certificate v1.0.0"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-21T15:39:21Z"
+utc = "2026-09-22T23:17:27Z"
 
 [scope]
-formalized = ["Chebyshev multiple-angle reduction, k = 1..7", "hand-written trigonometric constructor equals the exact polynomial coordinates", "Fc(cos z) = F(z)", "Lemma 6.1: 16 side equalities + 15 active-diameter equalities", "existence of a constructor root, with sin z > 0 and cos z in a narrow rational bracket", "uniqueness of cos z as a root of Fc on the rational bracket [49/50, 491/500] (Prop 6.2(1), see the caveat below)", "strict convexity and labelled cyclic order: all 224 cross products strictly positive (Prop 6.2(3))", "the 89 strict inactive-diameter bounds, hence diameter exactly 1 (Prop 6.2(4)); the remaining 16 of the paper's 105 inactive pairs are the sides, covered by the equilateral identity", "stationarity at every vertex with all 15 active-diameter multipliers strictly positive (Prop 6.2(5))", "I_eq = R_eq: every admissible infinitesimal variation is a rigid motion — the conclusion the rank-30 computation of Prop 6.2(6) exists to supply", "Theorem 3.5, the abstract first-order criterion, in full: the feasible set, openness of convexity and the inactive margin, the first-order limits, invariance under Euclidean motions with the slice normalisation, and the blow-up (Chiquipoli.Feasible.thm_3_5)", "Theorem 6.3: the certified configuration is a strict local maximiser of the perimeter modulo orientation-preserving Euclidean motions (Chiquipoli.Feasible.A16_locally_maximal)", "Proposition 4.2: the square is a strict local maximiser, by the same route (Chiquipoli.Feasible.square_strict_local_max)"]
-not_formalized = ["rank D(e,d) = 30 as a numerical rank statement (Prop 6.2(6)); Lean proves its consequence I_eq = R_eq directly instead", "the transfer of root uniqueness from the bracket in cos z back to the paper's t-interval I_search; the bracket does contain cos(I_search), but the change of variable is not itself formalized", "the identification of the certified configuration with the published Bingane-Audet polygon; that is an attribution, checked by running the upstream OPTIGON constructor and comparing coordinates, and no proof assistant can close it", "any lower bound on the radius of the neighbourhood of Theorem 6.3; the proof is by contradiction from a convergent sequence and yields none", "global optimality, which is not addressed anywhere in this package", "every interval-arithmetic step of the Julia certificate; Lean re-proves the exact-algebra and positivity layers by kernel-checked rational arithmetic rather than re-running it"]
+formalized = ["Chebyshev multiple-angle reduction, k = 1..7", "hand-written trigonometric constructor equals the exact polynomial coordinates", "Fc(cos z) = F(z)", "Lemma 6.1: 16 side equalities + 15 active-diameter equalities", "existence of a constructor root, with sin z > 0 and cos z in a narrow rational bracket", "Prop 6.2(1): exactly one root of the constructor equation in the article's search interval I_search = (2 arcsin(sin(pi/16)/2), pi/16), via uniqueness of cos z on [49/50, 491/500] and the inclusion cos(I_search) in that bracket (Chiquipoli.constructor_root_existsUnique_article_search)", "strict convexity and labelled cyclic order: all 224 cross products strictly positive (Prop 6.2(3))", "the 89 strict inactive-diameter bounds, hence diameter exactly 1 (Prop 6.2(4)); the remaining 16 of the paper's 105 inactive pairs are the sides, covered by the equilateral identity", "stationarity at every vertex with all 15 active-diameter multipliers strictly positive (Prop 6.2(5))", "I_eq = R_eq: every admissible infinitesimal variation is a rigid motion — the conclusion the rank-30 computation of Prop 6.2(6) exists to supply", "Prop 6.2(6): rank D(e,d) = 30, by rank-nullity from the exact kernel, with no minor and no preconditioner (Chiquipoli.FirstOrder.rank_eq_thirty)", "Theorem 3.5, the abstract first-order criterion, in full: the feasible set, openness of convexity and the inactive margin, the first-order limits, invariance under Euclidean motions with the slice normalisation, and the blow-up (Chiquipoli.Feasible.thm_3_5)", "Theorem 6.3: the certified configuration is a strict local maximiser of the perimeter modulo orientation-preserving Euclidean motions (Chiquipoli.Feasible.A16_locally_maximal)", "Proposition 4.2: the square is a strict local maximiser, by the same route (Chiquipoli.Feasible.square_strict_local_max)"]
+not_formalized = ["the sharper constants of Prop 6.2(3)-(5): Lean proves the same strict inequalities with coarser rational margins (3/100 on the support determinants over sin z, 1/100 on 1 - d^2, 1/1000 on the multipliers), and with a different representative of the one-parameter multiplier family", "the identification of the certified configuration with the published Bingane-Audet polygon; that is an attribution, checked by running the upstream OPTIGON constructor and comparing coordinates, and no proof assistant can close it", "any lower bound on the radius of the neighbourhood of Theorem 6.3; the proof is by contradiction from a convergent sequence and yields none", "global optimality, which is not addressed anywhere in this package", "every interval-arithmetic step of the Julia certificate; Lean re-proves the exact-algebra and positivity layers by kernel-checked rational arithmetic rather than re-running it"]
 
 [[source_sha256]]
 file = "lean/ChiquipoliLean.lean"
-sha256 = "10189e0fda557aadd1b66b0928eade792c7b923d53017fcd789311e85563ccfd"
+sha256 = "032d3b5516e119ebd1a7998f4e952b254d1c5a894c7e436da82bf3dfab60a289"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Audit.lean"
-sha256 = "7f5731969b8de0b94fa9223aed2a781091a298635aa8a7e9cf7c83aedcec3113"
+sha256 = "1ab17a9c2f0faf6d2de0d5f1a4303f3b53e4cc1d87fd362f17c49b0b9ae2a80e"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Certificate.lean"
 sha256 = "ae778c2f3899bd294e9026644c5bf1ca4deff81f0d1e801e3d374b42f749a7a5"
@@ -62,7 +62,7 @@ file = "lean/ChiquipoliLean/FeasibleMain.lean"
 sha256 = "c5f19c871f8e0e9b5e9d725ad05c414a2a8eab8eaa179f4971260e553815b6af"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/FeasibleOpen.lean"
-sha256 = "b05f7ae01a19aa9a9a7cac03628605a8ff43e5f59b85e201c98ee06fb2c027d4"
+sha256 = "42de3ff32277c982f05ceaa029cf841d8b43f2ea6562dd779d67c287e9b3661d"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/FeasibleRigid.lean"
 sha256 = "627fbfd6b14469088c2bf218215fb3188cd60730239bb8470b01d3b944a42a8d"
@@ -74,7 +74,7 @@ file = "lean/ChiquipoliLean/FeasibleTangent.lean"
 sha256 = "6f8fc4363c75301052c51625446d6bb141189ff009aab6b84c0af39d32d72830"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/FirstOrder.lean"
-sha256 = "50536b7835e23b456927ae195fba36e43b77a8de5d2daf7072da2fc7c11aecde"
+sha256 = "17e762aa628eba6ae2bc9d54fa95d2d6cfff4cbad0391d9a1be11e7119863459"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/FirstOrderA16.lean"
 sha256 = "1939357f4612a6f91e2c976c090135d86c1cb891d76b311d21b1cbda02f669e3"
@@ -107,13 +107,16 @@ file = "lean/ChiquipoliLean/Rank30.lean"
 sha256 = "e5cecaed6e09ea70769adb22191ecfc4b4dc5dfe8973751912a417ed77cb46cd"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/RootExists.lean"
-sha256 = "deb18ed9d96a2071db94387d029b24d4b9f38defffcbf9c2fca7493be04a1f99"
+sha256 = "674450a084b84521a081e2b849267bcf6a28edd9d16aa8ec8c9a01a57d6a025f"
+[[source_sha256]]
+file = "lean/ChiquipoliLean/SearchInterval.lean"
+sha256 = "24d6e56058c009abf53e81e3e94a507ed9fe92c868b31cac7bb2e98e56817c69"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/SideLength.lean"
 sha256 = "9b290c6e0f21300443fc5c66524131e02f78ef9c0e7e6709bb38890eb5eb892b"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Slice.lean"
-sha256 = "96943c30a70570f8acd8dedb84ed03f7d6c1396dcb03c00912b7938949e20e5e"
+sha256 = "49e87a856213fe7771dd1361277b3c45ef80cf5c2367e8c00a7a0e9580379101"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/SliceIFT.lean"
 sha256 = "a60ad1133fc4362f2e3589664f537b1d028fd689aed762faed37746fa09c696c"
@@ -203,14 +206,14 @@ file = "lean/negative_controls/nc9_certificate_not_vacuous.lean"
 sha256 = "1af127589f175851315ca5497fc16a34cdfc092ebdf3b38111c3735959dfe85e"
 [[source_sha256]]
 file = "lean/scripts/verify.sh"
-sha256 = "20add30dd5df98a8c9c9a31245220de1ad0621065ba083c292e9d3c9477964bb"
+sha256 = "a2f57aafb17f80d1e5c562c29ee047ee0d101e0d7ded3c2142e4ef3dff0275d5"
 [[source_sha256]]
 file = "lean/tools/extract_polys.jl"
 sha256 = "28744b25ff2bb9649dc2f81356a73ec56cbbcaec136ba0cd6eb3aa1aeac5e304"
 
 [theorems]
 active_diameters = 15
-axiom_audited_theorems = 107
+axiom_audited_theorems = 108
 axioms = ["propext", "Classical.choice", "Quot.sound"]
 conditional_quotient = 1
 conditional_sides = ["(3,4)", "(12,13)"]

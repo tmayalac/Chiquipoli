@@ -1,14 +1,14 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-21T15:37:57Z
+UTC timestamp        = 2026-09-22T23:16:10Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = b063c707c8c2b7bfc35b537a95016b1723331f03  (source clean — log matches this commit)
+git commit           = 8bb8e3d2bb78c64de2fc3ccf1c936169b2d5681d  (source clean — log matches this commit)
 SHA256 of source files:
-  6c0536587f2a346acc6028baa9d3f28988d7ee6ac5c8ed79a7bb7097f14e7734  src/A16Certificate.jl
+  085a031819347d4482ea6f8a67ccd94d52e442c8004f0f3e72a4a628242ea837  src/A16Certificate.jl
   d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f  src/ExactIdentity.jl
   baa825d225ea7549c582d429cd3d2463c24997ab76928845412b045b35417886  src/SmallPolygons.jl
   66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  scripts/01_nominal.jl
@@ -18,9 +18,9 @@ SHA256 of source files:
   baed9cf29de8665e27068316db141ccbcb4acd5429ba8e446b625e96cccea897  scripts/05_multipliers_interval.jl
   8529bebfb5c366c151839dfb5dbfbc215a1a9e08e4e0dd8e6dfda2d749dbb91b  scripts/06_exact_identities.jl
   beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
-  610ef81f40005904089e20adc96e5f5c050f0cd6b99da41442a1a071877e96e0  scripts/check_paper.jl
-  6dd28bfe741cccb51b12bdca27efbfef01e3ed70b98cdcf171b59af3b96e441f  scripts/run_all.jl
-  7a20271b7ee95ac97b3bbb803265ed8be3c4006929c21280035c90a7fe7d72f4  scripts/run_lean_certificate.jl
+  8d2fc05ea5db3a8d1915305405a800e5dcf310c12e56413534e8ee1cb24556c0  scripts/check_paper.jl
+  892d7679096edd53828d0fce61e5c91f7d78a4afbbb001f5aae1b3bbcc8e7832  scripts/run_all.jl
+  73ee807be09de425cfb4532b1d1b5a0fef6da3c8f8adc9d9b9f4e4b6c491bb9a  scripts/run_lean_certificate.jl
   5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9  scripts/run_literature.jl
   42e7838569a087198bdcf9b38342a28a0ded8ba8ca933894089a22091e1641ba  test/optigon_reference.jl
   c2b4b0c24acfa423ff9fa857110c2d6b377f34d4ae9bfdcd212c672ec02401c1  test/runtests.jl
