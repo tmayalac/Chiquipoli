@@ -23,14 +23,14 @@ Eight gates, all `CERTIFIED` or `PROVEN`:
 
 | Gate | Method | Certified bound |
 |---|---|---|
-| Unique constructor root | interval Newton, plus monotonicity on the whole search interval | $0 \notin F'$, $N(Z)\subset\operatorname{int}Z$ |
+| Unique constructor root | interval Newton, plus monotonicity on the whole search interval | $0 \notin F'$, $N(Z)\subset\mathrm{int}\,Z$ |
 | 16 side + 15 active-diameter equalities | exact division in $\mathbb Q[c]$ | zero remainder, no rounding |
 | Side length $\ell$, perimeter $16\ell$ | enclosure over the root box | widths $< 2\times10^{-30}$ and $< 3.19\times10^{-29}$ |
 | Strict convexity (224 support determinants) | outward-rounded evaluation | $\geq 0.0074882049306989244$ |
 | Exact active graph (105 inactive pairs) | outward-rounded evaluation | $\delta_{\mathrm{inact}} \geq 0.0080997106581357295$ |
 | Positive multipliers | Krawczyk, plus algebraic gauge recovery | $\min\lambda \geq 0.0918667776833353997$ |
-| $\operatorname{rank} D(e,d) = 30$ | preconditioned regularity test | $\lVert \mathrm{Id}-CM\rVert_\infty \leq 1.42\times10^{-25}$ |
-| Box nesting | interval containment | $Z_{\mathrm{root}} \subset \operatorname{int} Z_{\mathrm{cert}}$ |
+| $\mathrm{rank}\, D(e,d) = 30$ | preconditioned regularity test | $\lVert \mathrm{Id}-CM\rVert_\infty \leq 1.42\times10^{-25}$ |
+| Box nesting | interval containment | $Z_{\mathrm{root}} \subset \mathrm{int}\, Z_{\mathrm{cert}}$ |
 
 The certified object is identified with the published one by computation:
 `test/fixtures/optigon_reference.jl` vendors the upstream OPTIGON general $n=2^s$

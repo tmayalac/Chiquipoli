@@ -41,10 +41,10 @@ which cites this package as **[AH26]**.
 ## 1. What is certified — the dedicated A16 certificate
 
 `pipeline/certify_a16.jl` certifies, for the exact Bingane–Audet hexadecagon
-\(A_{16}\) enclosed by the constructor root interval, the **hypotheses of the
-paper's Theorem 3.5** as instantiated for \(A_{16}\) (Lemma 6.1 +
+$A_{16}$ enclosed by the constructor root interval, the **hypotheses of the
+paper's Theorem 3.5** as instantiated for $A_{16}$ (Lemma 6.1 +
 Proposition 6.2 (1)–(6)). By that theorem (Theorem 6.3), those hypotheses imply
-\(A_{16}\) is a **strict local maximiser of perimeter modulo orientation
+$A_{16}$ is a **strict local maximiser of perimeter modulo orientation
 preserving Euclidean motions**.
 
 **The computation certifies the hypotheses; the paper's theorem supplies the
@@ -57,14 +57,14 @@ Machine-readable record of every gate below: **`results/a16_certificate.toml`**
 
 | Gate | Paper ref | Status | Certified quantity |
 |---|---|---|---|
-| Unique constructor root | Prop 6.2(1) | CERTIFIED | interval Newton: \(0\notin F'(Z_{\rm root})\), \(N(Z_{\rm root})\subset\operatorname{int}Z_{\rm root}\); unique in box **and** in the full search interval |
-| Side length / perimeter | Prop 6.2(2) | CERTIFIED | \(\ell=0.1959554930055385228\ldots\), \(16\ell=3.1352878880886163663\ldots\); enclosed over \(Z_{\rm root}\) with outward rounding, widths \(<2\times10^{-30}\) and \(<3.19\times10^{-29}\) |
-| Strict convexity + cyclic order | Prop 6.2(3) | CERTIFIED | min support determinant \(\ge 0.0074882049306989244\) (at edge/vertex \((10,12)\)) |
-| Exact active graph + inactive margin | Prop 6.2(4) | CERTIFIED | \(\delta_{\rm inact}\ge 0.0080997106581357295\) (critical pair \(\{4,12\}\)) |
-| Positive multipliers + stationarity | Prop 6.2(5) | CERTIFIED | \(\min\lambda_{ij}\ge 0.0918667776833353997\) (edge \(\{6,13\}\)); omitted-eq recovery via \(\det Q=y_1-y_8<0\) |
-| Rank 30 \(\Rightarrow I_{\rm eq}=R_{\rm eq}\) | Prop 6.2(6) | CERTIFIED | \(\lVert I-CM\rVert_\infty\le 1.419383643581978\times10^{-25}<1\) |
-| 16 side + 15 diameter equalities | Lemma 6.1 | PROVEN | exact \(\mathbb Q[c]\) algebra, 16/16 + 15/15; 29 unconditional, 2 (\(\{3,4\},\{12,13\}\)) \(=F_c\); no interval containing zero |
-| Box nesting \(Z_{\rm root}\subset\operatorname{int}Z_{\rm cert}\) | Prop 6.2 | CERTIFIED | composition gate: endpoints of \(Z_{\rm root}\) (radius \(10^{-30}\)) strictly inside each box stages 03–05 evaluated (radius \(10^{-28}\)) |
+| Unique constructor root | Prop 6.2(1) | CERTIFIED | interval Newton: $0\notin F'(Z_{\rm root})$, $N(Z_{\rm root})\subset\mathrm{int}\,Z_{\rm root}$; unique in box **and** in the full search interval |
+| Side length / perimeter | Prop 6.2(2) | CERTIFIED | $\ell=0.1959554930055385228\ldots$, $16\ell=3.1352878880886163663\ldots$; enclosed over $Z_{\rm root}$ with outward rounding, widths $<2\times10^{-30}$ and $<3.19\times10^{-29}$ |
+| Strict convexity + cyclic order | Prop 6.2(3) | CERTIFIED | min support determinant $\ge 0.0074882049306989244$ (at edge/vertex $(10,12)$) |
+| Exact active graph + inactive margin | Prop 6.2(4) | CERTIFIED | $\delta_{\rm inact}\ge 0.0080997106581357295$ (critical pair $\{4,12\}$) |
+| Positive multipliers + stationarity | Prop 6.2(5) | CERTIFIED | $\min\lambda_{ij}\ge 0.0918667776833353997$ (edge $\{6,13\}$); omitted-eq recovery via $\det Q=y_1-y_8<0$ |
+| Rank 30 $\Rightarrow I_{\rm eq}=R_{\rm eq}$ | Prop 6.2(6) | CERTIFIED | $\lVert I-CM\rVert_\infty\le 1.419383643581978\times10^{-25}<1$ |
+| 16 side + 15 diameter equalities | Lemma 6.1 | PROVEN | exact $\mathbb Q[c]$ algebra, 16/16 + 15/15; 29 unconditional, 2 ($\{3,4\},\{12,13\}$) $=F_c$; no interval containing zero |
+| Box nesting $Z_{\rm root}\subset\mathrm{int}\,Z_{\rm cert}$ | Prop 6.2 | CERTIFIED | composition gate: endpoints of $Z_{\rm root}$ (radius $10^{-30}$) strictly inside each box stages 03–05 evaluated (radius $10^{-28}$) |
 
 Final banner (from `certify_a16.jl`): `FINAL FIRST-ORDER CERTIFICATE: CERTIFIED`,
 `ROOT UNIQUENESS ... PROVED`, `TOPOLOGICAL LOCAL MAXIMALITY: NOT ESTABLISHED BY
@@ -80,13 +80,13 @@ is its executive summary).
 
 **Every computational row of the table above** is additionally verified by the
 Lean kernel in `lean/`, `sorry`-free: Lemma 6.1 with the 29-unconditional /
-2-conditional split (for \(\{3,4\}\) and \(\{12,13\}\) the defect is
-\(F_c(\cos z)\) exactly, quotient \(1\)); existence **and uniqueness** of
+2-conditional split (for $\{3,4\}$ and $\{12,13\}$ the defect is
+$F_c(\cos z)$ exactly, quotient $1$); existence **and uniqueness** of
 the constructor root across the paper's whole search interval, lifted to the
-angle \(z\) by injectivity of \(\cos\); the inactive margin, hence diameter
+angle $z$ by injectivity of $\cos$; the inactive margin, hence diameter
 exactly 1; strict convexity with the labelled cyclic order (224 determinants);
-stationarity with strictly positive multipliers; and \(\mathcal I_{\rm eq}=
-R_{\rm eq}\) via `kernel_is_rigid` — stated over the polygon's vertices, and
+stationarity with strictly positive multipliers; and $\mathcal I_{\rm eq}=
+R_{\rm eq}$ via `kernel_is_rigid` — stated over the polygon's vertices, and
 reached without `Matrix.det` or the rank API. For that layer the trust base is
 Lean's kernel rather than Julia's `Rational{BigInt}` arithmetic.
 
@@ -116,13 +116,13 @@ root. They are separated by *role and dependency direction*, documented here.
 ### Track A — dedicated A16 certificate (the paper's supplement, [AH26])
 
 The certified configuration is identified with the published Bingane--Audet
-\(A_{16}\) by `test/fixtures/optigon_reference.jl`, a line-for-line vendored copy of the
-upstream general \(n=2^s\) OPTIGON constructor: the test suite requires it to
+$A_{16}$ by `test/fixtures/optigon_reference.jl`, a line-for-line vendored copy of the
+upstream general $n=2^s$ OPTIGON constructor: the test suite requires it to
 reproduce the root, all sixteen vertices, the diameter graph, equilaterality and
 the perimeter of the specialisation used here.
 
 The flagship. Configuration-specific, exact-algebra + interval, produces the
-`CERTIFIED` verdict for \(A_{16}\).
+`CERTIFIED` verdict for $A_{16}$.
 
 - `src/A16Certificate.jl` — the module; its parts are in `src/a16/`:
   `constructor.jl` (coordinates, F, F'), `geometry.jl` (convexity, inactive
@@ -146,7 +146,7 @@ candidates. **Not claimed by the article.** Broader but weaker: it certifies
 (those are literature theorems it only re-certifies locally).
 
 - `src/SmallPolygons.jl` — the general `certify(candidate)` engine.
-- `src/ExactIdentity.jl` — general exact \(\mathbb Q(c,s)\) identity engine.
+- `src/ExactIdentity.jl` — general exact $\mathbb Q(c,s)$ identity engine.
 - `pipeline/certify_literature.jl` — benchmark driver (+ single-case CLI).
 - `cases/**/candidate.jl` — data-only case definitions
   (n=4,6,8,A16 + 3 negative controls).

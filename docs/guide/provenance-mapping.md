@@ -18,7 +18,7 @@ Topological maximality does not rest on any second-order remark. It is the
 **direct** conclusion of Theorem 3.5, proved via **Lemma 3.4 (Local Euclidean
 slice)** together with a normalised-sequence argument.
 
-Every dimensional claim below was verified numerically: $\operatorname{rank} D
+Every dimensional claim below was verified numerically: $\mathrm{rank}\,D
 = 30$, dependency space of dimension $1$, ambient dimension $33$, $\det Q =
 y_1 - y_8 < 0$, and three rigid-motion vectors of rank 3.
 
@@ -29,7 +29,7 @@ y_1 - y_8 < 0$, and three rigid-motion vectors of rank 3.
 To remove every ambiguity between rows, columns, equations and variables, the
 following terminology is fixed and used consistently throughout. It matches the
 article: ambient space $(\mathbb R^2)^{16}\times\mathbb R$ of dimension 33,
-$\operatorname{rank} D(e,d)=30$, $\dim\mathcal I_{\mathrm{eq}}=3$.
+$\mathrm{rank}\,D(e,d)=30$, $\dim\mathcal I_{\mathrm{eq}}=3$.
 
 - **Ambient space (of variables).** $V = (\mathbb R^2)^{16}\times\mathbb R$, of
   dimension **33**, with coordinates $(x_0,y_0,\dots,x_{15},y_{15},\ell)$. The
@@ -74,7 +74,7 @@ Numeric summary — every entry verified, none assumed:
 | number of active constraints | 31 |
 | number of multipliers $=\dim y$ | 31 |
 | number of stationarity equations | 33 |
-| $\operatorname{rank} D$ | 30 |
+| $\mathrm{rank}\,D$ | 30 |
 | $\dim$ of the dependency space among constraint gradients | 1 |
 | $\dim\mathcal I_{\mathrm{eq}}=\dim\ker D=33-30$ | 3 |
 | $\dim R_{\mathrm{eq}}$ (Lemma L1) | 3 |
@@ -109,7 +109,7 @@ coincide. Since at least two vertices are distinct, $c=0$; then $a=b=0$. $\squar
 the certified strict convexity (Lemma L2 with Proposition 6.2(3)): a strictly
 convex polygon with 16 labelled vertices has all 16 distinct. L1 is the reason
 $\dim R_{\mathrm{eq}}$ is exactly 3 and not less, and it is indispensable for
-the bound $\operatorname{rank}D\le30$ (Proposition 6.2(6)) and for
+the bound $\mathrm{rank}\,D\le30$ (Proposition 6.2(6)) and for
 $\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$ (Theorem 6.3). The article uses the
 same independence in the proofs of Lemma 3.4 and Proposition 6.2(6).
 
@@ -163,7 +163,7 @@ constant rank** on a neighbourhood. It uses only the one-sided linearised cone,
 the multiplier identity, and the **linear** identity
 $\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$ *at the point*. This settles the old
 "box in $z$ versus neighbourhood in $\mathbb R^{33}$" concern cleanly: the
-certificate needs $\operatorname{rank}D=30$ at the certified point, from which
+certificate needs $\mathrm{rank}\,D=30$ at the certified point, from which
 $\dim\mathcal I_{\mathrm{eq}}=3=\dim R_{\mathrm{eq}}$ and therefore
 $\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$. No sweep of a full neighbourhood of
 $\mathbb R^{33}$ is needed.
@@ -226,7 +226,7 @@ this mapping.
 
 The article states Proposition 6.2 over the box nesting
 
-$$Z_{\mathrm{root}}\subset\operatorname{int}Z_{\mathrm{cert}},$$
+$$Z_{\mathrm{root}}\subset\mathrm{int}\,Z_{\mathrm{cert}},$$
 
 with $Z_{\mathrm{root}}$ of radius $10^{-30}$ for existence and uniqueness, and
 $Z_{\mathrm{cert}}$ of radius $10^{-28}$ for geometry, rank and multipliers. In
@@ -243,7 +243,7 @@ certificate file with a `FAIL` entry rather than an aborted run (D02).
 - **Theorem used:** one-dimensional interval Newton. There is an exact real root
   in $Z_{\mathrm{root}}$, and it is unique there, provided
   $0\notin F'(Z_{\mathrm{root}})$ and
-  $N(Z_{\mathrm{root}})\subset\operatorname{int}Z_{\mathrm{root}}$.
+  $N(Z_{\mathrm{root}})\subset\mathrm{int}\,Z_{\mathrm{root}}$.
 - **Rigour of the point value $F(m)$.** $N=m-F(m)/F'(Z)$ requires $F(m)$ to be
   a rigorous enclosure. $F$ is evaluated over the thin interval
   `interval(m)`, of width about $10^{-77}$ at 256 bits. The domain check
@@ -313,7 +313,7 @@ certificate file with a `FAIL` entry rather than an aborted run (D02).
 This must be stated explicitly, and the article accommodates it: Definition 2.8
 allows dependent rows, and Theorem 3.5 does not require LICQ.
 
-- There are **31 active constraints** but $\operatorname{rank}D=30$. The 31
+- There are **31 active constraints** but $\mathrm{rank}\,D=30$. The 31
   constraint gradients are linearly **dependent**: the dependency space
   $\ker D^{\mathsf T}$ has **dimension $31-30=1$**.
 - Consequently **LICQ fails** at $A_{16}$.
@@ -391,25 +391,25 @@ is the analogue of the article's Remark 3.2, $\sum\alpha_i=-n$.
 > $Z_{\mathrm{cert}}$."
 
 - **File:** `pipeline/stages/04_certify_rank.jl`, with `regularity_test`.
-- **Lower bound $\operatorname{rank}D\ge30$.** A **30×30** minor $M$ is
+- **Lower bound $\mathrm{rank}\,D\ge30$.** A **30×30** minor $M$ is
   extracted — rows `ROWS_MINOR`, 30 of the 31 constraints, omitting
   $d_{(0,9)}$; columns `COLS_MINOR`, omitting $x_1,y_1,x_8$ — and certified
   regular over the whole box by the sufficient preconditioned criterion: with
-  $R\approx\operatorname{inv}(\operatorname{mid}M)$ and $E=\mathrm{Id}-R\,M$,
+  $R\approx\mathrm{inv}\,(\mathrm{mid}\,M)$ and $E=\mathrm{Id}-R\,M$,
   $\|E\|_\infty<1$ implies $M$ nonsingular, since
   $\rho(E)\le\|E\|_\infty<1$. The certified value
   $\|\mathrm{Id}-CM\|_\infty\le1.419383643581977854\ldots\times10^{-25}$ matches
   the article's bound.
-- **Upper bound $\operatorname{rank}D\le30$.** By **L1** the three rigid motions
+- **Upper bound $\mathrm{rank}\,D\le30$.** By **L1** the three rigid motions
   are independent and annihilate every constraint, so
   $R_{\mathrm{eq}}\subseteq\ker D$ with $\dim R_{\mathrm{eq}}=3$; by
-  rank–nullity, $\operatorname{rank}D\le33-3=30$. This **depends essentially on
+  rank–nullity, $\mathrm{rank}\,D\le33-3=30$. This **depends essentially on
   L1**: without the independence one would obtain only $\le31$.
-- **Conclusion:** $\operatorname{rank}D=30$, hence
+- **Conclusion:** $\mathrm{rank}\,D=30$, hence
   $\dim\ker D=\dim\mathcal I_{\mathrm{eq}}=3$.
 - **"Box in $z$" versus "neighbourhood in $\mathbb R^{33}$".** The code
   certifies regularity **at the enclosed exact point** on the one-parameter
-  curve $\{p(z)\}$. Proposition 6.2(6) concludes $\operatorname{rank}D(e,d)=30$
+  curve $\{p(z)\}$. Proposition 6.2(6) concludes $\mathrm{rank}\,D(e,d)=30$
   **at the exact configuration**, and by **Remark 3.6** Theorem 3.5 needs
   nothing more: the pointwise identity already gives
   $\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$. No computational sweep of a
@@ -427,7 +427,7 @@ is the analogue of the article's Remark 3.2, $\sum\alpha_i=-n$.
 
 The article's logical chain, reproduced by the code:
 
-1. Proposition 6.2(6) gives $\operatorname{rank}D(e,d)=30$.
+1. Proposition 6.2(6) gives $\mathrm{rank}\,D(e,d)=30$.
 2. The ambient space $(\mathbb R^2)^{16}\times\mathbb R$ has dimension 33, so
    $\dim\mathcal I_{\mathrm{eq}}(A_{16})=33-30=3$.
 3. $A_{16}$ is strictly convex (Proposition 6.2(3) with Lemma L2), so
@@ -503,7 +503,7 @@ fidelity of `coordinates(z)` to the Bingane–Audet constructor:
   $F(z^\ast)=0$ — with no tolerance and no interval containing zero.
 - **Strict convexity and cyclic order** — 6.2(3) with Lemma L2.
 - **Inactive margin** $\delta_{\mathrm{inact}}>0$ — 6.2(4), directed bound.
-- **Rank** $\operatorname{rank}D=30$ — 6.2(6) — hence
+- **Rank** $\mathrm{rank}\,D=30$ — 6.2(6) — hence
   $\dim\mathcal I_{\mathrm{eq}}=3$ and
   $\mathcal I_{\mathrm{eq}}=R_{\mathrm{eq}}$.
 - **Multipliers:** existence of a KKT representative satisfying the stationarity
