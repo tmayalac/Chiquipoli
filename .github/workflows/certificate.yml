@@ -51,20 +51,20 @@ jobs:
 
       - name: the A16 certificate
         run: |
-          julia --project=. scripts/run_all.jl | tee /tmp/run.txt
+          julia --project=. pipeline/certify_a16.jl | tee /tmp/run.txt
           grep -q 'FINAL FIRST-ORDER CERTIFICATE: CERTIFIED' /tmp/run.txt
           grep -q 'ROOT UNIQUENESS IN FULL SEARCH INTERVAL: PROVED' /tmp/run.txt
 
       - name: the literature benchmark and its negative controls
         run: |
-          julia --project=. scripts/run_literature.jl | tee /tmp/lit.txt
+          julia --project=. pipeline/certify_literature.jl | tee /tmp/lit.txt
           grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt
 
       - name: reconcile the article's claims against the certificate and Lean
-        # a16.tex and a16.pdf are working copies and are not tracked, so the
+        # The article (paper/) is a working copy and is not tracked, so the
         # checks that read the typeset article report as skipped here. The ones
         # that read the certificate, the sources and the Lean layer all run.
-        run: julia --project=. scripts/check_paper.jl
+        run: julia --project=. pipeline/check_paper.jl
 
       - name: the certificate must not have drifted from what is committed
         run: |
@@ -106,11 +106,11 @@ jobs:
 
       - name: the A16 certificate
         run: |
-          julia --project=. scripts/run_all.jl | tee /tmp/run.txt
+          julia --project=. pipeline/certify_a16.jl | tee /tmp/run.txt
           grep -q 'FINAL FIRST-ORDER CERTIFICATE: CERTIFIED' /tmp/run.txt
           grep -q 'ROOT UNIQUENESS IN FULL SEARCH INTERVAL: PROVED' /tmp/run.txt
 
       - name: the literature benchmark and its negative controls
         run: |
-          julia --project=. scripts/run_literature.jl | tee /tmp/lit.txt
+          julia --project=. pipeline/certify_literature.jl | tee /tmp/lit.txt
           grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt

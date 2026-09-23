@@ -1,6 +1,6 @@
 -- NEGATIVE CONTROL. Must FAIL to compile.
 -- K_eq is built from the diameters ACTIVE at p (`dC (a e) (b e) p = 0`). A
--- diameter with slack imposes no first-order condition (Remark 2.7), so a
+-- diameter with slack imposes no first-order condition (Definition 2.4), so a
 -- multiplier attached to one carries no information and the identity would no
 -- longer force anything. Weakening activity to mere feasibility must not go
 -- through.

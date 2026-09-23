@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Archives logs/final_run.txt (the mutable "latest run" pointer) into an
-# immutable, dated copy, per logs/README.md: "Never overwrite a successful
+# immutable, dated copy under logs/archive/, per logs/README.md: "Never overwrite a successful
 # log; use dated names."
 #
 # Usage: tools/archive_log.sh [path-to-log]   (default: logs/final_run.txt)
@@ -21,14 +21,16 @@ fi
 # avoids prefix-stripping, which broke under BSD sed's lack of \s support).
 TS_ISO="$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z' "$LOG" | head -n1 || true)"
 if [ -z "$TS_ISO" ]; then
-    echo "error: no UTC timestamp found in $LOG (is this a run_all.jl log?)" >&2
+    echo "error: no UTC timestamp found in $LOG (is this a certify_a16.jl log?)" >&2
     exit 1
 fi
 
 # "2026-07-23T19:15:09Z" -> "20260723T191509Z"
 TS_COMPACT="$(echo "$TS_ISO" | tr -d ':-')"
 
-DEST_DIR="$(dirname "$LOG")"
+# Archived copies live in logs/archive/, beside the latest run but apart from it.
+DEST_DIR="$(dirname "$LOG")/archive"
+mkdir -p "$DEST_DIR"
 DEST="$DEST_DIR/${TS_COMPACT}_a16_certificate.txt"
 
 if [ -e "$DEST" ]; then

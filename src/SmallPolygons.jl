@@ -4,7 +4,7 @@
 General framework to interval-certify LOCAL first-order structural properties
 of a candidate convex equilateral small polygon, independent of `n`.
 
-Scope and honesty (see `docs/literature-validation.md`): this module certifies,
+Scope and honesty (see `docs/guide/literature-validation.md`): this module certifies,
 by rigorous interval arithmetic, the geometric and rank structure of a given
 candidate. It NEVER proves global optimality, and it never upgrades a numerical
 value to a certified or proven one. Each block returns an explicit epistemic
@@ -172,7 +172,7 @@ function regularity_test(MI)
     nn = size(MI, 1)
     E = _eye(eltype(MI), nn) - C*MI
     # Directed upper bound: row sums as intervals, then the supremum (see the
-    # same function in A16Certificate.jl).
+    # same function in src/a16/linear_algebra.jl).
     bound = maximum(sup(sum(interval(interval_abs_bound(E[i,j])) for j in 1:nn)) for i in 1:nn)
     return bound < 1, bound
 end
@@ -199,7 +199,7 @@ There is no third case. A bad pivot choice cannot produce a spurious
 a candidate for a rigorous test. So this routine is sound but not complete: a
 configuration whose Jacobian has a regular `k×k` minor that Float64 pivoting
 fails to find would be refused rather than mis-certified. That has not occurred
-for any candidate here (see `docs/referee-report.md`, R8); falling back to
+for any candidate here (see `docs/audits/referee-report.md`, R8); falling back to
 alternative minors on failure would close the completeness gap and change
 nothing about soundness.
 """

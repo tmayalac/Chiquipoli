@@ -2,7 +2,7 @@
 -- The limit inequality for a diameter needs the constraint to be ACTIVE at the
 -- base point (`dC i j q = 0`). A merely feasible one (`dC i j q ≤ 0`) has slack,
 -- so its first-order limit is unconstrained — this is exactly why `K_eq` is
--- built from the active edges alone (Remark 2.7). Dropping activity to mere
+-- built from the active edges alone (Definition 2.4). Dropping activity to mere
 -- feasibility must not go through.
 import ChiquipoliLean
 namespace Chiquipoli.Feasible

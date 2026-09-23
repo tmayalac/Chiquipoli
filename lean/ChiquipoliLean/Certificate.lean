@@ -16,8 +16,8 @@ It proves no new mathematics. It closes a *presentation* gap, and a real one:
 gates" are different claims, and only the second is what the certificate is
 for.
 -/
-import ChiquipoliLean.Rank
-import ChiquipoliLean.Main
+import ChiquipoliLean.Generated.Rank
+import ChiquipoliLean.Constructor.A16Exists
 
 namespace Chiquipoli
 

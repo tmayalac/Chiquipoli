@@ -11,6 +11,109 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **Repository reorganised (2026-09-23), no mathematics changed.** Files are
+  grouped by role, so that a reader of the article can find the code behind a
+  statement without opening every file. Every certified value is unchanged
+  (the regenerated certificates differ from the previous ones only in
+  provenance fields and file paths), the test summary is identical (651
+  assertions in the same 22 testsets, in the same order), and the Lean layer
+  was rebuilt from an empty build directory, so no stale compiled module could
+  stand in for a renamed one. Theorem names are unchanged: they come from each
+  file's `namespace`, not from its folder, so `Audit.lean` and the 32 names
+  `verify.sh` requires did not move.
+
+  Old path -> new path (the audit reports and the archived logs use the old
+  ones):
+
+  | Old | New |
+  |---|---|
+  | `scripts/run_all.jl` | `pipeline/certify_a16.jl` |
+  | `scripts/run_literature.jl` | `pipeline/certify_literature.jl` |
+  | `scripts/run_lean_certificate.jl` | `pipeline/record_lean_certificate.jl` |
+  | `scripts/check_paper.jl` | `pipeline/check_paper.jl` |
+  | `scripts/_bootstrap.jl` | `pipeline/stages/_bootstrap.jl` |
+  | `scripts/01_nominal.jl` | `pipeline/stages/01_nominal_configuration.jl` |
+  | `scripts/02_root_interval.jl` | `pipeline/stages/02_certify_root.jl` |
+  | `scripts/03_geometry_interval.jl` | `pipeline/stages/03_certify_geometry.jl` |
+  | `scripts/04_rank_interval.jl` | `pipeline/stages/04_certify_rank.jl` |
+  | `scripts/05_multipliers_interval.jl` | `pipeline/stages/05_certify_multipliers.jl` |
+  | `scripts/06_exact_identities.jl` | `pipeline/stages/06_prove_exact_identities.jl` |
+  | `src/A16Certificate.jl` (one file) | `src/A16Certificate.jl` (module, exports, includes) + `src/a16/{data,guarantees,constructor,geometry,linear_algebra,exact_algebra}.jl` |
+  | `examples/literature/` | `cases/` (they are inputs of a certificate, not tutorials) |
+  | `test/runtests.jl` (one file) | `test/runtests.jl` + `test/{constructor,framework_guards,exact_algebra,certificate_stages,literature,regressions,optigon}.jl` |
+  | `test/optigon_reference.jl`, `test/optigon_upstream_*.txt` | `test/fixtures/` |
+  | `lean/scripts/verify.sh` | `lean/verify.sh` |
+  | `lean/tools/` | `lean/generators/` |
+  | `lean/ChiquipoliLean/{FirstOrder,Instability,Slice,SliceIFT,Feasible,FeasibleOpen,FeasibleTangent,FeasibleRigid,FeasibleMain}.lean` | `lean/ChiquipoliLean/Theory/` (same names) |
+  | `lean/ChiquipoliLean/{Chebyshev,Identities,RootExists,SearchInterval,SideLength}.lean` | `lean/ChiquipoliLean/Constructor/` (same names) |
+  | `lean/ChiquipoliLean/Constructor.lean` | `lean/ChiquipoliLean/Constructor/Coordinates.lean` |
+  | `lean/ChiquipoliLean/Main.lean` | `lean/ChiquipoliLean/Constructor/A16Exists.lean` (it was not the main theorem) |
+  | `lean/ChiquipoliLean/Generated.lean` | `lean/ChiquipoliLean/Generated/Polynomials.lean` |
+  | `lean/ChiquipoliLean/{Positivity,InactiveMargin,Diameter,Convexity,Multipliers,Rank}.lean` | `lean/ChiquipoliLean/Generated/` (same names) |
+  | `lean/ChiquipoliLean/FirstOrderA16.lean` | `lean/ChiquipoliLean/Instances/A16FirstOrder.lean` |
+  | `lean/ChiquipoliLean/Rank30.lean` | `lean/ChiquipoliLean/Instances/A16Rank30.lean` |
+  | `lean/ChiquipoliLean/FeasibleA16.lean` | `lean/ChiquipoliLean/Instances/A16LocalMax.lean` |
+  | `lean/ChiquipoliLean/Examples.lean` | `lean/ChiquipoliLean/Instances/SquareAndRhombus.lean` |
+  | `lean/ChiquipoliLean/FeasibleSquare.lean` | `lean/ChiquipoliLean/Instances/SquareLocalMax.lean` |
+  | `docs/{certificate-spec,provenance-mapping,general-framework,literature-validation,scope-and-limitations,theorem-3.5-formalisation}.md` | `docs/guide/` |
+  | `docs/{referee-report,theory-audit}.md` | `docs/audits/` (records, kept as written) |
+  | `tools/independent_check*`, `tools/independent-check.md` | `tools/independent_check/` |
+  | `logs/<UTC>_a16_certificate.txt` | `logs/archive/` (kept byte for byte) |
+  | `main.tex`, `supplement.tex`, PDFs, `latexmkrc` (root, untracked) | `paper/` (untracked; `main_1.*` in `paper/archive/`) |
+
+  The `make` targets did not change. Moving files into subdirectories exposed
+  checks that scanned one directory level only and would have gone blind in
+  silence; each is now recursive and pinned to a count, so a file that drops
+  out fails loudly:
+  - `verify.sh` searched for `sorry` in `ChiquipoliLean/*.lean` only. After the
+    move it would have scanned 2 of 31 files and passed. Now recursive, with
+    the number of scanned files pinned (and the planted-`sorry` mutation sits
+    in a subdirectory, so the harness checks the recursion).
+  - `verify.sh` check 5 compared a generated file against a copy of itself
+    left in place, so a generator writing to a stale path would have passed.
+    The committed file is now moved aside first, and the generator must
+    recreate it at its path.
+  - `verify.sh` counted a negative control as rejected whatever the error; one
+    whose import no longer resolves fails to compile for that reason alone and
+    guards nothing. That case is now a FAIL.
+  - `record_lean_certificate.jl` hashed only top-level Lean files and one of the
+    seven generators, and its `generated_matches_julia` field looked at one of
+    the seven generated files. Both now cover all of them.
+  - `check_paper.jl` read only top-level Lean files for its claims about the
+    Lean layer, and checks that the article's printed paths exist for the new
+    directories too (including `./verify.sh`).
+  - The provenance scans of both Julia certificates are recursive, and share
+    one list of directories with the git cleanliness check; the literature
+    certificate now also hashes `cases/exact_coords.jl`, which supplies the
+    exact coordinates of every case and was left out. Its cleanliness check
+    listed `tests`, a directory that does not exist, so an uncommitted edit to
+    the test suite never marked the run dirty.
+  - The mutation harness counted a mutation as caught whenever the checker
+    exited non-zero, and never checked that a Lean defect had actually been
+    planted. During this reorganisation a one-character slip in its `cd` made
+    it run from `tools/`: every Lean mutation then failed to plant, `cd lean`
+    failed, and all five were reported CAUGHT. (The Julia ones reported "could
+    not apply", which is why it was noticed.) Now the harness refuses to run
+    outside the repository root, every mutation must be planted before the
+    checker runs, and "rejected" requires the checker to have run and reported
+    a failure (`LEAN CERTIFICATE FAIL` or a failed build from `verify.sh`, a
+    failing test summary from the Julia suite).
+  - The certificates' git cleanliness check was, for one intermediate state of
+    this work, built as `` `git status -- $(SOURCE_DIRS...)` ``: inside
+    backticks Julia concatenates a splatted tuple into one word
+    (`srcpipelinetest`), git reports nothing for a path that does not exist, and
+    a dirty tree was recorded as clean. Caught by comparing the recorded flag
+    against `git status`; the command is now built from an explicit argument
+    vector. No committed certificate was affected.
+  - Found on the way, not caused by the move: two negative controls cited a
+    "Remark 2.7" that does not exist (it is Definition 2.4, as fixed in
+    `FeasibleOpen.lean` in the first external audit); `lean/README.md` said
+    eighteen negative controls (there are 26), listed eighteen, and omitted
+    six modules from its file list; `logs/README.md` pointed at
+    `scripts/archive_log.sh` (it is in `tools/`); and `make paper` with no
+    article reported "nothing to compile" and then failed.
+  - The supplement's table of commands and scripts prints the new paths (an
+    editorial change to `paper/supplement.tex`, which must be re-uploaded).
 - **Article retitled**: "Stability of Equilateral Small Polygons" -> "First
   Order Geometry of Equilateral Small Polygons", propagated to `README.md`,
   this changelog's own past entries being the one place it was intentionally

@@ -1,5 +1,5 @@
 -- NEGATIVE CONTROL. Must FAIL to compile.
--- FirstOrderA16 works in the SQUARED formulation: the scalar variable is
+-- Instances/A16FirstOrder works in the SQUARED formulation: the scalar variable is
 -- t = l^2, so its eta is d(l^2) = 2*l*dl, not dl. Identifying the two
 -- normalisations without the chain-rule factor 2*l would be a silent unit
 -- error that changes nothing syntactically and everything mathematically —

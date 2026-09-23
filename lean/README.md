@@ -8,7 +8,7 @@ kernel-checked theorem: the trust base drops from "Julia's rational arithmetic
 and my code are correct" to "Lean's kernel is correct".
 
 Everything here is machine-checked. Nothing is admitted (`sorry`-free), and
-`scripts/verify.sh` proves that claim rather than asserting it.
+`verify.sh` proves that claim rather than asserting it.
 
 ---
 
@@ -26,7 +26,7 @@ Everything here is machine-checked. Nothing is admitted (`sorry`-free), and
 | 8 | **The inactive margin** (Prop 6.2(4)) — each of the 89 non-active diagonals is strictly shorter than 1 (the article's 105 inactive pairs are the same statement counted differently: they include the 16 sides; see "The paper's sharpest constants" below) | `inactive_*`, `lt_one_*` |
 | 9 | **The diameter is exactly 1** — `∀ i j : Fin 16`, no pair exceeds 1, and `(0,7)` attains it | `diameter_eq_one` |
 | 10 | **Strict convexity + labelled cyclic order** (Prop 6.2(3)) — every vertex lies strictly left of every edge, all 224 determinants | `cross_pos` |
-| 11 | **Stationarity with strictly positive multipliers** (Prop 6.2(5)) — the weighted gradient sum vanishes at every vertex, `Σαᵢ = −1`, and all 15 diameter multipliers are positive. The `−1` is the squared formulation, where the objective is `t = ℓ²` and `κ = 1`; the article's `Σαᵢ = −16` is the same statement at `κ = n`, recovered by `multiplier_balance_paper` (see the header of `ChiquipoliLean/FirstOrder.lean`) | `multipliers_certified` |
+| 11 | **Stationarity with strictly positive multipliers** (Prop 6.2(5)) — the weighted gradient sum vanishes at every vertex, `Σαᵢ = −1`, and all 15 diameter multipliers are positive. The `−1` is the squared formulation, where the objective is `t = ℓ²` and `κ = 1`; the article's `Σαᵢ = −16` is the same statement at `κ = n`, recovered by `multiplier_balance_paper` (see the header of `ChiquipoliLean/Theory/FirstOrder.lean`) | `multipliers_certified` |
 | 12 | **`R_eq ⊆ I_eq`** — every rigid infinitesimal motion is annihilated by every constraint differential | `dsq_rigid` |
 | 13 | **`I_eq ⊆ R_eq`** (Prop 6.2(6)) — a displacement killing every active differential *is* a rigid motion, and `dt = 0` | `kernel_is_rigid` |
 | **14** | **The assembled certificate** — a single `z` at which all six gates hold *simultaneously* | **`A16_certificate`** |
@@ -64,7 +64,7 @@ identity
 which the kernel re-checks with `ring` plus nonnegativity of each factor. Exact
 rationals throughout — no interval arithmetic, no floating point, no rounding
 model in the trust base. The certificates are emitted by
-`tools/bernstein.jl` from the same Julia arithmetic as everything else.
+`generators/bernstein.jl` from the same Julia arithmetic as everything else.
 
 Two cross-checks fell out of this, each agreeing with a Julia result computed
 by 256-bit interval arithmetic:
@@ -91,7 +91,7 @@ determinant `D` in `(c,s)`-factored coordinates, and `cross = sin z* · D` with
 
 **How much these are worth, stated precisely.** They are *not* independent
 derivations: both routes read the same coordinate polynomials out of
-`src/A16Certificate.jl`. What differs is the arithmetic and the method — exact
+`src/a16/exact_algebra.jl`. What differs is the arithmetic and the method — exact
 rational Bernstein certificates versus outward-rounded 256-bit intervals — so
 what they corroborate is the *numerics*, not the model. A mistake in the
 constructor itself would propagate identically to both, and neither would
@@ -157,7 +157,7 @@ coefficient size.
 ### The multipliers: Julia computes, Lean checks
 
 Lean is never asked to *solve* the multiplier system — that would mean exact
-linear algebra over a number field inside the kernel. `lean/tools/multipliers.jl`
+linear algebra over a number field inside the kernel. `lean/generators/multipliers.jl`
 computes the witness once, exactly, by Gaussian elimination over `ℚ[c]/(Fc)`;
 Lean only verifies it. That asymmetry is what keeps the whole block cheap.
 
@@ -274,7 +274,7 @@ outside is:
   `FeasibleTangent.lean` passes the constraints to the first-order limit;
   `FeasibleRigid.lean` proves invariance under Euclidean motions and builds the
   slice normalisation on top of `SliceIFT`; `FeasibleMain.lean` assembles the
-  blow-up and discharges the slice hypothesis into congruence; `FeasibleA16.lean`
+  blow-up and discharges the slice hypothesis into congruence; `Instances/A16LocalMax.lean`
   instantiates at `A16`, bridging the two normalisations (`FirstOrderA16` works
   in the squared formulation `t = ℓ²`, so its `η` is `2ℓ` times this one — see
   `A16_bridge`, and negative control `nc25`, which confirms the chain-rule
@@ -323,7 +323,7 @@ Consequently: **Lean proves "the certified configuration is a strict local
 maximum"** — `Feasible.A16_locally_maximal` — but it does *not* prove that this
 configuration is the polygon Bingane and Audet published. That identification is
 an attribution, checked by running the original OPTIGON constructor and
-comparing coordinates (in Julia, see `docs/provenance-mapping.md`), and it is the
+comparing coordinates (in Julia, see `docs/guide/provenance-mapping.md`), and it is the
 one link in the chain a proof assistant cannot close.
 
 The other limits are unchanged and are mathematical, not architectural. The
@@ -336,9 +336,9 @@ that no reader can take "verified in Lean" to mean more than it does.
 
 ## Architecture: why the polynomials are generated
 
-`ChiquipoliLean/Generated.lean` is emitted by `tools/extract_polys.jl` from the
-exact `Rational{BigInt}` arithmetic in `src/A16Certificate.jl`.
-`ChiquipoliLean/Constructor.lean` is written **by hand**, transcribed from
+`ChiquipoliLean/Generated/Polynomials.lean` is emitted by `generators/extract_polys.jl` from the
+exact `Rational{BigInt}` arithmetic in `src/a16/exact_algebra.jl`.
+`ChiquipoliLean/Constructor/Coordinates.lean` is written **by hand**, transcribed from
 `coordinates(z)` in the same Julia file — independently, in trigonometric form.
 
 Lean then *proves the two agree* (`red0 … red15`). This is deliberate: a
@@ -360,7 +360,7 @@ export PATH="$HOME/.elan/bin:$PATH"
 
 cd lean
 lake exe cache get     # prebuilt Mathlib oleans (~7 GB, first run only)
-./scripts/verify.sh
+./verify.sh
 ```
 
 The `.lake/` directory (toolchain + vendored Mathlib, ~7 GB) is gitignored;
@@ -374,10 +374,11 @@ Expected output ends with `LEAN CERTIFICATE PASS`. The five checks are:
 3. every headline theorem depends only on `[propext, Classical.choice,
    Quot.sound]` — Lean's three standard axioms, and in particular **not**
    `sorryAx`;
-4. all eighteen files in `negative_controls/` — deliberately false variants —
+4. all twenty-six files in `negative_controls/` — deliberately false variants —
    **fail** to compile, and the count is pinned, so deleting one is a failure
    rather than a silently smaller check;
-5. `Generated.lean` reproduces byte-for-byte from the Julia source.
+5. every file in `ChiquipoliLean/Generated/` reproduces byte-for-byte from its
+   Julia generator in `generators/`.
 
 ### The negative controls
 
@@ -405,6 +406,14 @@ constants are wrong.
 | `nc16_rhombus_wrong_sign.lean` | the rhombus perimeter increases for `δ < 0` too | the first variation is `16δ/√41`, negative there |
 | `nc17_slice_without_distinct.lean` | Lemma 3.4's independence without two distinct vertices | with every vertex at the origin `T₃` vanishes and `R(p)` drops to dimension 2 |
 | `nc18_gram_needs_distinct.lean` | the Gram map injective for *any* configuration, no distinctness hypothesis | the actual proof needs exactly that hypothesis to invoke `gram_nondegenerate` |
+| `nc19_tangent_wrong_sign.lean` | the blow-up limit of an active diameter points outward, `dD ≥ 0` | the sign is what makes `K_eq` a one-sided cone; reversed, `no_ascent` is vacuous |
+| `nc20_inactive_has_no_limit.lean` | the limit inequality for a diameter that is merely feasible, not active | a slack constraint has an unconstrained first-order limit (Definition 2.4) |
+| `nc21_slice_needs_rotation.lean` | the slice condition from the two translations alone | without the rotation `T₃`, `v ∈ R(p) ∩ R(p)^⊥ ⇒ v = 0` no longer closes |
+| `nc22_blowup_needs_strict_multipliers.lean` | Theorem 3.5 with `λ ≥ 0` | strict complementarity is what forces every active differential to vanish |
+| `nc23_blowup_needs_ascent_direction.lean` | the blow-up with competitors of *smaller* side length | shrinking a polygon stays feasible, so no contradiction can follow |
+| `nc24_blowup_needs_activity.lean` | Theorem 3.5 with multipliers on merely feasible diameters | a multiplier on a slack diameter carries no information (Definition 2.4) |
+| `nc25_bridge_needs_chain_rule.lean` | the squared and unsquared normalisations identified without the factor `2ℓ` | a silent unit error that would rescale every side multiplier |
+| `nc26_conclusion_is_modulo_motions.lean` | `A16` locally unique outright, not modulo motions | translating or rotating `A16` gives a feasible competitor arbitrarily close |
 
 `nc4` is the sharpest of the constant-checking ones: if it compiled, the "29
 unconditional vs 2 conditional" split — a headline finding of the certificate —
@@ -422,35 +431,57 @@ constants, not a completeness argument.
 
 ## Files
 
+The modules are grouped by role. `import ChiquipoliLean` brings all of them
+into scope; the folder of a module is part of its import name
+(`import ChiquipoliLean.Theory.FeasibleMain`), but not of its theorems, whose
+names come from their `namespace` (`Chiquipoli.Feasible.A16_locally_maximal`).
+
 ```
-lean-toolchain              pinned Lean version
-lakefile.toml               package + Mathlib dependency
-lake-manifest.json          pinned Mathlib revision
-ChiquipoliLean.lean         root import
+lean-toolchain                 pinned Lean version
+lakefile.toml                  package + Mathlib dependency
+lake-manifest.json             pinned Mathlib revision
+verify.sh                      the five-check verification (`make lean`)
+ChiquipoliLean.lean            root import
 ChiquipoliLean/
-  Chebyshev.lean            multiple-angle reduction, k = 1..7
-  Generated.lean            AUTO-GENERATED exact polynomial layer
-  Constructor.lean          hand-written constructor + reduction lemmas
-  Positivity.lean           Bernstein sign certificates on the bracket
-  Identities.lean           the 31 equalities (Lemma 6.1)
-  RootExists.lean           existence and uniqueness of the root (IVT)
-  Diameter.lean             the diameter is exactly 1, over all pairs
-  InactiveMargin.lean       the 89 non-active diagonals are shorter than 1
-  Convexity.lean            224 support determinants, strict convexity
-  Multipliers.lean          stationarity with positive multipliers
-  Rank.lean                 I_eq = R_eq, both inclusions
-  Certificate.lean          the assembled A16_certificate
-  FirstOrder.lean           Theorem 3.5, algebraic core (general n)
-  FirstOrderA16.lean        that core with both hypotheses discharged at A16
-  Instability.lean          Proposition 3.8
-  Examples.lean             Section 4: the square and the rhombus
-  SideLength.lean           Proposition 6.2(2): side length and perimeter
-  Rank30.lean               Proposition 6.2(6): rank D(e,d) = 30
-  Slice.lean                Lemma 3.4: independence and Gram nondegeneracy
-  SliceIFT.lean             Lemma 3.4: the implicit function theorem step
-  Main.lean                 the headline theorem A16_exists
-  Audit.lean                #print axioms report
-negative_controls/          eighteen files that MUST fail to compile
-scripts/verify.sh           the five-check verification
-tools/extract_polys.jl      generator for Generated.lean
+  Certificate.lean             the assembled A16_certificate: all six gates at one root
+  Audit.lean                   #print axioms report (not imported by the root)
+
+  Theory/                      the general theory, for any n, with no reference to A16
+    FirstOrder.lean            Theorem 3.5, algebraic core
+    Instability.lean           Proposition 3.8
+    Slice.lean                 Lemma 3.4: independence and Gram nondegeneracy
+    SliceIFT.lean              Lemma 3.4: the implicit function theorem step
+    Feasible.lean              Theorem 3.5, step A: the feasible set
+    FeasibleOpen.lean          step B: openness of convexity and the inactive margin
+    FeasibleTangent.lean       step C: the first-order limits
+    FeasibleRigid.lean         step D: invariance under Euclidean motions, the slice
+    FeasibleMain.lean          step E: the blow-up; Theorem 3.5 in full (thm_3_5)
+
+  Constructor/                 the A16 constructor and its root
+    Chebyshev.lean             multiple-angle reduction, k = 1..7
+    Coordinates.lean           hand-written constructor + reduction lemmas
+    Identities.lean            the 31 equalities (Lemma 6.1)
+    RootExists.lean            existence of the root (IVT on Fc)
+    SearchInterval.lean        Proposition 6.2(1): unique root on the article's I_search
+    SideLength.lean            Proposition 6.2(2): side length and perimeter
+    A16Exists.lean             Lemma 6.1 + existence: A16_exists, all_sides
+
+  Generated/                   AUTO-GENERATED by generators/*.jl; never edit by hand
+    Polynomials.lean           exact polynomial layer (extract_polys.jl)
+    Positivity.lean            Bernstein sign certificates on the bracket
+    InactiveMargin.lean        the 89 non-active diagonals are shorter than 1
+    Diameter.lean              the diameter is exactly 1, over all pairs
+    Convexity.lean             224 support determinants, strict convexity
+    Multipliers.lean           stationarity with positive multipliers
+    Rank.lean                  I_eq = R_eq, both inclusions
+
+  Instances/                   the theory applied to explicit configurations
+    A16FirstOrder.lean         Theorem 3.5's core with both hypotheses discharged at A16
+    A16Rank30.lean             Proposition 6.2(6): rank D(e,d) = 30
+    A16LocalMax.lean           Theorem 6.3: A16_locally_maximal
+    SquareAndRhombus.lean      Section 4: the square and the rhombus, first order
+    SquareLocalMax.lean        Proposition 4.2: the square is a strict local maximum
+negative_controls/             twenty-six files that MUST fail to compile
+generators/                    the Julia programs that write ChiquipoliLean/Generated/,
+                               and their helpers (bernstein.jl, multipliers.jl, rank.jl)
 ```

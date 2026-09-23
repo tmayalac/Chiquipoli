@@ -39,6 +39,14 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
+# Every path below is relative to the repository root. If this is not the root,
+# nothing gets planted and every "rejects" check fails for the wrong reason --
+# which read as CAUGHT until 2026-09, when a one-character slip in the `cd`
+# above made all five Lean mutations report CAUGHT without planting anything.
+if [ ! -f "$ROOT/lean/verify.sh" ] || [ ! -f "$ROOT/src/A16Certificate.jl" ]; then
+  printf "refusing to run: %s is not the repository root\n" "$ROOT"
+  exit 2
+fi
 
 RED=$'\033[31m'; GRN=$'\033[32m'; DIM=$'\033[2m'; RST=$'\033[0m'
 fail=0
@@ -66,9 +74,9 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   printf "\n"
   printf "  To run it, clone the repository instead of extracting the archive.\n"
   printf "  Everything else in the supplementary material runs from the archive:\n"
-  printf "    julia --project=. scripts/run_all.jl\n"
+  printf "    julia --project=. pipeline/certify_a16.jl\n"
   printf "    julia --project=. test/runtests.jl\n"
-  printf "    julia --project=. scripts/run_literature.jl\n"
+  printf "    julia --project=. pipeline/certify_literature.jl\n"
   exit 2
 fi
 
@@ -83,9 +91,9 @@ fi
 
 MOVED_NC=""
 restore() {
-  git checkout -- src/A16Certificate.jl lean/ChiquipoliLean/Audit.lean \
-    lean/ChiquipoliLean/FirstOrderA16.lean lean/ChiquipoliLean/SideLength.lean 2>/dev/null
-  rm -f lean/ChiquipoliLean/ZZ_mutation_probe.lean
+  git checkout -- src/a16 lean/ChiquipoliLean/Audit.lean \
+    lean/ChiquipoliLean/Instances/A16FirstOrder.lean lean/ChiquipoliLean/Constructor/SideLength.lean 2>/dev/null
+  rm -f lean/ChiquipoliLean/Theory/ZZ_mutation_probe.lean
   if [ -n "$MOVED_NC" ] && [ -f "/tmp/$MOVED_NC" ]; then
     mv "/tmp/$MOVED_NC" "lean/negative_controls/$MOVED_NC"
   fi
@@ -93,9 +101,22 @@ restore() {
 trap restore EXIT INT TERM
 
 # --- helpers ---------------------------------------------------------------
-# A mutation is CAUGHT when the checker exits non-zero.
-julia_suite_rejects() { julia --project=. test/runtests.jl >/dev/null 2>&1; [ $? -ne 0 ]; }
-lean_verify_rejects() { (cd lean && ./scripts/verify.sh >/dev/null 2>&1); [ $? -ne 0 ]; }
+# A mutation is CAUGHT when the checker RAN and REPORTED a failure. A non-zero
+# exit alone is not enough: a checker that could not start (wrong directory,
+# missing tool, a file that failed to load) also exits non-zero, and counting
+# that as "rejected" is how this harness once reported five Lean mutations as
+# caught without running Lean on any of them.
+julia_suite_rejects() {
+  local out
+  out=$(julia --project=. test/runtests.jl 2>&1) && return 1
+  printf '%s' "$out" | grep -qE 'Some tests did not pass|Test Summary:.*(Fail|Error)'
+}
+lean_verify_rejects() {
+  local out
+  out=$(cd lean && ./verify.sh 2>&1) && return 1
+  printf '%s' "$out" | sed $'s/\033\\[[0-9;]*m//g' \
+    | grep -qE 'LEAN CERTIFICATE FAIL|^  FAIL  lake build'
+}
 
 # Replace exactly one occurrence, or abort: a mutation that did not apply would
 # silently be reported as CAUGHT by whatever else is failing.
@@ -126,13 +147,13 @@ dim  "    each mutation is a realistic transcription error, not a typo"
 
 run_julia_mutation \
   "constructor: sin(4t) -> sin(5t)" \
-  src/A16Certificate.jl \
+  src/a16/constructor.jl \
   '    return sin(t) - (two*cos(t) - one(t))*sin(four*t)' \
   '    return sin(t) - (two*cos(t) - one(t))*sin(_lit(t, 5)*t)'
 
 run_julia_mutation \
   "constructor equation: sin(7t) -> sin(6t)" \
-  src/A16Certificate.jl \
+  src/a16/constructor.jl \
   '    return (two*x + sin(seven*t))^2 + cos(seven*t)^2 - four*sin(t/two)^2' \
   '    return (two*x + sin(_lit(t, 6)*t))^2 + cos(seven*t)^2 - four*sin(t/two)^2'
 
@@ -143,7 +164,7 @@ run_julia_mutation \
 # is caught only by comparing against the outward-rounded operator directly.
 run_julia_mutation \
   "Krawczyk enclosure: outward rounding -> round to nearest" \
-  src/A16Certificate.jl \
+  src/a16/linear_algebra.jl \
   '                enclosure = [x0[i] + Kcorr[i] for i in 1:n]' \
   '                enclosure = [interval(BigFloat(inf(x0[i]))+inf(Kcorr[i]), BigFloat(sup(x0[i]))+sup(Kcorr[i])) for i in 1:n]'
 
@@ -153,7 +174,7 @@ run_julia_mutation \
 # to it, and the certificate would be about a polygon that is not A16.
 run_julia_mutation \
   "coordinates: sign of cos(6z) at vertex 5" \
-  src/A16Certificate.jl \
+  src/a16/constructor.jl \
   '    p[6,:] .= (x+sin(k6*z), y+cos(k6*z))' \
   '    p[6,:] .= (x+sin(k6*z), y-cos(k6*z))'
 
@@ -164,19 +185,19 @@ run_julia_mutation \
 # F'(t) = -sin t Fc'(cos t) sees it (2026-09 external audit, D08).
 run_julia_mutation \
   "derivative: Fprime loses a factor 2 in its last term" \
-  src/A16Certificate.jl \
+  src/a16/constructor.jl \
   '           fourteen*cos(seven*t)*sin(seven*t) - two*sin(t)' \
   '           fourteen*cos(seven*t)*sin(seven*t) - sin(t)'
 
 run_julia_mutation \
   "root literal: one digit altered" \
-  src/A16Certificate.jl \
+  src/a16/data.jl \
   'big"0.19627037213032280086206121185805318446"' \
   'big"0.19627037213032280096206121185805318446"'
 
 run_julia_mutation \
   "active graph: edge (6,13) -> (6,12)" \
-  src/A16Certificate.jl \
+  src/a16/data.jl \
   '(6,13)' \
   '(6,12)'
 note ""
@@ -186,48 +207,55 @@ if [ "$WHICH" = "all" ] || [ "$WHICH" = "lean" ]; then
 note "=== Lean: verify.sh must reject a weakened formalisation ==="
 dim  "    the first three were all reported as PASS before the harness was fixed"
 
-# L1 — an admitted goal must be found even in a file nothing imports.
-cat > lean/ChiquipoliLean/ZZ_mutation_probe.lean <<'LEAN'
+# L1 — an admitted goal must be found even in a file nothing imports, and even
+# one level down: the sources live in subdirectories, and the scan for `sorry`
+# once covered only the top level of ChiquipoliLean/.
+if ! cat > lean/ChiquipoliLean/Theory/ZZ_mutation_probe.lean <<'LEAN'
 import ChiquipoliLean
 namespace Chiquipoli
 theorem mutation_probe : (1 : ℝ) = 1 := by sorry
 end Chiquipoli
 LEAN
-if lean_verify_rejects; then ok "planted 'sorry' in the Lean sources"
+then bad "planted 'sorry' (could not apply)"
+elif lean_verify_rejects; then ok "planted 'sorry' in the Lean sources"
 else bad "planted 'sorry' — verify.sh accepted it"; fi
-rm -f lean/ChiquipoliLean/ZZ_mutation_probe.lean
+rm -f lean/ChiquipoliLean/Theory/ZZ_mutation_probe.lean
 
 # L2 — the axiom audit must not silently skip a name it cannot resolve.
-printf '\n#print axioms zz_mutation_no_such_theorem\n' >> lean/ChiquipoliLean/Audit.lean
-if lean_verify_rejects; then ok "unresolvable name in Audit.lean"
+if ! printf '\n#print axioms zz_mutation_no_such_theorem\n' >> lean/ChiquipoliLean/Audit.lean
+then bad "unresolvable name in Audit.lean (could not apply)"
+elif lean_verify_rejects; then ok "unresolvable name in Audit.lean"
 else bad "unresolvable name in Audit.lean — verify.sh accepted it"; fi
 git checkout -- lean/ChiquipoliLean/Audit.lean
 
 # L4 — the bridge from `twice` to the development's `dsq` is what ties the
 # Theorem 3.5 layer to the certified A16 arithmetic. A wrong factor there would
 # leave the abstract theorems true but about a different constraint system.
-patch_once lean/ChiquipoliLean/FirstOrderA16.lean \
+if ! patch_once lean/ChiquipoliLean/Instances/A16FirstOrder.lean \
   'def twice (a b : ℝ × ℝ) : ℝ × ℝ := (2 * (b.1 - a.1), 2 * (b.2 - a.2))' \
   'def twice (a b : ℝ × ℝ) : ℝ × ℝ := (2 * (b.1 - a.1), 3 * (b.2 - a.2))'
-if lean_verify_rejects; then ok "wrong factor in the dsq bridge (Theorem 3.5 layer)"
+then bad "wrong factor in the dsq bridge (could not apply)"
+elif lean_verify_rejects; then ok "wrong factor in the dsq bridge (Theorem 3.5 layer)"
 else bad "wrong factor in the dsq bridge — verify.sh accepted it"; fi
-git checkout -- lean/ChiquipoliLean/FirstOrderA16.lean
+git checkout -- lean/ChiquipoliLean/Instances/A16FirstOrder.lean
 
 # L5 — the tight root bracket of SideLength.lean is what pins the side length
 # to nineteen digits. One digit off and the exact sign check must fail.
-patch_once lean/ChiquipoliLean/SideLength.lean \
+if ! patch_once lean/ChiquipoliLean/Constructor/SideLength.lean \
   'noncomputable def cLo : ℝ := 9808007223804781715147 / 10 ^ 22' \
   'noncomputable def cLo : ℝ := 9808007223804781715148 / 10 ^ 22'
-if lean_verify_rejects; then ok "one digit off in the tight root bracket"
+then bad "one digit off in the tight root bracket (could not apply)"
+elif lean_verify_rejects; then ok "one digit off in the tight root bracket"
 else bad "one digit off in the tight root bracket — verify.sh accepted it"; fi
-git checkout -- lean/ChiquipoliLean/SideLength.lean
+git checkout -- lean/ChiquipoliLean/Constructor/SideLength.lean
 
 # L3 — removing a negative control must not reduce coverage in silence.
 MOVED_NC="nc1_wrong_diameter.lean"
-mv "lean/negative_controls/$MOVED_NC" /tmp/
-if lean_verify_rejects; then ok "a negative control removed"
+if ! mv "lean/negative_controls/$MOVED_NC" /tmp/
+then bad "a negative control removed (could not apply)"; MOVED_NC=""
+elif lean_verify_rejects; then ok "a negative control removed"
 else bad "a negative control removed — verify.sh accepted it"; fi
-mv "/tmp/$MOVED_NC" "lean/negative_controls/$MOVED_NC"
+[ -n "$MOVED_NC" ] && mv "/tmp/$MOVED_NC" "lean/negative_controls/$MOVED_NC"
 MOVED_NC=""
 note ""
 fi

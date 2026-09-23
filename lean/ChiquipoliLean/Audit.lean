@@ -11,7 +11,7 @@ which are the three standard axioms of Lean's classical foundation — and, in
 particular, **not** `sorryAx`.
 
 Run `lake env lean ChiquipoliLean/Audit.lean` to see the report, or
-`scripts/verify.sh` to have it checked automatically.
+`./verify.sh` (from `lean/`) to have it checked automatically.
 -/
 import ChiquipoliLean
 

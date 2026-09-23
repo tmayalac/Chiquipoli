@@ -2,7 +2,7 @@
 #
 # If 0 is not in f'(X) and N(X) is strictly inside X, then f has exactly one
 # root in X. That is the same operator, and the same two conditions, that
-# scripts/02_root_interval.jl applies to the constructor equation F.
+# pipeline/stages/02_certify_root.jl applies to the constructor equation F.
 #
 # Every integer literal is wrapped with `interval` so the result keeps
 # IntervalArithmetic's `isguaranteed` flag. Mixing a bare `2` into an interval

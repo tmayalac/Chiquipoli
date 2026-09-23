@@ -1,6 +1,8 @@
 .PHONY: help test nominal verify certificate lean lean-build lean-cache \
         lean-certificate literature mutation-check archive-log clean \
-        paper paper-check
+        paper paper-build paper-check
+
+PAPER := paper
 
 help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
@@ -15,7 +17,7 @@ help:
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
 	@echo
-	@echo "  make paper             compile a16.tex and audit the LaTeX log"
+	@echo "  make paper             compile paper/main.tex + supplement and audit the logs"
 	@echo "  make paper-check       reconcile the article against the certificate and Lean"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
@@ -28,17 +30,17 @@ test:
 	julia --project=. test/runtests.jl
 
 nominal:
-	julia --project=. scripts/01_nominal.jl
+	julia --project=. pipeline/stages/01_nominal_configuration.jl
 
 # The headline target. Writes results/a16_certificate.toml and the full log.
 verify:
-	julia --project=. scripts/run_all.jl | tee logs/final_run.txt
+	julia --project=. pipeline/certify_a16.jl | tee logs/final_run.txt
 
 certificate: verify
 
 # Re-certifies the solved literature cases and the deliberately broken ones.
 literature:
-	julia --project=. scripts/run_literature.jl
+	julia --project=. pipeline/certify_literature.jl
 
 # Plants known defects and requires the verification to reject each one. A
 # suite that has never failed is not a tested suite; this is what shows the
@@ -52,10 +54,10 @@ archive-log:
 	tools/archive_log.sh logs/final_run.txt
 
 # --- the article ----------------------------------------------------------
-# The article is main.tex, with supplement.tex beside it; main_1.tex is the
-# frozen previous version. All three are working copies at the repository root
-# and are not tracked (see .gitignore), so these targets are how they are held
-# to the certificate.
+# The article is paper/main.tex, with paper/supplement.tex beside it;
+# paper/archive/ holds the frozen previous version. All of paper/ is a working
+# copy and is not tracked (see .gitignore), so these targets are how the article
+# is held to the certificate.
 #
 # `paper` compiles both and audits the LaTeX logs. The audit is deliberately
 # case-insensitive and does not key on the word "Warning": LaTeX writes
@@ -67,19 +69,24 @@ archive-log:
 # Order matters. The supplement uses `xr` to cite the article's own numbering,
 # so it reads main.aux; TEXINPUTS puts the build directory on the search path.
 paper:
-	@test -f main.tex || { echo "main.tex not present; nothing to compile"; exit 0; }
-	@mkdir -p .texbuild
-	@for i in 1 2 3; do pdflatex -interaction=nonstopmode -halt-on-error \
+	@if [ -f $(PAPER)/main.tex ]; then $(MAKE) --no-print-directory paper-build; \
+	 else echo "$(PAPER)/main.tex not present; nothing to compile"; fi
+
+# Internal: every recipe line runs inside $(PAPER)/, where the article, its
+# build directory and the Overleaf latexmkrc live.
+paper-build:
+	@cd $(PAPER) && mkdir -p .texbuild
+	@cd $(PAPER) && for i in 1 2 3; do pdflatex -interaction=nonstopmode -halt-on-error \
 	    -output-directory=.texbuild main.tex >/dev/null 2>&1 || \
 	    { echo "FAIL  pdflatex errored on main.tex"; exit 1; }; done
-	@cp .texbuild/main.pdf main.pdf
-	@if [ -f supplement.tex ]; then \
+	@cd $(PAPER) && cp .texbuild/main.pdf main.pdf
+	@cd $(PAPER) && if [ -f supplement.tex ]; then \
 	   for i in 1 2 3; do TEXINPUTS=.texbuild: pdflatex -interaction=nonstopmode \
 	       -halt-on-error -output-directory=.texbuild supplement.tex >/dev/null 2>&1 || \
 	       { echo "FAIL  pdflatex errored on supplement.tex"; exit 1; }; done; \
 	   cp .texbuild/supplement.pdf supplement.pdf; \
 	 fi
-	@rc=0; for f in main supplement; do \
+	@cd $(PAPER) && rc=0; for f in main supplement; do \
 	   log=.texbuild/$$f.log; [ -f "$$log" ] || continue; \
 	   n=$$(LC_ALL=C grep -aicE '(reference|citation)[^.]*undefined' $$log); \
 	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n unresolved reference or citation"; rc=1; }; \
@@ -102,7 +109,7 @@ paper:
 # certificate and against the Lean sources. Reads the compiled PDFs, since a
 # mistyped table cell is invisible in the LaTeX source until it is typeset.
 paper-check:
-	julia --project=. scripts/check_paper.jl
+	julia --project=. pipeline/check_paper.jl
 
 # --- the Lean layer (see lean/README.md for scope) -------------------------
 
@@ -115,10 +122,10 @@ lean-build:
 # Five checks: build, no admitted goals, axiom audit, negative controls, and
 # byte-identical regeneration of the generated files from the Julia source.
 lean:
-	cd lean && ./scripts/verify.sh
+	cd lean && ./verify.sh
 
 lean-certificate:
-	julia --project=. scripts/run_lean_certificate.jl
+	julia --project=. pipeline/record_lean_certificate.jl
 
 # ---------------------------------------------------------------------------
 

@@ -33,7 +33,7 @@ Eight gates, all `CERTIFIED` or `PROVEN`:
 | Box nesting | interval containment | $Z_{\mathrm{root}} \subset \operatorname{int} Z_{\mathrm{cert}}$ |
 
 The certified object is identified with the published one by computation:
-`test/optigon_reference.jl` vendors the upstream OPTIGON general $n=2^s$
+`test/fixtures/optigon_reference.jl` vendors the upstream OPTIGON general $n=2^s$
 constructor (URL, retrieval date, upstream SHA256 and MIT attribution recorded
 in the file), and the suite requires it to reproduce the $n=16$ specialisation
 — the root, all sixteen vertices, the diameter graph, equilaterality and the
@@ -55,16 +55,16 @@ Theorem 3.5 and Theorem 6.3 used to be listed here. They no longer are:
 the bracket is a strictly convex equilateral small hexadecagon and a strict
 local maximiser of the perimeter modulo orientation-preserving Euclidean
 motions. `Feasible.thm_3_5` is the general statement. See
-`docs/theorem-3.5-formalisation.md`.
+`docs/guide/theorem-3.5-formalisation.md`.
 
 - **Global optimality.** $A_{16}$ is shown to be a strict *local* maximiser of
   perimeter, modulo orientation-preserving Euclidean motions. Whether it is
   globally optimal among convex equilateral small hexadecagons is not addressed.
 - **That the certified object is the polygon of the literature.** That is an
   attribution, checked separately by running the original OPTIGON constructor
-  and comparing coordinates; see `docs/provenance-mapping.md`.
+  and comparing coordinates; see `docs/guide/provenance-mapping.md`.
 
-`docs/scope-and-limitations.md` states the full scope, and `docs/referee-report.md` is our
+`docs/guide/scope-and-limitations.md` states the full scope, and `docs/audits/referee-report.md` is our
 own adversarial review of this package.
 
 ---
@@ -167,27 +167,85 @@ what those five were until they were looked for.
 
 ---
 
-## Repository layout
+## Repository map
 
-| Path | Contents |
-|---|---|
-| `src/` | the constructor, exact $\mathbb Q[c]$ identities, interval geometry |
-| `scripts/` | the numbered certificate stages, `run_all.jl` drives them |
-| `test/` | the test suite |
-| `lean/` | the Lean 4 formalisation and its verification script |
-| `results/` | machine-readable certificates and validation output |
-| `logs/` | the execution record, archived read-only under a UTC name |
-| `examples/` | worked cases: the square, the literature polygons, negative controls |
-| `tools/` | an independent SymPy re-derivation of the exact identities |
-| `docs/` | scope, limitations, theory audits, literature validation |
+The package is two independent layers that meet at one point. **Julia is the
+engine**: it computes the certificate by interval arithmetic and exact algebra.
+**Lean is the verifier**: it re-proves the same facts in the kernel, with no
+floating point, and proves the theorem they feed. The meeting point is
+`lean/generators/`, which writes Lean files from the Julia exact arithmetic;
+`lean/verify.sh` requires them to reproduce byte for byte.
+
+```
+src/                          THE ENGINE: a library, no side effects
+  A16Certificate.jl             the A16 module: exports and includes
+  a16/
+    data.jl                     active diameter graph, the minor, the root literal
+    guarantees.jl               _lit and assert_guaranteed: keeping IA's flag live
+    constructor.jl              F, F', the sixteen vertices, the side length
+    geometry.jl                 support determinants, inactive pairs
+    linear_algebra.jl           Jacobian D(e,d), regularity test, Krawczyk
+    exact_algebra.jl            Q[c]: Chebyshev reduction, Fc, exact divisions
+  ExactIdentity.jl              exact identities for any n (Q(c,s) arithmetic)
+  SmallPolygons.jl              the general certifier used for n = 4, 6, 8
+
+pipeline/                     THE CERTIFICATES: programs that write results/
+  certify_a16.jl                make verify      -> results/a16_certificate.toml
+  certify_literature.jl         make literature  -> results/validation_certificate.toml
+  record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
+  check_paper.jl                make paper-check: the article against all three
+  stages/                       the six steps of certify_a16.jl, in order
+    01_nominal_configuration.jl   the configuration, uncertified
+    02_certify_root.jl            Prop 6.2(1): interval Newton, uniqueness
+    03_certify_geometry.jl        Prop 6.2(3)-(4): convexity, inactive margin
+    04_certify_rank.jl            Prop 6.2(6): rank D(e,d) = 30
+    05_certify_multipliers.jl     Prop 6.2(5): positive multipliers
+    06_prove_exact_identities.jl  Lemma 6.1: the 31 equalities, exactly
+
+cases/                        inputs of the literature certificate: one
+                              candidate.jl per case, and 3 broken controls
+test/                         make test: runtests.jl and one file per theme;
+                              fixtures/ holds the vendored OPTIGON constructor
+lean/                         THE VERIFIER (see lean/README.md)
+  ChiquipoliLean/Theory/        Theorem 3.5 for any n
+  ChiquipoliLean/Constructor/   the A16 constructor and its root
+  ChiquipoliLean/Generated/     written by generators/, never by hand
+  ChiquipoliLean/Instances/     the theory at A16 and at the square
+  negative_controls/            26 false statements that must not compile
+  generators/                   Julia -> Lean, the bridge between the layers
+  verify.sh                     make lean: the five checks
+results/                      the three certificates (TOML) and the article's tables
+logs/                         final_run.txt; archive/ holds read-only copies
+docs/                         guide/ (what is certified, and how), audits/ (records)
+tools/                        mutation_check.sh, archive_log.sh, independent_check/
+examples/                     two worked tutorials: the square, interval Newton
+```
+
+To find the code behind a statement of the article:
+
+| The article says | Julia computes it in | Lean proves it in |
+|---|---|---|
+| Lemma 6.1, the 31 equalities | `pipeline/stages/06_prove_exact_identities.jl` | `Constructor/Identities.lean` |
+| Prop 6.2(1), the root | `pipeline/stages/02_certify_root.jl` | `Constructor/RootExists.lean`, `SearchInterval.lean` |
+| Prop 6.2(2), side length | `pipeline/certify_a16.jl` (`certify_side_length`) | `Constructor/SideLength.lean` |
+| Prop 6.2(3), convexity | `pipeline/stages/03_certify_geometry.jl` | `Generated/Convexity.lean` |
+| Prop 6.2(4), inactive margin | `pipeline/stages/03_certify_geometry.jl` | `Generated/InactiveMargin.lean`, `Diameter.lean` |
+| Prop 6.2(5), multipliers | `pipeline/stages/05_certify_multipliers.jl` | `Generated/Multipliers.lean` |
+| Prop 6.2(6), rank 30 | `pipeline/stages/04_certify_rank.jl` | `Generated/Rank.lean`, `Instances/A16Rank30.lean` |
+| Theorem 3.5 | (not computed) | `Theory/FirstOrder.lean` … `Theory/FeasibleMain.lean` |
+| Theorem 6.3, A16 is a strict local maximum | (not computed) | `Instances/A16LocalMax.lean` |
+| Proposition 4.2, the square | (not computed) | `Instances/SquareLocalMax.lean` |
+
+Lean paths are under `lean/ChiquipoliLean/`. `docs/guide/provenance-mapping.md`
+goes through Section 6 of the article line by line.
 
 ## Where to start reading
 
-1. `docs/certificate-spec.md` — the canonical statement of what is certified.
+1. `docs/guide/certificate-spec.md` — the canonical statement of what is certified.
 2. `results/a16_certificate.toml` — the gates and values, machine-readable.
-3. `docs/provenance-mapping.md` — line-by-line mapping of code to the article's
+3. `docs/guide/provenance-mapping.md` — line-by-line mapping of code to the article's
    Section 6, per gate.
-4. `docs/scope-and-limitations.md` — the boundaries of every claim.
+4. `docs/guide/scope-and-limitations.md` — the boundaries of every claim.
 
 ## Reproducibility
 

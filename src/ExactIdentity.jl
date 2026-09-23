@@ -3,7 +3,7 @@
 
 General exact-identity engine for side and active-diameter equalities of a
 convex equilateral small polygon, closing referee point R2 as a REUSABLE
-capability (not an A16-specific one). See `docs/general-framework.md`.
+capability (not an A16-specific one). See `docs/guide/general-framework.md`.
 
 Theory (verified in the analysis). Every candidate's coordinates lie in the
 ring `Q(c,s)` with `s^2 = 1 - c^2`, where `c = cos θ`, `s = sin θ`, and the

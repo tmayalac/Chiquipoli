@@ -5,34 +5,54 @@ the A16 first-order certificate.
     import ChiquipoliLean
 
 brings the whole development into scope. See `lean/README.md` for exactly what
-is and what is not formalized here.
+is and what is not formalized here. The modules are grouped by role:
+
+  Theory/       Theorem 3.5, Lemma 3.4 and Proposition 3.8 for an arbitrary
+                configuration, with no reference to A16
+  Constructor/  the A16 constructor, its root, and Lemma 6.1
+  Generated/    emitted by `lean/generators/*.jl` from the certified Julia
+                arithmetic; never edited by hand (`verify.sh`, check 5)
+  Instances/    the theory applied to A16, the square and the rhombus
+
+`Certificate.lean` assembles the six computational gates at one root, and
+`Audit.lean` (not imported here) prints the axioms of every headline theorem.
 -/
-import ChiquipoliLean.Chebyshev
-import ChiquipoliLean.Generated
-import ChiquipoliLean.Constructor
-import ChiquipoliLean.Identities
-import ChiquipoliLean.RootExists
-import ChiquipoliLean.Positivity
-import ChiquipoliLean.SearchInterval
-import ChiquipoliLean.InactiveMargin
-import ChiquipoliLean.Diameter
-import ChiquipoliLean.Convexity
-import ChiquipoliLean.Multipliers
-import ChiquipoliLean.Rank
-import ChiquipoliLean.FirstOrder
-import ChiquipoliLean.Feasible
-import ChiquipoliLean.FeasibleOpen
-import ChiquipoliLean.FeasibleTangent
-import ChiquipoliLean.FeasibleRigid
-import ChiquipoliLean.FeasibleMain
-import ChiquipoliLean.FeasibleA16
-import ChiquipoliLean.FeasibleSquare
-import ChiquipoliLean.FirstOrderA16
-import ChiquipoliLean.Instability
-import ChiquipoliLean.Examples
-import ChiquipoliLean.SideLength
-import ChiquipoliLean.Rank30
-import ChiquipoliLean.Slice
-import ChiquipoliLean.SliceIFT
-import ChiquipoliLean.Main
+
+-- Theory: the general first-order criterion
+import ChiquipoliLean.Theory.FirstOrder
+import ChiquipoliLean.Theory.Instability
+import ChiquipoliLean.Theory.Slice
+import ChiquipoliLean.Theory.SliceIFT
+import ChiquipoliLean.Theory.Feasible
+import ChiquipoliLean.Theory.FeasibleOpen
+import ChiquipoliLean.Theory.FeasibleTangent
+import ChiquipoliLean.Theory.FeasibleRigid
+import ChiquipoliLean.Theory.FeasibleMain
+
+-- Constructor: the A16 constructor and its root
+import ChiquipoliLean.Constructor.Chebyshev
+import ChiquipoliLean.Constructor.Coordinates
+import ChiquipoliLean.Constructor.Identities
+import ChiquipoliLean.Constructor.RootExists
+import ChiquipoliLean.Constructor.SearchInterval
+import ChiquipoliLean.Constructor.SideLength
+import ChiquipoliLean.Constructor.A16Exists
+
+-- Generated: emitted from Julia, checked byte for byte
+import ChiquipoliLean.Generated.Polynomials
+import ChiquipoliLean.Generated.Positivity
+import ChiquipoliLean.Generated.InactiveMargin
+import ChiquipoliLean.Generated.Diameter
+import ChiquipoliLean.Generated.Convexity
+import ChiquipoliLean.Generated.Multipliers
+import ChiquipoliLean.Generated.Rank
+
+-- Instances: the theory at A16, the square and the rhombus
+import ChiquipoliLean.Instances.A16FirstOrder
+import ChiquipoliLean.Instances.A16Rank30
+import ChiquipoliLean.Instances.A16LocalMax
+import ChiquipoliLean.Instances.SquareAndRhombus
+import ChiquipoliLean.Instances.SquareLocalMax
+
+-- The assembled certificate
 import ChiquipoliLean.Certificate
