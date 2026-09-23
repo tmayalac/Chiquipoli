@@ -585,6 +585,9 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
                 occursin("$nneg deliberately false variants", readme))
             chk("README: planted-defect count is the harness's ($nmut)",
                 nmut > 0 && occursin("plants $nmut known defects", readme))
+            spec = read(joinpath(ROOT, "docs", "certificate-spec.md"), String)
+            chk("certificate-spec: planted-defect count is the harness's ($nmut)",
+                occursin("# $nmut planted defects", spec))
         end
         if isempty(supsrc0)
             skip("supplement: audited theorem count matches the record")

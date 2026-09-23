@@ -144,11 +144,14 @@ rejecting anything.
 make mutation-check
 ```
 
-This plants 11 known defects and requires the verification to reject each
-one: six that the Julia suite must reject — a transcription error in the
+This plants 12 known defects and requires the verification to reject each
+one: seven that the Julia suite must reject — a transcription error in the
 constructor, one in the constructor equation, a sign error in one vertex, one
-digit of the root literal, one wrong active edge, and a Krawczyk enclosure
-rebuilt with round-to-nearest instead of outward rounding; and five weakenings of the Lean layer — an admitted
+digit of the root literal, one wrong active edge, a Krawczyk enclosure rebuilt
+with round-to-nearest instead of outward rounding, and a derivative `Fprime`
+that is wrong but keeps its sign (interval Newton still passes with it; only
+the chain-rule test against `Fc` catches it); and five weakenings of the Lean
+layer — an admitted
 goal, an unresolvable name in the axiom audit, a deleted negative control, a
 wrong factor in the bridge tying the Theorem 3.5 layer to the certified
 arithmetic, and one digit off in the tight root bracket — which `verify.sh`

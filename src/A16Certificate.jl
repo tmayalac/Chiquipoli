@@ -225,8 +225,16 @@ function regularity_test(MI)
         C = interval.(inv(M0))     # thin intervals: exact BigFloats, flag preserved
         n = size(MI,1)
         E = _eye(eltype(MI), n) - C*MI
+        # Row sums accumulated as intervals and read off by their supremum, so
+        # the reported bound is a directed upper bound on ‖I - CM‖∞ and not a
+        # round-to-nearest sum of upper bounds. Each |E_ij| bound is an exact
+        # BigFloat (abs of an endpoint), hence a guaranteed thin interval.
+        # The decision `< 1` was never at risk (the error of a nearest sum of
+        # ≤ 31 terms is ~31·2⁻²⁵⁶ relative, 25 orders below the margin), but the
+        # constants the article prints must be certified bounds themselves
+        # (2026-09 external audit, D05).
         bound = maximum(
-            sum(interval_abs_bound(E[i,j]) for j in 1:n)
+            sup(sum(interval(interval_abs_bound(E[i,j])) for j in 1:n))
             for i in 1:n
         )
         return bound < 1, bound, C, E

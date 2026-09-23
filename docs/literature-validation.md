@@ -34,7 +34,10 @@ certified point/box:
 2. **equilaterality** — the side² enclosures are mutually consistent with one
    common value. Interval arithmetic can *refute* equality (disjoint
    enclosures) but not *prove* exact equality (Golden Rule); so this is
-   `:CERTIFIED`-consistent for valid cases and `:FAIL` for negative controls.
+   `:CONSISTENT` for valid cases and `:FAIL` for negative controls. It was
+   labelled `:CERTIFIED` until the 2026-09 external audit (D11) pointed out
+   that the label reads as a certified equality; the equality itself is
+   `:PROVEN` by the `exact_identities` block.
 3. **active graph + inactive margin** — each declared active diameter encloses
    the diameter `1`; every other pair is strictly `< 1` (directed lower bound
    on the margin). `:CERTIFIED`.
@@ -57,10 +60,10 @@ certified point/box:
 
 | Case | n | Framework (local structure) | Literature result | LICQ |
 |---|---|---|---|---|
-| n4-regular-square (Vincze) | 4 | all blocks CERTIFIED/NA | **THEOREM** (global optimum, unique) | holds (6=6) |
-| n6-reinhardt-R₃,₆ (Reinhardt) | 6 | all blocks CERTIFIED/NA | **THEOREM** (global optimum, unique) | fails by 2 |
-| n8-ahmp2004-H₈ (AHMP 2004) | 8 | all blocks CERTIFIED | **THEOREM** (global optimum, unique) | holds (14=14) |
-| A16-bingane-audet | 16 | all blocks CERTIFIED | **OPEN** (best known, not optimal) | fails by 1 |
+| n4-regular-square (Vincze) | 4 | CERTIFIED/PROVEN/NA; equilaterality CONSISTENT | **THEOREM** (global optimum, unique) | holds (6=6) |
+| n6-reinhardt-R₃,₆ (Reinhardt) | 6 | CERTIFIED/PROVEN/NA; equilaterality CONSISTENT | **THEOREM** (global optimum, unique) | fails by 2 |
+| n8-ahmp2004-H₈ (AHMP 2004) | 8 | CERTIFIED/PROVEN; equilaterality CONSISTENT | **THEOREM** (global optimum, unique) | holds (14=14) |
+| A16-bingane-audet | 16 | CERTIFIED/PROVEN; equilaterality CONSISTENT | **OPEN** (best known, not optimal) | fails by 1 |
 | neg-broken-convexity | 16 | **REJECTED** (convexity FAIL) | negative control | — |
 | neg-broken-equilateral | 16 | **REJECTED** (equilaterality FAIL) | negative control | — |
 | neg-wrong-diameter | 16 | **REJECTED** (active-graph FAIL) | negative control | — |

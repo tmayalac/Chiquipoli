@@ -152,31 +152,43 @@ end
 # which is the GENERAL literature benchmark (run_literature.jl). Every
 # certified numeric bound is stringified at full BigFloat precision. Companion
 # human-readable spec: docs/certificate-spec.md.
-function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
-                              box_nesting_pass, cert_radius)
-    z = z_nominal
-    ell = side_length(z)
-    # Prop 6.2(2) states an ENCLOSURE of ℓ at the exact root, and the proof of
-    # Prop 6.2 attributes items (2)-(4) to outward-rounded evaluation. The
-    # nominal 2sin(z_nominal/2) above is a point evaluation at a hard-coded
-    # literal, so on its own it did not support that claim — this gate was the
-    # only one in the certificate marked NOMINAL rather than CERTIFIED.
-    # The interval-Newton step of 02 proves z* ∈ r2.Z, so evaluating the same
-    # expression over that box with outward rounding encloses ℓ rigorously.
-    ellI = r2.Z === nothing ? nothing : side_length(r2.Z)
-    ell_certified = ellI !== nothing
+# A value for the certificate file: TOML has no `nothing`, and a failed stage
+# returns `nothing` in the fields it could not compute.
+_s(x) = x === nothing ? "" : string(x)
+
+"""
+Prop 6.2(2): the side length ℓ = 2 sin(z/2) and the perimeter 16ℓ, enclosed.
+
+The interval-Newton step of 02 proves z* ∈ r2.Z, so evaluating the same
+expression over that box with outward rounding encloses ℓ rigorously. This is a
+gate of the verdict: it passes only if the root was certified and the nominal
+value lies in the enclosure (if not, the hard-coded literal and the certified
+root disagree). It used to be recorded as passed unconditionally and left out
+of `final_pass` (2026-09 external audit, D03).
+"""
+function certify_side_length(r2)
+    ell = side_length(z_nominal)
+    r2.Z === nothing && return (pass=false, ell=ell, ellI=nothing, perimI=nothing)
+    ellI = side_length(r2.Z)
     # 16 as a guaranteed thin interval: a bare Int here would clear
     # IntervalArithmetic's NG flag on the certificate's headline perimeter.
-    perimI = ell_certified ? A16Certificate._lit(ellI, 16) * ellI : nothing
-    if ell_certified
-        assert_guaranteed(ellI, "ell enclosure over Z_root")
-        assert_guaranteed(perimI, "perimeter enclosure over Z_root")
-        println("\nell enclosure over Z_root  = ", ellI)
-        println("16*ell enclosure over Z_root = ", perimI)
-        # The enclosure must contain the nominal value, or the hard-coded
-        # literal and the certified root disagree.
-        @assert inf(ellI) <= ell <= sup(ellI) "nominal ell outside its certified enclosure"
-    end
+    perimI = A16Certificate._lit(ellI, 16) * ellI
+    assert_guaranteed(ellI, "ell enclosure over Z_root")
+    assert_guaranteed(perimI, "perimeter enclosure over Z_root")
+    println("ell enclosure over Z_root  = ", ellI)
+    println("16*ell enclosure over Z_root = ", perimI)
+    contains_nominal = inf(ellI) <= ell <= sup(ellI)
+    println("nominal ell inside its certified enclosure PASS = ", contains_nominal)
+    return (pass=contains_nominal, ell=ell, ellI=ellI, perimI=perimI)
+end
+
+function emit_a16_certificate(projroot, final_pass, r2, rl, r3, r4, r5, r6,
+                              box_nesting_pass, cert_radius)
+    z = z_nominal
+    ell = rl.ell
+    ellI = rl.ellI
+    perimI = rl.perimI
+    ell_certified = ellI !== nothing
     commit, clean = _git_state(projroot)
     pkg_version = TOML.parsefile(joinpath(projroot, "Project.toml"))["version"]
     cert = Dict{String,Any}(
@@ -191,7 +203,7 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
             "git_commit" => commit,
             "git_source_clean" => clean,
             "git_available" => _git_available(projroot),
-            "z_root_radius" => string(r2.radius),
+            "z_root_radius" => _s(r2.radius),
             "z_cert_radius" => string(cert_radius),
         ),
         "verdict" => Dict{String,Any}(
@@ -215,12 +227,13 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
         "gate" => Any[
             Dict{String,Any}("id"=>"existence", "ref"=>"Prop 6.2(1)",
                 "hypothesis"=>"unique constructor root",
-                "status"=> r2.pass ? "CERTIFIED" : "FAIL", "passed"=>r2.pass,
+                "status"=> (r2.pass && r2.unique_in_search_interval) ? "CERTIFIED" : "FAIL",
+                "passed"=> r2.pass && r2.unique_in_search_interval,
                 "detail"=>"interval Newton: 0∉F'(Z_root), N(Z_root)⊂int Z_root; unique in box and in full search interval"),
             Dict{String,Any}("id"=>"side_length", "ref"=>"Prop 6.2(2)",
                 "hypothesis"=>"common side length ℓ and perimeter 16ℓ",
-                "status"=> ell_certified ? "CERTIFIED" : "NOMINAL",
-                "passed"=>true,
+                "status"=> rl.pass ? "CERTIFIED" : "FAIL",
+                "passed"=>rl.pass,
                 "detail"=>"ell = 2 sin(z/2) evaluated over the certified root box Z_root with outward rounding; the nominal value is the midpoint-literal evaluation, retained for display",
                 "ell"=>string(ell), "perimeter_16ell"=>string(16ell),
                 "ell_lower"=> ell_certified ? string(inf(ellI)) : "",
@@ -240,8 +253,8 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
             Dict{String,Any}("id"=>"multipliers", "ref"=>"Prop 6.2(5)",
                 "hypothesis"=>"strictly positive active-diameter multipliers + stationarity identity",
                 "status"=> r5.pass ? "CERTIFIED" : "FAIL", "passed"=>r5.pass,
-                "min_lambda_lower_bound"=>string(r5.lambda_lower),
-                "omitted_residual_matrix_regularity_bound"=>string(r5.omitted_bound),
+                "min_lambda_lower_bound"=>_s(r5.lambda_lower),
+                "omitted_residual_matrix_regularity_bound"=>_s(r5.omitted_bound),
                 "alpha_sum_contains_minus16_diagnostic"=>r5.alpha_balance_diagnostic,
                 # Prop 6.2(5) states that the FULL multiplier enclosures are recorded
                 # here, and the paper's Table 2 displays their midpoints. Emitting only
@@ -254,12 +267,12 @@ function emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
                         "index"=>i-1,
                         "lower"=>string(inf(r5.multiplier_enclosure[i])),
                         "upper"=>string(sup(r5.multiplier_enclosure[i])))
-                    for i in 1:16],
+                    for i in 1:16 if r5.multiplier_enclosure !== nothing],
                 "lambda_enclosure"=>[Dict{String,Any}(
                         "edge"=>[ACTIVE_EDGES[k][1], ACTIVE_EDGES[k][2]],
                         "lower"=>string(inf(r5.multiplier_enclosure[16+k])),
                         "upper"=>string(sup(r5.multiplier_enclosure[16+k])))
-                    for k in 1:length(ACTIVE_EDGES)]),
+                    for k in 1:length(ACTIVE_EDGES) if r5.multiplier_enclosure !== nothing]),
             Dict{String,Any}("id"=>"rank", "ref"=>"Prop 6.2(6)",
                 "hypothesis"=>"rank D(e,d)=30 ⇒ I_eq=R_eq",
                 "status"=> r4.pass ? "CERTIFIED" : "FAIL", "passed"=>r4.pass,
@@ -308,19 +321,31 @@ println("\n=== 05 MULTIPLIERS ===")
 r5 = run_multipliers_interval(radius=CERT_RADIUS)
 println("\n=== 06 EXACT IDENTITIES ===")
 r6 = run_identity_audit()
+println("\n=== SIDE LENGTH (Prop 6.2(2)) ===")
+rl = certify_side_length(r2)
 
 println("\n=== BOX NESTING (docs/provenance-mapping.md, Prop 6.2: Z_root ⊂ int Z_cert) ===")
 # Lemma 6.1's exact identities and Prop 6.2(3)-(6)'s interval certificates are
 # only composable with Prop 6.2(1)'s certified root if the root box is nested
-# inside the geometry/rank/multiplier box. This was previously an unverified
-# assumption from matching literal constants across scripts; now an explicit gate.
-box_nesting_pass = r2.pass && (r2.radius <= CERT_RADIUS)
+# inside the geometry/rank/multiplier box. Checked by comparing ENDPOINTS against
+# the box each of stages 03, 04 and 05 actually evaluated -- not by comparing
+# radii, which relied on every stage building its box by the same expression
+# around the same centre (2026-09 external audit, D04).
+strictly_inside(inner, outer) = inf(outer) < inf(inner) && sup(inner) < sup(outer)
+box_nesting_pass = r2.pass &&
+    all(strictly_inside(r2.Z, r.Z) for r in (r3, r4, r5))
 println("root box radius = ", r2.radius)
 println("geometry/rank/multiplier box radius = ", CERT_RADIUS)
-println("root box nested inside certificate box PASS = ", box_nesting_pass)
-@assert box_nesting_pass "root-certified box is not nested inside the geometry/rank/multiplier box; the composition argument in docs/provenance-mapping.md (Prop 6.2, box nesting Z_root ⊂ int Z_cert) does not apply"
+println("root box inside the interior of the boxes of 03, 04, 05 PASS = ", box_nesting_pass)
 
-final_pass = box_nesting_pass && r2.pass && r3.support_pass && r3.inactive_pass && r4.pass && r5.pass && r6.pass
+# The verdict. Every gate enters it, including root uniqueness on the whole of
+# I_search (which the article says is what pins the configuration; it used to
+# be reported but not required, D01) and the side-length enclosure (D03). A
+# failed gate yields NOT CERTIFIED and a certificate file with FAIL entries;
+# nothing aborts except a lost guarantee flag, which is a bug in the code, not
+# a failed hypothesis (D02).
+final_pass = box_nesting_pass && r2.pass && r2.unique_in_search_interval &&
+    rl.pass && r3.support_pass && r3.inactive_pass && r4.pass && r5.pass && r6.pass
 println("\n============================================================")
 println("FINAL FIRST-ORDER CERTIFICATE: ", final_pass ? "CERTIFIED" : "NOT CERTIFIED")
 println("ROOT UNIQUENESS IN CERTIFIED BOX: ", r2.unique_in_box ? "PROVED" : "NOT PROVED")
@@ -338,7 +363,7 @@ println("GLOBAL OPTIMALITY: NOT CLAIMED")
 println("============================================================")
 
 let projroot = normpath(joinpath(@__DIR__, ".."))
-    outpath = emit_a16_certificate(projroot, final_pass, r2, r3, r4, r5, r6,
+    outpath = emit_a16_certificate(projroot, final_pass, r2, rl, r3, r4, r5, r6,
                                    box_nesting_pass, CERT_RADIUS)
     println("\nwrote machine-readable certificate: ", relpath(outpath, projroot))
 end

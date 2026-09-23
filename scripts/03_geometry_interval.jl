@@ -21,7 +21,12 @@ function run_geometry_interval(; radius=big"1e-28")
     # 1 - sqrt(.) with outward interval rounding and extracting the infimum
     # yields a directed (rounded-down) lower bound on the true margin, rather
     # than a bare BigFloat that happens to round to nearest.
-    margin_interval = 1 - sqrt(interval(worst_inactive[3]))
+    # The literal 1 goes through `_lit`, as everywhere else: a bare Int would
+    # clear the guarantee flag (the value was sound, 1 being exact, but it was
+    # the one certified quantity not checked by `assert_guaranteed`; 2026-09
+    # external audit, D06).
+    margin_interval = A16Certificate._lit(Z, 1) - sqrt(interval(worst_inactive[3]))
+    assert_guaranteed(margin_interval, "inactive diameter margin")
     margin = inf(margin_interval)
 
     println("worst support = ", worst_support)
@@ -36,9 +41,11 @@ function run_geometry_interval(; radius=big"1e-28")
     for e in ACTIVE_EDGES
         println(e, " => ", sqdist(p,e[1],e[2]))
     end
+    # Z is returned so that run_all.jl checks the box nesting Z_root ⊂ int Z
+    # against the box this stage actually evaluated, not against a radius.
     return (support_pass=support_pass, inactive_pass=inactive_pass,
             worst_support=worst_support, worst_inactive=worst_inactive,
-            margin=margin)
+            margin=margin, Z=Z)
 end
 
 (abspath(PROGRAM_FILE) == @__FILE__) && run_geometry_interval()

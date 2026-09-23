@@ -64,7 +64,7 @@ Machine-readable record of every gate below: **`results/a16_certificate.toml`**
 | Positive multipliers + stationarity | Prop 6.2(5) | CERTIFIED | \(\min\lambda_{ij}\ge 0.0918667776833353997\) (edge \(\{6,13\}\)); omitted-eq recovery via \(\det Q=y_1-y_8<0\) |
 | Rank 30 \(\Rightarrow I_{\rm eq}=R_{\rm eq}\) | Prop 6.2(6) | CERTIFIED | \(\lVert I-CM\rVert_\infty\le 1.419383643581978\times10^{-25}<1\) |
 | 16 side + 15 diameter equalities | Lemma 6.1 | PROVEN | exact \(\mathbb Q[c]\) algebra, 16/16 + 15/15; 29 unconditional, 2 (\(\{3,4\},\{12,13\}\)) \(=F_c\); no interval containing zero |
-| Box nesting \(Z_{\rm root}\subset\operatorname{int}Z_{\rm cert}\) | Prop 6.2 | CERTIFIED | composition gate: \(10^{-30}\subset 10^{-28}\) |
+| Box nesting \(Z_{\rm root}\subset\operatorname{int}Z_{\rm cert}\) | Prop 6.2 | CERTIFIED | composition gate: endpoints of \(Z_{\rm root}\) (radius \(10^{-30}\)) strictly inside each box stages 03–05 evaluated (radius \(10^{-28}\)) |
 
 Final banner (from `run_all.jl`): `FINAL FIRST-ORDER CERTIFICATE: CERTIFIED`,
 `ROOT UNIQUENESS ... PROVED`, `TOPOLOGICAL LOCAL MAXIMALITY: NOT ESTABLISHED BY

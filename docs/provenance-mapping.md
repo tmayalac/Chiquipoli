@@ -231,7 +231,11 @@ $$Z_{\mathrm{root}}\subset\operatorname{int}Z_{\mathrm{cert}},$$
 with $Z_{\mathrm{root}}$ of radius $10^{-30}$ for existence and uniqueness, and
 $Z_{\mathrm{cert}}$ of radius $10^{-28}$ for geometry, rank and multipliers. In
 the code, `box_root` (radius `1e-30`) $\subset$ `box_geom` (radius `1e-28`),
-with an explicit `@assert box_nesting_pass` in `run_all.jl`.
+checked in `run_all.jl` by comparing endpoints: `Z_root` must lie in the
+interior of the box that each of stages 03, 04 and 05 actually evaluated (not,
+as before the 2026-09 external audit, by comparing the two radii, D04). The
+check is a gate of the verdict; a failure yields `NOT CERTIFIED` and a
+certificate file with a `FAIL` entry rather than an aborted run (D02).
 
 ### Proposition 6.2(1) — existence and uniqueness
 

@@ -157,6 +157,17 @@ run_julia_mutation \
   '    p[6,:] .= (x+sin(k6*z), y+cos(k6*z))' \
   '    p[6,:] .= (x+sin(k6*z), y-cos(k6*z))'
 
+# A derivative that is wrong but keeps the right sign. Interval Newton and the
+# monotonicity test on I_search both still PASS with it -- F'(Z) moves from
+# about -3.11 to -2.92 -- so the certificate would print CERTIFIED on a root
+# step whose proof uses the wrong function. Only the chain-rule test
+# F'(t) = -sin t Fc'(cos t) sees it (2026-09 external audit, D08).
+run_julia_mutation \
+  "derivative: Fprime loses a factor 2 in its last term" \
+  src/A16Certificate.jl \
+  '           fourteen*cos(seven*t)*sin(seven*t) - two*sin(t)' \
+  '           fourteen*cos(seven*t)*sin(seven*t) - sin(t)'
+
 run_julia_mutation \
   "root literal: one digit altered" \
   src/A16Certificate.jl \

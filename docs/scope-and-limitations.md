@@ -88,7 +88,8 @@ negative control).
   i.e. the sides are equal **to within the certified spread** `minsup−maxinf`
   (≈ rounding width for the benchmark cases). It can also **rigorously refute**
   equality (disjoint side² enclosures ⇒ sides differ; used by the negative
-  control). `:CERTIFIED` for the consistency/spread bound; `:FAIL` on refutation.
+  control). `:CONSISTENT` for the consistency/spread bound (it was `:CERTIFIED`
+  until the 2026-09 external audit, D11); `:FAIL` on refutation.
 - **Does NOT prove:** exact equality of the sides. Per the project's Golden
   Rule, overlapping interval enclosures are **not** a proof of exact equality.
   Exact equilaterality holds **by construction** (an algebraic identity of the

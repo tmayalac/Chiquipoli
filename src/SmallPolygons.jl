@@ -12,6 +12,8 @@ status:
 
   :PROVEN     — established by exact arithmetic / exact algebra.
   :CERTIFIED  — established rigorously by interval arithmetic (strict bounds).
+  :CONSISTENT — interval enclosures compatible with an equality they cannot
+                prove (Golden Rule); the equality itself needs :PROVEN elsewhere.
   :NUMERICAL  — high-precision floating diagnostic; NOT a certificate.
   :NA         — the block does not apply to this candidate.
   :FAIL       — the property was refuted (used for negative controls).
@@ -169,7 +171,9 @@ function regularity_test(MI)
     C = interval.(inv(M0))          # thin: exact BigFloats, keeps the NG flag live
     nn = size(MI, 1)
     E = _eye(eltype(MI), nn) - C*MI
-    bound = maximum(sum(interval_abs_bound(E[i,j]) for j in 1:nn) for i in 1:nn)
+    # Directed upper bound: row sums as intervals, then the supremum (see the
+    # same function in A16Certificate.jl).
+    bound = maximum(sup(sum(interval(interval_abs_bound(E[i,j])) for j in 1:nn)) for i in 1:nn)
     return bound < 1, bound
 end
 
@@ -306,7 +310,15 @@ per block. Never raises on a refuted property; instead marks the block :FAIL
 (this is what negative controls exercise).
 """
 function certify(cand::Candidate; radius=big"1e-24", precision=256)
-    setprecision(BigFloat, precision)
+    # Scoped, not global: a bare `setprecision(BigFloat, precision)` here used to
+    # change the working precision of whoever called `certify` (2026-09 external
+    # audit, D12).
+    return setprecision(BigFloat, precision) do
+        _certify(cand, radius)
+    end
+end
+
+function _certify(cand::Candidate, radius)
     n = cand.n
     blocks = BlockResult[]
     # Candidate `coords`/`F` are often loaded at runtime via `include`; call
@@ -346,8 +358,9 @@ function certify(cand::Candidate; radius=big"1e-24", precision=256)
     # ---- Block: equilaterality + side length -------------------------------
     # Interval arithmetic can RIGOROUSLY REFUTE equality (disjoint enclosures ⇒
     # sides differ) but cannot PROVE exact equality (Golden Rule). So: FAIL on
-    # disjoint side² enclosures; otherwise CERTIFIED-consistent (equal by
-    # construction, interval-confirmed).
+    # disjoint side² enclosures; otherwise :CONSISTENT -- not :CERTIFIED, which
+    # would read as a certified equality (2026-09 external audit, D11). The
+    # equality itself is :PROVEN by the exact_identities block below.
     sides2 = [sqdist(p, i, mod(i+1,n)) for i in 0:n-1]
     maxinf = maximum(inf(s) for s in sides2); minsup = minimum(sup(s) for s in sides2)
     ell = sqrt(sides2[1])   # interval side length
@@ -356,8 +369,8 @@ function certify(cand::Candidate; radius=big"1e-24", precision=256)
         push!(blocks, BlockResult("equilaterality", :FAIL,
             "side² enclosures are disjoint (max inf $(maxinf) > min sup $(minsup)) ⇒ sides NOT all equal (refuted)"))
     else
-        push!(blocks, BlockResult("equilaterality", :CERTIFIED,
-            "side² enclosures mutually consistent with a common value in [$(maxinf), $(minsup)] (equilateral by construction)" * guarantee_note(sides2)))
+        push!(blocks, BlockResult("equilaterality", :CONSISTENT,
+            "side² enclosures mutually consistent with a common value in [$(maxinf), $(minsup)]; not a proof of equality, which is the exact_identities block" * guarantee_note(sides2)))
     end
 
     # ---- Block: active graph + inactive margin -----------------------------
@@ -507,7 +520,7 @@ function Base.show(io::IO, r::CertifyReport)
         println(io, "   literature: ", r.meta[:status_literature])
     end
     for b in r.blocks
-        println(io, "   [", rpad(String(b.status), 9), "] ", rpad(b.name, 20), " ", b.detail)
+        println(io, "   [", rpad(String(b.status), 10), "] ", rpad(b.name, 20), " ", b.detail)
     end
 end
 

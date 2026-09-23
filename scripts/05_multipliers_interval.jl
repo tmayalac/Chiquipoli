@@ -32,7 +32,13 @@ function run_multipliers_interval(; radius=big"1e-28")
     println("Krawczyk PASS = ", sol.pass)
 
     if !(reg_pass && sol.pass)
-        return (pass=false, reason="normalized multiplier solve failed")
+        # Same fields as the success return, so a failure is reported as a
+        # FAIL gate in the certificate instead of crashing run_all.jl when it
+        # reads a field that is not there (2026-09 external audit, D02).
+        return (pass=false, reason="normalized multiplier solve failed",
+                lambda_lower=nothing, alpha_sum=nothing,
+                alpha_balance_diagnostic=false, multiplier_enclosure=nothing,
+                omitted_bound=nothing, Z=Z)
     end
 
     Y = sol.enclosure
@@ -74,9 +80,9 @@ function run_multipliers_interval(; radius=big"1e-28")
     final_pass =
         reg_pass && sol.pass && positivity_pass && omitted_pass
 
-    return (pass=final_pass, lambda_lower=lambda_lower,
+    return (pass=final_pass, reason="", lambda_lower=lambda_lower,
             alpha_sum=alpha_sum, alpha_balance_diagnostic=alpha_balance_diagnostic,
-            multiplier_enclosure=Y, omitted_bound=omitted_bound)
+            multiplier_enclosure=Y, omitted_bound=omitted_bound, Z=Z)
 end
 
 (abspath(PROGRAM_FILE) == @__FILE__) && run_multipliers_interval()

@@ -272,12 +272,61 @@ end
     @test sup(r.Fm) - inf(r.Fm) > 0
 end
 
+@testset "Fprime is the derivative of Ffun (chain rule through Fc)" begin
+    # Fprime is written by hand and carries the whole of Prop 6.2(1): interval
+    # Newton and the monotonicity test on I_search both evaluate it. A wrong
+    # derivative of the right sign would let both pass without supporting their
+    # conclusion, and no test compared it with the function it differentiates
+    # (2026-09 external audit, D08). F(t) = Fc(cos t) exactly, so
+    # F'(t) = -sin t * Fc'(cos t), with Fc' taken exactly from the rational
+    # coefficients of Fc_poly() -- an independent route to the same derivative.
+    setprecision(BigFloat, 256) do
+        Fc = Fc_poly()                                   # ascending: Fc[k+1] is the c^k coefficient
+        dFc = [k * Fc[k+1] for k in 1:length(Fc)-1]      # exact derivative, still rational
+        ev(p, c) = sum(BigFloat(p[k]) * c^(k-1) for k in eachindex(p))
+        for t in (big"0.11", big"0.17", z_nominal, big"0.23", big"0.31")
+            c = cos(t)
+            @test abs(ev(Fc, c) - Ffun(t)) < big"1e-60"              # F = Fc∘cos
+            @test abs(Fprime(t) + sin(t) * ev(dFc, c)) < big"1e-60"   # F' = -sin·Fc'∘cos
+        end
+    end
+end
+
+@testset "failure paths report instead of crashing" begin
+    # run_all.jl reads the fields of each stage's result to write the
+    # certificate. A failed multiplier solve used to return only (pass, reason),
+    # so a NOT CERTIFIED run then crashed on `r5.lambda_lower` before the
+    # certificate was written (2026-09 external audit, D02). Every stage must
+    # return the same fields whether it passes or fails.
+    include(joinpath(@__DIR__, "..", "scripts", "05_multipliers_interval.jl"))
+    quiet(f) = redirect_stdout(f, devnull)
+    ok5  = quiet(() -> run_multipliers_interval())
+    bad5 = quiet(() -> run_multipliers_interval(radius=big"1e-2"))   # too wide: regularity fails
+    @test ok5.pass && !bad5.pass
+    @test keys(ok5) == keys(bad5)
+    ok2  = quiet(() -> run_root_interval())
+    bad2 = quiet(() -> run_root_interval(radii=[big"1e-2"]))         # leaves I_search: rejected
+    @test ok2.pass && !bad2.pass
+    @test keys(ok2) == keys(bad2)
+end
+
 @testset "Literature positive cases certify (local first-order structure)" begin
     for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         @test structural_pass(r)
         @test !any(b.status == :FAIL for b in r.blocks)
+        # Interval consistency is not certified equality (audit D11): the
+        # equilaterality block is :CONSISTENT, the equality itself :PROVEN.
+        st = Dict(b.name => b.status for b in r.blocks)
+        @test st["equilaterality"] == :CONSISTENT
+        @test st["exact_identities"] == :PROVEN
+    end
+    # `certify` works at its own precision and leaves the caller's alone (D12).
+    cand = loadcand("n4_regular")
+    setprecision(BigFloat, 128) do
+        certify(cand; radius=big"0")
+        @test precision(BigFloat) == 128
     end
 end
 

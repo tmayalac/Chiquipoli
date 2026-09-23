@@ -50,6 +50,49 @@ these changes, not that tag, are what a fresh checkout of `main` gets.
   mutations still need `make mutation-check` by hand (Mathlib cache).
 - `.zenodo.json` added, so that a Zenodo deposit made from a GitHub release
   carries the right title, authors, licence and description. No deposit exists.
+- **Second external audit (2026-09, evidence-ledger report on 1.0.0).** No
+  finding of severity S3 or S4; every certified bound reproduced. Findings
+  M01-M04 and D07 had already been fixed by the round below. Resolved now:
+  - D01: root uniqueness on the whole of `I_search` is part of the verdict; it
+    was reported but not required, so a run whose monotonicity test failed
+    would still have printed CERTIFIED.
+  - D02: failure paths are uniform. A failed multiplier solve used to return
+    only `(pass, reason)`, and run_all.jl then crashed on `r5.lambda_lower`
+    after printing NOT CERTIFIED; a failed root step aborted through an
+    `@assert`. Every stage now returns the same fields on failure, nothing
+    aborts except a lost guarantee flag, and a failed run still writes the
+    certificate with FAIL entries. Checked end to end on forced failures of both
+    kinds, and by a new test that the failure and success results of stages 02
+    and 05 have the same fields.
+  - D03: the side-length gate is a real gate (`certify_side_length`): it fails
+    if the root was not certified or the nominal ℓ lies outside its enclosure,
+    and it enters the verdict. It was recorded as passed unconditionally.
+  - D04: box nesting compares endpoints against the box each of stages 03-05
+    actually evaluated, instead of comparing two radii.
+  - D05: `regularity_test` (both tracks) sums the row bounds as intervals and
+    reports the supremum, so the printed norm bounds are directed upper bounds.
+    No certified value changed at 256 bits.
+  - D06: the inactive margin routes its literal through `_lit` and is checked by
+    `assert_guaranteed`, like every other certified quantity.
+  - D08: new test `Fprime(t) = -sin t · Fc'(cos t)` from the exact coefficients
+    of `Fc_poly()`, and a new mutation (a derivative that is wrong but keeps its
+    sign). With that mutation interval Newton and monotonicity both still PASS,
+    so before this test the certificate would have printed CERTIFIED on a wrong
+    derivative; the test now rejects it. 12 planted defects, 7 in Julia.
+  - D11: Track B's equilaterality block reports `:CONSISTENT`, not
+    `:CERTIFIED`; the equality itself is the `:PROVEN` exact_identities block.
+  - D12: `certify` sets its working precision in a scoped
+    `setprecision(...) do` block instead of changing the caller's.
+  - Supplement (editorial, no mathematics changed): M07, the equilateral
+    benchmarks n = 4, 8 are credited to Vincze (1950) and Audet-Hansen-Messine-
+    Perron (2004), not to Tamvakis (1987) and AHM (2007), whose optima are not
+    equilateral; M05, the pipeline paragraph no longer says nothing is iterative
+    or that a failure aborts; M06, the Krawczyk system is linear; D10, it states
+    that the Jacobian steps rest on Lemma 6.1; and the steps are described in
+    logical order, the scripts computing (i) last.
+  - Not changed, by the report's own revision: R02 (the supplement's `y8 - y1`
+    statement is accurate), R04 (the article's "re-derives those hypotheses" is
+    accurate). R03 and R05 concerned the report itself.
 - **External audit (2026-09, report on package 1.0.0), project-side findings
   resolved.** The report re-executed every interval gate in mpmath and found
   no error in any certified value; its findings concern the text around them.
