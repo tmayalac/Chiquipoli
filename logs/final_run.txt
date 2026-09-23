@@ -1,29 +1,42 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-23T13:19:36Z
+UTC timestamp        = 2026-09-23T22:57:45Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = 9f736d16637eb57ec6208c5daf4effd6f5979285  (source clean — log matches this commit)
+git commit           = 980e59c34d7e466298174a109e71a7774425a247  (source clean — log matches this commit)
 SHA256 of source files:
-  01bbd548863daf6f8733edba2848440854416b3066cfe55540070e45e773eb99  src/A16Certificate.jl
-  d554b47c76d921abea8333fa9de6903c1a707c4db9849bc7de73d3f8ac600b2f  src/ExactIdentity.jl
-  11787e6adbd32ba4d0a09b6b777cdc1124134f60318cd53e42953afc45657ea5  src/SmallPolygons.jl
-  66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  scripts/01_nominal.jl
-  ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82  scripts/02_root_interval.jl
-  a452f764cdd8b171c5c302766b16f066083988d12c4b032ffc1f86ce821c6202  scripts/03_geometry_interval.jl
-  4c52bf4530d4403aacdc718f2bf41171ade6f11c5e7540bb92bd8ac85372855b  scripts/04_rank_interval.jl
-  7acdea68540509f45aa429d338b3f6c10a18a5e4ba53ef601e41afb7cdf8d91c  scripts/05_multipliers_interval.jl
-  8529bebfb5c366c151839dfb5dbfbc215a1a9e08e4e0dd8e6dfda2d749dbb91b  scripts/06_exact_identities.jl
-  beaf0180e561c4bc490f8a59a40df3cfafff39f0521cbf4627d1cad9f2567f7e  scripts/_bootstrap.jl
-  6b9ef29029a09d22efcb17fba6c5252ca68b13334e21f15c12a40cec03edcc43  scripts/check_paper.jl
-  9dd94b66b33f1ce9f980c374686f615d6634916f0a1e5218ed36af8285af418d  scripts/run_all.jl
-  73ee807be09de425cfb4532b1d1b5a0fef6da3c8f8adc9d9b9f4e4b6c491bb9a  scripts/run_lean_certificate.jl
-  5396b3c8e7a365248e2c7afe94cc559900a204d0671a7e3bec4be4d6855162c9  scripts/run_literature.jl
-  42e7838569a087198bdcf9b38342a28a0ded8ba8ca933894089a22091e1641ba  test/optigon_reference.jl
-  25c02e845d314a9ebdb4a2e3e15bf019ad445a29514582c1a25b2414591829dd  test/runtests.jl
+  156c7dc49065528651b1b494a05b2fcbb2e84c544e7fb7bb6d300442f181dbb8  pipeline/certify_a16.jl
+  a4c6777792af9df691c2c53cd61aa274eac183a1435d5d5780f767d82946a250  pipeline/certify_literature.jl
+  74e8b47a96ae3823206a63dc6e6e8eb3e3a895a00ebb98860f2ff1383cc80944  pipeline/check_paper.jl
+  0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216  pipeline/record_lean_certificate.jl
+  66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  pipeline/stages/01_nominal_configuration.jl
+  ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82  pipeline/stages/02_certify_root.jl
+  18070f1bfeaf76dbb4f986b69c652b360462459a982238f5fb07ec8f120493fa  pipeline/stages/03_certify_geometry.jl
+  4c52bf4530d4403aacdc718f2bf41171ade6f11c5e7540bb92bd8ac85372855b  pipeline/stages/04_certify_rank.jl
+  c289addd92ed3d271cdece7cf22b7940451d5ad5a68ee5e5b22f277b9b5c516d  pipeline/stages/05_certify_multipliers.jl
+  be25d69eb5a18a4f508fd2c532576a3b4cd5b5b41d991c1fc1149c530cfd74de  pipeline/stages/06_prove_exact_identities.jl
+  c952fbe3b55506b362d5eb974f4a89411a476b819ccf862be9dc483907b87e1f  pipeline/stages/_bootstrap.jl
+  25f544cfe29066473517d97b6648223e441af2049b33b8ee1a55b6856bd945a5  src/A16Certificate.jl
+  689f2bddc490b420c616389bae7afdaec053208eb0a5058e54567856dd3cd4bb  src/ExactIdentity.jl
+  6f7f606f5cef44da29fda03b44876a0fab2f48abfcf4f26980311c3e7183699e  src/SmallPolygons.jl
+  108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50  src/a16/constructor.jl
+  d8eccb690967adfcf71266db2694407fcc5f9a4e62e9b18ab9365496a7f6e9b4  src/a16/data.jl
+  b69ff3c3a4e082197696a41f1521dda0e92386d375820208493c9c979104f037  src/a16/exact_algebra.jl
+  1fe5c3feadf9fcf9d447475bb9f134d3a6ee444c586ec4c13ef0b43fd714ed9a  src/a16/geometry.jl
+  99aa7edc14d88b589419a22abb89106e53ac4ad69cfb33a7ed1d5e89f00577d3  src/a16/guarantees.jl
+  e22454a4a8e4d8dfa009bc88a8cb919209faf6bdfee852ea422ee80a420cad79  src/a16/linear_algebra.jl
+  93cac610a4de6705a4fa5402dc81844b021c991b0d1851c308fa6b1e8b052a68  test/certificate_stages.jl
+  acab331dbb73673a5e0446c582289998ea5bbdc76838c213602a19a4904fbcfe  test/constructor.jl
+  76f6722ab739858cbacc8ebd5fbdddd453469be86f9a622f0a5430d285b67d33  test/exact_algebra.jl
+  7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf  test/fixtures/optigon_reference.jl
+  9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5  test/framework_guards.jl
+  d7356756080990cd21011235dae4556e0c60b99c17eaee4de53417e40a6cf7d8  test/literature.jl
+  bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff  test/optigon.jl
+  154192c00db5b5acce2a5770cae56c75347b011171f15c8fe8af44b85b5a78df  test/regressions.jl
+  57b972105d13e687a65ae241888304f8820d1aa301751622655ac62759adbf19  test/runtests.jl
   de9969597ef34a0c76833c870b4a3c7369d40dbbd4beff90b80e556d30ad5764  Project.toml
   a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57  Manifest.toml
 
@@ -207,7 +220,7 @@ ell enclosure over Z_root  = [0.195955, 0.195956]₂₅₆_com
 16*ell enclosure over Z_root = [3.13528, 3.13529]₂₅₆_com
 nominal ell inside its certified enclosure PASS = true
 
-=== BOX NESTING (docs/provenance-mapping.md, Prop 6.2: Z_root ⊂ int Z_cert) ===
+=== BOX NESTING (docs/guide/provenance-mapping.md, Prop 6.2: Z_root ⊂ int Z_cert) ===
 root box radius = 1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30
 geometry/rank/multiplier box radius = 9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29
 root box inside the interior of the boxes of 03, 04, 05 PASS = true
