@@ -69,41 +69,88 @@ own adversarial review of this package.
 
 ---
 
-## Quick start
+## Running it
 
-Julia 1.12. The exact dependency versions are pinned in `Manifest.toml`, which
-was resolved by Julia 1.12 and reproduces the recorded environment bit for bit;
-every recorded certificate was produced with it. Julia 1.10 and 1.11 also work,
-but not with this Manifest (Pkg cannot instantiate a 1.12 Manifest on older
-Julia): delete `Manifest.toml` first so Pkg re-resolves from `Project.toml`. CI
-runs the test suite, the certificate and the literature benchmark that way on
-both.
+### What you need
 
-```bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-make test        # the test suite
-make verify      # the certificate; writes results/a16_certificate.toml
+| Tool | Needed for | macOS | Linux | Windows |
+|---|---|---|---|---|
+| Julia 1.12 | everything in Julia | `brew install juliaup`, then `juliaup add 1.12` | `curl -fsSL https://install.julialang.org \| sh` | `winget install julia -s msstore` |
+| `make` | the short commands below (optional) | `xcode-select --install` | usually present; else `sudo apt install make` | not needed: use the right-hand column |
+| elan (Lean) | the Lean layer only | `curl https://elan.lean-lang.org/elan-init.sh -sSf \| sh` | same as macOS | [elan installer for Windows](https://github.com/leanprover/elan) |
+| bash, git, python3 | the Lean checks, the mutation harness, log archiving | preinstalled | preinstalled | WSL (recommended) or Git Bash |
+
+The exact dependency versions are pinned in `Manifest.toml`, resolved by Julia
+1.12, which reproduces the recorded environment bit for bit; every recorded
+certificate was produced with it. Julia 1.10 and 1.11 also work, but not with
+this Manifest (Pkg cannot instantiate a 1.12 Manifest on older Julia): delete
+`Manifest.toml` first so Pkg re-resolves from `Project.toml`. CI runs the test
+suite, the certificate and the literature benchmark that way on both.
+
+Once, after cloning, from the repository root (same command on every system):
+
 ```
+julia --project=. -e "using Pkg; Pkg.instantiate()"
+```
+
+### Every command
+
+All commands run from the repository root. `make` is a shortcut; the
+right-hand column is what it runs, and works the same in a macOS or Linux
+terminal and in Windows PowerShell.
+
+| What it does | macOS / Linux | Without `make` (any system) |
+|---|---|---|
+| Run the test suite (651 assertions) | `make test` | `julia --project=. test/runtests.jl` |
+| **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
+| The literature benchmark (n = 4, 6, 8 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
+| One literature case only (`4`, `6`, `8`, `16`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
+| The nominal configuration, uncertified | `make nominal` | `julia --project=. pipeline/stages/01_nominal_configuration.jl` |
+| Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean`, then `lake exe cache get` |
+| The five Lean checks | `make lean` | `cd lean`, then `./verify.sh` (bash) |
+| The Lean checks, recorded → `results/lean_certificate.toml` | `make lean-certificate` | `julia --project=. pipeline/record_lean_certificate.jl` (bash) |
+| The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
+| Plant 12 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
+| Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
+| List the targets | `make help` | — |
+
+`make verify` also saves the full output to `logs/final_run.txt`. Without
+`make`, add `| tee logs/final_run.txt` on macOS or Linux, or
+`| Tee-Object -FilePath logs/final_run.txt` in PowerShell 7.
+
+The article itself is not distributed, so `make paper` has nothing to compile
+in a fresh clone, and `make paper-check` checks the certificates, the source
+hashes and the claims about Lean, and reports the article checks as skipped
+(`PARTIAL`), never as passed.
+
+### Notes for Windows
+
+- **The Julia side runs natively.** Everything in the table that starts with
+  `julia` works as written in PowerShell or `cmd`; forward slashes in paths are
+  fine.
+- **Use PowerShell 7** (`winget install Microsoft.PowerShell`) if you save the
+  log with `Tee-Object`. Windows PowerShell 5.1 writes UTF-16, which
+  `tools/archive_log.sh` cannot read.
+- **The rows marked (bash)** need a bash shell, because `lean/verify.sh` and
+  the tools are bash scripts. The simplest route is WSL (`wsl --install`, then
+  follow the Linux column inside it, where `make` also works). Git Bash works
+  for the Lean checks; the mutation harness also needs `python3` on the PATH.
+- The continuous integration runs on Linux, and everything was developed on
+  macOS. Windows is not exercised by CI.
+
+### What a run looks like
 
 `make verify` is a single non-interactive run with no tuning between its
 steps. Two operators adapt inside a step, deterministically and without
 affecting what is proved: the root step tries the radii `1e-30, …, 1e-26` and
 accepts the first that passes (it is `1e-30`), and the Krawczyk step inflates
 its box by factors of ten until the inclusion holds. Whatever box is accepted,
-the conclusion is a proof. It completes in **under six seconds**, so the certificate can be
-re-executed rather than taken on trust. It prints a provenance header (commit,
-versions, per-file SHA256), then each gate, then:
+the conclusion is a proof. It completes in **under six seconds**, so the
+certificate can be re-executed rather than taken on trust. It prints a
+provenance header (commit, versions, per-file SHA256), then each gate, then:
 
 ```
 FINAL FIRST-ORDER CERTIFICATE: CERTIFIED
-```
-
-Other targets:
-
-```bash
-make literature  # re-certify the solved n=4,6,8 cases and the negative controls
-make nominal     # print the nominal configuration only, no certificate
-make help        # all targets
 ```
 
 ## The Lean layer
@@ -112,12 +159,8 @@ An independent formalisation in Lean 4, checked against Mathlib, re-proves the
 exact algebra and the positivity layer by kernel-checked rational arithmetic —
 no interval arithmetic, no floating point.
 
-```bash
-make lean-cache  # once: prebuilt Mathlib oleans, about 7 GB
-make lean        # the five checks
-```
-
-The five checks are: the development builds; no source admits a goal with
+Run it with `make lean-cache` once and then `make lean` (commands for every
+system are in the table above). The five checks are: the development builds; no source admits a goal with
 `sorry`; all 108 audited theorems depend only on Lean's three standard axioms;
 26 deliberately false variants **fail** to compile, so the true statements
 are not vacuous; and seven generated files reproduce byte for byte from the
