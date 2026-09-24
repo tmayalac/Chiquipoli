@@ -5,6 +5,7 @@
 #     tools/check_all.sh quick        Julia only, no Lean (make check)         ~5 min
 #     tools/check_all.sh lean         the two Lean layers, recorded (make check-lean)
 #     tools/check_all.sh case <n>     one case: n = 4, 6, 8, 16, 32 or 64 (make check-case N=<n>)
+#     tools/check_all.sh candidate <n>  ONE candidate, every layer: n = 16, 32, 64 (make A16, A32, A64)
 #
 # HOW TO READ THE RESULT. Every stage runs even if an earlier one failed, and
 # the run ends with a table: PASS, FAIL, or SKIP with the reason. Three verdicts:
@@ -65,6 +66,7 @@ case "$MODE" in
   lean)  echo "   estimated ~10 min if the Lean libraries are built, ~30 min from scratch; ~13 GB" ;;
   quick) echo "   estimated ~5 min; Julia only" ;;
   case)  echo "   estimated 1-15 min depending on the case" ;;
+  candidate) echo "   estimated: A16 ~13 min (5 + its 8-min mutation check), A32 ~4 min, A64 ~11 min" ;;
 esac
 [ "$memgb" -lt 16 ] && [ "$MODE" != quick ] && echo "   ${YEL}warning${RST}: less than 16 GB of memory; the A64 Lean build may not fit"
 clean_tree && echo "   git tree: clean" || echo "   git tree: ${YEL}dirty${RST} — the stages that need a clean tree will be skipped"
@@ -145,7 +147,37 @@ all)
   stage paper-check "the article and the docs agree with every certificate" julia_run pipeline/check_paper.jl
   ;;
 
-*) echo "usage: $0 [all|quick|lean|case <n>]"; exit 2 ;;
+candidate)
+  # Everything that certifies ONE candidate, in every layer, and nothing about
+  # the others. Writes no record in results/ (a partial run must not replace
+  # the record of a full one); the full suite runs because it is one process.
+  case "$CASE" in 16|32|64) ;; *) echo "usage: $0 candidate <16|32|64>"; exit 2 ;; esac
+  stage test "the Julia suite (includes the A$CASE tests: constructor, OPTIGON cross-check, family pattern)" julia_run test/runtests.jl
+  stage "julia-A$CASE" "the general certifier on A$CASE: first-order data, exact identities, multipliers" julia_run pipeline/certify_literature.jl "$CASE"
+  if [ "$CASE" = 16 ]; then
+    stage "julia-A16-dedicated" "the dedicated A16 interval certificate: eight gates, verdict CERTIFIED (nothing recorded)" \
+      env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
+  fi
+  if lean_ready; then
+    [ "$CASE" = 16 ] && stage "lean-A16-dedicated" "the dedicated A16 Lean layer: build, no sorry, axiom audit, 26 controls, regeneration" bash -c 'cd lean && ./verify.sh'
+    stage "lean-A$CASE" "A$CASE in the family Lean layer, incl. the published constructor: build, no sorry, axioms, 11 controls + twins, regeneration" family_case "$CASE"
+    stage "stress-gen-A$CASE" "8 planted defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$CASE" tools/stress_family.sh generator
+    stage "stress-lean-A$CASE" "the same 8 defects with the pre-checks off: Lean alone rejects each, inside the planted declaration" env STRESS_CASES="$CASE" tools/stress_family.sh lean
+  else
+    [ "$CASE" = 16 ] && skip "lean-A16-dedicated" "Lean or the Mathlib cache is missing (make lean-cache)"
+    skip "lean-A$CASE" "Lean or the Mathlib cache is missing (make lean-cache)"
+    stage "stress-gen-A$CASE" "8 planted defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$CASE" tools/stress_family.sh generator
+  fi
+  if [ "$CASE" = 16 ]; then
+    if clean_tree && lean_ready; then
+      stage "mutation-A16" "16 planted defects in the A16 Julia and Lean layers, each rejected" tools/mutation_check.sh
+    else
+      skip "mutation-A16" "needs a clean git tree and the Mathlib cache (it edits tracked files and restores them from git)"
+    fi
+  fi
+  ;;
+
+*) echo "usage: $0 [all|quick|lean|case <n>|candidate <16|32|64>]"; exit 2 ;;
 esac
 
 # --- summary ------------------------------------------------------------------

@@ -367,8 +367,18 @@ println("    cross-check in the test suite) or anything about global optimality.
 println("GLOBAL OPTIMALITY: NOT CLAIMED")
 println("============================================================")
 
-let projroot = normpath(joinpath(@__DIR__, ".."))
-    outpath = emit_a16_certificate(projroot, final_pass, r2, rl, r3, r4, r5, r6,
-                                   box_nesting_pass, CERT_RADIUS)
-    println("\nwrote machine-readable certificate: ", relpath(outpath, projroot))
+# CHIQUI_NO_RECORD=1 (make A16, make check-case): every gate runs and the
+# verdict is printed, but results/a16_certificate.toml is left untouched, so a
+# check of one candidate never rewrites the record of a full run.
+if get(ENV, "CHIQUI_NO_RECORD", "") == "1"
+    println("\n(CHIQUI_NO_RECORD=1 — results/a16_certificate.toml was left untouched)")
+else
+    let projroot = normpath(joinpath(@__DIR__, ".."))
+        outpath = emit_a16_certificate(projroot, final_pass, r2, rl, r3, r4, r5, r6,
+                                       box_nesting_pass, CERT_RADIUS)
+        println("\nwrote machine-readable certificate: ", relpath(outpath, projroot))
+    end
 end
+# A run that is not CERTIFIED must fail as a process too, so that a caller
+# (make, tools/check_all.sh) sees it without reading the text.
+final_pass || exit(1)

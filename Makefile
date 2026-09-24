@@ -2,7 +2,7 @@
         lean-certificate lean-family literature mutation-check stress-family \
         stress-family-generator archive-log clean \
         check check-all check-lean check-case literature-case lean-family-case \
-        stress-case lean-family-certificate lean-family-record \
+        stress-case lean-family-certificate lean-family-record A16 A32 A64 \
         paper paper-build paper-check
 
 PAPER := paper
@@ -15,6 +15,11 @@ help:
 	@echo "  make check-all         every check and every record, in order (~30 min, 16 GB)"
 	@echo "  make check-lean        both Lean layers, verified and recorded"
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
+	@echo
+	@echo "  ONE CANDIDATE, EVERY LAYER (Julia, Lean, controls, stress; writes no record)"
+	@echo "  make A16               A16: both Julia certificates, both Lean layers, stress, mutations"
+	@echo "  make A32               A32: Julia certificate, Lean (incl. published constructor), stress"
+	@echo "  make A64               A64: the same for A64"
 	@echo
 	@echo "  ONE CASE, ONE LAYER"
 	@echo "  make literature-case N=32   the general certifier on one case"
@@ -181,6 +186,15 @@ check-all:
 
 check-lean:
 	tools/check_all.sh lean
+
+A16:
+	tools/check_all.sh candidate 16
+
+A32:
+	tools/check_all.sh candidate 32
+
+A64:
+	tools/check_all.sh candidate 64
 
 check-case:
 	@test -n "$(N)" || { echo "usage: make check-case N=<4|6|8|16|32|64>"; exit 2; }

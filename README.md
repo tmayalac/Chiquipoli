@@ -100,6 +100,9 @@ make check                 # quick: Julia only, ~5 min, writes nothing
 make check-all             # everything, in order, and refreshes every record in results/ (~30 min, 16 GB)
 make check-lean            # both Lean layers, verified and recorded
 make check-case N=32       # one case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress)
+make A16                   # ONE candidate, every layer: both Julia certificates, both Lean layers, stress, mutations (~13 min)
+make A32                   # A32: Julia certificate, Lean incl. the published constructor, stress (~4 min)
+make A64                   # A64: the same (~11 min)
 ```
 
 Every stage runs even if an earlier one fails, and the run ends with a table

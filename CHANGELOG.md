@@ -11,6 +11,18 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **`make A16`, `make A32`, `make A64` (2026-09-24).** One candidate, every
+  layer, nothing about the others. Each runs the Julia suite, the general
+  certifier on that case, the family Lean layer for that case (including the
+  published constructor, 11 controls and twins, regeneration), and the
+  generator and Lean stress tests for that case. A16 adds its dedicated Julia
+  certificate, its dedicated Lean layer (`verify.sh`) and the mutation check
+  (needs a clean tree; otherwise skipped, and the verdict is `INCOMPLETE`).
+  None of them writes a record: `certify_a16.jl` honours `CHIQUI_NO_RECORD=1`
+  like `certify_literature.jl`. It now also exits non-zero on
+  `NOT CERTIFIED`; before, a failed certificate still ended with code 0.
+  Measured: A16 4.5 min plus its mutation check, A32 3.9 min, A64 10.7 min.
+
 - **A16, A32, A64: the published polygon, proved in Lean (2026-09-24).**
   Until now the family certificate was about a polygon in polynomial form, and
   only Julia tests identified it with the one Bingane and Audet published. The
