@@ -1,18 +1,19 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-24T20:36:44Z
+UTC timestamp        = 2026-09-24T23:05:15Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = a0ac7ba148420a9e5592f78a051b808c683695c8  (source clean — log matches this commit)
+git commit           = 29f19d248cbee7b3aa6ed1d454b2b1c7205b9cde  (source clean — log matches this commit)
 SHA256 of source files:
-  e7fe532666a9abb415629c5f8812142b6afd356d77a21664c7b0d90c3e2562bb  pipeline/certify_a16.jl
+  707ddceb32327f620befd04cc3e0c074100d794e289005e68b8ecb9e0c4bc584  pipeline/certify_a16.jl
+  c0273354ae8be9a9c4a710b7d98130102a5ece26d058c27d0c8cd4e36c7b8bb2  pipeline/certify_family.jl
   df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742  pipeline/certify_literature.jl
-  5f382286aec12cecd4dacde6954d02e213349a2e9b69717338c7bf1174a6ee8d  pipeline/check_paper.jl
+  a097c6a26eeb2c9bb70723c14367c1d20ff45efdd04e0577ca849df4c672f0db  pipeline/check_paper.jl
   0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216  pipeline/record_lean_certificate.jl
-  2b422758767b4d29c67a85b743568c16a8cb81647cc27e83604b42e20a560e5d  pipeline/record_lean_family_certificate.jl
+  c8f3edc8caeca88529d0debaabb94c9f2c1c66a9c25e9879d04bb9b1a28e974a  pipeline/record_lean_family_certificate.jl
   66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  pipeline/stages/01_nominal_configuration.jl
   ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82  pipeline/stages/02_certify_root.jl
   18070f1bfeaf76dbb4f986b69c652b360462459a982238f5fb07ec8f120493fa  pipeline/stages/03_certify_geometry.jl
@@ -34,10 +35,10 @@ SHA256 of source files:
   76f6722ab739858cbacc8ebd5fbdddd453469be86f9a622f0a5430d285b67d33  test/exact_algebra.jl
   7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf  test/fixtures/optigon_reference.jl
   9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5  test/framework_guards.jl
-  27ae242ee30ec7e5bb79d42f61b6839a0bf30aeacd979a4fcc75b715a123ef80  test/literature.jl
+  0b8592cd5efb514182fa38f6858ef6a0f3e16e841848abb8f0a849721524d54f  test/literature.jl
   bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff  test/optigon.jl
   6dfbbe7c31c4cce8806ee1f8e0146d6ffd43042f6ee24f2971326b0352c722ec  test/regressions.jl
-  57b972105d13e687a65ae241888304f8820d1aa301751622655ac62759adbf19  test/runtests.jl
+  74cd4ac0761f601073221f25607df6d06aab15138bd6dd7155bab5fbdd0681d4  test/runtests.jl
   de9969597ef34a0c76833c870b4a3c7369d40dbbd4beff90b80e556d30ad5764  Project.toml
   a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57  Manifest.toml
 

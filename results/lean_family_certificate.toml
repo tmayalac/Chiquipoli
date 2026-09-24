@@ -75,19 +75,19 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "a0ac7ba148420a9e5592f78a051b808c683695c8"
+git_commit = "29f19d248cbee7b3aa6ed1d454b2b1c7205b9cde"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
 package = "A16Certificate v1.0.0"
-utc = "2026-09-24T20:42:14Z"
-verify_seconds = 219
+utc = "2026-09-24T23:11:09Z"
+verify_seconds = 218
 
 [scope]
 formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
-not_formalized = ["that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia; it is bounded by a test requiring every quoted upstream statement to occur verbatim in the vendored source with the same number of assignments, by four planted transcription slips each of which breaks the Lean identification, and by the Julia generic constructor reproducing the vendored upstream code numerically", "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s", "any lower bound on the radius of the neighbourhood of local maximality", "global optimality, which is not addressed anywhere in this package"]
+not_formalized = ["that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia. It is bounded by running the upstream source itself, byte-identical (SHA-256), unchanged, in exact arithmetic (cases/optigon_exact.jl): its vertices and equation equal the certified ones exactly; by a test requiring every quoted upstream statement to occur verbatim in the vendored reference with the same number of assignments; and by four planted transcription slips each of which breaks the Lean identification", "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s", "any lower bound on the radius of the neighbourhood of local maximality", "global optimality, which is not addressed anywhere in this package"]
 
 [[source_sha256]]
 file = "Manifest.toml"
@@ -107,6 +107,12 @@ sha256 = "20246966f712454fc0b2503acbb548c87624839c1a0b57672429b67b9292bb2f"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
 sha256 = "c44544ab1439a54fabe24a4b36ac6b878cea23a94e8bea594f8921502ae840ff"
+[[source_sha256]]
+file = "cases/optigon_exact.jl"
+sha256 = "8d3ba4bd6283f6dc59583b850662a8a85aaeb96fcfaea040c8926f1d8909de6e"
+[[source_sha256]]
+file = "cases/upstream/optigon/cstrt_audet_ngon.jl"
+sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily.lean"
 sha256 = "077796f5b925d4c8b6f1e40c6a46b53a7449113609ebd6e4f23ba7b1bf6b94e6"
@@ -985,7 +991,7 @@ file = "test/fixtures/optigon_reference.jl"
 sha256 = "7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "27ae242ee30ec7e5bb79d42f61b6839a0bf30aeacd979a4fcc75b715a123ef80"
+sha256 = "0b8592cd5efb514182fa38f6858ef6a0f3e16e841848abb8f0a849721524d54f"
 
 [theorems]
 axiom_audited_theorems = 65
