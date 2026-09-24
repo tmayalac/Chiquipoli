@@ -9,7 +9,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 2.883
+seconds = 2.752
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 32
 name = "A32-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 1.244
+seconds = 1.232
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 64
 name = "A64-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 7.467
+seconds = 7.321
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 4
 name = "n4-regular-square"
 negative_control = false
 reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.067
+seconds = 0.056
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -109,7 +109,7 @@ n = 8
 name = "n8-ahmp2004-H8"
 negative_control = false
 reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.193
+seconds = 0.196
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -129,7 +129,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.036
+seconds = 0.035
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -149,7 +149,7 @@ n = 16
 name = "neg-broken-equilateral"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.016
+seconds = 0.017
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -184,12 +184,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "5ffb6610feceb888f78483fddf2c4e4ca0070f23"
+git_commit = "e30be979469787734d8ce144ec7a35b48d53581d"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 12.096
-utc = "2026-09-24T02:09:02Z"
+total_seconds = 11.799
+utc = "2026-09-24T05:08:57Z"
 
 [[source_sha256]]
 file = "cases/A16_bingane_audet/candidate.jl"
@@ -199,7 +199,7 @@ file = "cases/A32_bingane_audet/candidate.jl"
 sha256 = "e1498ef03e1a9c599df6296a537b74544e2559b684cee2b9d24ae28f404aade9"
 [[source_sha256]]
 file = "cases/A64_bingane_audet/candidate.jl"
-sha256 = "be7b2be175d76f9835fac33b5f783bd31ccc062af8e83f6a478b6d2992a780e0"
+sha256 = "20246966f712454fc0b2503acbb548c87624839c1a0b57672429b67b9292bb2f"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
 sha256 = "c44544ab1439a54fabe24a4b36ac6b878cea23a94e8bea594f8921502ae840ff"
