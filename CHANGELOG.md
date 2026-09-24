@@ -11,6 +11,55 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **A16, A32, A64: the published polygon, proved in Lean (2026-09-24).**
+  Until now the family certificate was about a polygon in polynomial form, and
+  only Julia tests identified it with the one Bingane and Audet published. The
+  identification is now kernel-checked.
+  * `lean/ChiquipoliFamily/Optigon.lean` transcribes the upstream OPTIGON
+    constructor `cstrt_audet_ngon`, the code accompanying the paper, statement
+    for statement and for every `n`. It keeps the array assignments in order,
+    the quarter-turn shifts `sin(i(2z − π/2))`, the signs `(−1)^i` and the
+    division by `cos 2z`. The general lemmas are `shift`, `sin_quarter` and
+    `cos_two_pos`.
+  * `lean/ChiquipoliFamily/Chebyshev.lean` gives `sin kz` and `cos kz` as
+    explicit polynomials for `k ≤ 63`, generated once and shared by every case.
+  * `A<n>/Published.lean` proves three things. `Q_eq_P`: all `n` vertices of
+    the transcribed code equal the certified ones. `F_eq`: upstream's equation
+    is `2^m · Fc(cos z)`, with `m = 12, 28, 60`, wherever `cos 2z ≠ 0`; the
+    generator checks exactly that the only denominator is `cos⁴ 2z`.
+    `published_locally_maximal`: upstream's `F` has exactly one zero in
+    upstream's bracket, and the polygon upstream's code builds there is a
+    strict local maximiser. Build cost: A64 137 s, 9.2 GB.
+  * What no kernel can check is that the Lean transcription says what the Julia
+    source says. It is bounded three ways. A new test requires the 32 upstream
+    statements quoted in `Optigon.lean` to occur verbatim in the vendored
+    source, with the same assignment counts (12 and 16). Four transcription
+    slips are now planted by `tools/stress_family.sh harness` (a sign, a
+    symmetry, an angle, the loop bound); each breaks the Lean identification,
+    and in `A16/Published.lean`, not in `Optigon.lean`. The existing numerical
+    agreement to `10⁻⁷⁰` stays.
+  * Controls: an eleventh per case, `fnc11_published_bracket`. It claims
+    uniqueness of the published root on `(0, π/4)`, which is false: there
+    `F = 2^m · Fc(cos z)` has at least two zeros. Its twin is upstream's own
+    bracket. A first candidate for this control (`F = 2^m · Fc(cos z)` at
+    `z = π/4`, where `cos 2z = 0`) was refused by the generator's falsity
+    check. The dropped term's numerator `sin(nπ/16)` also vanishes there, so
+    the claim was true, and a control built on it would have been vacuous.
+  * `verify_family.sh`: 11 controls per case, 65 audited theorems, the headline
+    audited by name now includes `published_locally_maximal`, `Q_eq_P` and
+    `F_eq`, and step 5 also regenerates `Chebyshev.lean`. The family record
+    moves the identification from `not_formalized` to `formalized`, keeps
+    transcription fidelity as the one step outside the kernel, and hashes the
+    vendored upstream file. `make paper-check` checks both.
+  * The first full `make check-all` after this change reported two MISSED
+    harness defects. Neither was a blind spot, since the step failed each
+    time, but both were wrong reports. Step 3 of `verify_family.sh` reported
+    only the lowered theorem count when a headline theorem was dropped, and
+    never named it; each condition is now reported on its own. The harness
+    still expected the old count of 9 remaining controls. Measured afterwards
+    on a clean tree: `make check-all` passes all 8 stages in 30.7 min, with
+    the stress test rejecting 63 of 63 planted defects.
+
 - **The family certificate is recorded; one command for everything
   (2026-09-24).**
   * `results/lean_family_certificate.toml` (`make lean-family-certificate`),

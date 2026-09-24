@@ -20,6 +20,13 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.div_close
 #print axioms Chiquipoli.Family.recenter
 
+-- the published constructor (OPTIGON), transcribed for every n
+#print axioms Chiquipoli.Family.Optigon.shift
+#print axioms Chiquipoli.Family.Optigon.sin_quarter
+#print axioms Chiquipoli.Family.Optigon.cos_two_pos
+#print axioms Chiquipoli.Family.Cheb.sin_31
+#print axioms Chiquipoli.Family.Cheb.cos_31
+
 -- A16, re-derived by the family pipeline
 #print axioms Chiquipoli.Family.A16.Fc_root
 #print axioms Chiquipoli.Family.A16.convexOrdered
@@ -34,6 +41,9 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.A16.Fc_root_unique_search
 #print axioms Chiquipoli.Family.A16.cos_mem_of_search
 #print axioms Chiquipoli.Family.A16.locally_maximal_unique
+#print axioms Chiquipoli.Family.A16.F_eq
+#print axioms Chiquipoli.Family.A16.Q_eq_P
+#print axioms Chiquipoli.Family.A16.published_locally_maximal
 
 -- A32
 #print axioms Chiquipoli.Family.A32.Fc_root
@@ -49,6 +59,9 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.A32.Fc_root_unique_search
 #print axioms Chiquipoli.Family.A32.cos_mem_of_search
 #print axioms Chiquipoli.Family.A32.locally_maximal_unique
+#print axioms Chiquipoli.Family.A32.F_eq
+#print axioms Chiquipoli.Family.A32.Q_eq_P
+#print axioms Chiquipoli.Family.A32.published_locally_maximal
 
 -- A64
 #print axioms Chiquipoli.Family.A64.Fc_root
@@ -64,3 +77,6 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.A64.Fc_root_unique_search
 #print axioms Chiquipoli.Family.A64.cos_mem_of_search
 #print axioms Chiquipoli.Family.A64.locally_maximal_unique
+#print axioms Chiquipoli.Family.A64.F_eq
+#print axioms Chiquipoli.Family.A64.Q_eq_P
+#print axioms Chiquipoli.Family.A64.published_locally_maximal

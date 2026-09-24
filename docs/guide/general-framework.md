@@ -332,7 +332,13 @@ same generator re-proves A16 independently. The method differs from the A16
 layer — vertex enclosures plus lemmas proved once for every `n`, and rigidity by
 a Henneberg construction, multipliers as a self-stress built by the same order —
 because the A16 method does not scale to `n = 32`; see
-`lean/ChiquipoliFamily/README.md`.
+`lean/ChiquipoliFamily/README.md`. The result is also stated about the
+published objects (`Chiquipoli.Family.A<n>.published_locally_maximal`):
+`lean/ChiquipoliFamily/Optigon.lean` transcribes the upstream OPTIGON
+constructor for every `n`. For each case, Lean proves that every vertex it
+builds is the certified vertex and that its equation is `2^m · Fc(cos z)` on the
+search bracket, so the identification with the published polygon is
+kernel-checked, not only tested.
 
 **[OBSERVED] The same structure at n = 16, 32, 64**, recorded as a pattern,
 not a theorem:

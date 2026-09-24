@@ -13,7 +13,8 @@
 #   4. every case's negative controls do NOT compile, and each control's twin
 #      -- the same proof of the true statement -- DOES;
 #   5. every generated file (ChiquipoliFamily/A<n>/, the root module A<n>.lean,
-#      negative_controls_family/A<n>/) reproduces byte for byte from
+#      the shared ChiquipoliFamily/Chebyshev.lean, negative_controls_family/A<n>/)
+#      reproduces byte for byte from
 #      lean/generators/family/gen_family.jl.
 #
 # FAMILY_STEPS="2 4" runs only the listed steps (default: all five), and
@@ -28,8 +29,8 @@ set -uo pipefail
 cd "$(dirname "$0")"
 
 CASES="${FAMILY_CASES:-16 32 64}"
-AXIOM_AUDIT_MIN=48
-NEGATIVE_CONTROLS_PER_CASE=10
+AXIOM_AUDIT_MIN=65
+NEGATIVE_CONTROLS_PER_CASE=11
 STEPS="${FAMILY_STEPS:-1 2 3 4 5}"
 want() { case " $STEPS " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
 
@@ -100,18 +101,17 @@ else
       | grep -v '\[propext, Classical.choice, Quot.sound\]' || true)
   missing=""
   for c in $CASES; do
-    for t in locally_maximal locally_maximal_unique Ieq_imp_R stationary; do
+    for t in locally_maximal locally_maximal_unique published_locally_maximal Q_eq_P F_eq Ieq_imp_R stationary; do
       printf '%s\n' "$axout" | grep -qF "'Chiquipoli.Family.A$c.$t' depends on axioms" \
         || missing="$missing A$c.$t"
     done
   done
-  if [ -n "$bad_lines" ]; then
-    bad "unexpected axioms:"; printf '%s\n' "$bad_lines"
-  elif [ "$n" -lt "$AXIOM_AUDIT_MIN" ]; then
-    bad "only $n theorems audited, expected at least $AXIOM_AUDIT_MIN"
-  elif [ -n "$missing" ]; then
-    bad "headline theorems missing from the audit:$missing"
-  else
+  # Each condition is reported on its own: a dropped headline theorem also
+  # lowers the count, and reporting only the count would hide which one went.
+  [ -n "$bad_lines" ] && { bad "unexpected axioms:"; printf '%s\n' "$bad_lines"; }
+  [ "$n" -lt "$AXIOM_AUDIT_MIN" ] && bad "only $n theorems audited, expected at least $AXIOM_AUDIT_MIN"
+  [ -n "$missing" ] && bad "headline theorems missing from the audit:$missing"
+  if [ -z "$bad_lines" ] && [ "$n" -ge "$AXIOM_AUDIT_MIN" ] && [ -z "$missing" ]; then
     ok "$n theorems depend only on [propext, Classical.choice, Quot.sound]"
     ok "every case's headline theorems are audited by name ($CASES)"
   fi
@@ -177,6 +177,7 @@ if command -v julia >/dev/null 2>&1; then
     if (cd .. && CHIQUI_OUTDIR="$scratch" julia --project=. lean/generators/family/gen_family.jl "$c" >"$scratch.log" 2>&1); then
       d=$( { diff -rq "$scratch/ChiquipoliFamily/A$c" "ChiquipoliFamily/A$c";
              diff -q "$scratch/ChiquipoliFamily/A$c.lean" "ChiquipoliFamily/A$c.lean";
+             diff -q "$scratch/ChiquipoliFamily/Chebyshev.lean" "ChiquipoliFamily/Chebyshev.lean";
              diff -rq "$scratch/negative_controls_family/A$c" "negative_controls_family/A$c"; } 2>&1 || true)
       if [ -z "$d" ]; then
         ok "A$c: $(ls ChiquipoliFamily/A$c/*.lean | wc -l | tr -d ' ') certificate files, the root module and $(find negative_controls_family/A$c -name '*.lean' | wc -l | tr -d ' ') control/twin files reproduce byte for byte"

@@ -117,7 +117,7 @@ terminal and in Windows PowerShell.
 
 | What it does | macOS / Linux | Without `make` (any system) |
 |---|---|---|
-| Run the test suite (714 assertions) | `make test` | `julia --project=. test/runtests.jl` |
+| Run the test suite (750 assertions) | `make test` | `julia --project=. test/runtests.jl` |
 | **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
 | The literature benchmark (n = 4, 6, 8, 16, 32, 64 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
 | One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
@@ -133,7 +133,7 @@ terminal and in Windows PowerShell.
 | One case of the literature benchmark | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
 | The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
 | Plant 16 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
-| Stress test of the family layer: 24 generator defects, each refused by the generator AND by Lean; 11 harness defects | `make stress-family` | `bash tools/stress_family.sh all` (the harness part needs a clean git tree) |
+| Stress test of the family layer: 24 generator defects, each refused by the generator AND by Lean; 15 harness and transcription defects | `make stress-family` | `bash tools/stress_family.sh all` (the harness part needs a clean git tree) |
 | Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
 | List the targets | `make help` | — |
 
@@ -245,8 +245,9 @@ signs, a derivative bound that is false) are planted in each case. With the
 pre-checks on, the generator must refuse all 24; with them switched off, Lean
 must reject all 24, with every error inside the planted declaration and every
 upstream module identical to the certified one. A third part sabotages
-`verify_family.sh` itself (11 ways) and requires the responsible step to fail.
-Each case also carries ten negative controls, each paired with a *twin* — the
+`verify_family.sh` itself (11 ways) and the transcription of the published
+constructor (4 ways), and requires the responsible check to fail.
+Each case also carries eleven negative controls, each paired with a *twin* — the
 same proof of the true statement — that must compile, so a control cannot be
 rejected for an accidental reason. Details: `lean/ChiquipoliFamily/README.md`.
 
@@ -301,7 +302,7 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliFamily/             A32, A64 (and A16 again), a method that scales in n;
                                 built and checked by verify_family.sh
   negative_controls/            26 false statements that must not compile
-  negative_controls_family/     10 per family case, each with a twin that must compile
+  negative_controls_family/     11 per family case, each with a twin that must compile
   generators/                   Julia -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks
 results/                      the three certificates (TOML) and the article's tables

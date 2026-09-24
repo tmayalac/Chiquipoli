@@ -98,7 +98,7 @@ case)
   stage "literature-$CASE" "the general certifier on case $CASE" julia_run pipeline/certify_literature.jl "$CASE"
   if [ "$CASE" -ge 16 ]; then
     if lean_ready; then
-      stage "lean-family-A$CASE" "A$CASE in Lean: build, no sorry, axioms, 10 controls + twins, regeneration (partial run)" family_case "$CASE"
+      stage "lean-family-A$CASE" "A$CASE in Lean: build, no sorry, axioms, 11 controls + twins, regeneration (partial run)" family_case "$CASE"
       stage "stress-A$CASE" "8 planted defects, each refused by the generator's pre-checks" env STRESS_CASES="$CASE" tools/stress_family.sh generator
       stage "stress-lean-A$CASE" "the same 8 defects with the pre-checks off: Lean alone rejects each" env STRESS_CASES="$CASE" tools/stress_family.sh lean
     else
@@ -115,7 +115,7 @@ all)
   if clean_tree; then
     if lean_ready; then
       stage mutation-check "16 planted defects in Julia and the A16 Lean layer, each rejected" tools/mutation_check.sh
-      stage stress-family  "59 planted defects in the family layer: generator, Lean, harness" tools/stress_family.sh all
+      stage stress-family  "63 planted defects in the family layer: generator, Lean, harness, transcription" tools/stress_family.sh all
     else
       stage mutation-julia "the 11 Julia mutations (the Lean ones need the Mathlib cache)" tools/mutation_check.sh julia
       stage stress-gen     "the family generator refuses 24 planted defects" tools/stress_family.sh generator

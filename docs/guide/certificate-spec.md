@@ -216,7 +216,7 @@ make lean-family-certificate                                  # writes results/l
 make paper                                                    # compile a16.tex, audit the LaTeX log
 make paper-check                                              # reconcile the article vs certificate + Lean
 tools/mutation_check.sh                                     # 16 planted defects, all must be rejected
-tools/stress_family.sh all                                    # 59 planted defects in the family layer
+tools/stress_family.sh all                                    # 63 planted defects in the family layer
 
 make check-all                                                # all of the above, in order, with a summary
 ```

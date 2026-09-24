@@ -41,7 +41,8 @@ end
 tracked_files() = sort!(unique(vcat(
     ["lean/ChiquipoliFamily.lean", "lean/verify_family.sh", "lean/lakefile.toml",
      "lean/lean-toolchain", "lean/lake-manifest.json",
-     "cases/exact_coords.jl", "Project.toml", "Manifest.toml"],
+     "cases/exact_coords.jl", "Project.toml", "Manifest.toml",
+     "test/fixtures/optigon_reference.jl", "test/literature.jl"],
     ["cases/A$(n)_bingane_audet/candidate.jl" for n in CASES],
     walk("lean/ChiquipoliFamily", ".lean"),
     walk("lean/negative_controls_family", ".lean"),
@@ -151,7 +152,7 @@ checks = Dict{String,Any}(
 )
 cases = Dict{String,Any}()
 for n in CASES
-    ctl = haspass("A$n: all 10 controls rejected by Lean, all 10 twins compile")
+    ctl = haspass("A$n: all \\d+ controls rejected by Lean, all \\d+ twins compile")
     gen = haspass("A$n: \\d+ certificate files, the root module and \\d+ control/twin files reproduce byte for byte")
     checks["A$(n)_controls_and_twins"] = ctl
     checks["A$(n)_regeneration"] = gen
@@ -179,8 +180,8 @@ doc = Dict{String,Any}(
     "theorems" => Dict{String,Any}(
         "axioms" => ["propext", "Classical.choice", "Quot.sound"],
         "axiom_audited_theorems" => axm === nothing ? 0 : parse(Int, axm.captures[1]),
-        "negative_controls_per_case" => 10,
-        "headline_per_case" => ["locally_maximal_unique", "locally_maximal_at", "locally_maximal"],
+        "negative_controls_per_case" => parse(Int, match(r"NEGATIVE_CONTROLS_PER_CASE=(\d+)", read(joinpath(LEAN, "verify_family.sh"), String)).captures[1]),
+        "headline_per_case" => ["published_locally_maximal", "locally_maximal_unique", "locally_maximal_at", "locally_maximal"],
     ),
     "scope" => Dict{String,Any}(
         "formalized" => [
@@ -189,9 +190,10 @@ doc = Dict{String,Any}(
             "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)",
             "I_eq = R_eq, by a Henneberg construction",
             "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)",
+            "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)",
         ],
         "not_formalized" => [
-            "the identification of the configuration with the published Bingane-Audet polygon: Lean defines it by its polynomial form; the generic constructor is checked against upstream OPTIGON in the Julia tests (test/literature.jl)",
+            "that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia; it is bounded by a test requiring every quoted upstream statement to occur verbatim in the vendored source with the same number of assignments, by four planted transcription slips each of which breaks the Lean identification, and by the Julia generic constructor reproducing the vendored upstream code numerically",
             "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s",
             "any lower bound on the radius of the neighbourhood of local maximality",
             "global optimality, which is not addressed anywhere in this package",

@@ -502,7 +502,7 @@ target and is verified by its own script, so nothing on this page — the counts
     lake build ChiquipoliFamily
     ./verify_family.sh          # or `make lean-family` from the repository root
 
-Each case has ten negative controls in `negative_controls_family/A<n>/`, each
+Each case has eleven negative controls in `negative_controls_family/A<n>/`, each
 paired with a twin (`twin/`) that must compile, and the whole layer has a
 stress test, `tools/stress_family.sh` (`make stress-family`), that plants
 generator defects and requires both the generator and Lean to reject each one.

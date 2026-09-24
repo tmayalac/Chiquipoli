@@ -4,7 +4,7 @@
 #
 #     tools/stress_family.sh generator   the generator's pre-checks refuse each defect   (Julia only, ~2 min)
 #     tools/stress_family.sh lean        Lean alone rejects each defect                  (Lean, ~8 min for all cases)
-#     tools/stress_family.sh harness     verify_family.sh rejects a sabotaged harness    (Lean, ~4 min)
+#     tools/stress_family.sh harness     verify_family.sh and the identification reject sabotage (Lean, ~8 min)
 #     tools/stress_family.sh all         the three, in that order
 #
 #     STRESS_CASES="16"   restrict the generator and lean layers to some cases (default: 16 32 64)
@@ -227,7 +227,7 @@ else
   harness "a headline theorem (A64.locally_maximal_unique) dropped from the audit" 3 "16 32 64" 'missing from the audit'
 
   rm "$NC/fnc05_rigidity_needs_bars.lean"
-  harness "a negative control deleted" 4 16 'found 9 controls'
+  harness "a negative control deleted" 4 16 'found [0-9]+ controls and [0-9]+ twins, expected'
 
   sed 's/theorem good/theorem bad/' "$NC/twin/fnc06_root_sign.lean" > "$NC/fnc06_root_sign.lean"
   harness "a negative control made true (it now compiles)" 4 16 'COMPILED'
@@ -246,6 +246,51 @@ else
 
   printf '\n-- a hand edit\n' >> "$NC/fnc02_inactive_margin.lean"
   harness "a hand edit of a generated control" 5 16 'differ from a fresh run'
+
+  # The transcription of the published constructor (ChiquipoliFamily/Optigon.lean)
+  # is the one hand-written link between the published polygon and the
+  # certified one. A copying slip there must break the proof that the two agree
+  # (A16/Published.lean) -- and break it there, not inside Optigon.lean, where
+  # a failure would only say the slip was ill-typed. These run last: they
+  # rebuild Optigon, and the library is rebuilt once afterwards.
+  OPT=lean/ChiquipoliFamily/Optigon.lean
+  transcription() {  # transcription <label> <old> <new>
+    if ! python3 - "$OPT" "$2" "$3" <<'PY'
+import io, sys
+p, o, n = sys.argv[1:4]
+s = io.open(p, encoding="utf-8").read()
+if s.count(o) != 1:
+    sys.exit("transcription mutation target not found exactly once")
+io.open(p, "w", encoding="utf-8").write(s.replace(o, n))
+PY
+    then err "$1 (could not apply)"; return; fi
+    local out
+    if out=$(cd lean && lake build ChiquipoliFamily.A16.Published 2>&1); then
+      bad "$1 -- Lean still proves the transcription equals the certified polygon"
+    elif printf '%s' "$out" | grep -qE "error: .*Optigon\.lean"; then
+      err "$1 -- the slip broke Optigon.lean itself, not the identification"
+    elif printf '%s' "$out" | grep -qE "error: .*A16/Published\.lean"; then
+      ok "$1"
+    else
+      err "$1 -- the build failed for another reason:"; printf '%s\n' "$out" | grep -m3 error
+    fi
+    git checkout -- "$OPT"
+  }
+  transcription "transcription: (-1)^i -> (-1)^(i+1) in a[j2]" \
+    'let a := set a j2 (a j1 - (-1) ^ i * sin ((4 * (i : ℝ) + 2) * z))' \
+    'let a := set a j2 (a j1 - (-1) ^ (i + 1) * sin ((4 * (i : ℝ) + 2) * z))'
+  transcription "transcription: b[n-j1] = b[j1] -> -b[j1]" \
+    'let b := set b (n - j1) (b j1)' \
+    'let b := set b (n - j1) (-(b j1))'
+  transcription "transcription: cos((n/4-2)t) -> cos((n/4-1)t) in x(t)" \
+    'cos (((n : ℝ) / 4 - 2) * t)' \
+    'cos (((n : ℝ) / 4 - 1) * t)'
+  transcription "transcription: loop bound n/8-1 -> n/8 (one extra iteration)" \
+    '(List.range'"'"' 1 (n / 8 - 1))' \
+    '(List.range'"'"' 1 (n / 8))'
+  if ! (cd lean && lake build ChiquipoliFamily >"$SCRATCH/rebuild.log" 2>&1); then
+    err "the family library does not rebuild after the transcription mutations (see $SCRATCH/rebuild.log)"
+  fi
 
   restore; trap - EXIT INT TERM
   if [ -z "$(git status --porcelain)" ]; then

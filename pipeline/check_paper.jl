@@ -651,8 +651,11 @@ let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
         rec = TOML.parsefile(fam)
         chk("the record covers A16, A32 and A64",
             all(haskey(get(rec, "cases", Dict()), "A$n") for n in (16, 32, 64)))
-        chk("the record does not claim the identification with the published polygon",
-            any(x -> occursin("identification", x), get(get(rec, "scope", Dict()), "not_formalized", String[])))
+        sc = get(rec, "scope", Dict())
+        chk("the record states the Lean identification with the published constructor",
+            any(x -> occursin("published_locally_maximal", x), get(sc, "formalized", String[])))
+        chk("the record keeps the one step no kernel can check (transcription fidelity) as not formalised",
+            any(x -> occursin("transcription", x), get(sc, "not_formalized", String[])))
     end
 end
 

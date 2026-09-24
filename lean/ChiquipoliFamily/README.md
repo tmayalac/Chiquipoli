@@ -1,12 +1,14 @@
 # ChiquipoliFamily — the Bingane–Audet family `A_n`, verified in Lean 4
 
 This library proves, for members of the Bingane–Audet family `A_n`
-(`n = 2^s ≥ 16`), the same statement that `ChiquipoliLean` proves for A16:
+(`n = 2^s ≥ 16`), the same statement that `ChiquipoliLean` proves for A16, and
+proves it **about the published constructor itself**:
 
-> there is a root of the constructor equation in the article's search interval,
-> it is the only one there, and the polygon it builds is a strictly convex
-> equilateral small `n`-gon that is a **strict local maximiser of the
-> perimeter, modulo orientation-preserving Euclidean motions**.
+> the constructor equation of Bingane and Audet — as their published code
+> OPTIGON writes it — has exactly one zero in their search bracket, and the
+> polygon their code builds there is a strictly convex equilateral small
+> `n`-gon that is a **strict local maximiser of the perimeter, modulo
+> orientation-preserving Euclidean motions**.
 
 It is built separately from `ChiquipoliLean` (`lake build ChiquipoliFamily`,
 not a default target) and verified separately (`./verify_family.sh`, or
@@ -20,7 +22,8 @@ by a different method), **A32** and **A64**.
 
 | Lean name | Statement |
 |---|---|
-| `Chiquipoli.Family.A<n>.locally_maximal_unique` | the full statement above |
+| `Chiquipoli.Family.A<n>.published_locally_maximal` | the full statement above, about `Optigon.F n` and the polygon `Q z` built by the transcribed upstream code |
+| `Chiquipoli.Family.A<n>.locally_maximal_unique` | the same, about the certified polynomial form `P z` and `Fc` |
 | `Chiquipoli.Family.A<n>.locally_maximal_at` | the same conclusion at *every* root `c ∈ (clo, chi)` |
 | `Chiquipoli.Family.A<n>.locally_maximal` | existence form, without the search interval |
 
@@ -114,7 +117,7 @@ around it could fail. Three mechanisms, all generated and run the same way for
 every case, address that.
 
 **Negative controls with twins** (`lean/negative_controls_family/A<n>/`, checked
-by `verify_family.sh`, step 4). Ten per case, the same ten for every `n`. Each
+by `verify_family.sh`, step 4). Eleven per case, the same eleven for every `n`. Each
 control is a **false** statement about `A_n`, attempted with the proof the
 certificate itself uses. The generator checks that it is false before writing
 it, exactly or with an explicit witness. Its twin, in `twin/`, is the same proof
@@ -137,6 +140,7 @@ compiling.
 | `fnc08_henneberg_degenerate` | a Henneberg vertex pinned twice to one vertex has a positive determinant | the determinant is identically 0 |
 | `fnc09_enclosure_tight` | a vertex enclosure with half the radius the polynomial actually reaches | the radius is not a free parameter |
 | `fnc10_uniqueness_is_local` | `Fc` has one root on `[0, 1]` | false: it changes sign at least 5, 11, 21 times there for n = 16, 32, 64; uniqueness holds only on the article's search bracket |
+| `fnc11_published_bracket` | the published `F` has one zero on `(0, π/4)` | false: there `F` is a constant times `Fc(cos z)`, which has at least two zeros; the twin is upstream's own bracket |
 
 The last row is a fact worth knowing on its own: the constructor equation has
 many roots in `(0, 1)`, and the search interval `(2 arcsin(sin(π/n)/2), π/n)` is
@@ -174,7 +178,9 @@ tracked tree:
   unimported file, and one in a twin; an unresolvable and a missing audit name;
   a control deleted, and one made true; a twin made false; a control failing
   only by an unresolved name, and one failing only by a timeout; a hand edit of
-  a certificate file, and one of a control.
+  a certificate file, and one of a control. Then four slips in the
+  transcription of the published constructor (`Optigon.lean`), each of which
+  must break the identification proof in `A16/Published.lean` (15 of 15).
 
 The unguarded switch refuses to run without a planted defect, and a mutated run
 refuses to write anywhere but a scratch directory, so the switch cannot
@@ -191,12 +197,48 @@ coordinates are reduced to `(sin z · XC(c), YC(c))` with `XC, YC ∈ Q[c]` by
 exact division by `cos 2z`, which the generator asserts. `verify_family.sh`
 re-runs the generator and requires every file to reproduce byte for byte.
 
-## What is not (yet) in Lean here
+## The published polygon, in the kernel
 
-* **The trigonometric constructor.** `ChiquipoliLean` transcribes the A16
-  constructor by hand and proves it equal to its polynomial form (`red*`). Here
-  the configuration is *defined* by its polynomial form, `P z`, and `Fc` by
-  Proposition 1. That this is the Bingane–Audet `A_n` rests on the Julia tests
-  (the generic constructor reproduces upstream OPTIGON to `10⁻⁷⁰`, and at
-  `n = 16` reproduces `A16Certificate` exactly), not on Lean.
+The certificate is proved about a polygon in polynomial form, `P z`, and an
+equation `Fc`. A reader needs to know that this polygon is the one Bingane and
+Audet published. The link is proved in Lean, not only tested:
+
+1. **`ChiquipoliFamily/Optigon.lean` transcribes the upstream constructor**
+   (`cstrt_audet_ngon` from OPTIGON, the code that accompanies the paper, as
+   vendored in `test/fixtures/optigon_reference.jl` with its SHA-256)
+   statement for statement, for every `n`. The transcription keeps upstream's
+   array assignments in their order, the quarter-turn shifts
+   `sin(i(2z − π/2))`, the signs `(−1)^i` and the division by `cos 2z`. Each
+   upstream statement it transcribes is quoted in the file.
+2. **`A<n>/Published.lean` proves, for each case,** that each of the `n`
+   vertices the transcribed code builds equals `P z k`, and that its equation
+   `F` equals a constant times `Fc (cos z)` (`4096`, `2^28`, `2^60` for
+   n = 16, 32, 64), wherever `cos 2z ≠ 0`. That condition holds on the whole
+   search bracket, since `z < π/16`. The multiple angles go through
+   `Chebyshev.lean` (`sin kz`, `cos kz` for `k ≤ 63`, shared by all cases).
+3. **`published_locally_maximal`** then states the headline result about
+   upstream's own objects: its `F` has exactly one zero in its bracket
+   `(2 arcsin(sin(π/n)/2), π/n)`, and the polygon its code builds there, with
+   side `2 sin(z/2)`, is a strict local maximiser.
+
+What remains outside any proof assistant is whether `Optigon.lean` says what
+the Julia source says; no kernel can read Julia. Three checks bound it:
+
+* the test *Optigon.lean quotes the vendored upstream constructor verbatim*
+  (`test/literature.jl`) requires every quoted upstream statement to occur in
+  the vendored file, and the transcription to make exactly as many
+  assignments as upstream (12 before the loop, 16 in it);
+* four transcription slips — a sign `(−1)^i`, a symmetry `b[n−j] = b[j]`,
+  the angle `(n/4 − 2)t` in `x(t)`, and the loop bound — are planted by
+  `tools/stress_family.sh harness`. Each breaks the Lean identification, in
+  `A16/Published.lean`;
+* independently, the Julia generic constructor reproduces the vendored
+  upstream code to `10⁻⁷⁰` at every vertex (`test/literature.jl`).
+
+## What is not in Lean here
+
 * **Global optimality.** As for A16, nothing here says anything about it.
+* **Every `n = 2^s`.** Each case is proved separately. The pattern the three
+  share is recorded in `docs/guide/general-framework.md`: `n − 1` active
+  diameters, `deg Fc = n − 4`, and the `Fc`-sides being the two
+  non-Henneberg bars.

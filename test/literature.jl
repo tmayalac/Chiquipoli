@@ -215,3 +215,27 @@ end
     @test rej(variant(active = vcat(cand.active, [(8, 24)])))              # spurious diameter
     @test rej(variant(coords = z -> (p = cand.coords(z); p[6,1] += interval(big"1e-20"); p)))  # moved vertex
 end
+
+# The Lean transcription of the published constructor (lean/ChiquipoliFamily/
+# Optigon.lean) is the one piece of the family certificate written by hand. Lean
+# proves it produces the certified polygon, but only a reader can say it is the
+# upstream code. This makes that reading mechanical: every upstream statement the
+# Lean file quotes must occur verbatim in the vendored upstream file (whitespace
+# and the `pi_`/`pi` spelling aside), and the transcription must make exactly as
+# many assignments as upstream -- twelve before the loop, sixteen inside it.
+@testset "Optigon.lean quotes the vendored upstream constructor verbatim" begin
+    lean = read(joinpath(@__DIR__, "..", "lean", "ChiquipoliFamily", "Optigon.lean"), String)
+    upstream = read(joinpath(@__DIR__, "fixtures", "optigon_reference.jl"), String)
+    norm(s) = replace(replace(s, r"\s+" => ""), "pi_" => "pi")
+    up = norm(upstream)
+    quoted = [m.captures[1] for m in eachmatch(r"```\n(.*?)```"s, lean)]
+    @test length(quoted) == 2                                  # the pre-loop block and the loop body
+    stmts = [strip(st) for q in quoted for line in split(q, '\n') for st in split(line, ';') if !isempty(strip(st))]
+    @test length(stmts) == 12 + 4 + 16                         # 12 assignments, 4 indices, 16 assignments
+    for st in stmts
+        @test occursin(norm(st), up)
+    end
+    body(name) = (i = findfirst("noncomputable def $name", lean); j = findnext("\n\n", lean, last(i)); lean[first(i):first(j)])
+    @test count("let a := set a", body("init")) + count("let b := set b", body("init")) == 12
+    @test count("let a := set a", body("body")) + count("let b := set b", body("body")) == 16
+end
