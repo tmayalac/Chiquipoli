@@ -11,9 +11,10 @@ every file its verdict depends on.
 | `validation_certificate.toml` | `make literature` (`pipeline/certify_literature.jl`) | the literature benchmark, n = 4, 6, 8, 16, 32, 64, and the three broken controls |
 | `lean_certificate.toml` | `make lean-certificate` | the A16 Lean layer: its five checks, counts, scope |
 | `lean_family_certificate.toml` | `make lean-family-certificate` | the family Lean layer (A16, A32, A64): its five checks, the certified numbers of each case, scope |
+| `family/A16.toml`, `family/A32.toml`, `family/A64.toml` | `julia --project=. pipeline/certify_family.jl <n>` (all three in `make check-all`) | the family certificate of each candidate: the same ten gates for every n, among them the published OPTIGON source run unchanged in exact arithmetic |
 | `tables/*.tex` | `make literature` | the tables of the article |
 
-`make check-all` regenerates all four records in one run. `make paper-check`
+`make check-all` regenerates every record in one run. `make paper-check`
 compares them with the tree and the article. For the family record, `make
 lean-family-record` answers in seconds, without Lean, whether it still
 describes the tree.

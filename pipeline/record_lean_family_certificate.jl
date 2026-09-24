@@ -42,7 +42,8 @@ tracked_files() = sort!(unique(vcat(
     ["lean/ChiquipoliFamily.lean", "lean/verify_family.sh", "lean/lakefile.toml",
      "lean/lean-toolchain", "lean/lake-manifest.json",
      "cases/exact_coords.jl", "Project.toml", "Manifest.toml",
-     "test/fixtures/optigon_reference.jl", "test/literature.jl"],
+     "test/fixtures/optigon_reference.jl", "test/literature.jl",
+     "cases/optigon_exact.jl", "cases/upstream/optigon/cstrt_audet_ngon.jl"],
     ["cases/A$(n)_bingane_audet/candidate.jl" for n in CASES],
     walk("lean/ChiquipoliFamily", ".lean"),
     walk("lean/negative_controls_family", ".lean"),
@@ -193,7 +194,7 @@ doc = Dict{String,Any}(
             "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)",
         ],
         "not_formalized" => [
-            "that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia; it is bounded by a test requiring every quoted upstream statement to occur verbatim in the vendored source with the same number of assignments, by four planted transcription slips each of which breaks the Lean identification, and by the Julia generic constructor reproducing the vendored upstream code numerically",
+            "that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia. It is bounded by running the upstream source itself, byte-identical (SHA-256), unchanged, in exact arithmetic (cases/optigon_exact.jl): its vertices and equation equal the certified ones exactly; by a test requiring every quoted upstream statement to occur verbatim in the vendored reference with the same number of assignments; and by four planted transcription slips each of which breaks the Lean identification",
             "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s",
             "any lower bound on the radius of the neighbourhood of local maximality",
             "global optimality, which is not addressed anywhere in this package",

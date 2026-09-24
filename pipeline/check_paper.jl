@@ -637,6 +637,23 @@ end
 # depends on. The record is only evidence while it describes the tree: an edit
 # to a certificate file, a control, the generator or its Julia inputs after the
 # run makes it stale, and that must fail here rather than pass unnoticed.
+section("the family certificates (pipeline/certify_family.jl), against the tree")
+for n in (16, 32, 64)
+    path = joinpath(ROOT, "results", "family", "A$n.toml")
+    if !isfile(path)
+        skip("results/family/A$n.toml is CERTIFIED and describes the tree")
+        continue
+    end
+    rec = TOML.parsefile(path)
+    local fg = get(rec, "gate", Any[])
+    chk("A$n: family certificate CERTIFIED, all $(length(fg)) gates passed, incl. the published source",
+        get(rec, "certified", false) && length(fg) == 10 && all(g -> get(g, "passed", false), fg) &&
+        any(g -> get(g, "id", "") == "published_constructor", fg))
+    stale = [e["file"] for e in get(rec, "source_sha256", Any[])
+             if !isfile(joinpath(ROOT, e["file"])) || bytes2hex(open(sha256, joinpath(ROOT, e["file"]))) != e["sha256"]]
+    chk("A$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))
+end
+
 section("the family layer, against its recorded Lean certificate")
 let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
     if !isfile(fam)

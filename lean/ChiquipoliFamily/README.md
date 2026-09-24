@@ -232,8 +232,13 @@ the Julia source says; no kernel can read Julia. Three checks bound it:
   the angle `(n/4 − 2)t` in `x(t)`, and the loop bound — are planted by
   `tools/stress_family.sh harness`. Each breaks the Lean identification, in
   `A16/Published.lean`;
-* independently, the Julia generic constructor reproduces the vendored
-  upstream code to `10⁻⁷⁰` at every vertex (`test/literature.jl`).
+* the upstream source itself, byte-identical to OPTIGON's
+  (`cases/upstream/optigon/`, SHA-256 checked), is run **unchanged in exact
+  arithmetic** (`cases/optigon_exact.jl`). Its vertices and its equation equal
+  the certified ones exactly for n = 16, 32, 64: a gate of every family
+  certificate (`pipeline/certify_family.jl`), and a test with planted errors.
+  The only trust left is that Julia executes a Julia file, which is the trust
+  anyone running OPTIGON extends.
 
 ## What is not in Lean here
 

@@ -11,17 +11,55 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
-- **`make A16`, `make A32`, `make A64` (2026-09-24).** One candidate, every
-  layer, nothing about the others. Each runs the Julia suite, the general
-  certifier on that case, the family Lean layer for that case (including the
-  published constructor, 11 controls and twins, regeneration), and the
-  generator and Lean stress tests for that case. A16 adds its dedicated Julia
-  certificate, its dedicated Lean layer (`verify.sh`) and the mutation check
-  (needs a clean tree; otherwise skipped, and the verdict is `INCOMPLETE`).
-  None of them writes a record: `certify_a16.jl` honours `CHIQUI_NO_RECORD=1`
-  like `certify_literature.jl`. It now also exits non-zero on
-  `NOT CERTIFIED`; before, a failed certificate still ended with code 0.
-  Measured: A16 4.5 min plus its mutation check, A32 3.9 min, A64 10.7 min.
+- **Every candidate certified the same way; the published source run exactly
+  (2026-09-24).**
+  * *The published source, unchanged.* `cases/upstream/optigon/` holds
+    OPTIGON's `cstrt_audet_ngon.jl`, byte for byte, with its MIT licence. Its
+    SHA-256 (`376e838b…d0ff`) is the one recorded in 2026-09 and was confirmed
+    against an independent download (`optigon-master`).
+    `cases/optigon_exact.jl` runs that file unchanged in exact arithmetic. The
+    root is a symbol, angles are `q·z + r·π`, and sin/cos are exact elements of
+    `Q(c,s)`. Its vertices and its equation `F` are then compared with the
+    certified ones by exact equality, not by a tolerance: equal for n = 16, 32,
+    64. A test plants a sign, an angle and a symmetry error in a copy of the
+    source; each is caught. `OPTIGON_DIR=…` also compares against a local
+    OPTIGON checkout. This replaces the numerical 1e−70 agreement as the
+    evidence that the certified polygon is the published one.
+  * *`pipeline/certify_family.jl <n>`: the same certificate for A16, A32, A64.*
+    Ten gates, all in the verdict. They are the published source run exactly;
+    exact identities; interval Newton on `Z_root`, with `F'` from the exact
+    identity `F = 2^m · Fc(cos z)`; root uniqueness on the whole search
+    interval by an exact Sturm count (previously a test only, now a gate);
+    side length and perimeter; convexity; inactive margin; rank; multipliers;
+    box nesting by endpoints. A16 goes through the generic constructor here,
+    exactly like A32 and A64. All three CERTIFIED, 10 of 10. The A16 bounds
+    agree with the dedicated certificate, e.g. the smallest support
+    determinant 0.0074882049306989244… and the margin
+    0.0080997106581357295…; the multipliers are another point of the same
+    one-parameter family. Records go to `results/family/A<n>.toml`, which
+    `make paper-check` checks against the tree.
+  * *The same planted defects for every candidate.*
+    `tools/mutation_check.sh family [n]` plants, for each of A16, A32, A64: a
+    digit of its root, one of its active diameters, a sign in the published
+    source, a sign in the harmonic only its own n reaches, and a changed
+    constructor equation. The family certificate must print NOT CERTIFIED for
+    each; it does (manually verified on A32 before the harness ran). The
+    verifier harness of `tools/stress_family.sh` now runs against any case
+    (`HARNESS_CASE`).
+  * *`make A16`, `make A32`, `make A64` run the same stages.* The suite, the
+    general certifier, the family certificate, the family Lean layer, the
+    generator and Lean stress tests, the five family mutations and the fifteen
+    harness sabotages in that case's files. A16 adds the article's dedicated
+    certificate, Lean layer and mutation check. On a dirty tree the mutation and
+    harness stages are skipped and the verdict is `INCOMPLETE`. Nothing is
+    recorded: `certify_a16.jl` and `certify_family.jl` honour
+    `CHIQUI_NO_RECORD=1`, and `certify_a16.jl` now exits non-zero on
+    `NOT CERTIFIED`.
+  * The A16 provenance guardrail now counts 33 load-bearing sources
+    (`pipeline/certify_family.jl`).
+  * Measured on a clean tree, run one after another: `make A32` 10 min,
+    `make A16` 18 min, `make A64` 32 min and `make check-all` 34 min. Every
+    stage passed, including the mutation and harness stages of each candidate.
 
 - **A16, A32, A64: the published polygon, proved in Lean (2026-09-24).**
   Until now the family certificate was about a polygon in polynomial form, and

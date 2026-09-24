@@ -9,6 +9,7 @@
 #
 #     STRESS_CASES="16"   restrict the generator and lean layers to some cases (default: 16 32 64)
 #     STRESS_MEM_GB=16    kill any single Lean process tree above this resident size
+#     HARNESS_CASE=32     run the harness part against that case's files (default: 16)
 #
 # WHAT IS BEING TESTED
 #
@@ -211,46 +212,49 @@ else
     if verify_rejects "$2" "$3" "$4"; then ok "$1"; else bad "$1 -- verify_family.sh step $2 accepted it"; fi
     restore
   }
-  NC=lean/negative_controls_family/A16
+  # The harness runs against one case, HARNESS_CASE (default 16), so that each
+  # candidate can be sabotaged in its own files (make A32 uses 32).
+  H="${HARNESS_CASE:-16}"
+  NC=lean/negative_controls_family/A$H
 
   printf 'import ChiquipoliFamily\ntheorem zz_probe : (1 : Nat) = 1 := by sorry\n' > lean/ChiquipoliFamily/ZZ_stress_probe.lean
-  harness "an admitted goal in a file nothing imports" 2 16 'admits a goal'
+  harness "an admitted goal in a file nothing imports" 2 "$H" 'admits a goal'
 
   printf '\ntheorem zz : True := by\n  sorry\n' >> "$NC/twin/fnc07_bracket_nonempty.lean"
-  harness "an admitted goal in a twin (a twin must not compile by sorry)" 2 16 'admits a goal'
+  harness "an admitted goal in a twin (a twin must not compile by sorry)" 2 "$H" 'admits a goal'
 
-  printf '\n#print axioms Chiquipoli.Family.A16.zz_no_such_theorem\n' >> lean/ChiquipoliFamily/Audit.lean
+  printf '\n#print axioms Chiquipoli.Family.A%s.zz_no_such_theorem\n' "$H" >> lean/ChiquipoliFamily/Audit.lean
   harness "an unresolvable name in the axiom audit" 3 "16 32 64" 'does not compile'
 
-  grep -v '^#print axioms Chiquipoli.Family.A64.locally_maximal_unique$' lean/ChiquipoliFamily/Audit.lean > "$SCRATCH/audit" \
+  grep -v "^#print axioms Chiquipoli.Family.A$H.locally_maximal_unique\$" lean/ChiquipoliFamily/Audit.lean > "$SCRATCH/audit" \
     && cp "$SCRATCH/audit" lean/ChiquipoliFamily/Audit.lean
-  harness "a headline theorem (A64.locally_maximal_unique) dropped from the audit" 3 "16 32 64" 'missing from the audit'
+  harness "a headline theorem (A$H.locally_maximal_unique) dropped from the audit" 3 "16 32 64" 'missing from the audit'
 
   rm "$NC/fnc05_rigidity_needs_bars.lean"
-  harness "a negative control deleted" 4 16 'found [0-9]+ controls and [0-9]+ twins, expected'
+  harness "a negative control deleted" 4 "$H" 'found [0-9]+ controls and [0-9]+ twins, expected'
 
   sed 's/theorem good/theorem bad/' "$NC/twin/fnc06_root_sign.lean" > "$NC/fnc06_root_sign.lean"
-  harness "a negative control made true (it now compiles)" 4 16 'COMPILED'
+  harness "a negative control made true (it now compiles)" 4 "$H" 'COMPILED'
 
   cp "$NC/fnc06_root_sign.lean" "$NC/twin/fnc06_root_sign.lean"
-  harness "a twin made false (the control's rejection would prove nothing)" 4 16 'twin does NOT compile'
+  harness "a twin made false (the control's rejection would prove nothing)" 4 "$H" 'twin does NOT compile'
 
   sed 's/det_lb/det_lb_no_such_lemma/' "$NC/fnc01_convexity_sign.lean" > "$SCRATCH/c" && cp "$SCRATCH/c" "$NC/fnc01_convexity_sign.lean"
-  harness "a control that fails only because a name does not resolve" 4 16 'wrong reason'
+  harness "a control that fails only because a name does not resolve" 4 "$H" 'wrong reason'
 
   sed 's/set_option maxHeartbeats 4000000/set_option maxHeartbeats 1/' "$NC/fnc09_enclosure_tight.lean" > "$SCRATCH/c" && cp "$SCRATCH/c" "$NC/fnc09_enclosure_tight.lean"
-  harness "a control that fails only by timing out" 4 16 'wrong reason'
+  harness "a control that fails only by timing out" 4 "$H" 'wrong reason'
 
-  printf '\n-- a hand edit\n' >> lean/ChiquipoliFamily/A16/Unique.lean
-  harness "a hand edit of a generated certificate file" 5 16 'differ from a fresh run'
+  printf '\n-- a hand edit\n' >> lean/ChiquipoliFamily/A$H/Unique.lean
+  harness "a hand edit of a generated certificate file" 5 "$H" 'differ from a fresh run'
 
   printf '\n-- a hand edit\n' >> "$NC/fnc02_inactive_margin.lean"
-  harness "a hand edit of a generated control" 5 16 'differ from a fresh run'
+  harness "a hand edit of a generated control" 5 "$H" 'differ from a fresh run'
 
   # The transcription of the published constructor (ChiquipoliFamily/Optigon.lean)
   # is the one hand-written link between the published polygon and the
   # certified one. A copying slip there must break the proof that the two agree
-  # (A16/Published.lean) -- and break it there, not inside Optigon.lean, where
+  # (A<n>/Published.lean) -- and break it there, not inside Optigon.lean, where
   # a failure would only say the slip was ill-typed. These run last: they
   # rebuild Optigon, and the library is rebuilt once afterwards.
   OPT=lean/ChiquipoliFamily/Optigon.lean
@@ -265,11 +269,11 @@ io.open(p, "w", encoding="utf-8").write(s.replace(o, n))
 PY
     then err "$1 (could not apply)"; return; fi
     local out
-    if out=$(cd lean && lake build ChiquipoliFamily.A16.Published 2>&1); then
+    if out=$(cd lean && lake build ChiquipoliFamily.A$H.Published 2>&1); then
       bad "$1 -- Lean still proves the transcription equals the certified polygon"
     elif printf '%s' "$out" | grep -qE "error: .*Optigon\.lean"; then
       err "$1 -- the slip broke Optigon.lean itself, not the identification"
-    elif printf '%s' "$out" | grep -qE "error: .*A16/Published\.lean"; then
+    elif printf '%s' "$out" | grep -qE "error: .*A$H/Published\.lean"; then
       ok "$1"
     else
       err "$1 -- the build failed for another reason:"; printf '%s\n' "$out" | grep -m3 error

@@ -239,3 +239,33 @@ end
     @test count("let a := set a", body("init")) + count("let b := set b", body("init")) == 12
     @test count("let a := set a", body("body")) + count("let b := set b", body("body")) == 16
 end
+
+# The published constructor itself, unchanged, in exact arithmetic
+# (cases/optigon_exact.jl). Not a transcription and not a tolerance: upstream's
+# source is `include`d byte for byte and must produce exactly the certified
+# polygon and equation, for every member of the family we certify. The planted
+# errors show the comparison can fail: a flipped sign or a changed angle in the
+# source is caught, and so is any changed byte (the SHA-256).
+@testset "the published OPTIGON source, run unchanged, is exactly the certified A_n" begin
+    for n in (16, 32, 64)
+        r = optigon_exact(n)
+        @test r.sha_ok
+        @test r.vertices_ok
+        @test r.F_ok
+    end
+    src = read(OPTIGON_UPSTREAM, String)
+    for (old, new) in (("-(-1)^i*sin((4*i+2)*z);", "+(-1)^i*sin((4*i+2)*z);"),   # a sign
+                       ("cos((n/4-2)*t)", "cos((n/4-1)*t)"),                     # an angle in x(t)
+                       ("b[Int(n/2+1)] = b[Int(n/2-1)];", "b[Int(n/2+1)] = -b[Int(n/2-1)];"))  # a symmetry
+        bad = replace(src, old => new)
+        @test bad != src
+        r = optigon_exact(32; source = bad)
+        @test !r.sha_ok
+        @test !(r.vertices_ok && r.F_ok)
+    end
+    # Optional: against an independent copy of OPTIGON (OPTIGON_DIR=/path/to/optigon).
+    if haskey(ENV, "OPTIGON_DIR")
+        theirs = joinpath(ENV["OPTIGON_DIR"], "cstrt_ngon", "cstrt_audet_ngon.jl")
+        @test isfile(theirs) && read(theirs) == read(OPTIGON_UPSTREAM)
+    end
+end

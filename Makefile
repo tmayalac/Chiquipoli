@@ -12,7 +12,7 @@ help:
 	@echo
 	@echo "  EVERYTHING, WITH A SUMMARY TABLE (tools/check_all.sh)"
 	@echo "  make check             quick: Julia only, no Lean (~5 min)"
-	@echo "  make check-all         every check and every record, in order (~30 min, 16 GB)"
+	@echo "  make check-all         every check and every record, in order (~35 min, 16 GB)"
 	@echo "  make check-lean        both Lean layers, verified and recorded"
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
 	@echo

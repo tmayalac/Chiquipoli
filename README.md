@@ -97,13 +97,21 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 
 ```bash
 make check                 # quick: Julia only, ~5 min, writes nothing
-make check-all             # everything, in order, and refreshes every record in results/ (~30 min, 16 GB)
+make check-all             # everything, in order, and refreshes every record in results/ (~35 min, 16 GB)
 make check-lean            # both Lean layers, verified and recorded
 make check-case N=32       # one case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress)
-make A16                   # ONE candidate, every layer: both Julia certificates, both Lean layers, stress, mutations (~13 min)
-make A32                   # A32: Julia certificate, Lean incl. the published constructor, stress (~4 min)
-make A64                   # A64: the same (~11 min)
+make A16                   # ONE candidate, every layer (~18 min on a clean tree)
+make A32                   # the same stages for A32 (~10 min)
+make A64                   # the same stages for A64 (~32 min)
 ```
+
+`make A16`, `make A32` and `make A64` run the same stages for each candidate:
+the Julia suite, the general certifier, the family certificate (ten gates,
+among them the published OPTIGON source run unchanged in exact arithmetic), the
+family Lean layer (the published constructor, eleven controls with twins,
+regeneration), the generator and Lean stress tests, five planted defects in the
+candidate's data and sources, and fifteen sabotages of the verifier in the
+candidate's own files. A16 adds the article's two dedicated layers.
 
 Every stage runs even if an earlier one fails, and the run ends with a table
 of PASS, FAIL and SKIP per stage (logs in `logs/check_all/`, not tracked). The
@@ -120,7 +128,7 @@ terminal and in Windows PowerShell.
 
 | What it does | macOS / Linux | Without `make` (any system) |
 |---|---|---|
-| Run the test suite (750 assertions) | `make test` | `julia --project=. test/runtests.jl` |
+| Run the test suite (768 assertions; 769 with OPTIGON_DIR set) | `make test` | `julia --project=. test/runtests.jl` |
 | **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
 | The literature benchmark (n = 4, 6, 8, 16, 32, 64 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
 | One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |

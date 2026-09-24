@@ -5,6 +5,10 @@
 #     tools/mutation_check.sh            all mutations
 #     tools/mutation_check.sh julia      only the ones the Julia suite guards
 #     tools/mutation_check.sh lean       only the ones the Lean layer guards
+#     tools/mutation_check.sh family [n] the same five defects for each of A16, A32,
+#                                        A64 (or one n), which the family
+#                                        certificate (pipeline/certify_family.jl)
+#                                        must reject
 #
 # WHY THIS EXISTS
 #
@@ -289,6 +293,51 @@ elif lean_verify_rejects; then ok "a negative control removed"
 else bad "a negative control removed — verify.sh accepted it"; fi
 [ -n "$MOVED_NC" ] && mv "/tmp/$MOVED_NC" "lean/negative_controls/$MOVED_NC"
 MOVED_NC=""
+note ""
+fi
+
+# --- the family certificate, the same five defects for every candidate ------
+# Standardisation means each of A16, A32, A64 faces the same planted defects and
+# the same certificate must reject each one: a digit of its root, one of its
+# active diameters, one byte of the published source, a sign in the harmonic
+# only its own n reaches (the last loop iteration i = n/8 - 1), and the
+# constructor equation. Caught means pipeline/certify_family.jl RAN and printed
+# NOT CERTIFIED -- a crash is not a rejection.
+if [ "$WHICH" = "all" ] || [ "$WHICH" = "family" ]; then
+note "=== Family certificate: the same five defects for each candidate ==="
+dim  "    pipeline/certify_family.jl <n> must print NOT CERTIFIED for every one"
+family_rejects() {
+  local out
+  out=$(CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl "$1" 2>&1) && return 1
+  printf '%s' "$out" | grep -q "FAMILY CERTIFICATE A$1: NOT CERTIFIED"
+}
+run_family_mutation() {  # run_family_mutation <n> <label> <file> <old> <new>
+  local n="$1" label="A$1 $2"
+  if ! patch_once "$3" "$4" "$5"; then bad "$label (could not apply)"; return; fi
+  if family_rejects "$n"; then ok "$label"; else bad "$label — certify_family.jl accepted it (or crashed)"; fi
+  git checkout -- "$3"
+}
+FAMN="${2:-16 32 64}"
+for n in $FAMN; do
+  case "$n" in
+    16) rootf=src/a16/data.jl; rootold='big"0.19627037213032280086206121185805318446"'
+        rootnew='big"0.19627037213032280096206121185805318446"'; edgef=src/a16/data.jl; edgeold='(6,13)'; edgenew='(6,12)' ;;
+    32) rootf=cases/A32_bingane_audet/candidate.jl; rootold='big"0.0981721090090961666722'
+        rootnew='big"0.0981721090090961667722'; edgef=$rootf; edgeold='(7, 24)'; edgenew='(7, 25)' ;;
+    64) rootf=cases/A64_bingane_audet/candidate.jl; rootold='big"0.04908729857644960608'
+        rootnew='big"0.04908729857644960618'; edgef=$rootf; edgeold='(3, 35)'; edgenew='(3, 37)' ;;
+    *) bad "unknown family case $n"; continue ;;
+  esac
+  run_family_mutation "$n" "root literal: one digit altered" "$rootf" "$rootold" "$rootnew"
+  run_family_mutation "$n" "active graph: one diameter moved" "$edgef" "$edgeold" "$edgenew"
+  run_family_mutation "$n" "published source: one sign in the loop" cases/upstream/optigon/cstrt_audet_ngon.jl \
+    '-(-1)^i*sin((4*i+2)*z);' '+(-1)^i*sin((4*i+2)*z);'
+  run_family_mutation "$n" "generic constructor: sign of its last harmonic i = n/8-1" cases/exact_coords.jl \
+    'sg(v) = isodd(i) ? neg(v) : v' 'sg(v) = (isodd(i) ⊻ (i == n ÷ 8 - 1)) ? neg(v) : v'
+  run_family_mutation "$n" "constructor equation: 4 sin²(z/2) = 2 - 3 cos z" cases/exact_coords.jl \
+    'return sub(add(mul(u, u), mul(v, v)), sub(K(2), mul(K(2), C(1))))' \
+    'return sub(add(mul(u, u), mul(v, v)), sub(K(2), mul(K(3), C(1))))'
+done
 note ""
 fi
 

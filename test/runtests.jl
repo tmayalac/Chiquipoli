@@ -6,6 +6,8 @@ using .ExactIdentity
 include(joinpath(@__DIR__,"..","src","SmallPolygons.jl"))
 using .SmallPolygons
 include(joinpath(@__DIR__,"..","cases","exact_coords.jl"))
+using SHA
+include(joinpath(@__DIR__,"..","cases","optigon_exact.jl"))
 include(joinpath(@__DIR__,"fixtures","optigon_reference.jl"))
 using IntervalArithmetic
 using LinearAlgebra
