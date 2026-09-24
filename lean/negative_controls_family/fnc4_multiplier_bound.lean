@@ -1,9 +1,12 @@
 -- NEGATIVE CONTROL (family). Must FAIL to compile.
--- The diameter multipliers of A32 are about 10⁻⁴. A lower bound of 1 for the
--- first one must not be provable from its Taylor enclosure.
+-- The first active-diameter stress of A32 (st32) is certified in a narrow
+-- enclosure around a small positive value. Claiming it is at least 1, from that
+-- same enclosure, must not go through.
 import ChiquipoliFamily.A32
 namespace Chiquipoli.Family.A32
-theorem bad (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : (1 : ℝ) ≤ mL0 c := by
-  have := lam_lb0 c h₁ h₂
+open Chiquipoli.Family
+theorem bad (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : (1 : ℝ) ≤ st32 c := by
+  have h := encS32 c h₁ h₂
+  have := (abs_le.mp h).1
   linarith
 end Chiquipoli.Family.A32

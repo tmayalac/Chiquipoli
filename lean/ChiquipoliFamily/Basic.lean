@@ -273,4 +273,111 @@ lemma mult_of_stationary {iota : Type*} [Fintype iota] {p : Cfg n} {l : ℝ} (hl
 
 end general
 
+/-! ## Centred enclosure arithmetic
+
+Every quantity below is carried as `|x − x̂| ≤ r` with rational `x̂`, `r`. The
+generator computes the centres and radii exactly, rounds them outward, and each
+step is one of these lemmas plus rational side conditions for `norm_num`. -/
+
+lemma add_close {x y xh yh r s : ℝ} (hx : |x - xh| ≤ r) (hy : |y - yh| ≤ s) :
+    |(x + y) - (xh + yh)| ≤ r + s := by
+  have : (x + y) - (xh + yh) = (x - xh) + (y - yh) := by ring
+  rw [this]; exact (abs_add_le _ _).trans (by linarith)
+
+lemma sub_close' {x y xh yh r s : ℝ} (hx : |x - xh| ≤ r) (hy : |y - yh| ≤ s) :
+    |(x - y) - (xh - yh)| ≤ r + s := by
+  have : (x - y) - (xh - yh) = (x - xh) - (y - yh) := by ring
+  rw [this]; exact (abs_sub _ _).trans (by linarith)
+
+lemma neg_close {x xh r : ℝ} (hx : |x - xh| ≤ r) : |(-x) - (-xh)| ≤ r := by
+  have : (-x) - (-xh) = -(x - xh) := by ring
+  rw [this, abs_neg]; exact hx
+
+lemma mul_close {x y xh yh r s : ℝ} (hx : |x - xh| ≤ r) (hy : |y - yh| ≤ s) :
+    |x * y - xh * yh| ≤ |xh| * s + |yh| * r + r * s :=
+  bilin x y xh yh r s hx hy
+
+/-- Division by a quantity enclosed away from zero. -/
+lemma div_close {x d xh dh r δ : ℝ} (hx : |x - xh| ≤ r) (hd : |d - dh| ≤ δ) (hpos : δ < dh) :
+    |x / d - xh / dh| ≤ (r * dh + |xh| * δ) / ((dh - δ) * dh) := by
+  have hdh : 0 < dh := lt_of_le_of_lt (abs_nonneg _ |>.trans hd) hpos
+  have hdlo : dh - δ ≤ d := by have := (abs_le.mp hd).1; linarith
+  have hd0 : 0 < d := lt_of_lt_of_le (by linarith) hdlo
+  have e : x / d - xh / dh = ((x - xh) * dh - xh * (d - dh)) / (d * dh) := by
+    field_simp; ring
+  rw [e, abs_div, abs_of_pos (mul_pos hd0 hdh)]
+  have hnum : |(x - xh) * dh - xh * (d - dh)| ≤ r * dh + |xh| * δ := by
+    calc |(x - xh) * dh - xh * (d - dh)| ≤ |(x - xh) * dh| + |xh * (d - dh)| := abs_sub _ _
+      _ = |x - xh| * dh + |xh| * |d - dh| := by rw [abs_mul, abs_mul, abs_of_pos hdh]
+      _ ≤ r * dh + |xh| * δ := by
+        gcongr
+  have hden : (dh - δ) * dh ≤ d * dh := mul_le_mul_of_nonneg_right hdlo hdh.le
+  have hden0 : 0 < (dh - δ) * dh := mul_pos (by linarith) hdh
+  calc |(x - xh) * dh - xh * (d - dh)| / (d * dh)
+      ≤ (r * dh + |xh| * δ) / (d * dh) := by gcongr
+    _ ≤ (r * dh + |xh| * δ) / ((dh - δ) * dh) := by
+        have hr0 : 0 ≤ r := (abs_nonneg _).trans hx
+        have hδ0 : 0 ≤ δ := (abs_nonneg _).trans hd
+        exact div_le_div_of_nonneg_left
+          (add_nonneg (mul_nonneg hr0 hdh.le) (mul_nonneg (abs_nonneg _) hδ0)) hden0 hden
+
+/-- Move the centre to a rational `b` and round the radius up to `s`. -/
+lemma recenter {x a b r e s : ℝ} (h : |x - a| ≤ r) (he : |a - b| ≤ e) (hs : r + e ≤ s) :
+    |x - b| ≤ s := by
+  have : x - b = (x - a) + (a - b) := by ring
+  rw [this]; exact (abs_add_le _ _).trans (by linarith)
+
+lemma pos_of_close {x xh r : ℝ} (h : |x - xh| ≤ r) (hr : r < xh) : 0 < x := by
+  have := (abs_le.mp h).1; linarith
+
+lemma neg_of_close {x xh r : ℝ} (h : |x - xh| ≤ r) (hr : xh + r < 0) : x < 0 := by
+  have := (abs_le.mp h).2; linarith
+
+/-- **Cramer balances a vertex.** Given the known force `(F₁, F₂)` at a vertex and
+two bar vectors `a`, `b` with `det(a, b) ≠ 0`, the two stresses given by Cramer's
+rule cancel it. Every Henneberg vertex of the self-stress is an instance. -/
+lemma cramer_bal {F1 F2 a1 a2 b1 b2 : ℝ} (hD : a1 * b2 - a2 * b1 ≠ 0) :
+    F1 + ((-F1) * b2 + F2 * b1) / (a1 * b2 - a2 * b1) * a1
+        + ((-F2) * a1 + F1 * a2) / (a1 * b2 - a2 * b1) * b1 = 0 ∧
+    F2 + ((-F1) * b2 + F2 * b1) / (a1 * b2 - a2 * b1) * a2
+        + ((-F2) * a1 + F1 * a2) / (a1 * b2 - a2 * b1) * b2 = 0 := by
+  have hi : (a1 * b2 - a2 * b1) * (a1 * b2 - a2 * b1)⁻¹ = 1 := mul_inv_cancel₀ hD
+  simp only [div_eq_mul_inv]
+  constructor
+  · linear_combination (-F1) * hi
+  · linear_combination (-F2) * hi
+
+/-- **The pinned bar.** With the stress `−(G·u)/(u·u)` on a bar `u`, the net force
+at its endpoint has no component along `u`. -/
+lemma pin_bal {G1 G2 u1 u2 : ℝ} (hu : u1 * u1 + u2 * u2 ≠ 0) :
+    (G1 + (-(G1 * u1 + G2 * u2)) / (u1 * u1 + u2 * u2) * u1) * u1
+      + (G2 + (-(G1 * u1 + G2 * u2)) / (u1 * u1 + u2 * u2) * u2) * u2 = 0 := by
+  have hi : (u1 * u1 + u2 * u2) * (u1 * u1 + u2 * u2)⁻¹ = 1 := mul_inv_cancel₀ hu
+  simp only [div_eq_mul_inv]
+  linear_combination (-(G1 * u1 + G2 * u2)) * hi
+
+section general2
+variable {n : ℕ} [NeZero n]
+
+/-- `mult_of_stationary` with the side weights summing to any negative `S`: then
+`(ℓ·A, Λ)` is a multiplier vector with objective coefficient `κ = −ℓ S > 0`. The
+stress found by the Henneberg recursion is not normalised, so this is the form
+the family layer uses. -/
+lemma mult_of_stationary' {iota : Type*} [Fintype iota] {p : Cfg n} {l : ℝ} (hl : l ≠ 0)
+    (a b : iota → Fin n) (A : Fin n → ℝ) (Λ : iota → ℝ) (S : ℝ)
+    (hstat : ∀ v : Cfg n, (∑ i, A i * ip (p (i + 1) - p i) (v (i + 1) - v i))
+        + ∑ e, Λ e * ip (p (b e) - p (a e)) (v (b e) - v (a e)) = 0)
+    (hsum : ∑ i, A i = S) :
+    (dataOf p l a b).MultiplierIdentity (-(l * S)) (fun i => l * A i) Λ := by
+  intro v η
+  have h := hstat v
+  simp only [Data.sideD, Data.diamD, dataOf, ip_smul_left]
+  have e1 : ∀ i, l * A i * (l⁻¹ * ip (p (i + 1) - p i) (v (i + 1) - v i) - η)
+      = A i * ip (p (i + 1) - p i) (v (i + 1) - v i) - l * η * A i := by
+    intro i; field_simp
+  simp only [e1, Finset.sum_sub_distrib, ← Finset.mul_sum, hsum]
+  linarith
+
+end general2
+
 end Chiquipoli.Family

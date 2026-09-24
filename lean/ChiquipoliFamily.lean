@@ -11,3 +11,4 @@ directory is generated. See `lean/ChiquipoliFamily/README.md`.
 import ChiquipoliFamily.Basic
 import ChiquipoliFamily.A16
 import ChiquipoliFamily.A32
+import ChiquipoliFamily.A64

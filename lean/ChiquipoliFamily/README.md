@@ -14,7 +14,7 @@ not a default target) and verified separately (`./verify_family.sh`, or
 `verify.sh`, or the counts the article quotes depends on it.
 
 Currently generated: **A16** (a second, independent proof of the A16 result,
-by a different method) and **A32**.
+by a different method), **A32** and **A64**.
 
 ## The headline theorems
 
@@ -32,7 +32,7 @@ for every `n` in `ChiquipoliLean/Theory/`), whose hypotheses each case discharge
 | equilateral, active diameters `= 1` | `equilateral`, `active_eq` | exact identities in `Q[c]` (`ring`, `linear_combination` with `Fc`) |
 | strictly convex, labelled cyclic order | `convexOrdered` | all `n(n−2)` support determinants, from vertex enclosures |
 | small (every pair `≤ 1`) | `small` | every non-active pair `< 1`, from vertex enclosures |
-| (i) multiplier identity, `λ > 0` | `stationary`, `alpha_total`, `lam_pos` | exact witness in `Q[c]/(Fc)`; positivity by Taylor bounds |
+| (i) multiplier identity, `λ > 0` | `stationary`, `side_sum`, `lam_pos` | **self-stress by the Henneberg recursion** (below); positivity by enclosure arithmetic |
 | (ii) `I_eq ⊆ R_eq` | `Ieq_imp_R` | **Henneberg construction** (below) |
 
 ## The method, and why A16's does not scale
@@ -63,25 +63,42 @@ measured at `n = 32` before this library was written:
    (`henneberg_step`). That is `n − 2` two-by-two determinants, each again from
    the enclosures. No elimination, no `Fc`.
 
-3. **The multiplier identity from stationarity.** The exact witness is checked
-   vertex by vertex (`row_*`, each a multiple of `Fc`), and
-   `mult_of_stationary` turns vertex balance plus `Σ α = −1` into the
-   multiplier identity of `dataOf`, with the diameter multipliers unchanged.
+3. **The multipliers are a self-stress, built by the same Henneberg order.**
+   The multipliers of the squared formulation are a self-stress of the bar
+   framework: weights on the bars that balance at every vertex. The two bars
+   the Henneberg construction does not use — which turn out to be exactly the
+   two sides that hold only at the root of `Fc` — carry rational stresses; in
+   reverse Henneberg order, each vertex fixes its two Henneberg bars by
+   Cramer's rule (`cramer_bal`, with the same nonzero determinant as the
+   rigidity proof), the pinned side is fixed last (`pin_bal`), and vertices
+   `0`, `1` balance by the global force and moment identities. The equilibrium
+   holds on the whole interval — **no `Fc` is needed** — and positivity of the
+   diameter stresses, and a negative sum of side stresses, follow by centred
+   enclosure arithmetic (`add_close`, `mul_close`, `div_close`, `recenter`).
+   `mult_of_stationary'` turns this into the multiplier identity of `dataOf`
+   with `κ = −ℓ Σα > 0`.
+
+   This replaced a first design that computed an exact multiplier witness in
+   `Q[c]/(Fc)`: at `n = 64` that witness took 51 min to compute and one
+   positivity certificate of degree 59 took 314 s and 9.7 GB in Lean.
 
 Every margin is checked in exact rational arithmetic by the generator **before**
 any Lean is written; Lean then re-checks everything in the kernel.
 
 ## Cost
 
-| | A16 (this library) | A32 |
-|---|---|---|
-| generated files | 24 | 51 |
-| clean build (18 cores, 24 GB) | 81 s | about 8 min |
-| peak memory (all `lean` processes) | 0.8 GB | 3.8 GB |
-| support determinants | 224 | 960 |
-| inactive pairs | 105 | 465 |
-| Henneberg steps | 14 | 30 |
-| smallest certified diameter multiplier | `1.03·10⁻³` | `6.07·10⁻⁵` |
+| | A16 (this library) | A32 | A64 |
+|---|---|---|---|
+| generated files | 22 | 46 | 132 |
+| generator run | 4 s | 5 s | 7 s |
+| support determinants | 224 | 960 | 3968 |
+| inactive pairs | 105 | 465 | 1953 |
+| Henneberg steps | 14 | 30 | 62 |
+| vertex enclosure radius `ρ` | `9·10⁻¹⁶` | `7·10⁻¹⁵` | `7·10⁻¹⁴` |
+| smallest certified diameter stress | `0.0141` | `0.00161` | `0.000186` |
+
+Build times and peak memory are recorded in the CHANGELOG entry for the run
+that produced these files.
 
 For comparison, the A16 layer of `ChiquipoliLean` needs 160 s and 13.6 GB for
 its rank certificate alone.

@@ -491,10 +491,11 @@ generators/                    the Julia programs that write ChiquipoliLean/Gene
 ## The Bingane–Audet family (`ChiquipoliFamily/`)
 
 A separate library, `ChiquipoliFamily`, proves the same local-maximality
-statement for other members `A_n` of the family (currently A32, and A16 again,
-independently), with a method that scales where the one above does not: vertex
-enclosures plus sign lemmas proved once for every `n`, and `I_eq ⊆ R_eq` by a
-Henneberg construction instead of dense elimination. It is not a default
+statement for other members `A_n` of the family (currently A32 and A64, and A16
+again, independently), with a method that scales where the one above does not:
+vertex enclosures plus sign lemmas proved once for every `n`; `I_eq ⊆ R_eq` by a
+Henneberg construction instead of dense elimination; and the multipliers as a
+self-stress built by the same Henneberg order, with no `Fc`. It is not a default
 target and is verified by its own script, so nothing on this page — the counts,
 `verify.sh`, the article's numbers — depends on it:
 

@@ -20,8 +20,8 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-CASES="16 32"
-AXIOM_AUDIT_MIN=34
+CASES="16 32 64"
+AXIOM_AUDIT_MIN=48
 NEGATIVE_CONTROLS_EXPECTED=5
 
 RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; RST=$'\033[0m'

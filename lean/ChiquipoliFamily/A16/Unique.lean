@@ -14,6 +14,7 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 set_option linter.unusedVariables false
 set_option maxHeartbeats 4000000
+set_option maxRecDepth 20000
 
 namespace Chiquipoli.Family.A16
 

@@ -8,6 +8,7 @@ import ChiquipoliFamily.A32.Conv16
 
 set_option linter.unusedVariables false
 set_option maxHeartbeats 4000000
+set_option maxRecDepth 20000
 
 namespace Chiquipoli.Family.A32
 
@@ -16,560 +17,560 @@ theorem far_0_1 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC1 c - XC0 c) ^ 2 + (YC1 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX1 c h₁ h₂) (encY0 c h₁ h₂) (encY1 c h₁ h₂) hs0 hs
-  have hn : sb * (|(495184987572062517/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(14398668594450063/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(495184987533017231/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(14398668710833907/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_2 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC2 c - XC0 c) ^ 2 + (YC2 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX2 c h₁ h₂) (encY0 c h₁ h₂) (encY2 c h₁ h₂) hs0 hs
-  have hn : sb * (|(980786318977612453/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(4780291727369581/125000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1961572637644366647/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(38242334126817713/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_3 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC3 c - XC0 c) ^ 2 + (YC3 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX3 c h₁ h₂) (encY0 c h₁ h₂) (encY3 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2866657207234732887/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(40099201341987903/500000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2866657206165377533/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(1253100051890251/15625000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_4 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC4 c - XC0 c) ^ 2 + (YC4 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX4 c h₁ h₂) (encY0 c h₁ h₂) (encY4 c h₁ h₂) hs0 hs
-  have hn : sb * (|(902128822821311547/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(14609883785100473/100000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(3608515288214345789/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(29219767794489231/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_5 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC5 c - XC0 c) ^ 2 + (YC5 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX5 c h₁ h₂) (encY0 c h₁ h₂) (encY5 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4204953303239546973/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4204953297131181269/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_6 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC6 c - XC0 c) ^ 2 + (YC6 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX6 c h₁ h₂) (encY0 c h₁ h₂) (encY6 c h₁ h₂) hs0 hs
-  have hn : sb * (|(589962502659878089/125000000000000000) - 0| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4719700011583717889/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_7 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC7 c - XC0 c) ^ 2 + (YC7 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX7 c h₁ h₂) (encY0 c h₁ h₂) (encY7 c h₁ h₂) hs0 hs
-  have hn : sb * (|(101140550117470043/20000000000000000) - 0| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1264256872871862829/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_8 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC8 c - XC0 c) ^ 2 + (YC8 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX8 c h₁ h₂) (encY0 c h₁ h₂) (encY8 c h₁ h₂) hs0 hs
-  have hn : sb * (|(5096377350871325931/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1274094332541849269/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_9 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC9 c - XC0 c) ^ 2 + (YC9 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX9 c h₁ h₂) (encY0 c h₁ h₂) (encY9 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4949431705100014071/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2474715845057620117/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_10 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC10 c - XC0 c) ^ 2 + (YC10 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX10 c h₁ h₂) (encY0 c h₁ h₂) (encY10 c h₁ h₂) hs0 hs
-  have hn : sb * (|(18824494433630913/4000000000000000) - 0| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(941224719728708217/200000000000000000) - 0| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_11 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC11 c - XC0 c) ^ 2 + (YC11 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX11 c h₁ h₂) (encY0 c h₁ h₂) (encY11 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4278025207972273791/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1069506300587539523/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_12 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC12 c - XC0 c) ^ 2 + (YC12 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX12 c h₁ h₂) (encY0 c h₁ h₂) (encY12 c h₁ h₂) hs0 hs
-  have hn : sb * (|(1802819807491629263/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(901409902966614409/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_13 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC13 c - XC0 c) ^ 2 + (YC13 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX13 c h₁ h₂) (encY0 c h₁ h₂) (encY13 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2801453151660185413/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1400726575039908499/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_14 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC14 c - XC0 c) ^ 2 + (YC14 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX14 c h₁ h₂) (encY0 c h₁ h₂) (encY14 c h₁ h₂) hs0 hs
-  have hn : sb * (|(388536528939022373/200000000000000000) - 0| + 2 * rho) ^ 2 + (|(962125940806266571/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1942682644234066849/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(962125940504356581/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_18 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC18 c - XC0 c) ^ 2 + (YC18 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX18 c h₁ h₂) (encY0 c h₁ h₂) (encY18 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-971341322347555933/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(962125940806266571/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-38853652884681337/20000000000000000) - 0| + 2 * rho) ^ 2 + (|(962125940504356581/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_19 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC19 c - XC0 c) ^ 2 + (YC19 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX19 c h₁ h₂) (encY0 c h₁ h₂) (encY19 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1400726575830092707/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2801453150079816999/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_20 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC20 c - XC0 c) ^ 2 + (YC20 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX20 c h₁ h₂) (encY0 c h₁ h₂) (encY20 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-3605639614983258527/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-3605639611866457637/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_21 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC21 c - XC0 c) ^ 2 + (YC21 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX21 c h₁ h₂) (encY0 c h₁ h₂) (encY21 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-33422071937283389/7812500000000000) - 0| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-4278025202350158093/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_22 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC22 c - XC0 c) ^ 2 + (YC22 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX22 c h₁ h₂) (encY0 c h₁ h₂) (encY22 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4706123608407728251/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2353061799321770543/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_23 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC23 c - XC0 c) ^ 2 + (YC23 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX23 c h₁ h₂) (encY0 c h₁ h₂) (encY23 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-618678963137501759/125000000000000000) - 0| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-989886338023048047/200000000000000000) - 0| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_24 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC24 c - XC0 c) ^ 2 + (YC24 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX24 c h₁ h₂) (encY0 c h₁ h₂) (encY24 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1274094337717831483/250000000000000000) - 0| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5096377330167397077/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_25 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC25 c - XC0 c) ^ 2 + (YC25 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX25 c h₁ h₂) (encY0 c h₁ h₂) (encY25 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-5057027505873502151/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5057027491487451317/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_26 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC26 c - XC0 c) ^ 2 + (YC26 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX26 c h₁ h₂) (encY0 c h₁ h₂) (encY26 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4719700021279024713/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-471970001158371789/100000000000000000) - 0| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_27 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC27 c - XC0 c) ^ 2 + (YC27 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX27 c h₁ h₂) (encY0 c h₁ h₂) (encY27 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-2102476651619773487/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-420495329713118127/100000000000000000) - 0| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_28 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC28 c - XC0 c) ^ 2 + (YC28 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX28 c h₁ h₂) (encY0 c h₁ h₂) (encY28 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-3608515291285246189/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(14609883785100473/100000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-360851528821434579/100000000000000000) - 0| + 2 * rho) ^ 2 + (|(29219767794489231/200000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_29 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC29 c - XC0 c) ^ 2 + (YC29 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX29 c h₁ h₂) (encY0 c h₁ h₂) (encY29 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-358332150904341611/125000000000000000) - 0| + 2 * rho) ^ 2 + (|(40099201341987903/500000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-1433328603082688767/500000000000000000) - 0| + 2 * rho) ^ 2 + (|(1253100051890251/15625000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_30 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC30 c - XC0 c) ^ 2 + (YC30 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX30 c h₁ h₂) (encY0 c h₁ h₂) (encY30 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1961572637955224907/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(4780291727369581/125000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-245196579705545831/125000000000000000) - 0| + 2 * rho) ^ 2 + (|(38242334126817713/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_0_31 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC31 c - XC0 c) ^ 2 + (YC31 c - YC0 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX0 c h₁ h₂) (encX31 c h₁ h₂) (encY0 c h₁ h₂) (encY31 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-198073995028825007/200000000000000000) - 0| + 2 * rho) ^ 2 + (|(14398668594450063/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-990369975066034463/1000000000000000000) - 0| + 2 * rho) ^ 2 + (|(14398668710833907/1000000000000000000) - 0| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_2 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC2 c - XC1 c) ^ 2 + (YC2 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX2 c h₁ h₂) (encY1 c h₁ h₂) (encY2 c h₁ h₂) hs0 hs
-  have hn : sb * (|(980786318977612453/500000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(4780291727369581/125000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1961572637644366647/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(38242334126817713/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_3 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC3 c - XC1 c) ^ 2 + (YC3 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX3 c h₁ h₂) (encY1 c h₁ h₂) (encY3 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2866657207234732887/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(40099201341987903/500000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2866657206165377533/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(1253100051890251/15625000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_4 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC4 c - XC1 c) ^ 2 + (YC4 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX4 c h₁ h₂) (encY1 c h₁ h₂) (encY4 c h₁ h₂) hs0 hs
-  have hn : sb * (|(902128822821311547/250000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(14609883785100473/100000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(3608515288214345789/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(29219767794489231/200000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_5 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC5 c - XC1 c) ^ 2 + (YC5 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX5 c h₁ h₂) (encY1 c h₁ h₂) (encY5 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4204953303239546973/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4204953297131181269/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_6 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC6 c - XC1 c) ^ 2 + (YC6 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX6 c h₁ h₂) (encY1 c h₁ h₂) (encY6 c h₁ h₂) hs0 hs
-  have hn : sb * (|(589962502659878089/125000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4719700011583717889/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_7 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC7 c - XC1 c) ^ 2 + (YC7 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX7 c h₁ h₂) (encY1 c h₁ h₂) (encY7 c h₁ h₂) hs0 hs
-  have hn : sb * (|(101140550117470043/20000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1264256872871862829/250000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_8 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC8 c - XC1 c) ^ 2 + (YC8 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX8 c h₁ h₂) (encY1 c h₁ h₂) (encY8 c h₁ h₂) hs0 hs
-  have hn : sb * (|(5096377350871325931/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1274094332541849269/250000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_9 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC9 c - XC1 c) ^ 2 + (YC9 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX9 c h₁ h₂) (encY1 c h₁ h₂) (encY9 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4949431705100014071/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2474715845057620117/500000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_10 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC10 c - XC1 c) ^ 2 + (YC10 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX10 c h₁ h₂) (encY1 c h₁ h₂) (encY10 c h₁ h₂) hs0 hs
-  have hn : sb * (|(18824494433630913/4000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(941224719728708217/200000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_11 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC11 c - XC1 c) ^ 2 + (YC11 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX11 c h₁ h₂) (encY1 c h₁ h₂) (encY11 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4278025207972273791/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1069506300587539523/250000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_12 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC12 c - XC1 c) ^ 2 + (YC12 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX12 c h₁ h₂) (encY1 c h₁ h₂) (encY12 c h₁ h₂) hs0 hs
-  have hn : sb * (|(1802819807491629263/500000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(901409902966614409/250000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_13 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC13 c - XC1 c) ^ 2 + (YC13 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX13 c h₁ h₂) (encY1 c h₁ h₂) (encY13 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2801453151660185413/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1400726575039908499/500000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_14 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC14 c - XC1 c) ^ 2 + (YC14 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX14 c h₁ h₂) (encY1 c h₁ h₂) (encY14 c h₁ h₂) hs0 hs
-  have hn : sb * (|(388536528939022373/200000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(962125940806266571/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1942682644234066849/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(962125940504356581/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_15 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC15 c - XC1 c) ^ 2 + (YC15 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX15 c h₁ h₂) (encY1 c h₁ h₂) (encY15 c h₁ h₂) hs0 hs
-  have hn : sb * (|1 - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(995184987572062517/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|1 - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(995184987533017231/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_16 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC16 c - XC1 c) ^ 2 + (YC16 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX16 c h₁ h₂) (encY1 c h₁ h₂) (encY16 c h₁ h₂) hs0 hs
-  have hn : sb * (|0 - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|1 - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|0 - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|1 - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_18 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC18 c - XC1 c) ^ 2 + (YC18 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX18 c h₁ h₂) (encY1 c h₁ h₂) (encY18 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-971341322347555933/500000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(962125940806266571/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-38853652884681337/20000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(962125940504356581/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_19 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC19 c - XC1 c) ^ 2 + (YC19 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX19 c h₁ h₂) (encY1 c h₁ h₂) (encY19 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1400726575830092707/500000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2801453150079816999/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_20 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC20 c - XC1 c) ^ 2 + (YC20 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX20 c h₁ h₂) (encY1 c h₁ h₂) (encY20 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-3605639614983258527/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-3605639611866457637/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_21 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC21 c - XC1 c) ^ 2 + (YC21 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX21 c h₁ h₂) (encY1 c h₁ h₂) (encY21 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-33422071937283389/7812500000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-4278025202350158093/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_22 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC22 c - XC1 c) ^ 2 + (YC22 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX22 c h₁ h₂) (encY1 c h₁ h₂) (encY22 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4706123608407728251/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2353061799321770543/500000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_23 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC23 c - XC1 c) ^ 2 + (YC23 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX23 c h₁ h₂) (encY1 c h₁ h₂) (encY23 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-618678963137501759/125000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-989886338023048047/200000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_24 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC24 c - XC1 c) ^ 2 + (YC24 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX24 c h₁ h₂) (encY1 c h₁ h₂) (encY24 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1274094337717831483/250000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5096377330167397077/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_25 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC25 c - XC1 c) ^ 2 + (YC25 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX25 c h₁ h₂) (encY1 c h₁ h₂) (encY25 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-5057027505873502151/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5057027491487451317/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_26 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC26 c - XC1 c) ^ 2 + (YC26 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX26 c h₁ h₂) (encY1 c h₁ h₂) (encY26 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4719700021279024713/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-471970001158371789/100000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_27 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC27 c - XC1 c) ^ 2 + (YC27 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX27 c h₁ h₂) (encY1 c h₁ h₂) (encY27 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-2102476651619773487/500000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-420495329713118127/100000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_28 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC28 c - XC1 c) ^ 2 + (YC28 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX28 c h₁ h₂) (encY1 c h₁ h₂) (encY28 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-3608515291285246189/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(14609883785100473/100000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-360851528821434579/100000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(29219767794489231/200000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_29 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC29 c - XC1 c) ^ 2 + (YC29 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX29 c h₁ h₂) (encY1 c h₁ h₂) (encY29 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-358332150904341611/125000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(40099201341987903/500000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-1433328603082688767/500000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(1253100051890251/15625000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_30 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC30 c - XC1 c) ^ 2 + (YC30 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX30 c h₁ h₂) (encY1 c h₁ h₂) (encY30 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1961572637955224907/1000000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(4780291727369581/125000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-245196579705545831/125000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(38242334126817713/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_1_31 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC31 c - XC1 c) ^ 2 + (YC31 c - YC1 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX1 c h₁ h₂) (encX31 c h₁ h₂) (encY1 c h₁ h₂) (encY31 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-198073995028825007/200000000000000000) - (495184987572062517/500000000000000000)| + 2 * rho) ^ 2 + (|(14398668594450063/1000000000000000000) - (14398668594450063/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-990369975066034463/1000000000000000000) - (495184987533017231/500000000000000000)| + 2 * rho) ^ 2 + (|(14398668710833907/1000000000000000000) - (14398668710833907/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_3 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC3 c - XC2 c) ^ 2 + (YC3 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX3 c h₁ h₂) (encY2 c h₁ h₂) (encY3 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2866657207234732887/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(40099201341987903/500000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2866657206165377533/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(1253100051890251/15625000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_4 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC4 c - XC2 c) ^ 2 + (YC4 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX4 c h₁ h₂) (encY2 c h₁ h₂) (encY4 c h₁ h₂) hs0 hs
-  have hn : sb * (|(902128822821311547/250000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(14609883785100473/100000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(3608515288214345789/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(29219767794489231/200000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_5 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC5 c - XC2 c) ^ 2 + (YC5 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX5 c h₁ h₂) (encY2 c h₁ h₂) (encY5 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4204953303239546973/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4204953297131181269/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_6 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC6 c - XC2 c) ^ 2 + (YC6 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX6 c h₁ h₂) (encY2 c h₁ h₂) (encY6 c h₁ h₂) hs0 hs
-  have hn : sb * (|(589962502659878089/125000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(4719700011583717889/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_7 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC7 c - XC2 c) ^ 2 + (YC7 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX7 c h₁ h₂) (encY2 c h₁ h₂) (encY7 c h₁ h₂) hs0 hs
-  have hn : sb * (|(101140550117470043/20000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1264256872871862829/250000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_8 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC8 c - XC2 c) ^ 2 + (YC8 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX8 c h₁ h₂) (encY2 c h₁ h₂) (encY8 c h₁ h₂) hs0 hs
-  have hn : sb * (|(5096377350871325931/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1274094332541849269/250000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_9 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC9 c - XC2 c) ^ 2 + (YC9 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX9 c h₁ h₂) (encY2 c h₁ h₂) (encY9 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4949431705100014071/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(2474715845057620117/500000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_10 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC10 c - XC2 c) ^ 2 + (YC10 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX10 c h₁ h₂) (encY2 c h₁ h₂) (encY10 c h₁ h₂) hs0 hs
-  have hn : sb * (|(18824494433630913/4000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(941224719728708217/200000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_11 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC11 c - XC2 c) ^ 2 + (YC11 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX11 c h₁ h₂) (encY2 c h₁ h₂) (encY11 c h₁ h₂) hs0 hs
-  have hn : sb * (|(4278025207972273791/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1069506300587539523/250000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_12 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC12 c - XC2 c) ^ 2 + (YC12 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX12 c h₁ h₂) (encY2 c h₁ h₂) (encY12 c h₁ h₂) hs0 hs
-  have hn : sb * (|(1802819807491629263/500000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(901409902966614409/250000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_13 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC13 c - XC2 c) ^ 2 + (YC13 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX13 c h₁ h₂) (encY2 c h₁ h₂) (encY13 c h₁ h₂) hs0 hs
-  have hn : sb * (|(2801453151660185413/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1400726575039908499/500000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_14 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC14 c - XC2 c) ^ 2 + (YC14 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX14 c h₁ h₂) (encY2 c h₁ h₂) (encY14 c h₁ h₂) hs0 hs
-  have hn : sb * (|(388536528939022373/200000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(962125940806266571/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(1942682644234066849/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(962125940504356581/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_15 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC15 c - XC2 c) ^ 2 + (YC15 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX15 c h₁ h₂) (encY2 c h₁ h₂) (encY15 c h₁ h₂) hs0 hs
-  have hn : sb * (|1 - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(995184987572062517/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|1 - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(995184987533017231/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_16 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC16 c - XC2 c) ^ 2 + (YC16 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX16 c h₁ h₂) (encY2 c h₁ h₂) (encY16 c h₁ h₂) hs0 hs
-  have hn : sb * (|0 - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|1 - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|0 - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|1 - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_19 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC19 c - XC2 c) ^ 2 + (YC19 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX19 c h₁ h₂) (encY2 c h₁ h₂) (encY19 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1400726575830092707/500000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(911676887828049137/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2801453150079816999/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(911676887137171457/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_20 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC20 c - XC2 c) ^ 2 + (YC20 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX20 c h₁ h₂) (encY2 c h₁ h₂) (encY20 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-3605639614983258527/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(213305169092692253/250000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-3605639611866457637/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(853220675238780511/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_21 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC21 c - XC2 c) ^ 2 + (YC21 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX21 c h₁ h₂) (encY2 c h₁ h₂) (encY21 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-33422071937283389/7812500000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(156102128064532551/200000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-4278025202350158093/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(195127659668178531/250000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_22 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC22 c - XC2 c) ^ 2 + (YC22 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX22 c h₁ h₂) (encY2 c h₁ h₂) (encY22 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4706123608407728251/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(138360204720032521/200000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-2353061799321770543/500000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(691801021398312527/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_23 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC23 c - XC2 c) ^ 2 + (YC23 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX23 c h₁ h₂) (encY2 c h₁ h₂) (encY23 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-618678963137501759/125000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(74576263023572477/125000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-989886338023048047/200000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(119322020294504847/200000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_24 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC24 c - XC2 c) ^ 2 + (YC24 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX24 c h₁ h₂) (encY2 c h₁ h₂) (encY24 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-1274094337717831483/250000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(49954010815698569/100000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5096377330167397077/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(499540104964162029/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_25 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC25 c - XC2 c) ^ 2 + (YC25 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX25 c h₁ h₂) (encY2 c h₁ h₂) (encY25 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-5057027505873502151/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(16059329318271239/40000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-5057027491487451317/1000000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(401483235710596239/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_26 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC26 c - XC2 c) ^ 2 + (YC26 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX26 c h₁ h₂) (encY2 c h₁ h₂) (encY26 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-4719700021279024713/1000000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(19318005067824791/62500000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-471970001158371789/100000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(154544041649877159/500000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 theorem far_2_27 (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC27 c - XC2 c) ^ 2 + (YC27 c - YC2 c) ^ 2 < 1 := by
   obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂
   have h := sqd_ub (encX2 c h₁ h₂) (encX27 c h₁ h₂) (encY2 c h₁ h₂) (encY27 c h₁ h₂) hs0 hs
-  have hn : sb * (|(-2102476651619773487/500000000000000000) - (980786318977612453/500000000000000000)| + 2 * rho) ^ 2 + (|(224918275325773493/1000000000000000000) - (4780291727369581/125000000000000000)| + 2 * rho) ^ 2 < 1 := by
+  have hn : sb * (|(-420495329713118127/100000000000000000) - (1961572637644366647/1000000000000000000)| + 2 * rho) ^ 2 + (|(224918276988028073/1000000000000000000) - (38242334126817713/1000000000000000000)| + 2 * rho) ^ 2 < 1 := by
     unfold sb rho; norm_num [abs_of_pos, abs_of_neg]
   linarith
 

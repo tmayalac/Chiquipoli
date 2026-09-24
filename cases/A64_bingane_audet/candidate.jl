@@ -3,8 +3,8 @@
 # Problem: maximal-perimeter convex EQUILATERAL small (diameter-1) 64-gon.
 # Status: OPEN. A64 is the Bingane–Audet construction for n = 2^s, NOT a
 #   proven global optimum. This framework certifies its LOCAL first-order
-#   structure only. Unlike A16 there is no dedicated Julia module and, so far,
-#   no Lean certificate (A16 and A32 have one: lean/ChiquipoliFamily).
+#   structure only. Unlike A16 there is no dedicated Julia module; the Lean
+#   certificate is lean/ChiquipoliFamily/A64 (make lean-family).
 #
 # Reference: C. Bingane, C. Audet, "Tight bounds on the maximal perimeter of
 #   convex equilateral small polygons", Archiv der Mathematik 119 (2022)

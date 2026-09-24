@@ -11,6 +11,30 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **Lean certificate of A64; multipliers as a self-stress (2026-09-24).** The
+  family layer now proves `locally_maximal_unique` for **A64** as well (A16,
+  A32, A64 all pass `verify_family.sh`). Getting there replaced the multiplier
+  witness: the exact solve over `Q[c]/(Fc)` took 51 min at n = 64 and one of
+  its 63 degree-59 positivity certificates took 314 s / 9.7 GB in Lean. The
+  multipliers are now a **self-stress built by the Henneberg order** already
+  used for rigidity: the two bars outside the construction (which are exactly
+  the two sides that need `Fc`, at n = 16, 32, 64) carry rational stresses,
+  every other stress is Cramer's rule at the vertex that added it
+  (`cramer_bal`), the pinned side is fixed last (`pin_bal`), and vertices 0, 1
+  balance by the global force and moment identities. The equilibrium needs no
+  `Fc`; positivity of the diameter stresses and `Σα < 0` follow by centred
+  enclosure arithmetic (`add_close`, `mul_close`, `div_close`, `recenter`), and
+  `mult_of_stationary'` gives the multiplier identity with `κ = −ℓΣα > 0`. The
+  certified bracket for `c` narrowed from `10⁻⁹` to `10⁻¹⁷` so the enclosures
+  survive the recursion. The generator now runs in seconds for every n
+  (`simplest` became a continued-fraction search); `multipliers_n.jl`, the
+  solver of the previous design, is removed. Measured: A64 builds in
+  21 min at 13 GB peak (the degree-31 vertex enclosures dominate); A16 in
+  about 1.5 min at 0.8 GB. Nothing outside `lean/ChiquipoliFamily/`,
+  `lean/generators/family/`, `lean/negative_controls_family/` and
+  `lean/verify_family.sh` changed apart from documentation and the A64 case
+  comment (re-run `make literature` at a clean tree).
+
 - **Lean certificate of A32, and a Lean layer that scales in n (2026-09-24).**
   New library `lean/ChiquipoliFamily/` (not a default target; `make
   lean-family` runs its own five checks in `lean/verify_family.sh`). For A32 it

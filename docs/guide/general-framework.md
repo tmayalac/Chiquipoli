@@ -324,14 +324,15 @@ side and active-diameter equalities `PROVEN`. Uniqueness of the constructor
 root on its bracket is proved exactly by a Sturm count on `Fc` (one real root
 in the image interval of `cos`, out of 19 and 37 real roots). Planted errors
 (wrong `Fc`, a spurious active pair, a vertex moved by `1e−20`) are rejected.
-**Lean.** A32 is also proved in Lean 4 (`lean/ChiquipoliFamily/A32/`, headline
-`Chiquipoli.Family.A32.locally_maximal_unique`): the root is the unique one in
+**Lean.** A32 and A64 are also proved in Lean 4 (`lean/ChiquipoliFamily/A32/`,
+`lean/ChiquipoliFamily/A64/`, headline `Chiquipoli.Family.A<n>.locally_maximal_unique`): the root is the unique one in
 the article's search interval, and the configuration is a strict local maximiser
 of the perimeter modulo Euclidean motions, through the general `thm_3_5`. The
 same generator re-proves A16 independently. The method differs from the A16
 layer — vertex enclosures plus lemmas proved once for every `n`, and rigidity by
-a Henneberg construction — because the A16 method does not scale to `n = 32`; see
-`lean/ChiquipoliFamily/README.md`. A64 has no Lean layer yet.
+a Henneberg construction, multipliers as a self-stress built by the same order —
+because the A16 method does not scale to `n = 32`; see
+`lean/ChiquipoliFamily/README.md`.
 
 **[OBSERVED] The same structure at n = 16, 32, 64**, recorded as a pattern,
 not a theorem:
@@ -344,7 +345,11 @@ not a theorem:
 
 That is: `n − 1` active diameters, LICQ defect 1, `deg Fc = n − 4`, and exactly
 two equalities (the sides `n/4 − 1` and `3n/4`) that hold only at the root, all
-others identically in `θ`. Three members do not prove it for all `n = 2^s`;
+others identically in `θ`. A second observation, from the Lean layer: in the
+bar framework of sides and active diameters, a Henneberg construction pinned at
+side `0 → 1` uses every bar except exactly those two sides, again at all three
+`n` — so the two equalities that need the root are precisely the two bars that
+infinitesimal rigidity does not need. Three members do not prove it for all `n = 2^s`;
 `test/literature.jl` pins it for these three so that a change is noticed. A
 proof for general `s` would be the natural statement to formalize in Lean for
 the whole family at once.

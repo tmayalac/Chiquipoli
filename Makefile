@@ -16,7 +16,7 @@ help:
 	@echo "  make lean-cache        download prebuilt Mathlib oleans (~7 GB, once)"
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
-	@echo "  make lean-family       the same five checks for the family layer (A16, A32)"
+	@echo "  make lean-family       the same five checks for the family layer (A16, A32, A64)"
 	@echo
 	@echo "  make paper             compile paper/main.tex + supplement and audit the logs"
 	@echo "  make paper-check       reconcile the article against the certificate and Lean"

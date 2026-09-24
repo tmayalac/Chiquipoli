@@ -14,12 +14,15 @@
 #
 # WHAT LEAN CHECKS, AND HOW (see Basic.lean for the method):
 #   Poly.lean   the polynomials, the rational interval [clo, chi] around c*
-#   Encl.lean   |XC_k(c) − x̂_k| ≤ ρ, |YC_k(c) − ŷ_k| ≤ ρ  (centred Taylor)
-#               and every diameter multiplier λ_e(c) > 0    (centred Taylor)
+#   Encl*.lean  |XC_k(c) − x̂_k| ≤ ρ, |YC_k(c) − ŷ_k| ≤ ρ  (centred Taylor)
 #   Conv*.lean  every support determinant > 0               (det_lb + norm_num)
 #   Far*.lean   every non-active pair at distance < 1       (sqd_ub + norm_num)
-#   Exact.lean  sides, active diameters, stationarity rows, Σα = −1   (ring)
+#   Sides*.lean sides and active diameters, exactly          (ring, linear_combination)
 #   Hen.lean    the n − 2 Henneberg determinants ≠ 0         (det_lb + norm_num)
+#   Stress*.lean the multipliers: a self-stress built by the Henneberg recursion
+#               (Cramer at each vertex, in reverse order), balanced at every vertex
+#               (field_simp; ring — no Fc needed), with every diameter stress > 0
+#               and the side stresses summing < 0 (centred enclosure arithmetic)
 #   Root.lean   Fc has a root in (clo, chi)                  (IVT, norm_num)
 #   Geometry.lean, Main.lean   the configuration, its feasibility, the multiplier
 #               identity, I_eq ⊆ R_eq, and Theorem 3.5 applied: strict local
@@ -34,7 +37,6 @@ include(joinpath(REPO, "src", "A16Certificate.jl"));  using .A16Certificate
 include(joinpath(REPO, "src", "ExactIdentity.jl"));   using .ExactIdentity
 include(joinpath(REPO, "src", "SmallPolygons.jl"));   using .SmallPolygons
 include(joinpath(REPO, "cases", "exact_coords.jl"))
-include(joinpath(@__DIR__, "multipliers_n.jl"));      using .MultipliersN
 using IntervalArithmetic
 
 const QQ = Rational{BigInt}
@@ -82,13 +84,16 @@ detpoly(k, i, j) = ps(pm(ps(XC[i+1], XC[k+1]), ps(YC[j+1], YC[k+1])),
 peval(p, x) = sum(p[i] * x^(i-1) for i in eachindex(p))
 
 # ---- the rational interval around c* -----------------------------------------
+"The rational of smallest denominator in [lo, hi] (continued fractions; lo, hi > 0)."
 function simplest(lo, hi)
-    q = 1
-    while true
-        p_ = ceil(BigInt, lo * q); p_ <= hi * q && return QQ(p_, q); q += 1
-    end
+    a = QQ(lo); b = QQ(hi)
+    @assert 0 < a <= b
+    f = floor(a)
+    f == a && return a
+    f + 1 <= b && return f + 1
+    return f + 1 / simplest(1 / (b - f), 1 / (a - f))
 end
-W = big"1e-9"
+W = big"1e-17"                                  # narrow: the stress recursion amplifies errors
 CLO = simplest(cstar - W, cstar - W/4); CHI = simplest(cstar + W/4, cstar + W)
 C0 = simplest(cstar - W/8, cstar + W/8); R0 = max(C0 - CLO, CHI - C0)
 SB = 1 - CLO^2                                   # sin² z = 1 − c² ≤ 1 − clo²  (c ≥ clo > 0)
@@ -144,32 +149,6 @@ for (i, j) in active
     @assert EI.iszeropoly(ps(sqdpoly(i, j), QQ[1])) "active diameter ($i,$j) is not identically 1"
 end
 
-# ---- multipliers: exact witness, positive representative ------------------------
-kapex = n ÷ 2                               # apex (0, 1): y differs from y_0
-omit = [1, 2, 2kapex + 1]; pin = n + 4
-solve(v) = MultipliersN.exact_multipliers(XC, YC, Fc, active; pin_index = pin, pin_value = QQ[QQ(v)], omit = omit)
-s0 = solve(0); s1 = solve(1)
-L0 = [peval(s0.y[n+e], cstar) for e in 1:m]; L1 = [peval(s1.y[n+e], cstar) for e in 1:m]
-lo_mu = big(-Inf); hi_mu = big(Inf)
-for e in 1:m
-    sl = L1[e] - L0[e]
-    if sl > 0; global lo_mu = max(lo_mu, -L0[e] / sl)
-    elseif sl < 0; global hi_mu = min(hi_mu, -L0[e] / sl)
-    else; @assert L0[e] > 0; end
-end
-@assert lo_mu < hi_mu "no strictly positive multiplier representative"
-mu = simplest(lo_mu + (hi_mu - lo_mu) * 3 / 8, hi_mu - (hi_mu - lo_mu) * 3 / 8)
-sol = solve(mu)
-Y = [QQ.(p) for p in sol.y]                 # Y[1:n] side weights A_i, Y[n+1:n+m] diameter weights
-lam_lb = Dict{Int,QQ}()
-for e in 1:m
-    t = taylor(Y[n+e], C0)
-    lb = t[1] - tail(t)
-    @assert lb > 0 "diameter multiplier $e is not certified positive"
-    lam_lb[e] = QQ(floor(BigInt, lb * big(10)^12), big(10)^12)
-    @assert lam_lb[e] > 0
-end
-
 # ---- Henneberg order -----------------------------------------------------------
 bars = vcat([(i, mod(i + 1, n)) for i in 0:n-1], active)
 nbr = Dict(k => Int[] for k in 0:n-1)
@@ -198,10 +177,64 @@ for (a, b) in [(0, 1)]                      # pin side 0; greedy by margin
 end
 HEN = best
 
+# ---- the self-stress (the multipliers), by the reverse Henneberg recursion --------
+# Every bar is exactly one of: the pinned bar (0,1); a Henneberg bar of its
+# later-added endpoint; or one of the two "extra" bars the construction does not
+# use. The extra bars carry free rational stresses t₁, t₂. In reverse Henneberg
+# order, vertex k balances the forces of its already-known bars with its two
+# Henneberg bars (Cramer, determinant henD_k ≠ 0); the pinned bar is fixed last
+# by vertex 1, and vertices 0, 1 then balance by the global force and moment
+# identities. Equilibrium is in reduced coordinates (XC, YC): the x-rows of the
+# true equilibrium are sin z times these.
+@assert EI.iszeropoly(XC[1]) && EI.iszeropoly(YC[1]) "vertex 0 is not at the origin"
+barix = Dict{Tuple{Int,Int},Int}()
+for (bi, (a, b)) in enumerate(bars); barix[(a, b)] = bi; barix[(b, a)] = bi; end
+hbar = Dict{Int,Tuple{Int,Int,Int,Int}}()          # k => (i, j, bar_ki, bar_kj)
+used = Set([barix[(0, 1)]])
+for (k, i, j) in HEN
+    hbar[k] = (i, j, barix[(k, i)], barix[(k, j)]); push!(used, barix[(k, i)], barix[(k, j)])
+end
+extra = sort([bi for bi in eachindex(bars) if !(bi in used)])
+@assert length(extra) == 2 "expected exactly two bars outside the Henneberg construction"
+PIN = barix[(0, 1)]
+incident(k) = sort([bi for (bi, (a, b)) in enumerate(bars) if a == k || b == k])
+otherend(bi, k) = bars[bi][1] == k ? bars[bi][2] : bars[bi][1]
+others(k) = [bi for bi in incident(k) if !(k in keys(hbar) && bi in hbar[k][3:4]) && !(k == 1 && bi == PIN)]
+
+# numeric stress basis (BigFloat at the rational centres) to choose t₁, t₂
+function stress_numeric(t)
+    X(k) = BigFloat(cx[k]); Yc(k) = BigFloat(cy[k])
+    y = Dict{Int,BigFloat}(extra[1] => t[1], extra[2] => t[2])
+    for (k, i, j) in reverse(HEN)
+        (_, _, p, q) = hbar[k]
+        Fx = sum((y[b] * (X(otherend(b, k)) - X(k)) for b in others(k)); init = big(0.0))
+        Fy = sum((y[b] * (Yc(otherend(b, k)) - Yc(k)) for b in others(k)); init = big(0.0))
+        D = (X(i) - X(k)) * (Yc(j) - Yc(k)) - (Yc(i) - Yc(k)) * (X(j) - X(k))
+        y[p] = (-Fx * (Yc(j) - Yc(k)) + Fy * (X(j) - X(k))) / D
+        y[q] = (-Fy * (X(i) - X(k)) + Fx * (Yc(i) - Yc(k))) / D
+    end
+    Gx = sum(y[b] * (X(otherend(b, 1)) - X(1)) for b in others(1))
+    Gy = sum(y[b] * (Yc(otherend(b, 1)) - Yc(1)) for b in others(1))
+    ux = X(0) - X(1); uy = Yc(0) - Yc(1)
+    y[PIN] = -(Gx * ux + Gy * uy) / (ux^2 + uy^2)
+    y
+end
+yA = stress_numeric((big(1.0), big(0.0))); yB = stress_numeric((big(0.0), big(1.0)))
+bestφ = nothing
+for φ in range(0, 2π, length = 72001)
+    ca, sa = cos(φ), sin(φ)
+    lam = minimum(ca * yA[b] + sa * yB[b] for b in n+1:n+m)
+    ssum = sum(ca * yA[b] + sa * yB[b] for b in 1:n)
+    (ssum < 0 && lam > 0) || continue
+    sc = lam / abs(ssum)
+    (bestφ === nothing || sc > bestφ[1]) && (global bestφ = (sc, φ))
+end
+@assert bestφ !== nothing "no direction of the stress space gives positive diameter stresses"
+T1 = QQ(round(BigInt, cos(bestφ[2]) * 10^6), 10^6); T2 = QQ(round(BigInt, sin(bestφ[2]) * 10^6), 10^6)
+
 println("A$n:  [clo,chi] = [$CLO, $CHI]  width $(Float64(CHI - CLO))   ρ = $(Float64(RHO))")
 println("  convexity: $(length(triples)) determinants, worst certified margin $(Float64(minimum(conv_m)))")
 println("  inactive:  $(length(farpairs)) pairs, worst certified bound $(Float64(maximum(far_ub(i,j) for (i,j) in farpairs)))")
-println("  multipliers: pin μ = $mu, worst certified λ ≥ $(Float64(minimum(values(lam_lb))))")
 println("  Henneberg: $(length(HEN)) steps, worst margin $(Float64(minimum(hmargin(k,i,j) for (k,i,j) in HEN)))")
 println("  sides needing Fc: $([i for i in 0:n-1 if side_quot[i] !== nothing])   deg Fc = $(length(Fc)-1)")
 
@@ -217,7 +250,7 @@ function lp(p, var = "c")
     for k in d-1:-1:0; e = p[k+1] == 0 ? "($e) * $var" : "($e) * $var + $(lr(p[k+1]))"; end
     e
 end
-mA(i) = "mA$i"; mL(e) = "mL$e"               # e is 0-based in Lean names
+mA(i) = "st$i"; mL(e) = "st$(n + e)"         # the stress on side i / on active diameter e (0-based)
 header(doc, imports) = """/-
 AUTO-GENERATED by `lean/generators/family/gen_family.jl $n` — do not edit by hand.
 
@@ -227,6 +260,7 @@ $(join(["import $im" for im in imports], "\n"))
 
 set_option linter.unusedVariables false
 set_option maxHeartbeats 4000000
+set_option maxRecDepth 20000
 
 namespace $NS
 
@@ -315,9 +349,8 @@ global buf = IOBuffer()
 print(buf, header("""**A$n: the polynomial layer.** Every vertex of the Bingane–Audet `$n`-gon is
 `p_k = (sin z · XC_k(cos z), YC_k(cos z))` with `XC_k, YC_k ∈ Q[c]` (exact
 division by `cos 2z`, asserted by the generator). `Fc` is the constructor
-equation reduced to `c = cos z` (Proposition 1); `mA_i`, `mL_e` are the exact
-multiplier witness, as elements of `Q[c]/(Fc)`. `[clo, chi]` is a rational
-interval of width about `10⁻⁹` around the root; `c0`, `r0` centre it.""",
+equation reduced to `c = cos z` (Proposition 1). `[clo, chi]` is a rational
+interval of width about `10⁻¹⁷` around the root; `c0`, `r0` centre it.""",
     ["ChiquipoliFamily.Basic"]))
 println(buf, """
 noncomputable def clo : ℝ := $(lr(CLO))
@@ -341,8 +374,6 @@ for k in 0:n-1
     println(buf, "noncomputable def YC$k (c : ℝ) : ℝ := ", lp(YC[k+1]))
 end
 println(buf, "\n/-- The constructor equation in `c = cos z`. -/\nnoncomputable def Fc (c : ℝ) : ℝ := ", lp(Fc))
-for i in 0:n-1; println(buf, "noncomputable def $(mA(i)) (c : ℝ) : ℝ := ", lp(Y[i+1])); end
-for e in 0:m-1; println(buf, "noncomputable def $(mL(e)) (c : ℝ) : ℝ := ", lp(Y[n+e+1])); end
 print(buf, footer())
 emit("Poly", String(take!(buf)))
 
@@ -354,10 +385,7 @@ emit_chain("Encl", """**A$n: vertex enclosures.** Each vertex coordinate polynom
 `rho` of a rational centre on `[clo, chi]`. Centred Taylor expansion at `c0`: one
 `ring` identity per polynomial, then one bound per term (`tbound`).""",
     [s_ for k in 0:n-1 for s_ in (encl_lemma("encX$k", "XC$k", XC[k+1], cx[k]),
-                                  encl_lemma("encY$k", "YC$k", YC[k+1], cy[k]))], 32)
-emit_chain("Lam", """**A$n: the diameter multipliers are positive.** Each `mL_e` is bounded
-below by a positive rational on `[clo, chi]`, by centred Taylor expansion.""",
-    [lb_lemma("lam_lb$(e-1)", mL(e-1), Y[n+e], lam_lb[e]) for e in 1:m], 4)
+                                  encl_lemma("encY$k", "YC$k", YC[k+1], cy[k]))], 16)
 
 # ---------------------------------------------------------------------------
 # Conv*.lean  (chained, so lake builds them one after another)
@@ -411,7 +439,7 @@ end
 # ---------------------------------------------------------------------------
 # Sides*.lean, Rows*.lean  (the exact identities)
 # ---------------------------------------------------------------------------
-barname(b) = b <= n ? mA(b - 1) : mL(b - n - 1)
+barname(b) = "st$(b - 1)"                    # bar b (1-based) carries the stress st(b−1)
 side_pieces = String[]
 for i in 0:n-1
     j = mod(i + 1, n)
@@ -428,30 +456,6 @@ end
 emit_chain("Sides", """**A$n: sides and active diameters, exactly.** All $n sides equal `2 − 2c`
 in squared length — all but $(count(!isnothing, values(side_quot))) for every `c`, those at a root of `Fc` —
 and all $m active diameters are identically `1`. `ring` / `linear_combination`.""", side_pieces, 16)
-
-# stationarity rows: at vertex k, Σ over bars (a→b) incident to k of ±weight·Δ
-function row_terms(k, coord)
-    t = String[]
-    for (bi, (a, b)) in enumerate(bars)
-        w = barname(bi)
-        if b == k; push!(t, "$w c * ($(coord)$b c - $(coord)$a c)")
-        elseif a == k; push!(t, "-($w c * ($(coord)$b c - $(coord)$a c))"); end
-    end
-    join(t, " + ")
-end
-rowquot(k, coord) = sol.quot[coord == "XC" ? 2k + 1 : 2k + 2]
-row_pieces = String[]
-for k in 0:n-1, coord in ("XC", "YC")
-    ws = unique([barname(bi) for (bi, (a, b)) in enumerate(bars) if a == k || b == k])
-    ps_ = unique([s_ for (a, b) in bars if a == k || b == k for s_ in ("$coord$a", "$coord$b")])
-    push!(row_pieces, "\ntheorem row_$(coord)_$k (c : ℝ) (hF : Fc c = 0) :\n    $(row_terms(k, coord)) = 0 := by\n" *
-        "  unfold $(join(ws, " ")) $(join(ps_, " "))\n  unfold Fc at hF\n  linear_combination ($(lp(rowquot(k, coord)))) * hF\n")
-end
-push!(row_pieces, "\ntheorem alpha_sum (c : ℝ) (hF : Fc c = 0) :\n    $(join([mA(i) * " c" for i in 0:n-1], " + ")) = -1 := by\n" *
-    "  unfold $(join([mA(i) for i in 0:n-1], " "))\n  unfold Fc at hF\n  linear_combination ($(lp(-sol.quot[2n+1]))) * hF\n")
-emit_chain("Rows", """**A$n: the stationarity rows.** At every vertex the weighted bar vectors of
-the exact multiplier witness balance, in both coordinates, and the side weights
-sum to `−1`; each identity is a multiple of `Fc`.""", row_pieces, 8)
 
 # ---------------------------------------------------------------------------
 # Hen.lean
@@ -470,6 +474,145 @@ end
 print(buf, footer())
 emit("Hen", String(take!(buf)))
 prev = "$MOD.Hen"
+
+
+# ---------------------------------------------------------------------------
+# Stress*.lean — the multipliers, as a self-stress (see the comment at `extra`)
+# ---------------------------------------------------------------------------
+# Centred-enclosure terms. Each carries its Lean term, an exact rational centre
+# and radius, and a Lean proof of |term − centre| ≤ radius built from the lemmas
+# of Basic.lean; every operation recentres to rounded rationals, so each side
+# condition is small rational arithmetic. The definition of a stress IS the term
+# of its tree, so the definition and the proof of its enclosure cannot diverge.
+struct En; t::String; c::QQ; r::QQ; pf::String; end
+GR = big(10)^30
+rn(x) = QQ(round(BigInt, x * GR), GR); ru(x) = QQ(ceil(BigInt, x * GR), GR)
+function recen(t, a, r, pf)
+    c = rn(a); e = ru(abs(a - c)); s_ = ru(r + e)
+    En(t, c, s_, "(recenter (b := $(lr(c))) (e := $(lr(e))) (s := $(lr(s_))) $pf (by norm_num [rho]) (by norm_num [rho]))")
+end
+leafX(k) = En("XC$k c", cx[k], RHO, "(encX$k c h₁ h₂)")
+leafY(k) = En("YC$k c", cy[k], RHO, "(encY$k c h₁ h₂)")
+SC = Dict{Int,QQ}(); SR = Dict{Int,QQ}()
+leafS(b) = En("st$(b-1) c", SC[b], SR[b], "(encS$(b-1) c h₁ h₂)")
+zeroEn = En("0", QQ(0), QQ(0), "(show |(0:ℝ) - 0| ≤ 0 by norm_num)")
+eadd(x, y) = recen("($(x.t) + $(y.t))", x.c + y.c, x.r + y.r, "(add_close $(x.pf) $(y.pf))")
+esub(x, y) = recen("($(x.t) - $(y.t))", x.c - y.c, x.r + y.r, "(sub_close' $(x.pf) $(y.pf))")
+eneg(x) = recen("(-$(x.t))", -x.c, x.r, "(neg_close $(x.pf))")
+emul(x, y) = recen("($(x.t) * $(y.t))", x.c * y.c, abs(x.c) * y.r + abs(y.c) * x.r + x.r * y.r, "(mul_close $(x.pf) $(y.pf))")
+function ediv(x, d)
+    @assert d.r < d.c "a Cramer denominator is not enclosed away from zero"
+    recen("($(x.t) / $(d.t))", x.c / d.c, (x.r * d.c + abs(x.c) * d.r) / ((d.c - d.r) * d.c),
+          "(div_close $(x.pf) $(d.pf) (by norm_num [rho]))")
+end
+esum(xs) = isempty(xs) ? zeroEn : foldl(eadd, xs)
+force(k, coord, bs) = esum([emul(leafS(b), esub(coord == "X" ? leafX(otherend(b, k)) : leafY(otherend(b, k)),
+                                                    coord == "X" ? leafX(k) : leafY(k))) for b in bs])
+
+stress_def = Dict{Int,String}(); stress_pf = Dict{Int,String}()
+hen_terms = Dict{Int,NTuple{6,String}}(); pin_terms = ("", "", "", "")
+for (b, t) in zip(extra, (T1, T2))
+    SC[b] = t; SR[b] = QQ(0)
+    stress_def[b] = lr(t); stress_pf[b] = "by unfold st$(b-1); norm_num"
+end
+order_defs = copy(extra)
+for (k, i, j) in reverse(HEN)
+    (_, _, p, q) = hbar[k]
+    Fx = force(k, "X", others(k)); Fy = force(k, "Y", others(k))
+    ui1 = esub(leafX(i), leafX(k)); ui2 = esub(leafY(i), leafY(k))
+    uj1 = esub(leafX(j), leafX(k)); uj2 = esub(leafY(j), leafY(k))
+    D = esub(emul(ui1, uj2), emul(ui2, uj1))
+    sp = ediv(eadd(emul(eneg(Fx), uj2), emul(Fy, uj1)), D)
+    sq = ediv(eadd(emul(eneg(Fy), ui1), emul(Fx, ui2)), D)
+    hen_terms[k] = (Fx.t, Fy.t, ui1.t, ui2.t, uj1.t, uj2.t)
+    for (b, e) in ((p, sp), (q, sq))
+        SC[b] = e.c; SR[b] = e.r
+        stress_def[b] = e.t; stress_pf[b] = "by unfold st$(b-1); exact $(e.pf)"
+        push!(order_defs, b)
+    end
+end
+let
+    Gx = force(1, "X", others(1)); Gy = force(1, "Y", others(1))
+    ux = esub(leafX(0), leafX(1)); uy = esub(leafY(0), leafY(1))
+    sp = ediv(eneg(eadd(emul(Gx, ux), emul(Gy, uy))), eadd(emul(ux, ux), emul(uy, uy)))
+    global pin_terms = (Gx.t, Gy.t, ux.t, uy.t)
+    SC[PIN] = sp.c; SR[PIN] = sp.r
+    stress_def[PIN] = sp.t; stress_pf[PIN] = "by unfold st$(PIN-1); exact $(sp.pf)"
+    push!(order_defs, PIN)
+end
+@assert sort(order_defs) == collect(eachindex(bars))
+SUM = esum([leafS(b) for b in 1:n])
+lamlo = minimum(SC[b] - SR[b] for b in n+1:n+m)
+@assert lamlo > 0 "a diameter stress is not certified positive (enclosures too wide)"
+@assert SUM.c + SUM.r < 0 "the side stresses are not certified to sum below zero"
+println("  multipliers: self-stress with t = ($(Float64(T1)), $(Float64(T2))) on the extra bars " *
+        "$([bars[b] for b in extra]); worst certified λ ≥ $(Float64(lamlo)), Σα ≤ $(Float64(SUM.c + SUM.r))")
+
+# StressDef.lean: the definitions and the vertex balances
+global buf = IOBuffer()
+print(buf, header("""**A$n: the multipliers, as a self-stress.** The two bars the Henneberg
+construction does not use, $([bars[b] for b in extra]), carry rational stresses; every
+other stress is defined by Cramer's rule at the vertex that added it, in reverse
+order, and the stress on the pinned side `0 → 1` last. Each vertex then balances
+(`bal_*`, by `field_simp; ring` with its Henneberg determinant nonzero), and
+vertices `0`, `1` by the global force and moment identities (`bal_base`).
+Nothing here uses `Fc`: the equilibrium holds on the whole interval.""", [prev]))
+for b in order_defs
+    println(buf, "@[irreducible] noncomputable def st$(b-1) (c : ℝ) : ℝ := $(stress_def[b])")
+end
+for k in 0:n-1
+    println(buf, "noncomputable def BX$k (c : ℝ) : ℝ := $(join(["st$(b-1) c * (XC$(otherend(b, k)) c - XC$k c)" for b in incident(k)], " + "))")
+    println(buf, "noncomputable def BY$k (c : ℝ) : ℝ := $(join(["st$(b-1) c * (YC$(otherend(b, k)) c - YC$k c)" for b in incident(k)], " + "))")
+end
+for (k, i, j) in HEN
+    (_, _, p, q) = hbar[k]
+    (F1, F2, a1, a2, b1, b2) = hen_terms[k]
+    println(buf, "\ntheorem bal_$k (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : BX$k c = 0 ∧ BY$k c = 0 := by\n" *
+        "  have hD := (henD_$k c h₁ h₂).ne'\n" *
+        "  obtain ⟨h1, h2⟩ := cramer_bal (F1 := $F1) (F2 := $F2)\n    (a1 := $a1) (a2 := $a2) (b1 := $b1) (b2 := $b2) hD\n" *
+        "  unfold BX$k BY$k st$(p-1) st$(q-1)\n  exact ⟨by linear_combination h1, by linear_combination h2⟩")
+end
+hk = [k for (k, _, _) in HEN]
+println(buf, "\ntheorem bal_base (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :\n    BX0 c = 0 ∧ BY0 c = 0 ∧ BX1 c = 0 ∧ BY1 c = 0 := by\n" *
+    join(["  obtain ⟨x$k, y$k⟩ := bal_$k c h₁ h₂" for k in hk], "\n") * "\n" *
+    "  have gX : $(join(["BX$k c" for k in 0:n-1], " + ")) = 0 := by\n    unfold $(join(["BX$k" for k in 0:n-1], " ")); ring\n" *
+    "  have gY : $(join(["BY$k c" for k in 0:n-1], " + ")) = 0 := by\n    unfold $(join(["BY$k" for k in 0:n-1], " ")); ring\n" *
+    "  have gM : $(join(["(XC$k c * BY$k c - YC$k c * BX$k c)" for k in 0:n-1], " + ")) = 0 := by\n    unfold $(join(["BX$k BY$k" for k in 0:n-1], " ")); ring\n" *
+    "  have z0 : XC0 c = 0 := by unfold XC0; rfl\n" *
+    "  have w0 : YC0 c = 0 := by unfold YC0; rfl\n" *
+    "  have hx1 : 0 < XC1 c := pos_of_close (encX1 c h₁ h₂) (by norm_num [rho])\n" *
+    "  have hu : $(pin_terms[3]) * $(pin_terms[3]) + $(pin_terms[4]) * $(pin_terms[4]) ≠ 0 := by\n" *
+    "    rw [z0]; exact ne_of_gt (add_pos_of_pos_of_nonneg (mul_pos_of_neg_of_neg (sub_neg.mpr hx1) (sub_neg.mpr hx1)) (mul_self_nonneg _))\n" *
+    "  have hpin : BX1 c * (XC0 c - XC1 c) + BY1 c * (YC0 c - YC1 c) = 0 := by\n" *
+    "    have h := pin_bal (G1 := $(pin_terms[1])) (G2 := $(pin_terms[2])) (u1 := $(pin_terms[3])) (u2 := $(pin_terms[4])) hu\n" *
+    "    unfold BX1 BY1 st$(PIN-1)\n    linear_combination h\n" *
+    "  rw [z0, w0] at hpin\n" *
+    "  have e1 : BX0 c + BX1 c = 0 := by linear_combination gX $(join(["- x$k" for k in hk], " "))\n" *
+    "  have e2 : BY0 c + BY1 c = 0 := by linear_combination gY $(join(["- y$k" for k in hk], " "))\n" *
+    "  have e3 : XC1 c * BY1 c - YC1 c * BX1 c = 0 := by\n    linear_combination gM $(join(["- (XC$k c * y$k - YC$k c * x$k)" for k in hk], " ")) - BY0 c * z0 + BX0 c * w0\n" *
+    "  have hne : XC1 c ^ 2 + YC1 c ^ 2 ≠ 0 := ne_of_gt (add_pos_of_pos_of_nonneg (pow_pos hx1 2) (sq_nonneg _))\n" *
+    "  have hb1x : BX1 c = 0 := by\n    have hq : (XC1 c ^ 2 + YC1 c ^ 2) * BX1 c = 0 := by\n      linear_combination (-(XC1 c)) * hpin - (YC1 c) * e3\n    exact (mul_eq_zero.mp hq).resolve_left hne\n" *
+    "  have hb1y : BY1 c = 0 := by\n    have hq : (XC1 c ^ 2 + YC1 c ^ 2) * BY1 c = 0 := by\n      linear_combination (-(YC1 c)) * hpin + (XC1 c) * e3\n    exact (mul_eq_zero.mp hq).resolve_left hne\n" *
+    "  exact ⟨by linear_combination e1 - hb1x, by linear_combination e2 - hb1y, hb1x, hb1y⟩")
+print(buf, footer())
+emit("StressDef", String(take!(buf)))
+prev = "$MOD.StressDef"
+
+emit_chain("StressEnc", """**A$n: stress enclosures.** Every stress is within an explicit radius of a
+rational centre on `[clo, chi]`, by centred enclosure arithmetic on the vertex
+enclosures; the proof of each follows the term of its definition.""",
+    ["\ntheorem encS$(b-1) (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :\n    |st$(b-1) c - $(lr(SC[b]))| ≤ $(lr(SR[b])) := $(stress_pf[b])\n" for b in order_defs], 8)
+
+global buf = IOBuffer()
+print(buf, header("**A$n: signs of the stresses.** Every active-diameter stress is positive and the\nside stresses sum to a negative number, on `[clo, chi]`.", [prev]))
+println(buf, "noncomputable def Ssum (c : ℝ) : ℝ := $(join(["st$(i) c" for i in 0:n-1], " + "))\n")
+println(buf, "theorem Ssum_neg (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : Ssum c < 0 := by\n  unfold Ssum\n  exact neg_of_close $(SUM.pf) (by norm_num)")
+for e in 0:m-1
+    println(buf, "theorem stpos$(n+e) (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : 0 < st$(n+e) c :=\n  pos_of_close (encS$(n+e) c h₁ h₂) (by norm_num)")
+end
+print(buf, footer())
+emit("StressSign", String(take!(buf)))
+prev = "$MOD.StressSign"
 
 # ---------------------------------------------------------------------------
 # Root.lean
@@ -601,7 +744,7 @@ prev = "$MOD.Geometry"
 (pa_, pb_) = active[1]
 global buf = IOBuffer()
 print(buf, header("""**A$n: Theorem 3.5 applied — strict local maximality.** The multiplier
-identity (from the stationarity rows, through `mult_of_stationary`), strict
+identity (from the self-stress balances, through `mult_of_stationary'`), strict
 positivity of the $m diameter multipliers, `I_eq ⊆ R_eq` by the Henneberg
 construction, and the feasibility facts of `Geometry.lean`, fed to the general
 `Feasible.thm_3_5`.""", [prev]))
@@ -629,32 +772,36 @@ for k in 0:n-1
         push!(ty, "$(sgn)($w (Real.cos z) * (YC$b (Real.cos z) - YC$a (Real.cos z)))")
     end
     println(buf, """
-lemma gx_$k (z : ℝ) (hF : Fc (Real.cos z) = 0) :
+lemma gx_$k (z : ℝ) (h₁ : clo ≤ Real.cos z) (h₂ : Real.cos z ≤ chi) :
     $(join(tx, " + ")) = 0 := by
-  linear_combination Real.sin z * row_XC_$k (Real.cos z) hF
-lemma gy_$k (z : ℝ) (hF : Fc (Real.cos z) = 0) :
+  have h := $(k == 0 ? "(bal_base (Real.cos z) h₁ h₂).1" : k == 1 ? "(bal_base (Real.cos z) h₁ h₂).2.2.1" : "(bal_$k (Real.cos z) h₁ h₂).1")
+  unfold BX$k at h
+  linear_combination (-(Real.sin z)) * h
+lemma gy_$k (z : ℝ) (h₁ : clo ≤ Real.cos z) (h₂ : Real.cos z ≤ chi) :
     $(join(ty, " + ")) = 0 := by
-  linear_combination row_YC_$k (Real.cos z) hF""")
+  have h := $(k == 0 ? "(bal_base (Real.cos z) h₁ h₂).2.1" : k == 1 ? "(bal_base (Real.cos z) h₁ h₂).2.2.2" : "(bal_$k (Real.cos z) h₁ h₂).2")
+  unfold BY$k at h
+  linear_combination (-1 : ℝ) * h""")
 end
 simps = join(vcat(["P_$k" for k in 0:n-1], ["succ_$k" for k in 0:n-1], ["ea_$e" for e in 0:m-1],
                   ["eb_$e" for e in 0:m-1], ["Av_$i" for i in 0:n-1], ["Lv_$e" for e in 0:m-1]), ", ")
 println(buf, """
 set_option maxRecDepth 20000 in
-theorem stationary (z : ℝ) (hF : Fc (Real.cos z) = 0) (v : Cfg $n) :
+theorem stationary (z : ℝ) (h₁ : clo ≤ Real.cos z) (h₂ : Real.cos z ≤ chi) (v : Cfg $n) :
     (∑ i, Av (Real.cos z) i * ip (P z (i + 1) - P z i) (v (i + 1) - v i))
       + ∑ e, Lv (Real.cos z) e * ip (P z (eb e) - P z (ea e)) (v (eb e) - v (ea e)) = 0 := by
   rw [sum_n, sum_m]
   simp only [$simps, ip, Prod.fst_sub, Prod.snd_sub]
-  linear_combination $(join(["(v $(fin(k))).1 * gx_$k z hF + (v $(fin(k))).2 * gy_$k z hF" for k in 0:n-1], "\n    + "))
+  linear_combination $(join(["(v $(fin(k))).1 * gx_$k z h₁ h₂ + (v $(fin(k))).2 * gy_$k z h₁ h₂" for k in 0:n-1], "\n    + "))
 
-theorem alpha_total (z : ℝ) (hF : Fc (Real.cos z) = 0) : ∑ i, Av (Real.cos z) i = -1 := by
+theorem side_sum (z : ℝ) : ∑ i, Av (Real.cos z) i = Ssum (Real.cos z) := by
   rw [sum_n]; simp only [$(join(["Av_$i" for i in 0:n-1], ", "))]
-  exact alpha_sum _ hF
+  rfl
 
 theorem lam_pos (z : ℝ) (h₁ : clo ≤ Real.cos z) (h₂ : Real.cos z ≤ chi) (e : Fin $m) :
     0 < Lv (Real.cos z) e := by
   fin_cases e
-$(join(["  · show (0 : ℝ) < $(mL(e)) (Real.cos z)\n    linarith [lam_lb$e (Real.cos z) h₁ h₂]" for e in 0:m-1], "\n"))
+$(join(["  · show (0 : ℝ) < $(mL(e)) (Real.cos z)\n    exact stpos$(n+e) (Real.cos z) h₁ h₂" for e in 0:m-1], "\n"))
 
 theorem L_pos {z : ℝ} (h0 : 0 < z) (hpi : z < Real.pi) : 0 < L z := by
   unfold L
@@ -738,9 +885,11 @@ theorem locally_maximal_at {c : ℝ} (hc : c ∈ Set.Ioo clo chi) (hFc : Fc c = 
     have h1 := active_eq z (0 : Fin $m)
     rw [ea_0, eb_0, dC, heq, sub_self] at h1
     simp [nsq, ip] at h1
-  have hm := mult_of_stationary hl.ne' ea eb (Av (Real.cos z)) (Lv (Real.cos z))
-    (stationary z hF) (alpha_total z hF)
-  have hmain := thm_3_5 hl hij hl hm (lam_pos z h₁ h₂)
+  have hm := mult_of_stationary' hl.ne' ea eb (Av (Real.cos z)) (Lv (Real.cos z))
+    (Ssum (Real.cos z)) (stationary z h₁ h₂) (side_sum z)
+  have hkap : 0 < -(L z * Ssum (Real.cos z)) :=
+    neg_pos.mpr (mul_neg_of_pos_of_neg hl (Ssum_neg _ h₁ h₂))
+  have hmain := thm_3_5 hl hij hkap hm (lam_pos z h₁ h₂)
     (Ieq_imp_R z hsz h₁ h₂ hl.ne') (equilateral z hF) (active_eq z)
   refine ⟨hl, hfeas, hmain, ?_⟩
   filter_upwards [hmain] with y hy hf
