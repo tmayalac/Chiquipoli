@@ -5,11 +5,18 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
-Fourteen commits landed on top of the tagged `v1.0.0` (2026-09-09..2026-09-16)
-without a changelog entry; recorded here now, still untagged. The `v1.0.0`
-git tag was NOT moved — it still points at the original release commit
-(`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
-these changes, not that tag, are what a fresh checkout of `main` gets.
+## [1.1.0] — 2026-09-24
+
+The version the article cites. Everything below landed after `v1.0.0`
+(`fa7145d`, 2026-09-09), whose tag was never moved; `v1.0.0` is not the code
+the article describes, and `v1.1.0` is.
+
+- **Release 1.1.0.** `Project.toml`, `CITATION.cff` and the article's
+  bibliography entry for the package now say 1.1.0, and `make paper-check`
+  requires the three to agree. `make paper-check` also requires the archived
+  log `logs/final_run.txt` and every record in `results/` to declare one and
+  the same commit, each with a clean source tree, which is what the
+  supplement states.
 
 - **Every candidate certified the same way; the published source run exactly
   (2026-09-24).**

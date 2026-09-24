@@ -92,6 +92,44 @@ else
     cert["meta"]["git_source_clean"] === true)
 end
 
+section("provenance: the log and every record declare one commit, from a clean tree")
+# The supplement states that every provenance artifact of the release declares a
+# single Git commit and a clean working tree, and that the archived log declares
+# the same commit as the certificates. Nothing checked that until 2026-09-24;
+# this does. A record written outside a Git checkout (git_available = false, as
+# when a referee re-runs a certificate in an extracted archive) has no commit to
+# compare, and is reported as skipped, never as agreeing.
+let
+    recs = vcat(["results/a16_certificate.toml", "results/validation_certificate.toml",
+                 "results/lean_certificate.toml", "results/lean_family_certificate.toml"],
+                ["results/family/A$n.toml" for n in (16, 32, 64)])
+    decl = Tuple{String,String,Bool}[]          # (artifact, commit, clean)
+    nocommit = String[]
+    for f in recs
+        path = joinpath(ROOT, f)
+        isfile(path) || (push!(nocommit, f * " (absent)"); continue)
+        m = get(TOML.parsefile(path), "meta", Dict{String,Any}())
+        c = string(get(m, "git_commit", ""))
+        if get(m, "git_available", true) === false || !occursin(r"^[0-9a-f]{40}$", c)
+            push!(nocommit, f)
+        else
+            push!(decl, (f, c, get(m, "git_source_clean", false) === true))
+        end
+    end
+    logpath = joinpath(ROOT, "logs", "final_run.txt")
+    lm = isfile(logpath) ? match(r"git commit\s*=\s*([0-9a-f]{40})\s*\(source clean", read(logpath, String)) : nothing
+    lm === nothing ? push!(nocommit, "logs/final_run.txt") : push!(decl, ("logs/final_run.txt", lm.captures[1], true))
+    commits = unique(c for (_, c, _) in decl)
+    nrec = count(d -> d[1] != "logs/final_run.txt", decl)
+    chk("the log and the $(nrec) records with a commit all declare the same one" *
+        (length(commits) == 1 ? " ($(first(commits[1], 7)))" : " (found $(join([first(c, 7) for c in commits], ", ")))"),
+        length(commits) == 1)
+    dirty = [f for (f, _, cl) in decl if !cl]
+    chk("each of them was produced from a clean source tree" * (isempty(dirty) ? "" : " (not: $(join(dirty, ", ")))"),
+        isempty(dirty))
+    isempty(nocommit) || skip("commit agreement for $(join(nocommit, ", ")) (no commit recorded)")
+end
+
 section("provenance: recorded SHA256 of every load-bearing source file")
 # In a function, not a top-level loop: `badsha += 1` inside one is soft scope,
 # so the counter would be a fresh local and reading it before assignment throws.
@@ -612,7 +650,8 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
         end
         # The article cites the package by version. Three files declare it and
         # they drifted apart once already (CITATION.cff said 1.0.0 while
-        # Project.toml and the bibliography said 2.2.0; they are all 1.0.0 now).
+        # Project.toml and the bibliography said 2.2.0; they have agreed since, and
+        # say 1.1.0 since 2026-09-24).
         let proj = TOML.parsefile(joinpath(ROOT, "Project.toml"))
             v = get(proj, "version", "")
             cff = isfile(joinpath(ROOT, "CITATION.cff")) ?
