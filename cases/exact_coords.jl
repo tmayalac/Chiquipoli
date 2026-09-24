@@ -4,7 +4,8 @@
 # general ExactIdentity engine (closing referee point R2 as a shared capability,
 # not per-case ad-hoc code). Loaded once by the driver; candidates reference it.
 #
-# Requires modules ExactIdentity (as EI) and A16Certificate in scope.
+# Requires modules ExactIdentity (as EI) and A16Certificate in scope; the
+# Bingane–Audet section at the end also needs IntervalArithmetic at call time.
 
 const EI = ExactIdentity
 using .ExactIdentity: CS, cs_c, cs_s, cs_const, cs_cos, cs_sin, csadd, cssub, csmul, csneg, csdiv, RPoly
@@ -98,4 +99,97 @@ function reinhardt36_cs()
     # floating approximation of π/6.
     zbox = interval(BigFloat, π) / 6
     return coords, Fc, _R([2,-2]), _R([1]), zbox
+end
+
+# ---- Bingane–Audet family, general n = 2^s ≥ 16 ------------------------------
+# The OPTIGON constructor `cstrt_audet_ngon(n)` written ONCE over an abstract
+# angle algebra, so the same formulas give both the interval coordinates the
+# certifier evaluates and the exact Q(c,s) coordinates the identity engine
+# proves. `S(k)`, `C(k)` are sin/cos of k·z, `K(q)` a rational constant, and
+# `ops = (add, sub, mul, dvd, neg)` the algebra's operations. Upstream writes
+# sin(i(2z-π/2)) and cos(i(2z-π/2)); they are rewritten here exactly by i mod 4,
+# so π enters neither version. Cross-checked against the verbatim upstream
+# transcription (test/fixtures/optigon_reference.jl) in test/literature.jl.
+# Vertices p_0..p_{n-1}, p_0 at the origin, as upstream.
+function audet_generic(n, S, C, K, ops)
+    add, sub, mul, dvd, neg = ops
+    (ispow2(n) && n >= 16) || throw(DomainError(n, "n must be a power of 2 >= 16"))
+    sinw(i) = (r = mod(i, 4); r == 0 ? S(2i) : r == 1 ? neg(C(2i)) : r == 2 ? neg(S(2i)) : C(2i))
+    cosw(i) = (r = mod(i, 4); r == 0 ? C(2i) : r == 1 ? S(2i) : r == 2 ? neg(C(2i)) : neg(S(2i)))
+    a = Vector{Any}(undef, n - 1); b = Vector{Any}(undef, n - 1)
+    h = n ÷ 2
+    a[h-1] = S(1);               a[h+1] = neg(a[h-1])
+    b[h-1] = C(1);               b[h+1] = b[h-1]
+    a[n-1] = sub(a[h-1], S(2));  a[1] = neg(a[n-1])
+    b[n-1] = sub(b[h-1], C(2));  b[1] = b[n-1]
+    a[n-2] = sub(a[h-1], S(3));  a[2] = neg(a[n-2])
+    b[n-2] = sub(b[h-1], C(3));  b[2] = b[n-2]
+    kk = sub(mul(K(2), C(1)), K(1))                       # 2cos z - 1
+    step = 3n ÷ 2 - 2
+    for i in 1:(n ÷ 8 - 1)
+        j1 = mod(h - 1 + i*step, n); j2 = mod(n - 1 + i*step, n)
+        j3 = mod(n - 2 + i*step, n); j4 = mod(n + i*step, n)
+        sg(v) = isodd(i) ? neg(v) : v                     # (-1)^i · v
+        a[j1] = sub(S(1), dvd(mul(kk, mul(sinw(i), sinw(i+1))), C(2)));  a[n-j1] = neg(a[j1])
+        b[j1] = sub(C(1), dvd(mul(kk, mul(sinw(i), cosw(i+1))), C(2)));  b[n-j1] = b[j1]
+        a[j2] = sub(a[j1], sg(S(4i+2)));  a[n-j2] = neg(a[j2])
+        b[j2] = sub(b[j1], sg(C(4i+2)));  b[n-j2] = b[j2]
+        a[j3] = sub(a[j1], sg(S(4i+3)));  a[n-j3] = neg(a[j3])
+        b[j3] = sub(b[j1], sg(C(4i+3)));  b[n-j3] = b[j3]
+        a[j4] = sub(a[j1], sg(S(4i+1)));  a[n-j4] = neg(a[j4])
+        b[j4] = sub(b[j1], sg(C(4i+1)));  b[n-j4] = b[j4]
+    end
+    a[h] = K(0); b[h] = K(1)
+    return vcat([(K(0), K(0))], [(a[i], b[i]) for i in 1:n-1])
+end
+
+# The constructor's defining equation F(z) = 0, same algebra:
+#   x = sin z - (2cos z - 1) cos((n/4-2)z) sin(nz/4) / cos 2z,
+#   F = (2x + sin((n/2-1)z))² + cos((n/2-1)z)² - 4 sin²(z/2),  4 sin²(z/2) = 2 - 2cos z.
+function audet_F_generic(n, S, C, K, ops)
+    add, sub, mul, dvd, neg = ops
+    x = sub(S(1), dvd(mul(sub(mul(K(2), C(1)), K(1)), mul(C(n ÷ 4 - 2), S(n ÷ 4))), C(2)))
+    u = add(mul(K(2), x), S(n ÷ 2 - 1)); v = C(n ÷ 2 - 1)
+    return sub(add(mul(u, u), mul(v, v)), sub(K(2), mul(K(2), C(1))))
+end
+
+# Interval instance. Integer literals enter as guaranteed thin intervals so
+# IntervalArithmetic keeps its `isguaranteed` flag (see n8_ahmp2004).
+const _AUDET_NUM_OPS = (+, -, *, /, -)
+_II(k) = interval(BigFloat, k)
+function audet_coords(n)
+    return function (z)
+        P = audet_generic(n, k -> sin(_II(k)*z), k -> cos(_II(k)*z), q -> _II(q) + zero(z), _AUDET_NUM_OPS)
+        p = Matrix{typeof(z)}(undef, n, 2)
+        for i in 1:n; p[i, 1] = P[i][1]; p[i, 2] = P[i][2]; end
+        return p
+    end
+end
+audet_F(n) = z -> audet_F_generic(n, k -> sin(_II(k)*z), k -> cos(_II(k)*z), q -> _II(q) + zero(z), _AUDET_NUM_OPS)
+
+# Exact Q(c,s) instance.
+const _AUDET_CS_OPS = (csadd, cssub, csmul, csdiv, csneg)
+audet_coords_cs(n) = audet_generic(n, cs_sin, cs_cos, cs_const, _AUDET_CS_OPS)
+
+"""
+    audet_Fc(n) -> (Fc, den)
+
+`Fc` by Proposition 1, from the constructor alone: F = (A + s·B)/den in Q(c,s).
+For this family B ≡ 0 (checked), so F(z*) = 0 with den(c*) ≠ 0 gives A(c*) = 0.
+The factor g = gcd(A, den) divides den, hence g(c*) ≠ 0 wherever den(c*) ≠ 0,
+and Fc = A/g (made monic) still has c* as a root. `den` is returned so that
+den(c*) ≠ 0 can be certified by the caller; for n = 16 this `Fc` equals
+`A16Certificate.Fc_poly` up to a constant (tested).
+"""
+function audet_Fc(n)
+    F = audet_F_generic(n, cs_sin, cs_cos, cs_const, _AUDET_CS_OPS)
+    EI.iszeropoly(F.B) || error("audet_Fc($n): F has an s-part; Proposition 1 needs the norm here")
+    g = EI.pgcd(F.A, F.den)
+    Fc = length(g) > 1 ? first(EI.pdivrem(F.A, g)) : F.A
+    return _R(Fc ./ Fc[end]), F.den
+end
+
+function audet_cs(n, z)
+    Fc, _ = audet_Fc(n)
+    return audet_coords_cs(n), Fc, _R([2,-2]), _R([1]), interval(z-big"1e-30", z+big"1e-30")
 end

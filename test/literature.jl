@@ -1,9 +1,10 @@
-# The literature benchmark (n = 4, 6, 8) and its negative controls.
+# The literature benchmark (n = 4, 6, 8, 16, 32, 64) and its negative controls.
 # Included by runtests.jl inside the outer "Chiquipoli" testset; run the
 # whole suite with `make test` (a file on its own lacks the shared setup).
 
 @testset "Literature positive cases certify (local first-order structure)" begin
-    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet")
+    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet",
+              "A32_bingane_audet", "A64_bingane_audet")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         @test structural_pass(r)
@@ -100,7 +101,8 @@ end
 end
 
 @testset "R1+R2 general: certified multipliers and PROVEN exact identities" begin
-    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet")
+    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet",
+              "A32_bingane_audet", "A64_bingane_audet")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         mult = findfirst(b -> b.name == "multipliers", r.blocks)
@@ -123,4 +125,93 @@ end
     sextic = pa(pa(pa(pa(pa(pa((2//1).*up[6],(-18//1).*up[5]),(57//1).*up[4]),(-78//1).*up[3]),(46//1).*up[2]),(-12//1).*up[1]),Rp([1]))
     strip(v) = (n=length(v); while n>1 && v[n]==0; n-=1; end; v[1:n])
     @test strip(Fc_norm) == strip(sextic)
+end
+
+@testset "Bingane–Audet family n = 16, 32, 64 (generic constructor)" begin
+    setprecision(BigFloat, 256)
+    R = Vector{Rational{BigInt}}
+    maxerr(p, q) = maximum(abs(p[i][k] - q[i][k]) for i in eachindex(p), k in 1:2)
+    csval(e, z) = (c = cos(z); s = sin(z); pv(p) = (v = zero(z); for k in length(p):-1:1; v = v*c + p[k]; end; v);
+                   (pv(e.A) + s*pv(e.B)) / pv(e.den))
+
+    # (1) The generic constructor IS the upstream one: interval and exact
+    # instances against the verbatim OPTIGON transcription, for every n.
+    for n in (16, 32, 64)
+        z, ua, ub = optigon_audet_ngon(n, BigFloat)
+        up = vcat([(big"0", big"0")], [(ua[i], ub[i]) for i in 1:n-1])
+        pI = audet_coords(n)(interval(z))
+        @test maxerr([(mid(pI[i,1]), mid(pI[i,2])) for i in 1:n], up) < big"1e-70"
+        pcs = audet_coords_cs(n)
+        @test maxerr([(csval(x, z), csval(y, z)) for (x, y) in pcs], up) < big"1e-60"
+    end
+
+    # (2) At n = 16 it reproduces the hand-written A16 module: coordinates and Fc.
+    p16 = audet_coords(16)(interval(z_nominal))
+    a16 = A16Certificate.coordinates(interval(z_nominal))
+    @test all(mag(p16[i,k] - a16[i,k]) < big"1e-70" for i in 1:16, k in 1:2)
+    Fc16, _ = audet_Fc(16)
+    off = R(Fc_poly()); @test Fc16 == off ./ off[end]
+
+    # (3) The structural pattern, observed (not proved) on the three members:
+    # n-1 active diameters, LICQ defect 1, deg Fc = n-4, and exactly two of the
+    # 2n-1 equalities need the root of Fc; the rest hold for every θ.
+    for (n, d) in ((32, "A32_bingane_audet"), (64, "A64_bingane_audet"))
+        cand = loadcand(d)
+        @test length(cand.active) == n - 1
+        @test n + length(cand.active) - (2n - 2) == 1
+        Fc, den = audet_Fc(n)
+        @test length(Fc) - 1 == n - 4
+        (co, _, st, dt, zb) = audet_cs(n, cand.root.nominal)
+        sides, diams = EI.prove_all(co, n, cand.active, st, dt, Fc, zb)
+        all_st = vcat(sides, diams)
+        @test count(==(:PROVED), all_st) == 2
+        @test count(==(:UNCONDITIONAL), all_st) == 2n - 3
+    end
+
+    # (4) Uniqueness of the constructor root on its bracket, exactly (Sturm),
+    # as for n = 8. z in (lo, hi) = (2 asin(sin(π/n)/2), π/n) maps injectively
+    # to c = cos z in (cos hi, cos lo) ⊂ [a, b]; there den ≠ 0, so F(z) = 0
+    # forces Fc(c) = 0. One root of Fc in [a, b] ⇒ at most one root of F on the
+    # bracket, and the certified sign change supplies it.
+    dp(q) = length(q) <= 1 ? RPoly([0//1]) : ptrim([q[k+1]*k for k in 1:length(q)-1])
+    function sturmchain(q)
+        ch = [ptrim(q), dp(q)]
+        while !iszeropoly(ch[end])
+            _, r = pdivrem(ch[end-1], ch[end]); iszeropoly(r) && break
+            push!(ch, pscale(r, -1//1))
+        end
+        return ch
+    end
+    ev(q, x) = (v = Rational{BigInt}(0); for c in reverse(q); v = v*x + c; end; v)
+    chg(ch, x) = (sg = filter(!iszero, [sign(ev(q, x)) for q in ch]); count(i -> sg[i] != sg[i+1], 1:length(sg)-1))
+    nr(ch, a, b) = chg(ch, a) - chg(ch, b)
+    piI = interval(BigFloat, π)
+    for (n, a, b, total) in ((16, 196157//200000, 98097//100000, 9),
+                             (32, 62199//62500, 995197//1000000, 19),
+                             (64, 199759//200000, 998797//1000000, 37))
+        a = Rational{BigInt}(a); b = Rational{BigInt}(b)
+        nI = interval(BigFloat, n)
+        @test inf(cos(piI/nI)) > a                                        # a < cos(π/n)
+        @test sup(cos(interval(BigFloat, 2)*asin(sin(piI/nI)/interval(BigFloat, 2)))) < b   # cos(lo) < b
+        Fc, den = audet_Fc(n)
+        @test length(EI.pgcd(Fc, dp(Fc))) == 1                            # squarefree: Sturm applies
+        cI = hull(interval(BigFloat, a), interval(BigFloat, b))
+        @test !in_interval(0, EI._peval(den, cI))                          # den ≠ 0 on [a, b]
+        ch = sturmchain(Fc)
+        @test nr(ch, Rational{BigInt}(-1), Rational{BigInt}(1)) == total  # non-vacuity: many real roots
+        @test nr(ch, a, b) == 1                                           # exactly one in [a, b]
+    end
+
+    # (5) Planted errors on A32 are rejected, so its PASS is not vacuous.
+    cand = loadcand("A32_bingane_audet")
+    function variant(; active = cand.active, coords = cand.coords, Fc = first(audet_Fc(32)))
+        co = audet_coords_cs(32)
+        Candidate(cand.name, 32, coords, cand.root, active,
+            Dict{Symbol,Any}(:exact => sb -> EI.prove_all(co, 32, active, R([2,-2]), R([1]), Fc, sb)))
+    end
+    rej(c) = any(b.status == :FAIL for b in certify(c; radius = big"1e-24").blocks)
+    @test !rej(variant())                                                  # the control passes
+    @test rej(variant(Fc = EI.padd(first(audet_Fc(32)), R([1]))))         # wrong Fc
+    @test rej(variant(active = vcat(cand.active, [(8, 24)])))              # spurious diameter
+    @test rej(variant(coords = z -> (p = cand.coords(z); p[6,1] += interval(big"1e-20"); p)))  # moved vertex
 end

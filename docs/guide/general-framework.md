@@ -10,7 +10,8 @@ throughout as **[THEORY]**, **[LIT]**, **[CERT]**, **[CONCL]**.
 Scope claim, stated once and honestly: the results below concern the **class
 `C`** of §1 — polygons whose coordinates are algebraic functions of a *single*
 angle. They are established for the four benchmark families (regular square,
-Reinhardt `R_{3,6}`, Vincze/AHMP `H8`, Audet `A16`) and, at the level of the
+Reinhardt `R_{3,6}`, Vincze/AHMP `H8`, Audet `A16`), for the two further members
+`A32`, `A64` of the Bingane–Audet family (§8a), and, at the level of the
 engine, for any member of `C`. We do **not** claim more.
 
 ---
@@ -179,6 +180,8 @@ equalities are `:PROVEN`/`:UNCONDITIONAL` for the four families:
 | `R_{3,6}` (Reinhardt) | 6 via `Fc` | 2 uncond. + 4 via `Fc` | (a),(b),(c) |
 | H8 (Vincze) | 4 uncond. + 4 seam via (c) | 6 unconditional | (a),(c) |
 | A16 (Audet) | 14 uncond. + 2 via `Fc` | 15 unconditional | (a),(b) |
+| A32 (Audet) | 30 uncond. + 2 via `Fc` | 31 unconditional | (a),(b) |
+| A64 (Audet) | 62 uncond. + 2 via `Fc` | 63 unconditional | (a),(b) |
 
 R2 is the certificate-producing procedure that applies Theorem 1. Case (c)'s
 `A − sB ≠ 0 at θ*` is discharged by a certified interval non-vanishing check
@@ -217,7 +220,8 @@ be the LICQ defect.
 
 **[CERT] Results.** Certified `λ_min > 0` for all four families, across LICQ
 defects `d`: square `d=0` (`λ_min=1.414`), `R_{3,6}` `d=2` (`0.5176`), H8 `d=0`
-(`0.3380`), A16 `d=1` (`0.1019`). When `d>0` the multipliers are a `d`-parameter
+(`0.3380`), A16 `d=1` (`0.1019`); and for the Bingane–Audet members of §8a,
+A32 `d=1` (`0.02323`), A64 `d=1` (`0.005363`). When `d>0` the multipliers are a `d`-parameter
 family and positivity is a property of the certified representative; exhibiting
 one positive representative is exactly what the corollary of §7 requires.
 
@@ -265,7 +269,10 @@ the corollary, and we claim **no** global-optimality or second-order result.
   re-prove; for A16 (`n = 2^s, s ≥ 4`) it is **open**.
 - For root-parametrized families the framework certifies **existence** of the
   constructor root (interval IVT); **uniqueness** in the search interval is
-  certified only by the dedicated A16 certificate, not by the general path.
+  not certified by the general path. It is certified separately: by the
+  dedicated A16 certificate, for H8 by a Sturm count on the AHMP sextic, and
+  for A16, A32, A64 by a Sturm count on the constructor-derived `Fc`
+  (`test/literature.jl`, §8a).
 - The rank block certifies `rank = 2n−2` at the certified point (over a box in
   `z` for root-parametrized families; at the exact point for fixed-angle ones);
   "constant rank in an `ℝ^{2n+1}` neighbourhood", the form the corollary's
@@ -284,8 +291,9 @@ Families **outside** the theory:
 
 1. **Two `Q`-independent angles**: coordinates in `Q(cos α, sin α, cos β, sin β)`
    with `α, β` independent mod `π` (transcendence degree 2). No single `c`
-   reduces both. *We have not verified that Mossinghoff `M_n` or `A_32` are
-   single-angle; the theory therefore does not (yet) claim them.*
+   reduces both. *The Bingane–Audet `A_n`, `n = 2^s ≥ 16`, are single-angle
+   (§8a); we have not verified that Mossinghoff `M_n` is, so the theory does
+   not (yet) claim it.*
 2. **Higher algebraic dependence on `θ`** (nested radicals `√(g(cos θ))`, `g`
    non-square): a degree `> 2` extension of `Q(c)`, which the quadratic normal
    form `A + sB` does not capture.
@@ -294,6 +302,45 @@ Families **outside** the theory:
 
 Every unqualified "general / every family" in earlier drafts must be read as
 "every family in `C`", and is so read throughout this revision.
+
+### 8a. The Bingane–Audet family `A_n`, `n = 2^s` [CERT for n = 16, 32, 64; pattern OBSERVED]
+
+**Membership in `C` holds for every `n = 2^s ≥ 16`, by construction.** The
+OPTIGON constructor `cstrt_audet_ngon(n)` uses only `sin`, `cos` of integer
+multiples of the one root `z`, the shifted angles `i(2z − π/2)` (which reduce
+exactly, by `i mod 4`, to `±sin 2iz`, `±cos 2iz`), and a division by `cos 2z`.
+`cases/exact_coords.jl` writes it once over an abstract angle algebra
+(`audet_generic`) and instantiates it both in intervals and in `Q(c,s)`, so
+the exact coordinates are the constructor itself, not a transcription per `n`.
+Cross-checked against the verbatim upstream transcription for `n = 16, 32, 64`,
+and at `n = 16` against the hand-written `A16Certificate` (coordinates and
+`Fc`, which Proposition 1 reproduces exactly).
+
+**[CERT] n = 32 and n = 64** (`cases/A32_bingane_audet`, `cases/A64_bingane_audet`).
+Every block of the general certifier passes: existence (IVT), active graph with
+margin (`0.00096`, `0.00012`), strict convexity, `rank = 2n − 2` (`62×62`,
+`126×126` regular minors), certified positive multipliers, and all `2n − 1`
+side and active-diameter equalities `PROVEN`. Uniqueness of the constructor
+root on its bracket is proved exactly by a Sturm count on `Fc` (one real root
+in the image interval of `cos`, out of 19 and 37 real roots). Planted errors
+(wrong `Fc`, a spurious active pair, a vertex moved by `1e−20`) are rejected.
+There is no Lean layer for these two members.
+
+**[OBSERVED] The same structure at n = 16, 32, 64**, recorded as a pattern,
+not a theorem:
+
+| `n` | active diameters | LICQ defect | `deg Fc` | equalities needing `Fc` | `λ_min` |
+|---|---|---|---|---|---|
+| 16 | 15 | 1 | 12 | sides 3, 12 | 0.1019 |
+| 32 | 31 | 1 | 28 | sides 7, 24 | 0.02323 |
+| 64 | 63 | 1 | 60 | sides 15, 48 | 0.005363 |
+
+That is: `n − 1` active diameters, LICQ defect 1, `deg Fc = n − 4`, and exactly
+two equalities (the sides `n/4 − 1` and `3n/4`) that hold only at the root, all
+others identically in `θ`. Three members do not prove it for all `n = 2^s`;
+`test/literature.jl` pins it for these three so that a change is noticed. A
+proof for general `s` would be the natural statement to formalize in Lean for
+the whole family at once.
 
 ---
 

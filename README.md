@@ -103,8 +103,8 @@ terminal and in Windows PowerShell.
 |---|---|---|
 | Run the test suite (651 assertions) | `make test` | `julia --project=. test/runtests.jl` |
 | **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
-| The literature benchmark (n = 4, 6, 8 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
-| One literature case only (`4`, `6`, `8`, `16`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
+| The literature benchmark (n = 4, 6, 8, 16, 32, 64 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
+| One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
 | The nominal configuration, uncertified | `make nominal` | `julia --project=. pipeline/stages/01_nominal_configuration.jl` |
 | Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean`, then `lake exe cache get` |
 | The five Lean checks | `make lean` | `cd lean`, then `./verify.sh` (bash) |
@@ -230,7 +230,7 @@ src/                          THE ENGINE: a library, no side effects
     linear_algebra.jl           Jacobian D(e,d), regularity test, Krawczyk
     exact_algebra.jl            Q[c]: Chebyshev reduction, Fc, exact divisions
   ExactIdentity.jl              exact identities for any n (Q(c,s) arithmetic)
-  SmallPolygons.jl              the general certifier used for n = 4, 6, 8
+  SmallPolygons.jl              the general certifier (n = 4, 6, 8, 16, 32, 64)
 
 pipeline/                     THE CERTIFICATES: programs that write results/
   certify_a16.jl                make verify      -> results/a16_certificate.toml
@@ -246,7 +246,9 @@ pipeline/                     THE CERTIFICATES: programs that write results/
     06_prove_exact_identities.jl  Lemma 6.1: the 31 equalities, exactly
 
 cases/                        inputs of the literature certificate: one
-                              candidate.jl per case, and 3 broken controls
+                              candidate.jl per case, and 3 broken controls;
+                              exact_coords.jl: exact coordinates, including
+                              the Bingane-Audet constructor for any n = 2^s
 test/                         make test: runtests.jl and one file per theme;
                               fixtures/ holds the vendored OPTIGON constructor
 lean/                         THE VERIFIER (see lean/README.md)

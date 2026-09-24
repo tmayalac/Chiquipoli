@@ -80,6 +80,9 @@ by construction, not demonstrated across a range.
   `A_32`, more Reinhardt `R_{m,n}` for several `m,n`), and ideally a sub-optimal
   and an infeasible family, to show the certifier discriminates across a range,
   not just on curated optima.
+- **Status (2026-09-23): partly addressed.** `A_32` and `A_64` were added
+  (`docs/guide/general-framework.md` §8a); Mossinghoff `M_16` and further
+  Reinhardt polygons remain open.
 
 ## Severity: MEDIUM
 

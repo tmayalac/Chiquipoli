@@ -70,13 +70,15 @@ negative control).
 
 ## 2. Per-property audit
 
-### existence (root-defined candidates: n8, A16)
+### existence (root-defined candidates: n8, A16, A32, A64)
 - **Proves:** a true real root of the constructor's defining equation `F` lies
   in the box, by a certified sign change of `F` at the box endpoints
   (Intermediate Value Theorem; `F` continuous). `:CERTIFIED`.
 - **Does NOT prove:** uniqueness of the root in the box or in the search
   interval. The general framework does **not** certify monotonicity of `F`.
-  (A16's dedicated certificate does prove uniqueness, via `0 ∉ F'(search)`.)
+  (A16's dedicated certificate does prove uniqueness, via `0 ∉ F'(search)`;
+  for H8, A16, A32 and A64 `test/literature.jl` proves it separately by an
+  exact Sturm count.)
 - **Hypotheses:** `F` interval-evaluable and continuous; box brackets a sign
   change. **Implicit hypothesis, now stated:** that the box is centred on the
   intended root — the nominal value is taken from the constructor, not
@@ -179,7 +181,7 @@ load-bearing anywhere in the chain.
 ## 4. The LICQ pattern — reported as an experimental observation
 
 The benchmark exhibits: LICQ **holds** for n=4 and n=8, and **fails** for n=6
-(by 2) and A16 (by 1). We report this honestly and do **not** promote it to a
+(by 2) and for A16, A32 and A64 (by 1 each). We report this honestly and do **not** promote it to a
 theorem.
 
 - **What is certified per case:** the LICQ defect equals

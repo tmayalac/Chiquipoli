@@ -11,6 +11,23 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **A32 and A64 added to the literature benchmark (2026-09-23).** The
+  Bingane–Audet constructor is now written once for every `n = 2^s ≥ 16`
+  (`audet_generic` in `cases/exact_coords.jl`), over an abstract angle algebra,
+  and instantiated both in intervals and in `Q(c,s)`; `Fc` is derived from it
+  by Proposition 1 (`audet_Fc`). New cases `cases/A32_bingane_audet` and
+  `cases/A64_bingane_audet` pass every block of the general certifier. A new
+  testset in `test/literature.jl` (52 assertions; the suite is now 703)
+  checks the constructor against the vendored OPTIGON transcription for
+  n = 16, 32, 64 and against `A16Certificate` at n = 16, proves uniqueness of
+  the constructor root by a Sturm count on `Fc`, pins the observed pattern
+  (`n − 1` active diameters, LICQ defect 1, `deg Fc = n − 4`, exactly two
+  equalities needing `Fc`), and rejects three planted errors on A32. Nothing
+  under `src/`, `lean/` or `paper/` changed; the A16 certificate's values are
+  unchanged, but its provenance hashes cover `pipeline/` and `test/`, so both
+  certificates must be regenerated at a clean tree. See
+  `docs/guide/general-framework.md` §8a.
+
 - **Repository reorganised (2026-09-23), no mathematics changed.** Files are
   grouped by role, so that a reader of the article can find the code behind a
   statement without opening every file. Every certified value is unchanged
