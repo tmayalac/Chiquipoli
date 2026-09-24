@@ -324,7 +324,14 @@ side and active-diameter equalities `PROVEN`. Uniqueness of the constructor
 root on its bracket is proved exactly by a Sturm count on `Fc` (one real root
 in the image interval of `cos`, out of 19 and 37 real roots). Planted errors
 (wrong `Fc`, a spurious active pair, a vertex moved by `1e−20`) are rejected.
-There is no Lean layer for these two members.
+**Lean.** A32 is also proved in Lean 4 (`lean/ChiquipoliFamily/A32/`, headline
+`Chiquipoli.Family.A32.locally_maximal_unique`): the root is the unique one in
+the article's search interval, and the configuration is a strict local maximiser
+of the perimeter modulo Euclidean motions, through the general `thm_3_5`. The
+same generator re-proves A16 independently. The method differs from the A16
+layer — vertex enclosures plus lemmas proved once for every `n`, and rigidity by
+a Henneberg construction — because the A16 method does not scale to `n = 32`; see
+`lean/ChiquipoliFamily/README.md`. A64 has no Lean layer yet.
 
 **[OBSERVED] The same structure at n = 16, 32, 64**, recorded as a pattern,
 not a theorem:

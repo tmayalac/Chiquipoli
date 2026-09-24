@@ -485,3 +485,20 @@ negative_controls/             twenty-six files that MUST fail to compile
 generators/                    the Julia programs that write ChiquipoliLean/Generated/,
                                and their helpers (bernstein.jl, multipliers.jl, rank.jl)
 ```
+
+---
+
+## The Bingane–Audet family (`ChiquipoliFamily/`)
+
+A separate library, `ChiquipoliFamily`, proves the same local-maximality
+statement for other members `A_n` of the family (currently A32, and A16 again,
+independently), with a method that scales where the one above does not: vertex
+enclosures plus sign lemmas proved once for every `n`, and `I_eq ⊆ R_eq` by a
+Henneberg construction instead of dense elimination. It is not a default
+target and is verified by its own script, so nothing on this page — the counts,
+`verify.sh`, the article's numbers — depends on it:
+
+    lake build ChiquipoliFamily
+    ./verify_family.sh          # or `make lean-family` from the repository root
+
+See `ChiquipoliFamily/README.md`.

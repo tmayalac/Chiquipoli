@@ -1,5 +1,5 @@
 .PHONY: help test nominal verify certificate lean lean-build lean-cache \
-        lean-certificate literature mutation-check archive-log clean \
+        lean-certificate lean-family literature mutation-check archive-log clean \
         paper paper-build paper-check
 
 PAPER := paper
@@ -10,12 +10,13 @@ help:
 	@echo "  make test              run the Julia test suite"
 	@echo "  make verify            run the full certificate, tee to logs/final_run.txt"
 	@echo "  make archive-log       freeze logs/final_run.txt under a timestamped name"
-	@echo "  make literature        re-certify the n=4,6,8 literature cases + negative controls"
+	@echo "  make literature        re-certify the literature cases (n=4,6,8,16,32,64) + controls"
 	@echo "  make nominal           print the nominal configuration only (no certificate)"
 	@echo
 	@echo "  make lean-cache        download prebuilt Mathlib oleans (~7 GB, once)"
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
+	@echo "  make lean-family       the same five checks for the family layer (A16, A32)"
 	@echo
 	@echo "  make paper             compile paper/main.tex + supplement and audit the logs"
 	@echo "  make paper-check       reconcile the article against the certificate and Lean"
@@ -126,6 +127,12 @@ lean:
 
 lean-certificate:
 	julia --project=. pipeline/record_lean_certificate.jl
+
+# The Bingane–Audet family A_n (lean/ChiquipoliFamily/): the same five checks,
+# on a separate library, so that nothing above changes. See
+# lean/ChiquipoliFamily/README.md.
+lean-family:
+	cd lean && ./verify_family.sh
 
 # ---------------------------------------------------------------------------
 

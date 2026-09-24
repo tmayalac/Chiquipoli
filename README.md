@@ -109,6 +109,7 @@ terminal and in Windows PowerShell.
 | Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean`, then `lake exe cache get` |
 | The five Lean checks | `make lean` | `cd lean`, then `./verify.sh` (bash) |
 | The Lean checks, recorded → `results/lean_certificate.toml` | `make lean-certificate` | `julia --project=. pipeline/record_lean_certificate.jl` (bash) |
+| The same five checks for the family layer (A16, A32) | `make lean-family` | `cd lean`, then `./verify_family.sh` (bash) |
 | The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
 | Plant 12 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
 | Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
@@ -256,6 +257,8 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliLean/Constructor/   the A16 constructor and its root
   ChiquipoliLean/Generated/     written by generators/, never by hand
   ChiquipoliLean/Instances/     the theory at A16 and at the square
+  ChiquipoliFamily/             A32 (and A16 again) by a method that scales in n;
+                                built and checked by verify_family.sh
   negative_controls/            26 false statements that must not compile
   generators/                   Julia -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks

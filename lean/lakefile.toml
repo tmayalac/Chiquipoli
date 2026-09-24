@@ -8,3 +8,10 @@ rev = "master"
 
 [[lean_lib]]
 name = "ChiquipoliLean"
+
+# The Bingane–Audet family (n = 2^s), certified with the two-layer method of
+# ChiquipoliFamily/Basic.lean. Deliberately NOT a default target: `lake build`,
+# `make lean` and verify.sh build and check exactly the A16 development they
+# always did. Build this library with `lake build ChiquipoliFamily`.
+[[lean_lib]]
+name = "ChiquipoliFamily"

@@ -3,7 +3,8 @@
 # Problem: maximal-perimeter convex EQUILATERAL small (diameter-1) 32-gon.
 # Status: OPEN. A32 is the Bingane–Audet construction for n = 2^s, NOT a
 #   proven global optimum. This framework certifies its LOCAL first-order
-#   structure only. Unlike A16 there is no dedicated module and no Lean layer.
+#   structure only. Unlike A16 there is no dedicated Julia module; the Lean
+#   certificate is lean/ChiquipoliFamily/A32 (make lean-family).
 #
 # Reference: C. Bingane, C. Audet, "Tight bounds on the maximal perimeter of
 #   convex equilateral small polygons", Archiv der Mathematik 119 (2022)

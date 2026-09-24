@@ -11,6 +11,34 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **Lean certificate of A32, and a Lean layer that scales in n (2026-09-24).**
+  New library `lean/ChiquipoliFamily/` (not a default target; `make
+  lean-family` runs its own five checks in `lean/verify_family.sh`). For A32 it
+  proves `locally_maximal_unique`: the constructor root is the only one in the
+  article's search interval `(2 arcsin(sin(π/32)/2), π/32)`, and the polygon it
+  builds is a strictly convex equilateral small 32-gon and a strict local
+  maximiser of the perimeter modulo Euclidean motions, through the general
+  `Feasible.thm_3_5`. Only `[propext, Classical.choice, Quot.sound]`. The same
+  generator re-proves A16 independently.
+  *Why a new method.* Measured before writing it: one A32 support determinant
+  is a degree-29 polynomial whose Bernstein certificate costs 38 s / 2.2 GB, and
+  A32 has 960 of them (a file of 300 exceeded 73 GB); the A16 rank certificate
+  already costs 160 s / 13.6 GB. `ChiquipoliFamily/Basic.lean` instead proves
+  once, for every n: centred-Taylor vertex enclosures (`tbound`), error
+  propagation to determinants and distances (`det_lb`, `sqd_ub`), infinitesimal
+  rigidity by a Henneberg construction (`pin_bar`, `henneberg_step`), and the
+  multiplier identity from vertex stationarity (`mult_of_stationary`). Result:
+  A16 builds in 81 s at 0.8 GB peak, A32 in about 8 min at 3.8 GB peak.
+  Generator `lean/generators/family/gen_family.jl` (plus `multipliers_n.jl`, the
+  n-generic copy of `multipliers.jl`) checks every margin in exact rational
+  arithmetic before writing Lean. Five family negative controls
+  (`lean/negative_controls_family/`). Not in Lean for the family: the
+  hand-transcribed trigonometric constructor (the configuration is defined by
+  its exact polynomial form; its identity with OPTIGON's is the Julia test).
+  Nothing in `ChiquipoliLean/`, `verify.sh`, its pinned counts, or `paper/`
+  changed; `lakefile.toml` gained the second library. `cases/A32`, `cases/A64`
+  changed in comments only, so re-run `make literature` at a clean tree.
+
 - **A32 and A64 added to the literature benchmark (2026-09-23).** The
   Bingane–Audet constructor is now written once for every `n = 2^s ≥ 16`
   (`audet_generic` in `cases/exact_coords.jl`), over an abstract angle algebra,
