@@ -208,28 +208,31 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "d2db34ba03aa1b52f772c6c5bbdce5994c607c92"
+git_commit = "e21a4a724aaa42122a9630759e2e2545cb36b501"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-24T00:06:25Z"
+utc = "2026-09-24T16:52:24Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
 [[source_sha256]]
 file = "pipeline/certify_a16.jl"
-sha256 = "156c7dc49065528651b1b494a05b2fcbb2e84c544e7fb7bb6d300442f181dbb8"
+sha256 = "8ffb895d2e6637ee2b6d3ba24e7fb509c86dfb74f91dc9b40ebf5285e65d594f"
 [[source_sha256]]
 file = "pipeline/certify_literature.jl"
-sha256 = "ee652591b53b56054ca65f65ff990fe11866fa969a8f912a1ecbfbc39ce36622"
+sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 [[source_sha256]]
 file = "pipeline/check_paper.jl"
-sha256 = "74e8b47a96ae3823206a63dc6e6e8eb3e3a895a00ebb98860f2ff1383cc80944"
+sha256 = "86a93a834451860e3b8944874c11ceaffd1cfa1bffaa683d93d74aa6c7d5595e"
 [[source_sha256]]
 file = "pipeline/record_lean_certificate.jl"
 sha256 = "0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216"
+[[source_sha256]]
+file = "pipeline/record_lean_family_certificate.jl"
+sha256 = "60fdd782bc1d7de8b065d5613d47a437ba1a183707b22b47d8711b2976dc2196"
 [[source_sha256]]
 file = "pipeline/stages/01_nominal_configuration.jl"
 sha256 = "66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c"
@@ -301,7 +304,7 @@ file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"
 [[source_sha256]]
 file = "test/regressions.jl"
-sha256 = "154192c00db5b5acce2a5770cae56c75347b011171f15c8fe8af44b85b5a78df"
+sha256 = "6dfbbe7c31c4cce8806ee1f8e0146d6ffd43042f6ee24f2971326b0352c722ec"
 [[source_sha256]]
 file = "test/runtests.jl"
 sha256 = "57b972105d13e687a65ae241888304f8820d1aa301751622655ac62759adbf19"
