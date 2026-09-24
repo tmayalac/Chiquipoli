@@ -10,9 +10,16 @@
 #   1. the library builds;
 #   2. no source admits a goal (`sorry` / `sorryAx`), and no `native_decide`;
 #   3. every audited theorem depends only on Lean's three standard axioms;
-#   4. the family's negative controls do NOT compile;
-#   5. every generated file under ChiquipoliFamily/A<n>/ reproduces byte for
-#      byte from lean/generators/family/gen_family.jl.
+#   4. every case's negative controls do NOT compile, and each control's twin
+#      -- the same proof of the true statement -- DOES;
+#   5. every generated file (ChiquipoliFamily/A<n>/, the root module A<n>.lean,
+#      negative_controls_family/A<n>/) reproduces byte for byte from
+#      lean/generators/family/gen_family.jl.
+#
+# FAMILY_STEPS="2 4" runs only the listed steps (default: all five), and
+# FAMILY_CASES="16" only the listed cases. They exist for tools/stress_family.sh,
+# which checks that each step rejects the defect it is responsible for. A run
+# restricted either way prints "partial run, not a certification".
 #
 # It is separate from verify.sh on purpose: the A16 development, its counts and
 # the numbers the article quotes are untouched by anything here.
@@ -20,9 +27,11 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-CASES="16 32 64"
+CASES="${FAMILY_CASES:-16 32 64}"
 AXIOM_AUDIT_MIN=48
-NEGATIVE_CONTROLS_EXPECTED=5
+NEGATIVE_CONTROLS_PER_CASE=10
+STEPS="${FAMILY_STEPS:-1 2 3 4 5}"
+want() { case " $STEPS " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
 
 RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; RST=$'\033[0m'
 fail=0
@@ -31,6 +40,7 @@ ok()   { printf "  ${GRN}PASS${RST}  %s\n" "$*"; }
 bad()  { printf "  ${RED}FAIL${RST}  %s\n" "$*"; fail=1; }
 skip() { printf "  ${YEL}SKIP${RST}  %s\n" "$*"; }
 
+if want 1; then
 note "=== 1. build ==="
 if lake build ChiquipoliFamily >/tmp/chiqui_family_build.log 2>&1; then
   ok "lake build ChiquipoliFamily"
@@ -39,8 +49,10 @@ else
   tail -20 /tmp/chiqui_family_build.log
   exit 1
 fi
-
 note ""
+fi
+
+if want 2; then
 note "=== 2. no admitted goals ==="
 # Same comment-stripping as verify.sh, so prose about `sorry` is not a hit.
 strip_lean_comments() {
@@ -64,15 +76,17 @@ while IFS= read -r f; do
   nsrc=$((nsrc + 1))
   h=$(strip_lean_comments "$f" | grep -E '\bsorry\b|sorryAx|native_decide|\badmit\b' || true)
   [ -n "$h" ] && hits="${hits}${h}"$'\n'
-done < <(find ChiquipoliFamily.lean ChiquipoliFamily -name '*.lean' | sort)
+done < <(find ChiquipoliFamily.lean ChiquipoliFamily negative_controls_family -name '*.lean' | sort)
 if [ -n "${hits//[$'\n' ]/}" ]; then
   bad "a source file admits a goal"
   printf '%s' "$hits"
 else
-  ok "no 'sorry', 'admit' or 'native_decide' in any of the $nsrc source files (comments excluded)"
+  ok "no 'sorry', 'admit' or 'native_decide' in any of the $nsrc source, control and twin files (comments excluded)"
+fi
+note ""
 fi
 
-note ""
+if want 3; then
 note "=== 3. axiom audit ==="
 axout=$(lake env lean ChiquipoliFamily/Audit.lean 2>&1)
 axrc=$?
@@ -102,59 +116,90 @@ else
     ok "every case's headline theorems are audited by name ($CASES)"
   fi
 fi
-
 note ""
-note "=== 4. negative controls (these MUST fail to compile) ==="
-nc_seen=0
-for f in negative_controls_family/*.lean; do
-  [ -e "$f" ] || continue
-  nc_seen=$((nc_seen + 1))
-  if ncout=$(lake env lean "$f" 2>&1); then
-    bad "$(basename "$f") COMPILED — the corresponding certificate is vacuous"
-  elif printf '%s' "$ncout" | grep -qiE "unknown module|unknown package|could not resolve import|object file .* does not exist|no such file|unknown (identifier|constant)"; then
-    bad "$(basename "$f") rejected only because a name or import did not resolve"
-    printf '%s\n' "$ncout" | head -3
-  else
-    ok "$(basename "$f") correctly rejected"
-  fi
-done
-[ "$nc_seen" -eq "$NEGATIVE_CONTROLS_EXPECTED" ] \
-  || bad "found $nc_seen negative controls, expected $NEGATIVE_CONTROLS_EXPECTED"
-
-note ""
-note "=== 5. generated files match the Julia source of truth ==="
-if command -v julia >/dev/null 2>&1; then
-  for c in $CASES; do
-    before="/tmp/chiqui_family_before_A$c"
-    # The root module is kept OUTSIDE the directory copy: on a case-insensitive
-    # file system (macOS) a file `root.lean` next to `Root.lean` is the same file.
-    beforeroot="/tmp/chiqui_family_before_A$c.root.lean"
-    rm -rf "$before"; mkdir -p "$before"
-    cp ChiquipoliFamily/A$c/*.lean "$before/"; cp "ChiquipoliFamily/A$c.lean" "$beforeroot"
-    # The generator deletes and rewrites the whole directory, so a file it no
-    # longer writes cannot survive and match itself.
-    if (cd .. && julia --project=. lean/generators/family/gen_family.jl "$c" >"/tmp/chiqui_family_gen_A$c.log" 2>&1); then
-      d=$(diff -rq "$before" "ChiquipoliFamily/A$c" 2>&1 || true)
-      d2=$(diff -q "$beforeroot" "ChiquipoliFamily/A$c.lean" 2>&1 || true)
-      if [ -z "$d$d2" ]; then
-        ok "A$c: all $(ls ChiquipoliFamily/A$c/*.lean | wc -l | tr -d ' ') files reproduce byte for byte"
-      else
-        bad "A$c: generated files differ from a fresh run"; printf '%s\n' "$d" "$d2" | head -10
-        cp "$before"/*.lean "ChiquipoliFamily/A$c/"; cp "$beforeroot" "ChiquipoliFamily/A$c.lean"
-      fi
-    else
-      bad "A$c: the generator failed (see /tmp/chiqui_family_gen_A$c.log)"
-      cp "$before"/*.lean "ChiquipoliFamily/A$c/"; cp "$beforeroot" "ChiquipoliFamily/A$c.lean"
-    fi
-  done
-else
-  skip "julia not on PATH — cannot re-derive the generated files"
 fi
 
+if want 4; then
+note "=== 4. negative controls: each must FAIL, its twin must COMPILE ==="
+# Every case has the same NEGATIVE_CONTROLS_PER_CASE controls, generated with
+# the certificate. A control is a false statement attempted with the
+# certificate's own proof; its twin (twin/<same name>) is that proof of the true
+# statement. A rejection counts only if the twin compiles -- otherwise the
+# control might fail for a reason unrelated to its claim -- and only if Lean
+# actually refuted the proof: a name that did not resolve, a timeout or a
+# recursion limit is not a refutation.
+wrong_reason='unknown module|unknown package|could not resolve import|object file .* does not exist|no such file|unknown (identifier|constant|namespace)|deterministic\) timeout|maximum recursion depth'
+stray=$(find negative_controls_family -maxdepth 1 -name '*.lean' | head -5)
+[ -z "$stray" ] || bad "controls outside a case directory (not generated, not paired with a twin): $stray"
+for c in $CASES; do
+  d="negative_controls_family/A$c"
+  nc_seen=0; nc_ok=0
+  for f in "$d"/*.lean; do
+    [ -e "$f" ] || continue
+    nc_seen=$((nc_seen + 1)); b=$(basename "$f"); t="$d/twin/$b"
+    if [ ! -f "$t" ]; then bad "A$c $b has no twin"; continue; fi
+    if ncout=$(lake env lean "$f" 2>&1); then
+      bad "A$c $b COMPILED -- the certificate proves a false statement, or the control is not false"
+      continue
+    elif printf '%s' "$ncout" | grep -qiE "$wrong_reason"; then
+      bad "A$c $b rejected for the wrong reason:"; printf '%s\n' "$ncout" | grep -iE "$wrong_reason" | head -2
+      continue
+    fi
+    if tout=$(lake env lean "$t" 2>&1); then
+      if printf '%s' "$tout" | grep -qi 'sorry'; then
+        bad "A$c $b: its twin compiles only by admitting a goal"
+      else
+        nc_ok=$((nc_ok + 1))
+      fi
+    else
+      bad "A$c $b: its twin does NOT compile, so the rejection proves nothing"
+      printf '%s\n' "$tout" | grep -m2 error
+    fi
+  done
+  ntw=$(find "$d/twin" -name '*.lean' 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$nc_seen" -ne "$NEGATIVE_CONTROLS_PER_CASE" ] || [ "$ntw" -ne "$NEGATIVE_CONTROLS_PER_CASE" ]; then
+    bad "A$c: found $nc_seen controls and $ntw twins, expected $NEGATIVE_CONTROLS_PER_CASE of each"
+  elif [ "$nc_ok" -eq "$nc_seen" ]; then
+    ok "A$c: all $nc_seen controls rejected by Lean, all $ntw twins compile"
+  fi
+done
 note ""
-if [ "$fail" -eq 0 ]; then
-  printf "${GRN}FAMILY LEAN CERTIFICATE PASS${RST}\n"
+fi
+
+if want 5; then
+note "=== 5. generated files match the Julia source of truth ==="
+# The generator writes into a scratch directory (CHIQUI_OUTDIR), never over the
+# tracked files, and the two trees must agree byte for byte: every certificate
+# file, the root module of the case, and every control and twin.
+if command -v julia >/dev/null 2>&1; then
+  for c in $CASES; do
+    scratch=$(mktemp -d "${TMPDIR:-/tmp}/chiqui_family_A$c.XXXXXX")
+    if (cd .. && CHIQUI_OUTDIR="$scratch" julia --project=. lean/generators/family/gen_family.jl "$c" >"$scratch.log" 2>&1); then
+      d=$( { diff -rq "$scratch/ChiquipoliFamily/A$c" "ChiquipoliFamily/A$c";
+             diff -q "$scratch/ChiquipoliFamily/A$c.lean" "ChiquipoliFamily/A$c.lean";
+             diff -rq "$scratch/negative_controls_family/A$c" "negative_controls_family/A$c"; } 2>&1 || true)
+      if [ -z "$d" ]; then
+        ok "A$c: $(ls ChiquipoliFamily/A$c/*.lean | wc -l | tr -d ' ') certificate files, the root module and $(find negative_controls_family/A$c -name '*.lean' | wc -l | tr -d ' ') control/twin files reproduce byte for byte"
+      else
+        bad "A$c: tracked files differ from a fresh run of the generator"; printf '%s\n' "$d" | head -10
+      fi
+    else
+      bad "A$c: the generator failed (see $scratch.log)"; tail -5 "$scratch.log"
+    fi
+    rm -rf "$scratch"
+  done
 else
-  printf "${RED}FAMILY LEAN CERTIFICATE FAIL${RST}\n"
+  skip "julia not on PATH -- cannot re-derive the generated files"
+fi
+note ""
+fi
+
+# A partial run is not a certification, and does not say so.
+what="FAMILY LEAN CERTIFICATE"
+[ "$STEPS" = "1 2 3 4 5" ] && [ "$CASES" = "16 32 64" ] || what="FAMILY LEAN STEPS [$STEPS], CASES [$CASES] (partial run, not a certification)"
+if [ "$fail" -eq 0 ]; then
+  printf "${GRN}%s PASS${RST}\n" "$what"
+else
+  printf "${RED}%s FAIL${RST}\n" "$what"
 fi
 exit "$fail"

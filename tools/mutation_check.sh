@@ -200,6 +200,28 @@ run_julia_mutation \
   src/a16/data.jl \
   '(6,13)' \
   '(6,12)'
+
+# The Bingane–Audet family (A32, A64). The generic constructor is shared by
+# every n; this sign error only touches the harmonics i >= 2 of its loop, which
+# exist only for n >= 32, so A16 -- and every A16 check -- is blind to it. Only
+# the family's cross-check against upstream OPTIGON sees it.
+run_julia_mutation \
+  "family constructor: sign of the i = 2 harmonics (n >= 32 only)" \
+  cases/exact_coords.jl \
+  'sg(v) = isodd(i) ? neg(v) : v' \
+  'sg(v) = (isodd(i) || i == 2) ? neg(v) : v'
+
+run_julia_mutation \
+  "A64 root literal: one digit altered" \
+  cases/A64_bingane_audet/candidate.jl \
+  'big"0.04908729857644960608' \
+  'big"0.04908729857644960618'
+
+run_julia_mutation \
+  "A32 active graph: edge (7,24) -> (7,25)" \
+  cases/A32_bingane_audet/candidate.jl \
+  '(7, 24)' \
+  '(7, 25)'
 note ""
 fi
 

@@ -1,5 +1,6 @@
 .PHONY: help test nominal verify certificate lean lean-build lean-cache \
-        lean-certificate lean-family literature mutation-check archive-log clean \
+        lean-certificate lean-family literature mutation-check stress-family \
+        stress-family-generator archive-log clean \
         paper paper-build paper-check
 
 PAPER := paper
@@ -22,6 +23,8 @@ help:
 	@echo "  make paper-check       reconcile the article against the certificate and Lean"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
+	@echo "  make stress-family     the same for A16/A32/A64: generator, Lean and harness (~15 min)"
+	@echo "  make stress-family-generator   only the generator's pre-checks (Julia, ~2 min)"
 	@echo
 	@echo "  make clean             remove editor and build leftovers"
 
@@ -49,6 +52,17 @@ literature:
 # and restores them from git.
 mutation-check:
 	tools/mutation_check.sh
+
+# The family layer (A16, A32, A64): each of eight planted generator defects must
+# be refused by the generator's exact pre-checks AND, with those switched off,
+# rejected by Lean inside the planted declaration; and verify_family.sh must
+# reject a sabotaged harness. The first two layers never touch tracked files;
+# the third needs a clean tree. STRESS_CASES="16" restricts the first two.
+stress-family:
+	tools/stress_family.sh all
+
+stress-family-generator:
+	tools/stress_family.sh generator
 
 # Freezes the current log under a timestamped, read-only name.
 archive-log:

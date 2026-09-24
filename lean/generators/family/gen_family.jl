@@ -43,7 +43,36 @@ const QQ = Rational{BigInt}
 setprecision(BigFloat, 512)
 
 n = parse(Int, ARGS[1])
-const OUTDIR = joinpath(REPO, "lean", "ChiquipoliFamily", "A$n")
+
+# Output root: `lean/` by default. CHIQUI_OUTDIR writes the same tree
+# (ChiquipoliFamily/A<n>/, ChiquipoliFamily/A<n>.lean,
+# negative_controls_family/A<n>/) somewhere else instead, so that
+# verify_family.sh can regenerate into a scratch directory and diff, and the
+# stress test (tools/stress_family.sh) can plant defects without ever touching
+# the tracked files.
+const LEANOUT = get(ENV, "CHIQUI_OUTDIR", joinpath(REPO, "lean"))
+
+# STRESS TESTING. CHIQUI_MUTATE=<kind> plants exactly one defect of that kind
+# (see MUTATIONS). With the pre-checks on, the generator must refuse to write it;
+# with CHIQUI_MUTATE_UNGUARDED=1 the pre-checks are skipped and the defect is
+# written, so that Lean alone must reject it. A mutated run may only write to a
+# scratch CHIQUI_OUTDIR: a planted defect never reaches the tracked tree.
+const MUTATIONS = ("encl", "conv", "far", "side", "hen", "stress", "root", "unique")
+const MUTATE = get(ENV, "CHIQUI_MUTATE", "")
+const UNGUARDED = get(ENV, "CHIQUI_MUTATE_UNGUARDED", "") == "1"
+MUTATE == "" || MUTATE in MUTATIONS || error("CHIQUI_MUTATE must be one of $(MUTATIONS)")
+UNGUARDED && MUTATE == "" && error("CHIQUI_MUTATE_UNGUARDED without CHIQUI_MUTATE: refusing to write unchecked output")
+MUTATE != "" && !haskey(ENV, "CHIQUI_OUTDIR") && error("a mutated run must write to a scratch CHIQUI_OUTDIR")
+
+# A pre-check: an inequality or identity that Lean will re-prove, checked here
+# first in exact rational arithmetic. Structural invariants of the generator
+# stay plain @assert and are never skipped.
+guard(ok::Bool, msg) = (ok || UNGUARDED) ? nothing : error("pre-check failed: " * msg)
+"The one planted defect, and where it lands; printed for the stress test."
+planted(file, decl) = println("MUTATED ", MUTATE, " ", file, " ", decl)
+
+const OUTDIR = joinpath(LEANOUT, "ChiquipoliFamily", "A$n")
+const NCDIR = joinpath(LEANOUT, "negative_controls_family", "A$n")
 const NS = "Chiquipoli.Family.A$n"
 const MOD = "ChiquipoliFamily.A$n"
 const CONV_CHUNK = 60
@@ -98,8 +127,8 @@ CLO = simplest(cstar - W, cstar - W/4); CHI = simplest(cstar + W/4, cstar + W)
 C0 = simplest(cstar - W/8, cstar + W/8); R0 = max(C0 - CLO, CHI - C0)
 SB = 1 - CLO^2                                   # sin² z = 1 − c² ≤ 1 − clo²  (c ≥ clo > 0)
 @assert CLO > 0
-sFclo = sign(peval(Fc, CLO)); sFchi = sign(peval(Fc, CHI))
-@assert sFclo * sFchi < 0 "Fc does not change sign on [clo, chi]"
+sFclo = Int(sign(peval(Fc, CLO))); sFchi = Int(sign(peval(Fc, CHI)))
+guard(sFclo * sFchi < 0, "Fc does not change sign on [clo, chi]")
 
 # ---- Taylor data -------------------------------------------------------------
 function taylor(p, c0)
@@ -118,6 +147,9 @@ for k in 0:n-1
     global rho = max(rho, abs(tx[1] - cx[k]) + tail(tx), abs(ty[1] - cy[k]) + tail(ty))
 end
 RHO = rup(2rho)
+# mutation `encl`: a vertex centre off by 10⁴ρ — the enclosure of XC1 now claims
+# a centre the polynomial never comes near on the interval.
+MUTATE == "encl" && (cx[1] += 10^4 * RHO; planted("ChiquipoliFamily/A$n/Encl1.lean", "encX1"))
 
 # ---- sign-layer margins, all checked exactly here ------------------------------
 function det_margin(x0, x1, x2, y0, y1, y2)
@@ -128,12 +160,12 @@ function det_margin(x0, x1, x2, y0, y1, y2)
 end
 triples = [(i, mod(i + 1, n), j) for i in 0:n-1 for j in 0:n-1 if j != i && j != mod(i + 1, n)]
 conv_m = [det_margin(cx[i], cx[ip], cx[j], cy[i], cy[ip], cy[j]) for (i, ip, j) in triples]
-@assert minimum(conv_m) > 0 "a support determinant is not certified by the enclosures"
+guard(minimum(conv_m) > 0, "a support determinant is not certified by the enclosures")
 
 activeset = Set(active)
 farpairs = [(i, j) for i in 0:n-1 for j in i+1:n-1 if !((i, j) in activeset)]
 far_ub(i, j) = SB * (abs(cx[j] - cx[i]) + 2RHO)^2 + (abs(cy[j] - cy[i]) + 2RHO)^2
-@assert maximum(far_ub(i, j) for (i, j) in farpairs) < 1 "an inactive pair is not certified below 1"
+guard(maximum(far_ub(i, j) for (i, j) in farpairs) < 1, "an inactive pair is not certified below 1")
 
 # ---- exact identities ----------------------------------------------------------
 side_quot = Dict{Int,Union{Nothing,Vector{QQ}}}()
@@ -169,7 +201,7 @@ for (a, b) in [(0, 1)]                      # pin side 0; greedy by margin
         end
         isempty(cands) && (ok = false; break)
         (mg, k, i, j) = maximum(cands)
-        @assert mg > 0 "Henneberg step at vertex $k is not certified"
+        guard(mg > 0, "Henneberg step at vertex $k is not certified")
         push!(done, k); push!(order, (k, i, j))
     end
     @assert ok "no Henneberg order from bar ($a,$b)"
@@ -299,22 +331,27 @@ function taylor_steps(pname, p; cn = "c0", rn = "r0", C = C0, R = R0)
     tl = deg == 0 ? "0" : join(["$(lr(abs(t[j+1]))) * $rn ^ $j" for j in 1:deg], " + ")
     return t, deg, rhs, steps, tl
 end
-function encl_lemma(name, pname, p, ctr)
+function encl_lemma(name, pname, p, ctr; rad = RHO, radname = "rho")
     t, deg, rhs, steps, tl = taylor_steps(pname, p)
+    guard(abs(t[1] - ctr) + tail(t) <= rad, "the enclosure $name does not hold (hnum)")
+    return encl_text(name, pname, t, deg, rhs, steps, tl, ctr, radname)
+end
+function encl_text(name, pname, t, deg, rhs, steps, tl, ctr, radname)
+    unf = radname == "rho" ? "rho" : ""
     if deg == 0
         return """
-lemma $name (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : |$pname c - $(lr(ctr))| ≤ rho := by
-  unfold $pname rho; norm_num
+lemma $name (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : |$pname c - $(lr(ctr))| ≤ $radname := by
+  unfold $pname $unf; norm_num
 """
     end
     """
-lemma $name (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : |$pname c - $(lr(ctr))| ≤ rho := by
+lemma $name (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) : |$pname c - $(lr(ctr))| ≤ $radname := by
   have key : $pname c = $rhs := by
     unfold $pname c0; ring
   have hr : |c - c0| ≤ r0 := near c h₁ h₂
 $steps
-  have hnum : |($(lr(t[1])) : ℝ) - $(lr(ctr))| + ($tl) ≤ rho := by
-    unfold r0 rho; norm_num
+  have hnum : |($(lr(t[1])) : ℝ) - $(lr(ctr))| + ($tl) ≤ $radname := by
+    unfold r0 $unf; norm_num
   have e1 := neg_abs_le (($(lr(t[1])) : ℝ) - $(lr(ctr)))
   have e2 := le_abs_self (($(lr(t[1])) : ℝ) - $(lr(ctr)))
   rw [key, abs_le]
@@ -323,6 +360,7 @@ $steps
 end
 function lb_lemma(name, pname, p, lb; lo = "clo", hi = "chi", cn = "c0", rn = "r0", nr = "near", C = C0, R = R0)
     t, deg, rhs, steps, tl = taylor_steps(pname, p; cn = cn, rn = rn, C = C, R = R)
+    guard(lb <= t[1] - (deg == 0 ? 0 : sum(abs(t[j+1]) * R^j for j in 1:deg)), "the lower bound $name does not hold (hnum)")
     if deg == 0
         return """
 lemma $name (c : ℝ) (h₁ : $lo ≤ c) (h₂ : c ≤ $hi) : ($(lr(lb)) : ℝ) ≤ $pname c := by
@@ -397,12 +435,17 @@ function margin_expr(x0, x1, x2, y0, y1, y2)
     " - (|$(lr(y1)) - $(lr(y0))| * (2 * rho) + |$(lr(x2)) - $(lr(x0))| * (2 * rho) + (2 * rho) * (2 * rho))"
 end
 conv_chunks = collect(Iterators.partition(triples, CONV_CHUNK))
+MUTATE == "conv" && planted("ChiquipoliFamily/A$n/Conv1.lean", "convD_0_2")
 for (ci, ch) in enumerate(conv_chunks)
     local buf = IOBuffer()
     print(buf, header("**A$n: support determinants, part $ci of $(length(conv_chunks)).** Each is positive on\n`[clo, chi]`, from the vertex enclosures by `det_lb`.", [prev]))
-    for (i, ip, j) in ch
+    for (i0, ip0, j) in ch
+        # mutation `conv`: the first determinant with its first two vertices
+        # swapped — the orientation of the support line reversed.
+        (i, ip) = (MUTATE == "conv" && (i0, ip0, j) == (0, 1, 2)) ? (ip0, i0) : (i0, ip0)
+        guard(det_margin(cx[i], cx[ip], cx[j], cy[i], cy[ip], cy[j]) > 0, "support determinant ($i0,$ip0,$j) (hn)")
         println(buf, """
-theorem convD_$(i)_$(j) (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
+theorem convD_$(i0)_$(j) (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     0 < (XC$ip c - XC$i c) * (YC$j c - YC$i c) - (YC$ip c - YC$i c) * (XC$j c - XC$i c) := by
   have h := det_lb $(enc("X", i)) $(enc("X", ip)) $(enc("X", j)) $(enc("Y", i)) $(enc("Y", ip)) $(enc("Y", j))
   have hn : (0 : ℝ) < $(margin_expr(cx[i], cx[ip], cx[j], cy[i], cy[ip], cy[j])) := by
@@ -417,11 +460,16 @@ end
 # ---------------------------------------------------------------------------
 # Far*.lean
 # ---------------------------------------------------------------------------
-far_chunks = collect(Iterators.partition(farpairs, FAR_CHUNK))
+far_chunks = [collect(ch) for ch in Iterators.partition(farpairs, FAR_CHUNK)]
+# mutation `far`: the first active diameter listed among the non-active pairs —
+# an active-graph transcription error. It is at distance exactly 1.
+MUTATE == "far" && (far_chunks[1] = vcat([active[1]], far_chunks[1]);
+                    planted("ChiquipoliFamily/A$n/Far1.lean", "far_$(active[1][1])_$(active[1][2])"))
 for (fi, ch) in enumerate(far_chunks)
     local buf = IOBuffer()
     print(buf, header("**A$n: non-active pairs, part $fi of $(length(far_chunks)).** Each is at squared distance\n`< 1`, from the vertex enclosures by `sqd_ub`.", [prev]))
     for (i, j) in ch
+        guard(far_ub(i, j) < 1, "pair ($i,$j) is not certified below 1 (hn)")
         println(buf, """
 theorem far_$(i)_$(j) (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     (1 - c ^ 2) * (XC$j c - XC$i c) ^ 2 + (YC$j c - YC$i c) ^ 2 < 1 := by
@@ -441,10 +489,15 @@ end
 # ---------------------------------------------------------------------------
 barname(b) = "st$(b - 1)"                    # bar b (1-based) carries the stress st(b−1)
 side_pieces = String[]
+FC_SIDES = sort([i for i in 0:n-1 if side_quot[i] !== nothing])
+# mutation `side`: the first side that holds only at a root of Fc, proved as if
+# it held for every c (`ring` alone).
+MUTATE == "side" && planted("ChiquipoliFamily/A$n/Sides1.lean", "side_$(FC_SIDES[1])")
 for i in 0:n-1
     j = mod(i + 1, n)
     lhs = "(1 - c ^ 2) * (XC$j c - XC$i c) ^ 2 + (YC$j c - YC$i c) ^ 2 = 2 - 2 * c"
-    if side_quot[i] === nothing
+    if side_quot[i] === nothing || (MUTATE == "side" && i == FC_SIDES[1])
+        guard(side_quot[i] === nothing, "side $i is not an identity in c; it needs Fc")
         push!(side_pieces, "\ntheorem side_$i (c : ℝ) (hF : Fc c = 0) :\n    $lhs := by\n  unfold XC$i XC$j YC$i YC$j; ring\n")
     else
         push!(side_pieces, "\ntheorem side_$i (c : ℝ) (hF : Fc c = 0) :\n    $lhs := by\n  unfold XC$i XC$j YC$i YC$j\n  unfold Fc at hF\n  linear_combination ($(lp(side_quot[i]))) * hF\n")
@@ -462,7 +515,12 @@ and all $m active diameters are identically `1`. `ring` / `linear_combination`."
 # ---------------------------------------------------------------------------
 global buf = IOBuffer()
 print(buf, header("**A$n: the Henneberg determinants.** Pin side `0 → 1`; then each vertex, in\nthe order below, is joined to two pinned vertices by bars with independent\ndirections. Each determinant is positive on `[clo, chi]` by `det_lb`.", [prev]))
-for (k, i, j) in HEN
+# mutation `hen`: the first Henneberg vertex pinned by two bars to the SAME
+# vertex — a degenerate step, determinant identically 0.
+MUTATE == "hen" && planted("ChiquipoliFamily/A$n/Hen.lean", "henD_$(HEN[1][1])")
+for (k, i, j0) in HEN
+    j = (MUTATE == "hen" && k == HEN[1][1]) ? i : j0
+    guard(hmargin(k, i, j) > 0, "Henneberg determinant at vertex $k (hn)")
     println(buf, """
 theorem henD_$k (c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi) :
     0 < (XC$i c - XC$k c) * (YC$j c - YC$k c) - (YC$i c - YC$k c) * (XC$j c - XC$k c) := by
@@ -516,13 +574,18 @@ for (b, t) in zip(extra, (T1, T2))
     stress_def[b] = lr(t); stress_pf[b] = "by unfold st$(b-1); norm_num"
 end
 order_defs = copy(extra)
+# mutation `stress`: Cramer's rule with one sign dropped, at the first vertex the
+# reverse recursion solves — the classic transcription error. The stress it
+# defines no longer balances that vertex.
+KMUT = reverse(HEN)[1][1]
+MUTATE == "stress" && planted("ChiquipoliFamily/A$n/StressDef.lean", "bal_$KMUT")
 for (k, i, j) in reverse(HEN)
     (_, _, p, q) = hbar[k]
     Fx = force(k, "X", others(k)); Fy = force(k, "Y", others(k))
     ui1 = esub(leafX(i), leafX(k)); ui2 = esub(leafY(i), leafY(k))
     uj1 = esub(leafX(j), leafX(k)); uj2 = esub(leafY(j), leafY(k))
     D = esub(emul(ui1, uj2), emul(ui2, uj1))
-    sp = ediv(eadd(emul(eneg(Fx), uj2), emul(Fy, uj1)), D)
+    sp = ediv(eadd(emul((MUTATE == "stress" && k == KMUT) ? Fx : eneg(Fx), uj2), emul(Fy, uj1)), D)
     sq = ediv(eadd(emul(eneg(Fy), ui1), emul(Fx, ui2)), D)
     hen_terms[k] = (Fx.t, Fy.t, ui1.t, ui2.t, uj1.t, uj2.t)
     for (b, e) in ((p, sp), (q, sq))
@@ -543,8 +606,18 @@ end
 @assert sort(order_defs) == collect(eachindex(bars))
 SUM = esum([leafS(b) for b in 1:n])
 lamlo = minimum(SC[b] - SR[b] for b in n+1:n+m)
-@assert lamlo > 0 "a diameter stress is not certified positive (enclosures too wide)"
-@assert SUM.c + SUM.r < 0 "the side stresses are not certified to sum below zero"
+guard(lamlo > 0, "a diameter stress is not certified positive (enclosures too wide)")
+guard(SUM.c + SUM.r < 0, "the side stresses are not certified to sum below zero")
+# Equilibrium at the centres. The true stresses balance exactly at every vertex;
+# with |st_b − SC_b| ≤ SR_b and every coordinate within ρ of its centre, the
+# residual at the centres is at most Σ_b SR_b (|Δ centre| + 2ρ) + |SC_b| 2ρ.
+# Lean proves the balances symbolically (StressDef.lean); this is the numerical
+# shadow of that proof, so a wrong Cramer formula is refused before it is written.
+for k in 0:n-1, (C, coord) in ((cx, "x"), (cy, "y"))
+    res = sum(SC[b] * (C[otherend(b, k)] - C[k]) for b in incident(k))
+    tol = sum(SR[b] * (abs(C[otherend(b, k)] - C[k]) + 2RHO) + abs(SC[b]) * 2RHO for b in incident(k))
+    guard(abs(res) <= tol, "vertex $k does not balance in $coord at the centres (residual $(Float64(res)))")
+end
 println("  multipliers: self-stress with t = ($(Float64(T1)), $(Float64(T2))) on the extra bars " *
         "$([bars[b] for b in extra]); worst certified λ ≥ $(Float64(lamlo)), Σα ≤ $(Float64(SUM.c + SUM.r))")
 
@@ -617,8 +690,13 @@ prev = "$MOD.StressSign"
 # ---------------------------------------------------------------------------
 # Root.lean
 # ---------------------------------------------------------------------------
-lohi = sFclo < 0 ? ("Fc clo < 0", "0 < Fc chi", "intermediate_value_Ioo", "Ioo (Fc clo) (Fc chi)") :
-                   ("0 < Fc clo", "Fc chi < 0", "intermediate_value_Ioo'", "Ioo (Fc chi) (Fc clo)")
+# mutation `root`: the signs of Fc at the ends of the bracket swapped — the
+# bracket would still "contain a root" by the IVT, from two false evaluations.
+sclaim = MUTATE == "root" ? -sFclo : sFclo
+MUTATE == "root" && planted("ChiquipoliFamily/A$n/Root.lean", "Fc_clo,Fc_chi")
+guard(sclaim == Int(sign(peval(Fc, CLO))) && -sclaim == Int(sign(peval(Fc, CHI))), "the claimed signs of Fc at clo, chi")
+lohi = sclaim < 0 ? ("Fc clo < 0", "0 < Fc chi", "intermediate_value_Ioo", "Ioo (Fc clo) (Fc chi)") :
+                    ("0 < Fc clo", "Fc chi < 0", "intermediate_value_Ioo'", "Ioo (Fc chi) (Fc clo)")
 global buf = IOBuffer()
 print(buf, header("**A$n: the root.** `Fc` changes sign on `[clo, chi]`, so it has a root there\n(intermediate value theorem). Both signs are exact rational evaluations.", [prev]))
 println(buf, """
@@ -633,7 +711,7 @@ lemma Fc_chi : $(lohi[2]) := by unfold Fc chi; norm_num
 
 theorem Fc_root : ∃ c ∈ Ioo clo chi, Fc c = 0 := by
   have hsub := $(lohi[3]) clo_lt_chi.le Fc_continuous.continuousOn
-  have h0 : (0 : ℝ) ∈ $(lohi[4]) := ⟨$(sFclo < 0 ? "Fc_clo, Fc_chi" : "Fc_chi, Fc_clo")⟩
+  have h0 : (0 : ℝ) ∈ $(lohi[4]) := ⟨$(sclaim < 0 ? "Fc_clo, Fc_chi" : "Fc_chi, Fc_clo")⟩
   obtain ⟨c, hc, hfc⟩ := hsub h0
   exact ⟨c, hc, hfc⟩""")
 print(buf, footer())
@@ -944,9 +1022,13 @@ RS0 = max(CS0 - SLO, SHI - CS0)
 sgn = Int(sign(peval(dF, cstar)))   # an Int: a Float here would leak into the exact arithmetic
 tdf = taylor(QQ(sgn) .* dF, CS0)
 dlb = tdf[1] - sum(abs(tdf[j+1]) * RS0^j for j in 1:length(tdf)-1)
-@assert dlb > 0 "Fc' is not certified of one sign on the search bracket"
+guard(dlb > 0, "Fc' is not certified of one sign on the search bracket")
 DLB = QQ(floor(BigInt, dlb * 9 / 10 * big(10)^18), big(10)^18)
-@assert DLB > 0
+guard(DLB > 0, "the derivative bound is not positive")
+# mutation `unique`: a derivative bound above the value of |Fc'| at the end slo
+# of the bracket — false at that point, so no proof of it can exist.
+MUTATE == "unique" && (DLB = sgn * peval(dF, SLO) + QQ(1, 10^6);
+                       planted("ChiquipoliFamily/A$n/Unique.lean", "dFc_lb"))
 println("  uniqueness: search bracket [$(Float64(SLO)), $(Float64(SHI))], sign(Fc') = $sgn, |Fc'| ≥ $(Float64(DLB))")
 
 # HasDerivAt chain for the Horner form written by `lp`
@@ -1118,8 +1200,130 @@ emit("Unique", String(take!(buf)))
 prev = "$MOD.Unique"
 
 # root module of the case
-open(joinpath(REPO, "lean", "ChiquipoliFamily", "A$n.lean"), "w") do io
+open(joinpath(LEANOUT, "ChiquipoliFamily", "A$n.lean"), "w") do io
     print(io, "/-\nAUTO-GENERATED by `lean/generators/family/gen_family.jl $n` — do not edit by hand.\n\nThe Lean certificate of A$n; see `ChiquipoliFamily/A$n/Unique.lean`.\n-/\nimport $MOD.Unique\n")
 end
 files = sort(filter(f -> endswith(f, ".lean"), readdir(OUTDIR)))
 println("wrote $(length(files)) files to lean/ChiquipoliFamily/A$n/: ", join(files, " "))
+
+# ---------------------------------------------------------------------------
+# negative_controls_family/A<n>/ — the same ten controls for every case
+# ---------------------------------------------------------------------------
+# Each control is a FALSE statement about this A_n, attempted with the proof
+# the certificate itself uses; its twin, in twin/, is the same proof of the true
+# statement. verify_family.sh requires every control to be rejected and every
+# twin to compile, so a control cannot pass for an accidental reason (a typo, a
+# name that does not resolve, a tactic that would have failed anyway): the twin
+# shows the proof works, the control shows it does not work for the false claim.
+# Falsity is checked here, exactly or by an explicit witness, before anything is
+# written.
+MUTATE == "" && let
+    mkpath(joinpath(NCDIR, "twin"))
+    for d in (NCDIR, joinpath(NCDIR, "twin")), f in readdir(d)
+        endswith(f, ".lean") && rm(joinpath(d, f))
+    end
+    opens = "open Chiquipoli.FirstOrder Chiquipoli.Feasible Chiquipoli.Family"
+    function control(file, why, bad, good)
+        body(kind, nm, thm) = "-- $kind\n-- AUTO-GENERATED by `lean/generators/family/gen_family.jl $n` — do not edit by hand.\n" *
+            join(["-- " * l for l in split(why, "\n")], "\n") *
+            "\nimport $MOD\nset_option maxHeartbeats 4000000\nset_option maxRecDepth 20000\nnamespace $NS\n$opens\n" * replace(thm, "THM" => nm) * "\nend $NS\n"
+        open(io -> print(io, body("NEGATIVE CONTROL (A$n). Must FAIL to compile; its twin, twin/$file.lean, must compile.", "bad", bad)),
+             joinpath(NCDIR, "$file.lean"), "w")
+        open(io -> print(io, body("TWIN of ../$file.lean: the same proof, of the true statement. Must COMPILE.", "good", good)),
+             joinpath(NCDIR, "twin", "$file.lean"), "w")
+    end
+    hyp = "(c : ℝ) (h₁ : clo ≤ c) (h₂ : c ≤ chi)"
+    detS(k, i, j) = "(XC$i c - XC$k c) * (YC$j c - YC$k c) - (YC$i c - YC$k c) * (XC$j c - XC$k c)"
+    detP(k, i, j) = "  have h := det_lb $(enc("X", k)) $(enc("X", i)) $(enc("X", j)) $(enc("Y", k)) $(enc("Y", i)) $(enc("Y", j))\n" *
+                    "  have hn : (0 : ℝ) < $(margin_expr(cx[k], cx[i], cx[j], cy[k], cy[i], cy[j])) := by\n" *
+                    "    unfold rho; norm_num [abs_of_pos, abs_of_neg]\n  linarith"
+
+    # 1. a support determinant with the wrong sign
+    @assert det_margin(cx[0], cx[1], cx[2], cy[0], cy[1], cy[2]) > 0          # so D > 0 on the whole bracket
+    control("fnc01_convexity_sign",
+        "The support determinant (0,1,2) claimed NEGATIVE, by the certificate's own\nproof (det_lb from the enclosures). It is positive on the whole bracket.",
+        "theorem THM $hyp :\n    $(detS(0, 1, 2)) < 0 := by\n$(detP(0, 1, 2))",
+        "theorem THM $hyp :\n    0 < $(detS(0, 1, 2)) := by\n$(detP(0, 1, 2))")
+
+    # 2. the tightest inactive pair, claimed further below 1 than it is
+    (fi, fj) = farpairs[argmax([far_ub(i, j) for (i, j) in farpairs])]
+    dlo = (1 - CHI^2) * max(abs(cx[fj] - cx[fi]) - 2RHO, 0)^2 + max(abs(cy[fj] - cy[fi]) - 2RHO, 0)^2
+    T = QQ(floor(BigInt, (dlo - QQ(1, 10^6)) * 10^6), 10^6)
+    @assert 0 < T < dlo                                    # squared distance ≥ dlo > T everywhere on the bracket
+    farS(bound) = "theorem THM $hyp :\n    (1 - c ^ 2) * (XC$fj c - XC$fi c) ^ 2 + (YC$fj c - YC$fi c) ^ 2 < $bound := by\n" *
+        "  obtain ⟨hs0, hs⟩ := sin2_bounds c h₁ h₂\n  have h := sqd_ub $(enc("X", fi)) $(enc("X", fj)) $(enc("Y", fi)) $(enc("Y", fj)) hs0 hs\n" *
+        "  have hn : sb * (|$(lr(cx[fj])) - $(lr(cx[fi]))| + 2 * rho) ^ 2 + (|$(lr(cy[fj])) - $(lr(cy[fi]))| + 2 * rho) ^ 2 < $bound := by\n" *
+        "    unfold sb rho; norm_num [abs_of_pos, abs_of_neg]\n  linarith"
+    control("fnc02_inactive_margin",
+        "The tightest inactive pair, ($fi,$fj), is at squared distance about $(round(Float64(dlo), digits = 6)).\nClaimed below $(Float64(T)), by the certificate's proof: the margin to 1 is real, not slack.",
+        farS(lr(T)), farS("1"))
+
+    # 3. a side that needs Fc, proved for every c
+    s3 = FC_SIDES[1]; t3 = mod(s3 + 1, n)
+    @assert !EI.iszeropoly(ps(sqdpoly(s3, t3), QQ[2, -2])) && side_quot[0] === nothing
+    sideS(i) = (j = mod(i + 1, n); "theorem THM (c : ℝ) :\n    (1 - c ^ 2) * (XC$j c - XC$i c) ^ 2 + (YC$j c - YC$i c) ^ 2 = 2 - 2 * c := by\n  unfold XC$i XC$j YC$i YC$j; ring")
+    control("fnc03_side_needs_Fc",
+        "Side $s3 is one of the two sides ($(join(FC_SIDES, ", "))) that hold only at a root of Fc.\nClaimed for every c, by `ring` (the proof of an unconditional side); the twin\nis side 0, which is unconditional.",
+        sideS(s3), sideS(0))
+
+    # 4. the smallest diameter stress with the wrong sign
+    bmin = n + argmin([SC[b] - SR[b] for b in n+1:n+m])
+    @assert SC[bmin] - SR[bmin] > 0
+    stS(claim) = "theorem THM $hyp : $claim := by\n  have h := encS$(bmin-1) c h₁ h₂\n  have := (abs_le.mp h).1\n  linarith"
+    control("fnc04_stress_sign",
+        "st$(bmin-1), the smallest active-diameter stress, is certified in [$(Float64(SC[bmin]-SR[bmin])), $(Float64(SC[bmin]+SR[bmin]))].\nClaimed non-positive from that same enclosure: the multiplier sign is not free.",
+        stS("st$(bmin-1) c ≤ 0"), stS("0 < st$(bmin-1) c"))
+
+    # 5. rigidity from the sides alone
+    rigS(h, arg) = "theorem THM (z : ℝ) (hsz : 0 < Real.sin z) (h₁ : clo ≤ Real.cos z) (h₂ : Real.cos z ≤ chi)\n" *
+        "    (hl : L z ≠ 0) (w : Cfg $n) ($h) :\n    (dataOf (P z) (L z) ea eb).R w := by\n  exact Ieq_imp_R z hsz h₁ h₂ hl w $arg"
+    control("fnc05_rigidity_needs_bars",
+        "Infinitesimal rigidity from the $n SIDE constraints alone. A $n-gon with free\ndiameters has a $(2n - n - 3)-dimensional space of non-trivial flexes, so this is false;\nthe Henneberg proof must not go through without the diameter bars.",
+        rigS("hs : ∀ i, (dataOf (P z) (L z) ea eb).sideD w 0 i = 0", "⟨hs, fun e => by simp [Data.diamD]⟩"),
+        rigS("hs : (dataOf (P z) (L z) ea eb).Ieq w 0", "hs"))
+
+    # 6. the wrong sign of Fc at the end of the bracket
+    rs(s) = s < 0 ? "Fc clo < 0" : "0 < Fc clo"
+    control("fnc06_root_sign",
+        "Fc at clo claimed with the opposite sign. Both signs are exact rational\nevaluations; the bracket brackets a root only with the true ones.",
+        "theorem THM : $(rs(-sFclo)) := by\n  unfold Fc clo; norm_num", "theorem THM : $(rs(sFclo)) := by\n  unfold Fc clo; norm_num")
+
+    # 7. the bracket is not empty
+    @assert CLO < CHI
+    control("fnc07_bracket_nonempty",
+        "Every sign fact of the certificate is stated for c in [clo, chi]. Were that\ninterval empty, all of them would be vacuous. It is not.",
+        "theorem THM : chi < clo := by\n  unfold clo chi; norm_num", "theorem THM : clo < chi := by\n  unfold clo chi; norm_num")
+
+    # 8. a degenerate Henneberg step
+    (hk, hi, hj) = HEN[1]
+    control("fnc08_henneberg_degenerate",
+        "Vertex $hk, the first one the Henneberg construction adds, pinned by two bars to\nthe SAME vertex $hi instead of to $hi and $hj. The determinant is identically 0; the\nsame proof must not certify it positive.",
+        "theorem THM $hyp :\n    0 < $(detS(hk, hi, hi)) := by\n$(detP(hk, hi, hi))",
+        "theorem THM $hyp :\n    0 < $(detS(hk, hi, hj)) := by\n$(detP(hk, hi, hj))")
+
+    # 9. an enclosure tighter than the truth
+    devs = [(max(abs(peval(XC[k+1], CLO) - cx[k]), abs(peval(XC[k+1], CHI) - cx[k])), k) for k in 1:n-1]
+    (dev, ke) = maximum(devs)
+    eps = QQ(floor(BigInt, dev / 2 * big(10)^40), big(10)^40)
+    @assert 0 < eps < dev                                  # |XC(c) − x̂| = dev > eps at an end of the bracket
+    tE = taylor_steps("XC$ke", XC[ke+1])
+    control("fnc09_enclosure_tight",
+        "The enclosure of XC$ke claimed with radius $(Float64(eps)), half the distance its\npolynomial actually reaches from the centre at an end of the bracket. The\ncertified radius rho is not slack either way: the twin is the certificate's.",
+        replace(encl_text("THM", "XC$ke", tE..., cx[ke], lr(eps)), r"^\n?lemma" => "theorem"),
+        replace(encl_text("THM", "XC$ke", tE..., cx[ke], "rho"), r"^\n?lemma" => "theorem"))
+
+    # 10. uniqueness is local
+    grid = [QQ(k, 20000) for k in 0:20000]
+    sg = [sign(peval(Fc, x)) for x in grid]
+    nroots = count(k -> sg[k] * sg[k+1] < 0, 1:length(grid)-1)
+    @assert nroots >= 2                                    # two sign changes: two distinct roots in [0, 1]
+    uqS(iv) = "theorem THM {x y : ℝ} (hx : x ∈ Set.Icc $iv) (hy : y ∈ Set.Icc $iv)\n    (hfx : Fc x = 0) (hfy : Fc y = 0) : x = y := by\n" *
+        "  rcases lt_trichotomy x y with h | h | h\n" *
+        "  · have := Fc_mono_search hx hy h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)\n  · exact h\n" *
+        "  · have := Fc_mono_search hy hx h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)"
+    control("fnc10_uniqueness_is_local",
+        "Fc has at least $nroots roots in [0, 1] (exact sign changes on a rational grid);\nthe certified root is the only one in the article's search bracket [slo, shi],\nnot in [0, 1]. Uniqueness claimed on [0, 1] with the certificate's proof.",
+        uqS("0 1"), uqS("slo shi"))
+
+    println("wrote 10 negative controls and their twins to lean/negative_controls_family/A$n/")
+end

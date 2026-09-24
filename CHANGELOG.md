@@ -11,6 +11,43 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **Family layer: controls with twins, and a stress test in two independent
+  lines (2026-09-24).** The certificates of A16, A32 and A64 are unchanged,
+  byte for byte. What changed is how they are tested:
+  * *Negative controls*: 10 per case, the same 10 for every `n`, generated with
+    the certificate into `lean/negative_controls_family/A<n>/`. They replace the
+    5 hand-written A32-only controls. Each control is a false statement,
+    checked false by the generator before it is written, and attempted with the
+    certificate's own proof. Each is paired with a *twin* (`twin/`): the same
+    proof of the true statement, which must compile. `verify_family.sh` now
+    rejects a control that fails for the wrong reason (an unresolved name, a
+    timeout, a recursion limit) and a twin that compiles only by `sorry`. One
+    control records a fact the certificate depends on: `Fc` has at least 5, 11 and 21
+    roots in `(0, 1)` for n = 16, 32, 64, so uniqueness holds only on the
+    article's search bracket.
+  * *Generator pre-checks*: every inequality Lean re-proves is now also a
+    named `guard` at the point of emission (enclosure `hnum`, each
+    determinant, each inactive pair, each Henneberg step, the unconditional
+    sides, the signs of `Fc` at the bracket ends, the derivative bound). There
+    is also a new numerical check of the self-stress: the equilibrium at every
+    vertex, at the centres, within a rigorous residual bound.
+  * *`tools/stress_family.sh`* (`make stress-family`): eight kinds of
+    generator defect (`CHIQUI_MUTATE`) planted in each case. The generator must
+    refuse all 24. With the pre-checks off (`CHIQUI_MUTATE_UNGUARDED=1`), Lean
+    must reject all 24, with every error inside the planted declaration and
+    every upstream module byte-identical to the built certificate. Eleven
+    sabotages of `verify_family.sh` must each fail the step responsible. The
+    generator and Lean parts write only to scratch directories
+    (`CHIQUI_OUTDIR`); a mutated run cannot write to the tracked tree. The
+    generator part also runs weekly in CI (`mutation.yml`).
+  * `verify_family.sh` step 5 regenerates into a scratch directory and diffs,
+    instead of overwriting and restoring the tracked files. It now also covers
+    the root module and the controls. `FAMILY_STEPS` and `FAMILY_CASES` run a
+    subset, and label the run as partial, not a certification.
+  * `tools/mutation_check.sh` gains three family mutations (15 in total): a
+    sign error in the generic constructor that exists only for n ≥ 32, a digit
+    of the A64 root, and an A32 active edge. The Julia suite rejects each one.
+
 - **Lean certificate of A64; multipliers as a self-stress (2026-09-24).** The
   family layer now proves `locally_maximal_unique` for **A64** as well (A16,
   A32, A64 all pass `verify_family.sh`). Getting there replaced the multiplier

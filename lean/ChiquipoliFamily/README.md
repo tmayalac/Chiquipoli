@@ -107,6 +107,79 @@ Large certificates are split into chained files (`Conv1 → Conv2 → …`): Lea
 keeps every proof of a file in memory while it elaborates that file, and the
 chain also keeps `lake` from building several heavy files at once.
 
+## How the certificate is tested against itself
+
+A proof that has only ever succeeded says nothing about whether the checks
+around it could fail. Three mechanisms, all generated and run the same way for
+every case, address that.
+
+**Negative controls with twins** (`lean/negative_controls_family/A<n>/`, checked
+by `verify_family.sh`, step 4). Ten per case, the same ten for every `n`. Each
+control is a **false** statement about `A_n`, attempted with the proof the
+certificate itself uses. The generator checks that it is false before writing
+it, exactly or with an explicit witness. Its twin, in `twin/`, is the same proof
+of the true statement. The control must be rejected; the twin must compile.
+Without the twin, a control could be "rejected" for an accidental reason, such
+as a typo, a name that does not resolve, a timeout, or a tactic that would have
+failed anyway. A timeout, a recursion limit or an unresolved name is therefore
+not accepted as a rejection, and a twin that admits a goal is not accepted as
+compiling.
+
+| control | the false claim | why it matters |
+|---|---|---|
+| `fnc01_convexity_sign` | the support determinant (0,1,2) is negative | the enclosures cannot prove the wrong orientation |
+| `fnc02_inactive_margin` | the tightest inactive pair is 10⁻⁶ closer than it is | the margin to 1 is real, not slack |
+| `fnc03_side_needs_Fc` | side `n/4 − 1` holds for every `c` (by `ring`) | only a root of `Fc` makes it equal; twin: side 0 |
+| `fnc04_stress_sign` | the smallest diameter stress is `≤ 0` | the sign of the multiplier comes from the certified enclosure |
+| `fnc05_rigidity_needs_bars` | `I_eq ⊆ R_eq` from the sides alone | an `n`-gon with free diameters flexes (`n − 3` dimensions) |
+| `fnc06_root_sign` | `Fc(clo)` has the other sign | the bracket brackets a root only with the true signs |
+| `fnc07_bracket_nonempty` | `chi < clo` | if the interval were empty every "for c in [clo, chi]" fact would be vacuous |
+| `fnc08_henneberg_degenerate` | a Henneberg vertex pinned twice to one vertex has a positive determinant | the determinant is identically 0 |
+| `fnc09_enclosure_tight` | a vertex enclosure with half the radius the polynomial actually reaches | the radius is not a free parameter |
+| `fnc10_uniqueness_is_local` | `Fc` has one root on `[0, 1]` | false: it changes sign at least 5, 11, 21 times there for n = 16, 32, 64; uniqueness holds only on the article's search bracket |
+
+The last row is a fact worth knowing on its own: the constructor equation has
+many roots in `(0, 1)`, and the search interval `(2 arcsin(sin(π/n)/2), π/n)` is
+what selects `A_n` among them.
+
+**The stress test** (`tools/stress_family.sh`, `make stress-family`). The
+certificate has two lines of defence. The generator checks every margin in
+exact rational arithmetic before it writes Lean (each check is a named
+`guard`), and Lean re-proves everything in the kernel. The stress test checks
+that *each line alone* is enough. It plants one generator defect at a time
+(`CHIQUI_MUTATE=<kind>`), always into a scratch directory, never into the
+tracked tree:
+
+| kind | defect | planted in |
+|---|---|---|
+| `encl` | a vertex centre off by `10⁴ρ` | `Encl1`, `encX1` |
+| `conv` | a support line with reversed orientation | `Conv1`, `convD_0_2` |
+| `far` | an active diameter listed as inactive | `Far1` |
+| `side` | a side that needs `Fc` proved for every `c` | `Sides1` |
+| `hen` | a Henneberg vertex pinned twice to one vertex | `Hen` |
+| `stress` | Cramer's rule with one sign dropped | `StressDef`, `bal_k` |
+| `root` | the signs of `Fc` at the bracket ends swapped | `Root` |
+| `unique` | a derivative bound above `|Fc'(slo)|` | `Unique`, `dFc_lb` |
+
+* *generator*: with the pre-checks on, the generator must stop with
+  `pre-check failed` after planting the defect (24 of 24 for A16, A32, A64);
+* *lean*: with `CHIQUI_MUTATE_UNGUARDED=1` the defect is written, and Lean must
+  reject the planted file. Every error must lie inside the planted declaration,
+  and every module the file imports must be byte-identical to the certified,
+  built one (24 of 24). The Cramer defect, for instance, is refused by the
+  generator's new equilibrium check at the centres, and by Lean at the balance
+  of exactly the vertex whose formula was broken;
+* *harness*: eleven sabotages of `verify_family.sh` itself, each run against
+  the step responsible for it (`FAMILY_STEPS`). They are: an admitted goal in an
+  unimported file, and one in a twin; an unresolvable and a missing audit name;
+  a control deleted, and one made true; a twin made false; a control failing
+  only by an unresolved name, and one failing only by a timeout; a hand edit of
+  a certificate file, and one of a control.
+
+The unguarded switch refuses to run without a planted defect, and a mutated run
+refuses to write anywhere but a scratch directory, so the switch cannot
+produce an unchecked certificate.
+
 ## Where the data comes from
 
 `lean/generators/family/gen_family.jl <n>` writes `ChiquipoliFamily/A<n>/`. Its

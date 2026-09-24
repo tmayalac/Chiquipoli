@@ -5,7 +5,8 @@
 # suite's ability to fail is checked continuously and not only on the day
 # someone thought to run it by hand.
 #
-# Julia mutations only. The Lean mutations need the ~7 GB Mathlib cache and are
+# Julia mutations, and the Julia half of the family stress test. The Lean
+# mutations need the ~7 GB Mathlib cache and are
 # run by hand with `make mutation-check`, for the reason given in
 # certificate.yml. The script edits tracked files and restores them from git,
 # and ends by requiring a clean working tree, so a leak fails the job.
@@ -34,3 +35,11 @@ jobs:
 
       - name: plant each defect and require it to be caught
         run: bash tools/mutation_check.sh julia
+
+      # The family generator's exact pre-checks must refuse each of eight
+      # planted defects, for A16, A32 and A64. Julia only; the Lean half of the
+      # same test (tools/stress_family.sh lean) needs the Mathlib cache. It
+      # writes only to scratch directories, and runs after the step above, never
+      # beside it: that step edits cases/, which the generator reads.
+      - name: family generator refuses each planted defect
+        run: bash tools/stress_family.sh generator

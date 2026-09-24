@@ -111,7 +111,8 @@ terminal and in Windows PowerShell.
 | The Lean checks, recorded → `results/lean_certificate.toml` | `make lean-certificate` | `julia --project=. pipeline/record_lean_certificate.jl` (bash) |
 | The same five checks for the family layer (A16, A32, A64) | `make lean-family` | `cd lean`, then `./verify_family.sh` (bash) |
 | The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
-| Plant 12 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
+| Plant 15 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
+| Stress test of the family layer: 24 generator defects, each refused by the generator AND by Lean; 11 harness defects | `make stress-family` | `bash tools/stress_family.sh all` (the harness part needs a clean git tree) |
 | Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
 | List the targets | `make help` | — |
 
@@ -188,13 +189,15 @@ rejecting anything.
 make mutation-check
 ```
 
-This plants 12 known defects and requires the verification to reject each
-one: seven that the Julia suite must reject — a transcription error in the
+This plants 15 known defects and requires the verification to reject each
+one: ten that the Julia suite must reject — a transcription error in the
 constructor, one in the constructor equation, a sign error in one vertex, one
 digit of the root literal, one wrong active edge, a Krawczyk enclosure rebuilt
 with round-to-nearest instead of outward rounding, and a derivative `Fprime`
 that is wrong but keeps its sign (interval Newton still passes with it; only
-the chain-rule test against `Fc` catches it); and five weakenings of the Lean
+the chain-rule test against `Fc` catches it), and three in the Bingane–Audet
+family (a sign error in the generic constructor that only exists for n ≥ 32,
+one digit of the A64 root, one wrong A32 active edge); and five weakenings of the Lean
 layer — an admitted
 goal, an unresolvable name in the axiom audit, a deleted negative control, a
 wrong factor in the bridge tying the Theorem 3.5 layer to the certified
@@ -208,6 +211,22 @@ was fixed; they are in the script so that failure mode cannot return unnoticed.
 It does not prove the harness complete. It detects blindness to the mutations
 someone thought of. A hole nobody imagined stays invisible — which is exactly
 what those five were until they were looked for.
+
+The family layer (A16, A32, A64) has its own stress test, `make stress-family`.
+Its certificate has two lines of defence — the generator checks every margin
+in exact arithmetic before writing Lean, and Lean re-proves everything — and
+the stress test checks that **each one alone** is enough: eight kinds of
+generator defect (a vertex centre off by 10⁴ρ, a reversed support line, an
+active diameter listed as inactive, a side that needs `Fc` proved for every c,
+a degenerate Henneberg step, Cramer's rule with a sign dropped, swapped root
+signs, a derivative bound that is false) are planted in each case. With the
+pre-checks on, the generator must refuse all 24; with them switched off, Lean
+must reject all 24, with every error inside the planted declaration and every
+upstream module identical to the certified one. A third part sabotages
+`verify_family.sh` itself (11 ways) and requires the responsible step to fail.
+Each case also carries ten negative controls, each paired with a *twin* — the
+same proof of the true statement — that must compile, so a control cannot be
+rejected for an accidental reason. Details: `lean/ChiquipoliFamily/README.md`.
 
 ---
 
@@ -260,12 +279,13 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliFamily/             A32, A64 (and A16 again), a method that scales in n;
                                 built and checked by verify_family.sh
   negative_controls/            26 false statements that must not compile
+  negative_controls_family/     10 per family case, each with a twin that must compile
   generators/                   Julia -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks
 results/                      the three certificates (TOML) and the article's tables
 logs/                         final_run.txt; archive/ holds read-only copies
 docs/                         guide/ (what is certified, and how), audits/ (records)
-tools/                        mutation_check.sh, archive_log.sh, independent_check/
+tools/                        mutation_check.sh, stress_family.sh, archive_log.sh, independent_check/
 examples/                     two worked tutorials: the square, interval Newton
 ```
 
