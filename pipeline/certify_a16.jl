@@ -43,7 +43,8 @@ function _source_hashes(projroot)
     # directory renamed) would drop out of the provenance chain with no error.
     # Pin the count so that fails loudly. If you add or remove a load-bearing
     # source, change this number deliberately.
-    @assert length(hashed) == 31 "provenance covers $(length(hashed)) files, expected 31 - a load-bearing source moved, was added, or was removed"
+    # 32 since pipeline/record_lean_family_certificate.jl (2026-09-24).
+    @assert length(hashed) == 32 "provenance covers $(length(hashed)) files, expected 32 - a load-bearing source moved, was added, or was removed"
     return hashed
 end
 

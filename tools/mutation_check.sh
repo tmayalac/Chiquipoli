@@ -201,6 +201,16 @@ run_julia_mutation \
   '(6,13)' \
   '(6,12)'
 
+# The verdict itself. Uniqueness of the root on the whole search interval was
+# once reported but not required (2026-09 external audit, D01): a run where it
+# failed still printed CERTIFIED. Dropping it from the verdict again must fail
+# the suite.
+run_julia_mutation \
+  "verdict: root uniqueness on I_search dropped from final_pass" \
+  pipeline/certify_a16.jl \
+  'final_pass = box_nesting_pass && r2.pass && r2.unique_in_search_interval &&' \
+  'final_pass = box_nesting_pass && r2.pass &&'
+
 # The Bingane–Audet family (A32, A64). The generic constructor is shared by
 # every n; this sign error only touches the harmonics i >= 2 of its loop, which
 # exist only for n >= 32, so A16 -- and every A16 check -- is blind to it. Only

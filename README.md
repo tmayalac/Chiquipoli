@@ -93,6 +93,22 @@ Once, after cloning, from the repository root (same command on every system):
 julia --project=. -e "using Pkg; Pkg.instantiate()"
 ```
 
+### In one command
+
+```bash
+make check                 # quick: Julia only, ~5 min, writes nothing
+make check-all             # everything, in order, and refreshes every record in results/ (~30 min, 16 GB)
+make check-lean            # both Lean layers, verified and recorded
+make check-case N=32       # one case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress)
+```
+
+Every stage runs even if an earlier one fails, and the run ends with a table
+of PASS, FAIL and SKIP per stage (logs in `logs/check_all/`, not tracked). The
+mutation check and the harness part of the stress test edit tracked files and
+restore them from git, so on a dirty tree they are *skipped*, never counted as
+passed, and the verdict is then `INCOMPLETE`, not `ALL CHECKS PASS`. Commit
+first for a full run.
+
 ### Every command
 
 All commands run from the repository root. `make` is a shortcut; the
@@ -101,7 +117,7 @@ terminal and in Windows PowerShell.
 
 | What it does | macOS / Linux | Without `make` (any system) |
 |---|---|---|
-| Run the test suite (651 assertions) | `make test` | `julia --project=. test/runtests.jl` |
+| Run the test suite (714 assertions) | `make test` | `julia --project=. test/runtests.jl` |
 | **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
 | The literature benchmark (n = 4, 6, 8, 16, 32, 64 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
 | One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
@@ -110,8 +126,13 @@ terminal and in Windows PowerShell.
 | The five Lean checks | `make lean` | `cd lean`, then `./verify.sh` (bash) |
 | The Lean checks, recorded → `results/lean_certificate.toml` | `make lean-certificate` | `julia --project=. pipeline/record_lean_certificate.jl` (bash) |
 | The same five checks for the family layer (A16, A32, A64) | `make lean-family` | `cd lean`, then `./verify_family.sh` (bash) |
+| The family checks, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | `julia --project=. pipeline/record_lean_family_certificate.jl` |
+| Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
+| One case of the family in Lean (a partial run) | `make lean-family-case N=32` | `cd lean`, then `FAMILY_CASES=32 ./verify_family.sh` |
+| One case of the family, planted defects | `make stress-case N=32` | `STRESS_CASES=32 bash tools/stress_family.sh generator`, then `... lean` |
+| One case of the literature benchmark | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
 | The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
-| Plant 15 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
+| Plant 16 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
 | Stress test of the family layer: 24 generator defects, each refused by the generator AND by Lean; 11 harness defects | `make stress-family` | `bash tools/stress_family.sh all` (the harness part needs a clean git tree) |
 | Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
 | List the targets | `make help` | — |
@@ -189,13 +210,14 @@ rejecting anything.
 make mutation-check
 ```
 
-This plants 15 known defects and requires the verification to reject each
-one: ten that the Julia suite must reject — a transcription error in the
+This plants 16 known defects and requires the verification to reject each
+one: eleven that the Julia suite must reject — a transcription error in the
 constructor, one in the constructor equation, a sign error in one vertex, one
 digit of the root literal, one wrong active edge, a Krawczyk enclosure rebuilt
 with round-to-nearest instead of outward rounding, and a derivative `Fprime`
 that is wrong but keeps its sign (interval Newton still passes with it; only
-the chain-rule test against `Fc` catches it), and three in the Bingane–Audet
+the chain-rule test against `Fc` catches it), the root-uniqueness gate dropped
+from the verdict, and three in the Bingane–Audet
 family (a sign error in the generic constructor that only exists for n ≥ 32,
 one digit of the A64 root, one wrong A32 active edge); and five weakenings of the Lean
 layer — an admitted

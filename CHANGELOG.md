@@ -11,6 +11,41 @@ git tag was NOT moved — it still points at the original release commit
 (`fa7145d`) and predates every item below. Do not treat `v1.0.0` as current;
 these changes, not that tag, are what a fresh checkout of `main` gets.
 
+- **The family certificate is recorded; one command for everything
+  (2026-09-24).**
+  * `results/lean_family_certificate.toml` (`make lean-family-certificate`),
+    the family's counterpart of `lean_certificate.toml`. It records the five
+    checks per case, the certified numbers of A16, A32 and A64 (bracket,
+    enclosure radius, margins, the smallest diameter stress, the `Fc`-sides,
+    the derivative bound), the toolchain, the scope, and the SHA-256 of 286
+    files: the Lean sources, controls and twins, the verifier, the generator,
+    and its Julia inputs. `make lean-family-record` answers in seconds, without
+    Lean, whether the record still describes the tree. `make paper-check` now
+    fails on a stale family record.
+  * `tools/check_all.sh`: `make check` (Julia only, ~5 min, writes nothing),
+    `make check-all` (everything, in order, refreshing every record),
+    `make check-lean`, and `make check-case N=<n>` for one case. Per-layer
+    commands for one case: `literature-case`, `lean-family-case`,
+    `stress-case`. Every stage runs even if one fails, and the run ends with a
+    table. Stages that need a clean tree are skipped on a dirty one, and the
+    verdict is then `INCOMPLETE`, not a pass. `CHIQUI_NO_RECORD=1` lets
+    `certify_literature.jl` run the full benchmark without rewriting
+    `results/`. Measured: `make check-all` takes 29.5 min on a clean tree
+    (test 31 s, mutation check 8.5 min, family stress test 15.4 min,
+    certificates and records 5 min). Its first run found a real defect that
+    nothing else exercises: the A16 provenance guardrail pins the number of
+    hashed sources, and the new `pipeline/record_lean_family_certificate.jl`
+    made it 32. It was raised deliberately, as the guardrail asks.
+  * The external audit of v1.0.0 is reviewed finding by finding in
+    `docs/audits/external-audit-v1.0.0.md`. All 19 findings were already
+    resolved. One had no guard against regression: D01, root uniqueness in the
+    verdict. It now has a test (every gate must appear in `final_pass`) and a
+    16th mutation.
+  * Fixed: `docs/guide/certificate-spec.md` still said 12 planted defects,
+    and `make paper-check` failed on it after the previous commit.
+    `results/README.md` described files that do not exist. The README quoted
+    651 test assertions (now 714).
+
 - **Family layer: controls with twins, and a stress test in two independent
   lines (2026-09-24).** The certificates of A16, A32 and A64 are unchanged,
   byte for byte. What changed is how they are tested:

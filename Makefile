@@ -1,12 +1,25 @@
 .PHONY: help test nominal verify certificate lean lean-build lean-cache \
         lean-certificate lean-family literature mutation-check stress-family \
         stress-family-generator archive-log clean \
+        check check-all check-lean check-case literature-case lean-family-case \
+        stress-case lean-family-certificate lean-family-record \
         paper paper-build paper-check
 
 PAPER := paper
 
 help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
+	@echo
+	@echo "  EVERYTHING, WITH A SUMMARY TABLE (tools/check_all.sh)"
+	@echo "  make check             quick: Julia only, no Lean (~5 min)"
+	@echo "  make check-all         every check and every record, in order (~30 min, 16 GB)"
+	@echo "  make check-lean        both Lean layers, verified and recorded"
+	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
+	@echo
+	@echo "  ONE CASE, ONE LAYER"
+	@echo "  make literature-case N=32   the general certifier on one case"
+	@echo "  make lean-family-case N=32  the five family Lean checks on one case (partial run)"
+	@echo "  make stress-case N=32       the 8+8 planted defects of one case"
 	@echo
 	@echo "  make test              run the Julia test suite"
 	@echo "  make verify            run the full certificate, tee to logs/final_run.txt"
@@ -18,6 +31,8 @@ help:
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
 	@echo "  make lean-family       the same five checks for the family layer (A16, A32, A64)"
+	@echo "  make lean-family-certificate  record them as results/lean_family_certificate.toml"
+	@echo "  make lean-family-record       does that record still describe the tree? (seconds)"
 	@echo
 	@echo "  make paper             compile paper/main.tex + supplement and audit the logs"
 	@echo "  make paper-check       reconcile the article against the certificate and Lean"
@@ -147,6 +162,41 @@ lean-certificate:
 # lean/ChiquipoliFamily/README.md.
 lean-family:
 	cd lean && ./verify_family.sh
+
+lean-family-certificate:
+	julia --project=. pipeline/record_lean_family_certificate.jl
+
+lean-family-record:
+	julia --project=. pipeline/record_lean_family_certificate.jl --check
+
+# --- everything, and one case at a time (tools/check_all.sh) -----------------
+# Every stage runs even if one fails; the run ends with a PASS/FAIL/SKIP table.
+# A stage that needs a clean git tree is skipped on a dirty one, and the
+# verdict is then INCOMPLETE, never PASS.
+check:
+	tools/check_all.sh quick
+
+check-all:
+	tools/check_all.sh all
+
+check-lean:
+	tools/check_all.sh lean
+
+check-case:
+	@test -n "$(N)" || { echo "usage: make check-case N=<4|6|8|16|32|64>"; exit 2; }
+	tools/check_all.sh case $(N)
+
+literature-case:
+	@test -n "$(N)" || { echo "usage: make literature-case N=<4|6|8|16|32|64>"; exit 2; }
+	julia --project=. pipeline/certify_literature.jl $(N)
+
+lean-family-case:
+	@test -n "$(N)" || { echo "usage: make lean-family-case N=<16|32|64>"; exit 2; }
+	cd lean && FAMILY_CASES=$(N) ./verify_family.sh
+
+stress-case:
+	@test -n "$(N)" || { echo "usage: make stress-case N=<16|32|64>"; exit 2; }
+	STRESS_CASES=$(N) tools/stress_family.sh generator && STRESS_CASES=$(N) tools/stress_family.sh lean
 
 # ---------------------------------------------------------------------------
 

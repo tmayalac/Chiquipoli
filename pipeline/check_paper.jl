@@ -632,6 +632,31 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
 end
 
 # ---------------------------------------------------------------------------
+# The family layer (A16, A32, A64) is verified locally and recorded in
+# results/lean_family_certificate.toml with a hash of every file the verdict
+# depends on. The record is only evidence while it describes the tree: an edit
+# to a certificate file, a control, the generator or its Julia inputs after the
+# run makes it stale, and that must fail here rather than pass unnoticed.
+section("the family layer, against its recorded Lean certificate")
+let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
+    if !isfile(fam)
+        skip("results/lean_family_certificate.toml describes the tree")
+    else
+        out = IOBuffer()
+        ok = success(pipeline(`$(Base.julia_cmd()) --project=$ROOT $(joinpath(ROOT, "pipeline", "record_lean_family_certificate.jl")) --check`;
+                              stdout = out, stderr = out))
+        txt = String(take!(out))
+        chk("the recorded family certificate is a PASS and describes this tree", ok)
+        ok || print(txt)
+        rec = TOML.parsefile(fam)
+        chk("the record covers A16, A32 and A64",
+            all(haskey(get(rec, "cases", Dict()), "A$n") for n in (16, 32, 64)))
+        chk("the record does not claim the identification with the published polygon",
+            any(x -> occursin("identification", x), get(get(rec, "scope", Dict()), "not_formalized", String[])))
+    end
+end
+
+# ---------------------------------------------------------------------------
 # Every path the article tells a referee to run must exist. The article is not
 # tracked, so a repository reorganisation cannot rewrite it, and the reader is
 # the one who discovers the command is gone. This check closes that gap: the

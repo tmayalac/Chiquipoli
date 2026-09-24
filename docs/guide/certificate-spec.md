@@ -210,10 +210,15 @@ export PATH="$HOME/.elan/bin:$PATH"                           # Lean layer
 (cd lean && lake exe cache get)                               # once; ~7 GB of Mathlib oleans
 make lean                                                     # 5 checks -> LEAN CERTIFICATE PASS
 make lean-certificate                                         # writes results/lean_certificate.toml
+make lean-family                                              # family layer (A16, A32, A64): 5 checks
+make lean-family-certificate                                  # writes results/lean_family_certificate.toml
 
 make paper                                                    # compile a16.tex, audit the LaTeX log
 make paper-check                                              # reconcile the article vs certificate + Lean
-tools/mutation_check.sh                                     # 12 planted defects, all must be rejected
+tools/mutation_check.sh                                     # 16 planted defects, all must be rejected
+tools/stress_family.sh all                                    # 59 planted defects in the family layer
+
+make check-all                                                # all of the above, in order, with a summary
 ```
 
 Provenance is pinned by content, not just by commit: both

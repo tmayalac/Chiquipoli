@@ -88,3 +88,24 @@
     @test Rational{BigInt}(inf(enc)) <= big_c <= Rational{BigInt}(sup(enc))
     @test inf(enc) < sup(enc)          # genuinely widened, not a thin lie
 end
+
+# ---------------------------------------------------------------------------
+# The A16 verdict must conjoin every gate. Uniqueness of the root on the whole
+# of I_search was once reported but not required, so a run in which it failed
+# still printed CERTIFIED (2026-09 external audit, D01); the side-length gate
+# was once recorded as passed unconditionally (D03). The verdict is an
+# expression in pipeline/certify_a16.jl, which the suite does not run end to
+# end, so it is checked here as source: every gate must appear in it, and a
+# gate dropped from it fails this test (tools/mutation_check.sh plants that).
+# ---------------------------------------------------------------------------
+@testset "the A16 verdict conjoins every gate (D01, D03)" begin
+    src = read(joinpath(@__DIR__, "..", "pipeline", "certify_a16.jl"), String)
+    m = match(r"^final_pass = ((?:.*\n)*?.*)\nprintln"m, src)
+    @test m !== nothing
+    expr = m === nothing ? "" : replace(m.captures[1], r"\s+" => " ")
+    for gate in ("box_nesting_pass", "r2.pass", "r2.unique_in_search_interval", "rl.pass",
+                 "r3.support_pass", "r3.inactive_pass", "r4.pass", "r5.pass", "r6.pass")
+        @test occursin(gate, expr)
+    end
+    @test !occursin("||", expr)          # a conjunction, nothing that can bypass a gate
+end
