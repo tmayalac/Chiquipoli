@@ -1,15 +1,15 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-09-23T22:57:45Z
+UTC timestamp        = 2026-09-24T00:06:22Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = 980e59c34d7e466298174a109e71a7774425a247  (source clean — log matches this commit)
+git commit           = d2db34ba03aa1b52f772c6c5bbdce5994c607c92  (source clean — log matches this commit)
 SHA256 of source files:
   156c7dc49065528651b1b494a05b2fcbb2e84c544e7fb7bb6d300442f181dbb8  pipeline/certify_a16.jl
-  a4c6777792af9df691c2c53cd61aa274eac183a1435d5d5780f767d82946a250  pipeline/certify_literature.jl
+  ee652591b53b56054ca65f65ff990fe11866fa969a8f912a1ecbfbc39ce36622  pipeline/certify_literature.jl
   74e8b47a96ae3823206a63dc6e6e8eb3e3a895a00ebb98860f2ff1383cc80944  pipeline/check_paper.jl
   0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216  pipeline/record_lean_certificate.jl
   66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  pipeline/stages/01_nominal_configuration.jl
@@ -33,7 +33,7 @@ SHA256 of source files:
   76f6722ab739858cbacc8ebd5fbdddd453469be86f9a622f0a5430d285b67d33  test/exact_algebra.jl
   7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf  test/fixtures/optigon_reference.jl
   9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5  test/framework_guards.jl
-  d7356756080990cd21011235dae4556e0c60b99c17eaee4de53417e40a6cf7d8  test/literature.jl
+  412e8c51a19e5e15db43dd2d104ba5467b6863eed856c0db81853bfb885b17cf  test/literature.jl
   bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff  test/optigon.jl
   154192c00db5b5acce2a5770cae56c75347b011171f15c8fe8af44b85b5a78df  test/regressions.jl
   57b972105d13e687a65ae241888304f8820d1aa301751622655ac62759adbf19  test/runtests.jl

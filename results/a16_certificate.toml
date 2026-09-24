@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "980e59c34d7e466298174a109e71a7774425a247"
+git_commit = "d2db34ba03aa1b52f772c6c5bbdce5994c607c92"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-23T22:57:48Z"
+utc = "2026-09-24T00:06:25Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -223,7 +223,7 @@ file = "pipeline/certify_a16.jl"
 sha256 = "156c7dc49065528651b1b494a05b2fcbb2e84c544e7fb7bb6d300442f181dbb8"
 [[source_sha256]]
 file = "pipeline/certify_literature.jl"
-sha256 = "a4c6777792af9df691c2c53cd61aa274eac183a1435d5d5780f767d82946a250"
+sha256 = "ee652591b53b56054ca65f65ff990fe11866fa969a8f912a1ecbfbc39ce36622"
 [[source_sha256]]
 file = "pipeline/check_paper.jl"
 sha256 = "74e8b47a96ae3823206a63dc6e6e8eb3e3a895a00ebb98860f2ff1383cc80944"
@@ -295,7 +295,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "d7356756080990cd21011235dae4556e0c60b99c17eaee4de53417e40a6cf7d8"
+sha256 = "412e8c51a19e5e15db43dd2d104ba5467b6863eed856c0db81853bfb885b17cf"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"
