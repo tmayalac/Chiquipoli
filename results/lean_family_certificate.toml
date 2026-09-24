@@ -12,7 +12,7 @@ chi = "136116661/138781159"
 clo = "667664192/680733789"
 deg_Fc = 12
 enclosure_radius_rho = "9.35e-16"
-generated_files = 22
+generated_files = 23
 headline = "Chiquipoli.Family.A16.locally_maximal_unique"
 henneberg_steps = 14
 inactive_pairs = 105
@@ -31,7 +31,7 @@ chi = "486919295/489275161"
 clo = "219909684/220973675"
 deg_Fc = 28
 enclosure_radius_rho = "6.759e-15"
-generated_files = 46
+generated_files = 47
 headline = "Chiquipoli.Family.A32.locally_maximal_unique"
 henneberg_steps = 30
 inactive_pairs = 465
@@ -50,7 +50,7 @@ chi = "314172013/314550902"
 clo = "450239227/450782212"
 deg_Fc = 60
 enclosure_radius_rho = "6.9504e-14"
-generated_files = 132
+generated_files = 133
 headline = "Chiquipoli.Family.A64.locally_maximal_unique"
 henneberg_steps = 62
 inactive_pairs = 1953
@@ -75,19 +75,19 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "e21a4a724aaa42122a9630759e2e2545cb36b501"
+git_commit = "161e72bf24d4e41d3ba69c16c5cb5ebad7d8be1d"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
 package = "A16Certificate v1.0.0"
-utc = "2026-09-24T16:57:28Z"
-verify_seconds = 207
+utc = "2026-09-24T19:37:50Z"
+verify_seconds = 218
 
 [scope]
-formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)"]
-not_formalized = ["the identification of the configuration with the published Bingane-Audet polygon: Lean defines it by its polynomial form; the generic constructor is checked against upstream OPTIGON in the Julia tests (test/literature.jl)", "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s", "any lower bound on the radius of the neighbourhood of local maximality", "global optimality, which is not addressed anywhere in this package"]
+formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
+not_formalized = ["that the transcription ChiquipoliFamily/Optigon.lean says what the upstream Julia source says: no kernel reads Julia; it is bounded by a test requiring every quoted upstream statement to occur verbatim in the vendored source with the same number of assignments, by four planted transcription slips each of which breaks the Lean identification, and by the Julia generic constructor reproducing the vendored upstream code numerically", "that the pattern observed at n = 16, 32, 64 (n-1 active diameters, deg Fc = n-4, the Fc-sides are the two non-Henneberg bars) holds for every n = 2^s", "any lower bound on the radius of the neighbourhood of local maximality", "global optimality, which is not addressed anywhere in this package"]
 
 [[source_sha256]]
 file = "Manifest.toml"
@@ -109,10 +109,10 @@ file = "cases/exact_coords.jl"
 sha256 = "c44544ab1439a54fabe24a4b36ac6b878cea23a94e8bea594f8921502ae840ff"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily.lean"
-sha256 = "a76e387c816da1339746e648bf1b86d2bc2e24afaa805e215bc68017d888d722"
+sha256 = "077796f5b925d4c8b6f1e40c6a46b53a7449113609ebd6e4f23ba7b1bf6b94e6"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A16.lean"
-sha256 = "e2d58faa86f081fc9bb0f4b3e13a7492fbcd45cdb93f50bd8277f1e021fb18f5"
+sha256 = "949d3d6a917ef771cb0612ad556213d513cbe151c7ffce574b19a0f68547046d"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A16/Conv1.lean"
 sha256 = "7027f865d49a990d27da03f7d1e612e023983b0ad32b300d08cd6eea43e01101"
@@ -150,6 +150,9 @@ sha256 = "16a8e05c51e121962ba3ef541f5cc6f222f0cbb9c2bf8402ea9803b272f1f9f0"
 file = "lean/ChiquipoliFamily/A16/Poly.lean"
 sha256 = "a3f11985d51c4b334a06e42969de8bb46f1ec416b179ced588bc37591bab7c55"
 [[source_sha256]]
+file = "lean/ChiquipoliFamily/A16/Published.lean"
+sha256 = "e9f978374d7e6b2b36a37969b683310f66fe187df9aaeefef1f536b2aeb8091b"
+[[source_sha256]]
 file = "lean/ChiquipoliFamily/A16/Root.lean"
 sha256 = "7da36177687e8242ce89814307177b126e56c7eba94590a3cd015b624b096bcd"
 [[source_sha256]]
@@ -181,7 +184,7 @@ file = "lean/ChiquipoliFamily/A16/Unique.lean"
 sha256 = "9e06e3ce37c3eb5946b12953c3c28ba64adb735c76c1ce14acafebfbce06b584"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A32.lean"
-sha256 = "35ed72f6f33b4101433ca2365418c661838d95a592091efe72f8f08738514221"
+sha256 = "c87213ad604997a3478123457baee9d89e97e35811247a8948d4584525801e66"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A32/Conv1.lean"
 sha256 = "c5f5f215d68bfff1b59de7bc72134e6205605739462d2b092fd1d6b28afab330"
@@ -273,6 +276,9 @@ sha256 = "e8f280d163f0597407199640372216edd333660a002c5080b525c8c51bf79c35"
 file = "lean/ChiquipoliFamily/A32/Poly.lean"
 sha256 = "d4f5e9377ad0a696ef1bce250be9873cabca43839959f194e4e0bc6deb19ad32"
 [[source_sha256]]
+file = "lean/ChiquipoliFamily/A32/Published.lean"
+sha256 = "2403fbadcd464b54d0c2c4bf49981945939e19a16815918021f0775fa76601c3"
+[[source_sha256]]
 file = "lean/ChiquipoliFamily/A32/Root.lean"
 sha256 = "f557c4a41634b6e66178d5cd185c070d421745b7f756bf1824aa7ecc11c5fe86"
 [[source_sha256]]
@@ -322,7 +328,7 @@ file = "lean/ChiquipoliFamily/A32/Unique.lean"
 sha256 = "567634a2c2f54530a2db912b3d853c717de757600dee058a6a6904a10809d606"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A64.lean"
-sha256 = "cc6d4675c464adf71f04beb46fe805f1f5d35271a8225eedf1e158295c36e8e1"
+sha256 = "d2d8540aded8a605e6cef0cfd418585ffd5e10f9e7a279ef8544588ab5973ee9"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/A64/Conv1.lean"
 sha256 = "3c96ac49baaecf4a71f23e855fab5db1901faa4291ee969c780f8c0a7c2357f2"
@@ -636,6 +642,9 @@ sha256 = "fafd494ad889a8d6b9003fa05bd7c212ac6aae13a97a1a3e005ff82cb20f8d0e"
 file = "lean/ChiquipoliFamily/A64/Poly.lean"
 sha256 = "113b1aafa710ec0af1b0217911f19196c37966d5115621f600823fc8502b887b"
 [[source_sha256]]
+file = "lean/ChiquipoliFamily/A64/Published.lean"
+sha256 = "0b7ad7b30d720c56f992d8bf6d1a4980bb2215508d8e8a53b107dbc73276a0a8"
+[[source_sha256]]
 file = "lean/ChiquipoliFamily/A64/Root.lean"
 sha256 = "d87caf6cc4bb937eea4518c050f89d64bdb277c8ad84e8f5efc76547c8351a44"
 [[source_sha256]]
@@ -721,13 +730,19 @@ file = "lean/ChiquipoliFamily/A64/Unique.lean"
 sha256 = "717cc4d4359db6a57c9992604ac99e728eb563cf274523c8cf71f337dc100ed1"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Audit.lean"
-sha256 = "47c0b7d86be1b5cb6c4c5563d5acfaf044ec8cdd69f466a054f949402d7b4abc"
+sha256 = "863d9cf0ffdb42f770988f7066958593a08c09e7219973e7c0335ba72b193587"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Basic.lean"
 sha256 = "b0f577ddd6fcf4485c352793ba63839c8ca211afd0e4654e79cd7471edb4efec"
 [[source_sha256]]
+file = "lean/ChiquipoliFamily/Chebyshev.lean"
+sha256 = "00a91df75319e78e9d1f5fdbbb5c8722e6416011b58a3f41c73353206a53532f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Optigon.lean"
+sha256 = "b7518d804d374f27dde29d67de671c8bf60e7d3038cdd6607b8adef27aab097a"
+[[source_sha256]]
 file = "lean/generators/family/gen_family.jl"
-sha256 = "05dfbdc02de58f939d69a9eb8fbceaa3326bb273015bdd6cfb03911bad3508f8"
+sha256 = "c4ead82cb64acf45fc5b93775b231b4c5335bb33d6dc0df5881b0ea4d7090d29"
 [[source_sha256]]
 file = "lean/lake-manifest.json"
 sha256 = "1d11f2d56001800312d7ce55d726636454c10dab0e5e58584b58722420c17d1e"
@@ -768,6 +783,9 @@ sha256 = "f5de72ec0ea726da6025a8332cde10f5d17066858962ae2b977193b2c00c6edf"
 file = "lean/negative_controls_family/A16/fnc10_uniqueness_is_local.lean"
 sha256 = "4fb0e33b1c85c4a3b53700ed3a37894ea8d0b63cf264ade480fa42bbe4e4aed9"
 [[source_sha256]]
+file = "lean/negative_controls_family/A16/fnc11_published_bracket.lean"
+sha256 = "33e5072357542fab0123898f08add7154e5cfc8a3b5c33452309f0e851d2efea"
+[[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc01_convexity_sign.lean"
 sha256 = "ba52a2459a7c15d8dc06dcb417650aa79ac80cd43d9106afff5fe648b02aee05"
 [[source_sha256]]
@@ -797,6 +815,9 @@ sha256 = "041e280410757f7af1ae1b0125c4fba3fff9820d36ccdda5a53e0c9b65bb8c05"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc10_uniqueness_is_local.lean"
 sha256 = "a5dcd719b169ba9da70e998294d32e6f6df2e14c2ec5c0bad514d477f2e1cd1e"
+[[source_sha256]]
+file = "lean/negative_controls_family/A16/twin/fnc11_published_bracket.lean"
+sha256 = "c3c73caaadff67246c3627d697ba868ee8dcbd9b37ca2d9b7fe4134202e78de4"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc01_convexity_sign.lean"
 sha256 = "93ac68b5ba8b99b239677251ce1111529afa7b7ad938bbfc4d17e13065b2c4ac"
@@ -828,6 +849,9 @@ sha256 = "0c60a2f3a80142c140d1a4679d8befe131fe374c21418c30c2ecb18e4e5a8936"
 file = "lean/negative_controls_family/A32/fnc10_uniqueness_is_local.lean"
 sha256 = "2389f6be7329eee71829c6017e013d6a56fd4ec264d561d149a92c6ddecd0e02"
 [[source_sha256]]
+file = "lean/negative_controls_family/A32/fnc11_published_bracket.lean"
+sha256 = "2c7c26c37b3c88f3092a867571d653dd6e72df40d60c12103685d3c15aa394db"
+[[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc01_convexity_sign.lean"
 sha256 = "64933b6b93857b76afcc63726addbbdeb9f9f6776d9f09c4eed970d7321f3153"
 [[source_sha256]]
@@ -857,6 +881,9 @@ sha256 = "d35c98e7d89c468f6bad3fc6d68aa203e763e6e903e1c7640c359439a8c6d110"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc10_uniqueness_is_local.lean"
 sha256 = "03ef1953c5b3608c4f077fa8863495d7dc3cda340f634089bf44be9007e458c5"
+[[source_sha256]]
+file = "lean/negative_controls_family/A32/twin/fnc11_published_bracket.lean"
+sha256 = "a9a9f6705905199ca4e2ed14e96f3b821fd9016fc7359d6f154ed19f5fbc926c"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc01_convexity_sign.lean"
 sha256 = "c2ec164b0dab9ffe4c1e42e1fe5f76d3cd9c823750dc9a96dc23264aae406537"
@@ -888,6 +915,9 @@ sha256 = "ee78d72d3b54a82e690f3ae0cdaf8ef61cae73b802e5a4b01fc222bec2b5f16c"
 file = "lean/negative_controls_family/A64/fnc10_uniqueness_is_local.lean"
 sha256 = "a76846ec75d85d2ea66fe13079e707ba0aa891d55494852bd6f18fcb32ca5568"
 [[source_sha256]]
+file = "lean/negative_controls_family/A64/fnc11_published_bracket.lean"
+sha256 = "4595b67aaadab5cdf1d4d7995386e28dccda7ff8678e085c97121a4fbb16eeff"
+[[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc01_convexity_sign.lean"
 sha256 = "60526c7a31cafcb59a01b4207fb44f80393d592e52a2f663e55dfaee043f0116"
 [[source_sha256]]
@@ -918,8 +948,11 @@ sha256 = "b76486fee3086cc8247f642612607e475fe4b3ee76cfe1a5549d30b783676aec"
 file = "lean/negative_controls_family/A64/twin/fnc10_uniqueness_is_local.lean"
 sha256 = "35c553edc6ac49268175a7c1e81897d15862d65ab42bca18798cda020abf8453"
 [[source_sha256]]
+file = "lean/negative_controls_family/A64/twin/fnc11_published_bracket.lean"
+sha256 = "eb7e49bb4b7df80c3e4ef1323185603e9d86ef3d74cf24953eea22df7b71d63f"
+[[source_sha256]]
 file = "lean/verify_family.sh"
-sha256 = "21326167bd65744837c59729a9005cff1ba52039138cdb30e7fd2f593141c726"
+sha256 = "613f87a337f17a791d1f8a34c422e8ae4d92e73e5a2b590967cd7d4f7714c04f"
 [[source_sha256]]
 file = "src/A16Certificate.jl"
 sha256 = "25f544cfe29066473517d97b6648223e441af2049b33b8ee1a55b6856bd945a5"
@@ -947,9 +980,15 @@ sha256 = "99aa7edc14d88b589419a22abb89106e53ac4ad69cfb33a7ed1d5e89f00577d3"
 [[source_sha256]]
 file = "src/a16/linear_algebra.jl"
 sha256 = "e22454a4a8e4d8dfa009bc88a8cb919209faf6bdfee852ea422ee80a420cad79"
+[[source_sha256]]
+file = "test/fixtures/optigon_reference.jl"
+sha256 = "7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf"
+[[source_sha256]]
+file = "test/literature.jl"
+sha256 = "27ae242ee30ec7e5bb79d42f61b6839a0bf30aeacd979a4fcc75b715a123ef80"
 
 [theorems]
-axiom_audited_theorems = 51
+axiom_audited_theorems = 65
 axioms = ["propext", "Classical.choice", "Quot.sound"]
-headline_per_case = ["locally_maximal_unique", "locally_maximal_at", "locally_maximal"]
-negative_controls_per_case = 10
+headline_per_case = ["published_locally_maximal", "locally_maximal_unique", "locally_maximal_at", "locally_maximal"]
+negative_controls_per_case = 11

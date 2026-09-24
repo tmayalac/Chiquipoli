@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "e21a4a724aaa42122a9630759e2e2545cb36b501"
+git_commit = "161e72bf24d4e41d3ba69c16c5cb5ebad7d8be1d"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.0.0 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-24T16:52:24Z"
+utc = "2026-09-24T19:32:26Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -226,13 +226,13 @@ file = "pipeline/certify_literature.jl"
 sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 [[source_sha256]]
 file = "pipeline/check_paper.jl"
-sha256 = "86a93a834451860e3b8944874c11ceaffd1cfa1bffaa683d93d74aa6c7d5595e"
+sha256 = "5f382286aec12cecd4dacde6954d02e213349a2e9b69717338c7bf1174a6ee8d"
 [[source_sha256]]
 file = "pipeline/record_lean_certificate.jl"
 sha256 = "0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216"
 [[source_sha256]]
 file = "pipeline/record_lean_family_certificate.jl"
-sha256 = "60fdd782bc1d7de8b065d5613d47a437ba1a183707b22b47d8711b2976dc2196"
+sha256 = "2b422758767b4d29c67a85b743568c16a8cb81647cc27e83604b42e20a560e5d"
 [[source_sha256]]
 file = "pipeline/stages/01_nominal_configuration.jl"
 sha256 = "66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c"
@@ -298,7 +298,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "412e8c51a19e5e15db43dd2d104ba5467b6863eed856c0db81853bfb885b17cf"
+sha256 = "27ae242ee30ec7e5bb79d42f61b6839a0bf30aeacd979a4fcc75b715a123ef80"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"
