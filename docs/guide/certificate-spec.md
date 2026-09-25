@@ -99,8 +99,13 @@ hypotheses Theorem 3.5 consumes. Theorem 3.5 is formalised separately, in
 `lean/ChiquipoliLean/Feasible*.lean`, and `Feasible.A16_locally_maximal` joins
 the two: the configuration is a strict local maximiser of the perimeter modulo
 orientation-preserving Euclidean motions, kernel-checked and `sorry`-free. What
-remains outside the Lean layer is global optimality, and the attribution of the
-certified object to the published polygon (an OPTIGON cross-check, in Julia).
+remains outside this Lean layer is global optimality, and the identification with
+the polygon the published OPTIGON code builds. The latter is established
+elsewhere: exactly in Julia, by running the unchanged upstream file in exact
+arithmetic (`cases/optigon_exact.jl`), and in the kernel by the family layer
+(`Chiquipoli.Family.A16.published_locally_maximal`). What no proof assistant can
+establish is that the published code implements the construction described in
+the Bingane–Audet paper.
 Scope, the verification checks and the negative controls: **`lean/README.md`**;
 the formalisation of Theorem 3.5: **`docs/guide/theorem-3.5-formalisation.md`**;
 machine-readable record: `results/lean_certificate.toml`.

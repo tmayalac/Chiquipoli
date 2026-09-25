@@ -120,12 +120,12 @@ namespace Chiquipoli
 #print axioms Chiquipoli.FirstOrder.ker_jacA16
 #print axioms Chiquipoli.FirstOrder.rank_eq_thirty
 
--- Lemma 3.6: the nondegeneracy the implicit function theorem consumes.
+-- Lemma 3.4: the nondegeneracy the implicit function theorem consumes.
 #print axioms Chiquipoli.FirstOrder.rigid_indep
 #print axioms Chiquipoli.FirstOrder.gram_nondegenerate
 #print axioms Chiquipoli.FirstOrder.rigid_inter_perp
 
--- Lemma 3.6, via the implicit function theorem: g exists, g(p) = id, and g is
+-- Lemma 3.4, via the implicit function theorem: g exists, g(p) = id, and g is
 -- strictly differentiable at p.
 #print axioms Chiquipoli.FirstOrder.f2CLM_base_invertible
 #print axioms Chiquipoli.FirstOrder.g_at_p

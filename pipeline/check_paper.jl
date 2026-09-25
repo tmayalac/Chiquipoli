@@ -721,6 +721,31 @@ end
 # the one who discovers the command is gone. This check closes that gap: the
 # v1.0 restructuring left three dead commands in the supplementary table, and
 # nothing here noticed.
+section("every Lean theorem the article names exists")
+# The article names Lean declarations (in \texttt or \nolinkurl) so that a reader
+# can find them. A renamed or deleted theorem would leave the text pointing at
+# nothing, and nothing else here would notice. A name inside a family case
+# (Chiquipoli.Family.A<n>.x) must be a theorem in that case's own files.
+let texsrc = texsrc0 * "\n" * supsrc0
+    names = unique(replace(m.captures[1], "\\_" => "_") for m in
+                   eachmatch(r"\\(?:texttt|nolinkurl)\{((?:Chiquipoli\.)?[A-Za-z0-9_\\.]*(?:locally_maximal|locally\\_maximal)[A-Za-z0-9_\\]*)\}", texsrc))
+    if isempty(names)
+        skip("every Lean theorem named in the article exists")
+    else
+        leanfiles = String[]
+        for d in ("ChiquipoliLean", "ChiquipoliFamily"), (dir, _, fs) in walkdir(joinpath(ROOT, "lean", d)), f in fs
+            endswith(f, ".lean") && push!(leanfiles, joinpath(dir, f))
+        end
+        for nm in names
+            short = split(nm, '.')[end]
+            m = match(r"Family\.(A\d+)\.", nm)
+            pool = m === nothing ? leanfiles : filter(f -> occursin("/" * m.captures[1] * "/", f), leanfiles)
+            found = any(f -> occursin(Regex("^theorem " * short * "\\b", "m"), read(f, String)), pool)
+            chk("the article's Lean theorem $(nm) exists" * (m === nothing ? "" : " (in $(m.captures[1]))"), found)
+        end
+    end
+end
+
 section("every command the article prints actually exists")
 let cmds = String[]
     texsrc = texsrc0 * "\n" * supsrc0

@@ -7,7 +7,7 @@ abstract: >-
   formalisation of the criterion itself, so that the passage from the certified
   data to strict local maximality is kernel checked end to end.
 type: software
-version: "1.1.0"
+version: "1.1.1"
 date-released: "2026-09-24"
 license: MIT
 repository-code: "https://github.com/TilinHub/Chiquipoli"

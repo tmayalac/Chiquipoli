@@ -263,6 +263,20 @@ end
         @test !r.sha_ok
         @test !(r.vertices_ok && r.F_ok)
     end
+    # At n = 16 the chain closes exactly on the article's own objects: upstream's
+    # vertices are (sin t · X_k(c), Y_k(c)) with the very polynomials X_k, Y_k of
+    # the A16 certificate (Lemma 6.1; also the source of Lean's
+    # Generated/Polynomials.lean), and upstream's equation is the article's F_c
+    # (leading coefficient 4096) evaluated at c = cos t. Exact, not to a tolerance.
+    let (a, b, Fup) = run_upstream(16, read(OPTIGON_UPSTREAM, String))
+        XC, YC = A16Certificate._XC, A16Certificate._YC
+        z0 = RPoly([0 // 1]); one = RPoly([1 // 1])
+        toCS(v) = v isa CS ? v : cs_const(v)
+        @test all(cs_equal(toCS(a[k]), CS(z0, XC[k+1], one)) && cs_equal(toCS(b[k]), CS(YC[k+1], z0, one)) for k in 1:15)
+        @test EI.iszeropoly(XC[1]) && EI.iszeropoly(YC[1])            # vertex 0, upstream's origin
+        @test cs_equal(Fup, CS(RPoly(A16Certificate.Fc_poly()), z0, one))
+        @test A16Certificate.Fc_poly()[end] == 4096
+    end
     # Optional: against an independent copy of OPTIGON (OPTIGON_DIR=/path/to/optigon).
     if haskey(ENV, "OPTIGON_DIR")
         theirs = joinpath(ENV["OPTIGON_DIR"], "cstrt_ngon", "cstrt_audet_ngon.jl")

@@ -5,9 +5,34 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-09-24
+
+The version the article cites. No certified result changed; v1.1.0 is the same
+certificate. This release adds what the article's revised identification
+paragraph relies on, and one more consistency check.
+
+- **The chain to the article's own objects is exact at n = 16.** The test
+  *the published OPTIGON source, run unchanged, is exactly the certified A_n*
+  now also requires the following. The upstream file, run in exact arithmetic
+  at n = 16, gives vertices `(sin t · X_k(c), Y_k(c))` with exactly the
+  polynomials `X_k`, `Y_k` of the A16 certificate. Those are the polynomials of
+  Lemma 6.1 and the source of Lean's `Generated/Polynomials.lean`. Its equation
+  must also be exactly the article's `F_c(cos t)`, with leading coefficient
+  4096. Until now this link was numerical, to 1e-70; the article now states it
+  exactly. The suite has 772 assertions.
+- **`make paper-check` checks every Lean theorem the article names.** A name
+  printed in `\texttt` or `\nolinkurl` must exist as a theorem, in the right
+  case for `Chiquipoli.Family.A<n>.…`. The article now names
+  `Chiquipoli.Family.A16.published_locally_maximal`.
+- **README.** Commands for macOS/Linux and Windows side by side, in both
+  tables. The identification is described as it now stands. The repository
+  map now includes the family certificate, the published source and
+  `check_all.sh`.
+
 ## [1.1.0] — 2026-09-24
 
-The version the article cites. Everything below landed after `v1.0.0`
+Superseded as the cited version by 1.1.1, which certifies the same results.
+Everything below landed after `v1.0.0`
 (`fa7145d`, 2026-09-09), whose tag was never moved; `v1.0.0` is not the code
 the article describes, and `v1.1.0` is.
 

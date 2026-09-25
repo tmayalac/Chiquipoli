@@ -32,13 +32,16 @@ Eight gates, all `CERTIFIED` or `PROVEN`:
 | $\mathrm{rank}\, D(e,d) = 30$ | preconditioned regularity test | $\lVert \mathrm{Id}-CM\rVert_\infty \leq 1.42\times10^{-25}$ |
 | Box nesting | interval containment | $Z_{\mathrm{root}} \subset \mathrm{int}\, Z_{\mathrm{cert}}$ |
 
-The certified object is identified with the published one by computation:
-`test/fixtures/optigon_reference.jl` vendors the upstream OPTIGON general $n=2^s$
-constructor (URL, retrieval date, upstream SHA256 and MIT attribution recorded
-in the file), and the suite requires it to reproduce the $n=16$ specialisation
-— the root, all sixteen vertices, the diameter graph, equilaterality and the
-perimeter. So "the polygon this package certifies" and "the polygon
-Bingane–Audet published" are checked to be the same object, not assumed to be.
+The certified object is identified with the one the published code builds,
+exactly. `cases/upstream/optigon/cstrt_audet_ngon.jl` is Bingane's OPTIGON
+constructor, byte for byte (SHA-256 checked, MIT licence alongside), and
+`cases/optigon_exact.jl` runs that file **unchanged, in exact arithmetic**: at
+$n=16$ its vertices are $(\sin t\,X_k(c),Y_k(c))$ with exactly the polynomials of
+the certificate, and its equation is exactly $F_c(\cos t)$. The certified
+perimeter agrees with the value Bingane and Audet publish, $3.1352878881$, in
+all ten decimals. A separate Lean development transcribes that file statement for
+statement and proves the same identification in the kernel
+(`Chiquipoli.Family.A16.published_locally_maximal`).
 
 Every one of those enclosures also carries IntervalArithmetic's own
 `isguaranteed` flag, and each gate asserts it (`assert_guaranteed`). The flag is
@@ -60,9 +63,10 @@ motions. `Feasible.thm_3_5` is the general statement. See
 - **Global optimality.** $A_{16}$ is shown to be a strict *local* maximiser of
   perimeter, modulo orientation-preserving Euclidean motions. Whether it is
   globally optimal among convex equilateral small hexadecagons is not addressed.
-- **That the certified object is the polygon of the literature.** That is an
-  attribution, checked separately by running the original OPTIGON constructor
-  and comparing coordinates; see `docs/guide/provenance-mapping.md`.
+- **That the published code implements the construction described in the
+  Bingane–Audet paper.** That the certified polygon is the one their code
+  builds is established exactly (above); that their code is their
+  construction is their attribution, as for any use of published software.
 
 `docs/guide/scope-and-limitations.md` states the full scope, and `docs/audits/referee-report.md` is our
 own adversarial review of this package.
@@ -95,15 +99,13 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 
 ### In one command
 
-```bash
-make check                 # quick: Julia only, ~5 min, writes nothing
-make check-all             # everything, in order, and refreshes every record in results/ (~35 min, 16 GB)
-make check-lean            # both Lean layers, verified and recorded
-make check-case N=32       # one case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress)
-make A16                   # ONE candidate, every layer (~18 min on a clean tree)
-make A32                   # the same stages for A32 (~10 min)
-make A64                   # the same stages for A64 (~32 min)
-```
+| What it does | macOS / Linux | Windows (Git Bash or WSL) |
+|---|---|---|
+| Quick check: Julia only, writes nothing (~5 min) | `make check` | `bash tools/check_all.sh quick` |
+| Everything, in order, refreshing every record in `results/` (~35 min, 16 GB) | `make check-all` | `bash tools/check_all.sh all` |
+| Both Lean layers, verified and recorded | `make check-lean` | `bash tools/check_all.sh lean` |
+| One case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress) | `make check-case N=32` | `bash tools/check_all.sh case 32` |
+| One candidate, every layer: A16 (~18 min), A32 (~10 min), A64 (~32 min) | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
 
 `make A16`, `make A32` and `make A64` run the same stages for each candidate:
 the Julia suite, the general certifier, the family certificate (ten gates,
@@ -116,41 +118,46 @@ candidate's own files. A16 adds the article's two dedicated layers.
 Every stage runs even if an earlier one fails, and the run ends with a table
 of PASS, FAIL and SKIP per stage (logs in `logs/check_all/`, not tracked). The
 mutation check and the harness part of the stress test edit tracked files and
-restore them from git, so on a dirty tree they are *skipped*, never counted as
-passed, and the verdict is then `INCOMPLETE`, not `ALL CHECKS PASS`. Commit
-first for a full run.
+restore them from git, so on a dirty tree, or in an extracted archive without
+`.git`, they are *skipped*, never counted as passed, and the verdict is then
+`INCOMPLETE`, not `ALL CHECKS PASS`. Commit first for a full run.
 
 ### Every command
 
-All commands run from the repository root. `make` is a shortcut; the
-right-hand column is what it runs, and works the same in a macOS or Linux
-terminal and in Windows PowerShell.
+All commands run from the repository root. The Julia commands are the same on
+every system; in Windows they run natively in PowerShell (forward slashes are
+fine). Commands marked **bash** are bash scripts: on Windows run them in Git
+Bash or, better, WSL.
 
-| What it does | macOS / Linux | Without `make` (any system) |
+| What it does | macOS / Linux | Windows (PowerShell unless marked bash) |
 |---|---|---|
-| Run the test suite (768 assertions; 769 with OPTIGON_DIR set) | `make test` | `julia --project=. test/runtests.jl` |
-| **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl` |
+| Install the pinned dependencies (once) | `julia --project=. -e "using Pkg; Pkg.instantiate()"` | same |
+| Run the test suite (772 assertions; 773 with `OPTIGON_DIR` set) | `make test` | `julia --project=. test/runtests.jl` |
+| **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl \| Tee-Object -FilePath logs/final_run.txt` |
+| The same, without writing any record | `CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl` | `$env:CHIQUI_NO_RECORD="1"; julia --project=. pipeline/certify_a16.jl; Remove-Item Env:CHIQUI_NO_RECORD` |
+| The family certificate of one candidate (ten gates) → `results/family/A32.toml` | `julia --project=. pipeline/certify_family.jl 32` | same |
 | The literature benchmark (n = 4, 6, 8, 16, 32, 64 and 3 broken controls) → `results/validation_certificate.toml` | `make literature` | `julia --project=. pipeline/certify_literature.jl` |
-| One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | — | `julia --project=. pipeline/certify_literature.jl 8` |
+| One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
 | The nominal configuration, uncertified | `make nominal` | `julia --project=. pipeline/stages/01_nominal_configuration.jl` |
-| Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean`, then `lake exe cache get` |
-| The five Lean checks | `make lean` | `cd lean`, then `./verify.sh` (bash) |
-| The Lean checks, recorded → `results/lean_certificate.toml` | `make lean-certificate` | `julia --project=. pipeline/record_lean_certificate.jl` (bash) |
-| The same five checks for the family layer (A16, A32, A64) | `make lean-family` | `cd lean`, then `./verify_family.sh` (bash) |
-| The family checks, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | `julia --project=. pipeline/record_lean_family_certificate.jl` |
-| Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
-| One case of the family in Lean (a partial run) | `make lean-family-case N=32` | `cd lean`, then `FAMILY_CASES=32 ./verify_family.sh` |
-| One case of the family, planted defects | `make stress-case N=32` | `STRESS_CASES=32 bash tools/stress_family.sh generator`, then `... lean` |
-| One case of the literature benchmark | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
+| Compare with your own copy of OPTIGON, byte for byte | `OPTIGON_DIR=/path/to/optigon make test` | `$env:OPTIGON_DIR="C:\path\to\optigon"; julia --project=. test/runtests.jl` |
 | The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
-| Plant 16 defects; the checks must reject each | `make mutation-check` | `bash tools/mutation_check.sh` (needs a clean git tree) |
-| Stress test of the family layer: 24 generator defects, each refused by the generator AND by Lean; 15 harness and transcription defects | `make stress-family` | `bash tools/stress_family.sh all` (the harness part needs a clean git tree) |
-| Archive the latest log, read-only | `make archive-log` | `bash tools/archive_log.sh logs/final_run.txt` |
+| Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean; lake exe cache get` |
+| The five Lean checks of the A16 layer | `make lean` | bash: `cd lean && ./verify.sh` |
+| The same, recorded → `results/lean_certificate.toml` | `make lean-certificate` | bash: `julia --project=. pipeline/record_lean_certificate.jl` |
+| The five Lean checks of the family layer (A16, A32, A64) | `make lean-family` | bash: `cd lean && ./verify_family.sh` |
+| The same, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | bash: `julia --project=. pipeline/record_lean_family_certificate.jl` |
+| Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
+| One case of the family in Lean (a partial run) | `make lean-family-case N=32` | bash: `cd lean && FAMILY_CASES=32 ./verify_family.sh` |
+| Plant 16 defects in the A16 layers, and 5 per candidate in the family certificates | `make mutation-check` | bash: `tools/mutation_check.sh` (needs a git clone, clean) |
+| The family stress test: 63 planted defects | `make stress-family` | bash (WSL): `tools/stress_family.sh all` |
+| One case of the family, planted defects | `make stress-case N=32` | bash (WSL): `STRESS_CASES=32 tools/stress_family.sh generator` |
+| Archive the latest log, read-only | `make archive-log` | bash: `tools/archive_log.sh logs/final_run.txt` |
 | List the targets | `make help` | — |
 
-`make verify` also saves the full output to `logs/final_run.txt`. Without
-`make`, add `| tee logs/final_run.txt` on macOS or Linux, or
-`| Tee-Object -FilePath logs/final_run.txt` in PowerShell 7.
+`make verify` also saves the full output to `logs/final_run.txt`; without
+`make`, add `| tee logs/final_run.txt` on macOS or Linux (the PowerShell form is
+in the table). `CHIQUI_NO_RECORD=1` works the same for
+`pipeline/certify_literature.jl` and `pipeline/certify_family.jl`.
 
 The article itself is not distributed, so `make paper` has nothing to compile
 in a fresh clone, and `make paper-check` checks the certificates, the source
@@ -159,18 +166,20 @@ hashes and the claims about Lean, and reports the article checks as skipped
 
 ### Notes for Windows
 
-- **The Julia side runs natively.** Everything in the table that starts with
-  `julia` works as written in PowerShell or `cmd`; forward slashes in paths are
-  fine.
+- **The Julia side runs natively.** Every command in the tables that starts
+  with `julia` works in PowerShell or `cmd`.
 - **Use PowerShell 7** (`winget install Microsoft.PowerShell`) if you save the
-  log with `Tee-Object`. Windows PowerShell 5.1 writes UTF-16, which
+  log with `Tee-Object`: Windows PowerShell 5.1 writes UTF-16, which
   `tools/archive_log.sh` cannot read.
-- **The rows marked (bash)** need a bash shell, because `lean/verify.sh` and
-  the tools are bash scripts. The simplest route is WSL (`wsl --install`, then
-  follow the Linux column inside it, where `make` also works). Git Bash works
-  for the Lean checks; the mutation harness also needs `python3` on the PATH.
-- The continuous integration runs on Linux, and everything was developed on
-  macOS. Windows is not exercised by CI.
+- **The bash scripts** (`lean/verify*.sh` and everything in `tools/`) need a
+  bash shell. The recommended route is WSL (`wsl --install`): install Julia and
+  elan inside it and follow the macOS / Linux column, where `make` works too.
+  Git Bash runs the Julia-only commands and `lean/verify.sh`; the stress test
+  (`tools/stress_family.sh`) uses `ps` and `pgrep` for its memory cap and needs
+  WSL.
+- Everything was developed and verified on macOS, and the continuous
+  integration runs on Linux. **Windows has not been tested** by us; the
+  Windows column is what should work, not what was run.
 
 ### What a run looks like
 
@@ -289,8 +298,10 @@ src/                          THE ENGINE: a library, no side effects
 pipeline/                     THE CERTIFICATES: programs that write results/
   certify_a16.jl                make verify      -> results/a16_certificate.toml
   certify_literature.jl         make literature  -> results/validation_certificate.toml
+  certify_family.jl             the family certificate of A16, A32, A64 -> results/family/A<n>.toml
   record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
-  check_paper.jl                make paper-check: the article against all three
+  record_lean_family_certificate.jl  make lean-family-certificate -> results/lean_family_certificate.toml
+  check_paper.jl                make paper-check: the article against every record
   stages/                       the six steps of certify_a16.jl, in order
     01_nominal_configuration.jl   the configuration, uncertified
     02_certify_root.jl            Prop 6.2(1): interval Newton, uniqueness
@@ -303,6 +314,8 @@ cases/                        inputs of the literature certificate: one
                               candidate.jl per case, and 3 broken controls;
                               exact_coords.jl: exact coordinates, including
                               the Bingane-Audet constructor for any n = 2^s
+  upstream/optigon/             OPTIGON's cstrt_audet_ngon.jl, byte for byte (MIT)
+  optigon_exact.jl              runs that file unchanged, in exact arithmetic
 test/                         make test: runtests.jl and one file per theme;
                               fixtures/ holds the vendored OPTIGON constructor
 lean/                         THE VERIFIER (see lean/README.md)
@@ -310,16 +323,18 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliLean/Constructor/   the A16 constructor and its root
   ChiquipoliLean/Generated/     written by generators/, never by hand
   ChiquipoliLean/Instances/     the theory at A16 and at the square
-  ChiquipoliFamily/             A32, A64 (and A16 again), a method that scales in n;
-                                built and checked by verify_family.sh
+  ChiquipoliFamily/             A32, A64 (and A16 again), a method that scales in n,
+                                and the published constructor (Optigon.lean) proved
+                                equal to each certified polygon; verify_family.sh
   negative_controls/            26 false statements that must not compile
   negative_controls_family/     11 per family case, each with a twin that must compile
   generators/                   Julia -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks
-results/                      the three certificates (TOML) and the article's tables
+results/                      every record (TOML; see results/README.md) and the article's tables
 logs/                         final_run.txt; archive/ holds read-only copies
 docs/                         guide/ (what is certified, and how), audits/ (records)
-tools/                        mutation_check.sh, stress_family.sh, archive_log.sh, independent_check/
+tools/                        check_all.sh, mutation_check.sh, stress_family.sh, archive_log.sh,
+                              independent_check/
 examples/                     two worked tutorials: the square, interval Newton
 ```
 
@@ -353,7 +368,9 @@ goes through Section 6 of the article line by line.
 
 Every artifact records the Git commit it was produced at, whether the working
 tree was clean, the language and library versions, and a SHA256 per load-bearing
-source file. The archived log declares the same commit as the certificate.
+source file. The archived log declares the same commit as the certificates, and
+`make paper-check` fails if the log and the records do not all declare one
+commit from a clean tree.
 
 Exact equalities are never inferred from an interval evaluation that contains
 zero. They are proved by exact polynomial reduction with zero remainder, in
@@ -362,7 +379,8 @@ integer arithmetic.
 ## Citation
 
 If you use this package, please cite the accompanying article together with this
-software, giving the version you used.
+software, giving the version you used. The version the article cites is the one
+in `Project.toml` and `CITATION.cff`, and its Git tag is `v<version>`.
 
 ## License
 

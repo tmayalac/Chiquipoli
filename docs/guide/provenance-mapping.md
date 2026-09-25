@@ -456,10 +456,19 @@ article, and lies outside what the code certifies.**
 ## Constructor fidelity
 
 Everything above certifies properties of the object that `coordinates(z)`
-produces. That this object is the polygon Bingane and Audet published is a
-separate claim, and it is an attribution rather than a theorem.
+produces. That this object is the one Bingane and Audet's published code builds
+is a separate claim, and it is established exactly. `cases/upstream/optigon/`
+holds `cstrt_audet_ngon.jl` byte for byte (SHA-256 checked), and
+`cases/optigon_exact.jl` runs it unchanged in exact arithmetic over `Q(cos t,
+sin t)`. At n = 16 its vertices are exactly `(sin t · X_k(c), Y_k(c))`, with
+the polynomials `X_k`, `Y_k` of Lemma 6.1, and its equation is exactly the
+article's `F_c(cos t)`. The family Lean layer proves the same in the kernel for
+a statement-for-statement transcription (`lean/ChiquipoliFamily/Optigon.lean`,
+`A16/Published.lean`). What remains an attribution, not a theorem, is that the
+published code implements the construction described in the Bingane–Audet
+paper.
 
-It is checked directly. The original OPTIGON constructor
+A second, numerical route is kept. The original OPTIGON constructor
 `cstrt_audet_ngon.jl` is executed unmodified and its 30 coordinates compared
 against `coordinates(z)`. In double precision the worst discrepancy is one unit
 in the last place. At 256 bits it falls to about $5.2\times10^{-39}$, and that
@@ -474,10 +483,12 @@ the root interval — agrees with the OPTIGON source character for character.
 
 ## Reproducibility
 
-Remark 5.1 of the supplementary material states: "The verification uses outward rounded interval
-arithmetic at 256 bits, together with exact rational polynomial arithmetic.
-Exact equalities are never inferred merely because an interval evaluation
-contains zero."
+Subsection 6.1 of the article states: "Every remaining numerical inequality is
+certified by outward rounded interval arithmetic over 256 bit binary floating
+point [...] No equality is ever inferred from an interval that contains zero."
+Section 2 of the supplement adds: "Exact statements are never obtained from
+intervals." (An earlier revision of the supplement had a Remark 5.1 to the same
+effect; it no longer exists.)
 
 Correspondence with this repository, which **is** that supplementary package:
 
@@ -490,6 +501,8 @@ Correspondence with this repository, which **is** that supplementary package:
 | 256-bit outward rounded intervals | `IntervalArithmetic.jl` with `setprecision(BigFloat, 256)` |
 | exact rational polynomial arithmetic | `Rational{BigInt}` in `src/a16/exact_algebra.jl` |
 | formal layer | `lean/`, kernel-checked; see `lean/README.md` for its scope |
+| the published constructor, run unchanged (Section 5 of the article) | `cases/upstream/optigon/cstrt_audet_ngon.jl` (byte for byte), `cases/optigon_exact.jl`, test *the published OPTIGON source, run unchanged, …* in `test/literature.jl` |
+| the same, proved in Lean for its transcription | `lean/ChiquipoliFamily/Optigon.lean`, `lean/ChiquipoliFamily/A16/Published.lean` (`published_locally_maximal`) |
 
 ---
 

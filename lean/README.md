@@ -319,12 +319,17 @@ outside is:
   (equilateral, strictly convex, diameter exactly 1, in the labelled cyclic
   order) — but it is narrowed, not closed, and it never can be by machine.
 
-Consequently: **Lean proves "the certified configuration is a strict local
-maximum"** — `Feasible.A16_locally_maximal` — but it does *not* prove that this
-configuration is the polygon Bingane and Audet published. That identification is
-an attribution, checked by running the original OPTIGON constructor and
-comparing coordinates (in Julia, see `docs/guide/provenance-mapping.md`), and it is the
-one link in the chain a proof assistant cannot close.
+Consequently: **this layer proves "the certified configuration is a strict
+local maximum"** — `Feasible.A16_locally_maximal` — but not that this
+configuration is the one Bingane and Audet's published code builds. That link is
+established elsewhere, twice. The family layer proves it in the kernel for a
+statement-for-statement transcription of the code
+(`Chiquipoli.Family.A16.published_locally_maximal`, see
+`ChiquipoliFamily/README.md`). And the unchanged upstream file is run in exact
+arithmetic in Julia (`cases/optigon_exact.jl`), producing exactly the
+polynomials of this layer. The one link no proof assistant can close is that
+the published code implements the construction described in their paper; that
+is their attribution.
 
 The other limits are unchanged and are mathematical, not architectural. The
 theorem is **local**: it excludes competitors in *some* neighbourhood, and since
