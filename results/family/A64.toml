@@ -60,13 +60,13 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A64 (Bingane–Audet)"
-git_commit = "107765d58b0679a98a9c103b001967bc5518fa28"
+git_commit = "dc6e7df36c128dfefd231b2df332505e131ad22e"
 git_source_clean = true
 julia_version = "1.12.6"
 n = 64
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-09-25T00:06:35Z"
+utc = "2026-09-25T01:32:23Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -94,7 +94,7 @@ file = "pipeline/certify_family.jl"
 sha256 = "c0273354ae8be9a9c4a710b7d98130102a5ece26d058c27d0c8cd4e36c7b8bb2"
 [[source_sha256]]
 file = "Project.toml"
-sha256 = "80319587230c207e16caa56f559bc66c0c9257d189cdf0d2b68a4c88e07fdd78"
+sha256 = "3edf7f4f2db7406562bfb273eb155a2a13df9d58b390d0d5db722ad933283337"
 [[source_sha256]]
 file = "Manifest.toml"
 sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"

@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "107765d58b0679a98a9c103b001967bc5518fa28"
+git_commit = "dc6e7df36c128dfefd231b2df332505e131ad22e"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-package = "A16Certificate v1.1.0 [AH26]"
+package = "A16Certificate v1.1.1 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-25T00:05:54Z"
+utc = "2026-09-25T01:31:41Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -229,7 +229,7 @@ file = "pipeline/certify_literature.jl"
 sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 [[source_sha256]]
 file = "pipeline/check_paper.jl"
-sha256 = "744bb1dc28c4b9a99d68de14df935856777f3aa2d22d06db941a75bcc8990e92"
+sha256 = "3950f403913003518a2e22062594805ed23eb202636f3ee35fb7d6bc873d408d"
 [[source_sha256]]
 file = "pipeline/record_lean_certificate.jl"
 sha256 = "0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216"
@@ -301,7 +301,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "0b8592cd5efb514182fa38f6858ef6a0f3e16e841848abb8f0a849721524d54f"
+sha256 = "4e5c286575b6f205907ef3d4e27d1bf330d322d7bd7fc6afdff927de323dee5b"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"
@@ -313,7 +313,7 @@ file = "test/runtests.jl"
 sha256 = "74cd4ac0761f601073221f25607df6d06aab15138bd6dd7155bab5fbdd0681d4"
 [[source_sha256]]
 file = "Project.toml"
-sha256 = "80319587230c207e16caa56f559bc66c0c9257d189cdf0d2b68a4c88e07fdd78"
+sha256 = "3edf7f4f2db7406562bfb273eb155a2a13df9d58b390d0d5db722ad933283337"
 [[source_sha256]]
 file = "Manifest.toml"
 sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
