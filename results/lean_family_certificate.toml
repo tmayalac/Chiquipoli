@@ -75,15 +75,15 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "a2ba9a62d2315d09d4074eff42e714f609929c77"
+git_commit = "56e002a84838eda72f52c7b9338f8158fe111ae2"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
-package = "A16Certificate v1.1.1"
-utc = "2026-09-29T22:35:23Z"
-verify_seconds = 224
+package = "A16Certificate v1.2.0"
+utc = "2026-09-29T23:45:37Z"
+verify_seconds = 233
 
 [scope]
 formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
@@ -94,7 +94,7 @@ file = "Manifest.toml"
 sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
 [[source_sha256]]
 file = "Project.toml"
-sha256 = "3edf7f4f2db7406562bfb273eb155a2a13df9d58b390d0d5db722ad933283337"
+sha256 = "ddfd2fcc7a6d137b5d86d95f957510ca52e80347a2827c76e27e6b0485d15590"
 [[source_sha256]]
 file = "cases/A16_bingane_audet/candidate.jl"
 sha256 = "afee94b75f3e39148af36d42b6fa23e5fc07fb2eb816b36c5c788b38da1f5727"
