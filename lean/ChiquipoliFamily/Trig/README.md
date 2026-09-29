@@ -148,11 +148,37 @@ and prove the whole chain in Lean, with no per-case data:
   `n`-gon beats in side length, modulo Euclidean motions. The case `n = 16` is
   taken from the per-case certificate `T16`.
 
-**Not yet proved for every `n`:** that the published polygon is itself small
-(Problem 1: no pair outside `G_n` at distance `> 1`) and convex. Until then,
-`strict_local_max_all` says that nearby *feasible* polygons are no better. That
-the published polygon is feasible is proved, per case, for `n = 16 … 256`
-(`published_of_checks`).
+## Problem 1 and the complete statement, for every `n = 16k`
+
+* `P1Generic.lean`: general facts about polygons, independent of the constructor.
+  * `convex_of_angles`: sides `ℓ e(α_x)` with `α` strictly increasing over a span
+    `< 2π` give a convex polygon. `cross(q_i, q_{i+1}, q_j)` is `ℓ²` times a
+    partial sum of `sin β_m` (`partial_sin_pos`).
+  * `supp_of_cone`: a vertex supports its normal cone.
+  * `small_of_antipodal`: support pairs at distance `≤ 1` for every direction
+    imply smallness.
+* `P1Sides.lean`, `P1Angles.lean`: every side is `ℓ e(sideAng x)` (`side_all`),
+  with the angle in closed form:
+  * `θ_j + z/2 ± π/2` along the strip;
+  * `π/2 − β` and `3π/2 + β` on the closing sides, `β = arctan(a / sin φ)`.
+
+  The angles increase with turns `≤ 1/2` (`sideAng_succ`, `sideAng_turn`) and
+  span less than `2π`. Hence `convex_all`.
+* `P1Small.lean`, `small_all`: for every direction, a pair of support vertices at
+  distance `≤ 1`:
+  * a rung, in the sector of that rung;
+  * the middle rung `{8k, 0}`;
+  * in the gap arc, `B–D`, `A–D` (width `a + cos φ ≤ 1`) or `A–C`;
+  * mirror images and `ψ + π` for the rest.
+* `P1Final.lean`, **`published_all_n`**: the statement of `A<n>/Published.lean`
+  for **every `n = 16k`**:
+  * `F_n` has a unique zero in `(0, π/n)`, and it is simple;
+  * there, the published polygon is strictly convex, equilateral and small;
+  * it is a strict local maximiser of the perimeter among equilateral small
+    `n`-gons, modulo Euclidean motions.
+
+  The case `n = 16` is taken from `T16`; `n ≥ 32` is proved analytically. The
+  statement also covers `n` divisible by 16 that are not powers of 2.
 
 ## The checks, per `n`
 
