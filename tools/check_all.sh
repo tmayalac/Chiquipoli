@@ -159,6 +159,7 @@ all)
   stage certify-a16  "the A16 interval certificate -> results/a16_certificate.toml, logs/final_run.txt" \
     bash -c 'julia --project=. pipeline/certify_a16.jl | tee logs/final_run.txt; exit ${PIPESTATUS[0]}'
   stage literature   "the literature benchmark -> results/validation_certificate.toml" julia_run pipeline/certify_literature.jl
+  stage radius       "an explicit radius of strict local maximality of A16 -> results/radius_certificate.toml" julia_run pipeline/certify_radius.jl
   stage family-certs "the family certificates of $(echo $FAMILY_N | sed 's/[0-9]*/A&/g') -> results/family/A<n>.toml" \
     bash -c "for n in $FAMILY_N; do julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
   if lean_ready; then
@@ -247,6 +248,8 @@ candidate)
   if [ "$N" = 16 ]; then
     stage "dedicated-julia-A16" "the article's dedicated A16 interval certificate: eight gates (nothing recorded)" \
       env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
+    stage "radius-A16" "an explicit radius of strict local maximality of A16 (nothing recorded)" \
+      env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_radius.jl
     if lean_ready; then
       stage "dedicated-lean-A16" "the article's dedicated A16 Lean layer: build, no sorry, axiom audit, 26 controls, regeneration" bash -c 'cd lean && ./verify.sh'
     else

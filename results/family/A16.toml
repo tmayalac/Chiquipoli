@@ -10,12 +10,12 @@ passed = true
 sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
 status = "CERTIFIED"
 [[gate]]
-detail = "interval Newton on Z_root (radius 1e-30): 0 ∉ F'(Z) = [-3.11097, -3.11096]₂₅₆_com, N(Z) ⊂ int Z = true; F' from the exact identity F = 4096//1·Fc(cos z) = true"
+detail = "interval Newton on Z_root (radius 1e-30): 0 ∉ F'(Z) = [-3.11097, -3.11096]₃₀₄_com, N(Z) ⊂ int Z = true; F' from the exact identity F = 4096//1·Fc(cos z) = true"
 id = "root"
 passed = true
 status = "CERTIFIED"
 [[gate]]
-detail = "Sturm: Fc has exactly 1 root(s) in [0.9807852804032304, 0.9809698831278217] ⊃ cos(I_search), I_search = (2 asin(sin(π/16)/2), π/16); squarefree = true, cos 2z ≠ 0 there = true, cos(Z_root) inside = true; F = LEAD·Fc(cos z) exactly, cos injective on I_search ⇒ one zero of F"
+detail = "Fc' ∈ [0.00388366, 0.00401308]₃₀₄_com on [0.9807852804032304, 0.9809698831278217] ⊃ cos(I_search), so 0 ∉ Fc' and Fc is strictly monotone there (at most one root); I_search = (2 asin(sin(π/16)/2), π/16), Z_root ⊂ I_search = true, cos 2z ≠ 0 there = true; F = LEAD·Fc(cos z) exactly, cos injective on I_search ⇒ F has exactly one zero on I_search"
 id = "root_unique_search"
 passed = true
 status = "CERTIFIED"
@@ -42,12 +42,12 @@ id = "inactive_margin"
 passed = true
 status = "CERTIFIED"
 [[gate]]
-detail = "regular 30×30 minor (‖I-CM‖∞=1.67920866457777247961831990111736444738632495624377818737715028371147762631281e-25<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=30, I_eq=R_eq [numerical sanity max|Aρ|=4.507145744153830545132838459630148880089576807579524320652823742086691621581076e-26]"
+detail = "regular 30×30 minor (‖I-CM‖∞=1.1422552915606188e-14<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=30, I_eq=R_eq [numerical sanity max|Aρ|=4.507145744153830545132838459630148880089576807579524320652823742086691621581076e-26] [Float64 intervals, :fast product (sentinel verified on this machine)]"
 id = "rank"
 passed = true
 status = "CERTIFIED"
 [[gate]]
-detail = "LICQ fails by 1; multipliers form a 1-parameter affine family; certified KKT multipliers with all active-diameter multipliers λ_ij ≥ 0.1019267165232007051348975363332906424330476252494035878156547222655060475972696 > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q)"
+detail = "LICQ fails by 1; multipliers form a 1-parameter affine family; certified KKT multipliers with all active-diameter multipliers λ_ij ≥ 0.10192671652318391 > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q) [Float64 intervals, :fast product (sentinel verified on this machine)]"
 id = "multipliers"
 passed = true
 status = "CERTIFIED"
@@ -60,26 +60,26 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A16 (Bingane–Audet)"
-git_commit = "dc6e7df36c128dfefd231b2df332505e131ad22e"
-git_source_clean = true
+git_commit = "102bea9b90075c8d414a2c0b66611fbd7a7d2053"
+git_source_clean = false
 julia_version = "1.12.6"
 n = 16
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-09-25T01:32:02Z"
+utc = "2026-09-29T15:49:18Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
 sha256 = "25f544cfe29066473517d97b6648223e441af2049b33b8ee1a55b6856bd945a5"
 [[source_sha256]]
 file = "src/ExactIdentity.jl"
-sha256 = "689f2bddc490b420c616389bae7afdaec053208eb0a5058e54567856dd3cd4bb"
+sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "6f7f606f5cef44da29fda03b44876a0fab2f48abfcf4f26980311c3e7183699e"
+sha256 = "5ab57525ab6d1d2bcd4ce53d9a9259630783fa360c92b75158a720d0ac2acdf2"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
-sha256 = "c44544ab1439a54fabe24a4b36ac6b878cea23a94e8bea594f8921502ae840ff"
+sha256 = "dd6650c6c26826ea28544f31210bb1f221a5c3e4370834450ad6b707adc9f741"
 [[source_sha256]]
 file = "cases/optigon_exact.jl"
 sha256 = "8d3ba4bd6283f6dc59583b850662a8a85aaeb96fcfaea040c8926f1d8909de6e"
@@ -91,7 +91,7 @@ file = "cases/A16_bingane_audet/candidate.jl"
 sha256 = "afee94b75f3e39148af36d42b6fa23e5fc07fb2eb816b36c5c788b38da1f5727"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
-sha256 = "c0273354ae8be9a9c4a710b7d98130102a5ece26d058c27d0c8cd4e36c7b8bb2"
+sha256 = "48767818358adf53831c0179b365a13661f617635d80709e4b59f4f17d60eecd"
 [[source_sha256]]
 file = "Project.toml"
 sha256 = "3edf7f4f2db7406562bfb273eb155a2a13df9d58b390d0d5db722ad933283337"

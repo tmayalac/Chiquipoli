@@ -7,7 +7,7 @@
         a16 a32 a64 a128 a256 a512 a1024 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
-        paper paper-build paper-check
+        paper paper-build paper-check radius
 
 PAPER := paper
 
@@ -42,6 +42,8 @@ help:
 	@echo "  make archive-log       freeze logs/final_run.txt under a timestamped name"
 	@echo "  make literature        re-certify the literature cases (n=4,6,8,16,32,64) + controls"
 	@echo "  make nominal           print the nominal configuration only (no certificate)"
+	@echo "  make radius            certify an explicit radius of strict local maximality of A16"
+	@echo "                         -> results/radius_certificate.toml (docs/guide/radius.md)"
 	@echo
 	@echo "  make lean-cache        download prebuilt Mathlib oleans (~7 GB, once)"
 	@echo "  make lean              full five-check verification of the Lean layer"
@@ -243,3 +245,7 @@ lean-general:
 
 lean-general-case:
 	cd lean && TRIG_CASES=$(N) ./verify_trig.sh
+
+# An explicit radius r of the strict local maximality of A16 (docs/guide/radius.md).
+radius:
+	julia --project=. pipeline/certify_radius.jl
