@@ -111,8 +111,30 @@ function _cheb(kmax)
     return T, U
 end
 const _CHEB = _cheb(40)
-cs_cos(k::Integer) = CS(k == 0 ? RPoly([1//1]) : _CHEB[1][k], RPoly([0//1]), RPoly([1//1]))
-cs_sin(k::Integer) = k == 0 ? cs_const(0) : CS(RPoly([0//1]), _CHEB[2][k-1], RPoly([1//1]))
+# Extend the table by the same three-term recurrence when a larger n needs it.
+function _cheb_upto!(k::Integer)
+    T, U = _CHEB
+    c1 = RPoly([0//1, 2//1])
+    for j in (maximum(keys(T)) + 1):k
+        T[j] = psub(pmul(c1, T[j-1]), T[j-2])
+        U[j] = psub(pmul(c1, U[j-1]), U[j-2])
+    end
+    return nothing
+end
+cs_cos(k::Integer) = (_cheb_upto!(k); CS(k == 0 ? RPoly([1//1]) : _CHEB[1][k], RPoly([0//1]), RPoly([1//1])))
+cs_sin(k::Integer) = (_cheb_upto!(k); k == 0 ? cs_const(0) : CS(RPoly([0//1]), _CHEB[2][k-1], RPoly([1//1])))
+
+"A gcd(den, Fc) memo shared by the threads of `prove_all`."
+struct LockedGcdCache
+    d::Dict{RPoly,RPoly}
+    l::ReentrantLock
+end
+function cached_gcd(c::LockedGcdCache, den::RPoly, Fc::RPoly)
+    hit = lock(() -> get(c.d, den, nothing), c.l)
+    hit === nothing || return hit
+    g = pgcd(den, Fc)                               # outside the lock: the slow part
+    return lock(() -> get!(c.d, den, g), c.l)
+end
 
 "Squared distance between coordinate CS-pairs p[i]=(x,y) (0-based), as a CS element."
 function sqdist_cs(coords, i, j)
@@ -128,7 +150,7 @@ Prove `|p_i - p_j|^2 == target` at the root of `Fc`, where `target_num ∈ Q[c]`
 `sign_ok(A, B)` must certify (by interval) that `A(c*) - s* B(c*) ≠ 0`; it is
 called only in the `B ≢ 0` branch. Returns :UNCONDITIONAL, :PROVED, or :FAIL.
 """
-function identity_status(coords, i, j, target_num::RPoly, Fc::RPoly; sign_ok)
+function identity_status(coords, i, j, target_num::RPoly, Fc::RPoly; sign_ok, gcd_cache = nothing)
     d = sqdist_cs(coords, i, j)
     # (A + sB)/den - target  =  (A - target*den + sB)/den
     A = psub(d.A, pmul(target_num, d.den))
@@ -158,7 +180,10 @@ function identity_status(coords, i, j, target_num::RPoly, Fc::RPoly; sign_ok)
     # enclosure achieves, and it would have to be redone for every candidate and
     # every box. The gcd is a statement about all roots at once, in exact
     # arithmetic, with no box at all.
-    g = pgcd(den, Fc)
+    # The same `den` recurs across equalities (a family has only a handful of
+    # distinct denominators), so `prove_all` passes a cache keyed on `den`: the
+    # gcd is computed once per distinct denominator, exactly as before.
+    g = gcd_cache === nothing ? pgcd(den, Fc) : cached_gcd(gcd_cache, den, Fc)
     (length(g) == 1 && !iszeropoly(g)) || return :FAIL       # den could vanish at root
     if iszeropoly(A) && iszeropoly(B)
         return :UNCONDITIONAL
@@ -214,9 +239,18 @@ sign check `A(c*) - s* B(c*) ≠ 0` in the `B ≢ 0` branch.
 function prove_all(coords, n, active, side_target::RPoly, diam_target::RPoly, Fc::RPoly, zbox)
     cstar = cos(zbox); sstar = sin(zbox)
     sok = (A, B) -> !in_interval(0, _peval(A, cstar) - sstar*_peval(B, cstar))
-    sides = [identity_status(coords, i, mod(i+1, n), side_target, Fc; sign_ok=sok) for i in 0:n-1]
-    diams = [identity_status(coords, i, j, diam_target, Fc; sign_ok=sok) for (i, j) in active]
-    return sides, diams
+    # The equalities are independent, so they are proved in parallel when Julia
+    # has threads (`julia -t auto`); each one is the same exact computation as
+    # in a serial run, and the statuses land in their own slots. The gcd cache
+    # is shared under a lock, so each distinct `den` is still reduced once.
+    jobs = vcat([(i, mod(i+1, n), side_target) for i in 0:n-1], [(i, j, diam_target) for (i, j) in active])
+    out = Vector{Symbol}(undef, length(jobs))
+    cache = LockedGcdCache(Dict{RPoly,RPoly}(), ReentrantLock())
+    Threads.@threads for k in eachindex(jobs)
+        (i, j, tgt) = jobs[k]
+        out[k] = identity_status(coords, i, j, tgt, Fc; sign_ok=sok, gcd_cache=cache)
+    end
+    return out[1:n], out[n+1:end]
 end
 
 end # module

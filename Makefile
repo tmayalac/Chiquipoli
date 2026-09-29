@@ -3,6 +3,10 @@
         stress-family-generator archive-log clean \
         check check-all check-lean check-case literature-case lean-family-case \
         stress-case lean-family-certificate lean-family-record A16 A32 A64 \
+        lean-general lean-general-case \
+        a16 a32 a64 a128 a256 a512 a1024 \
+        a16-complete a32-complete a64-complete a128-complete a256-complete \
+        a512-complete a1024-complete \
         paper paper-build paper-check
 
 PAPER := paper
@@ -16,10 +20,17 @@ help:
 	@echo "  make check-lean        both Lean layers, verified and recorded"
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
 	@echo
-	@echo "  ONE CANDIDATE, EVERY LAYER (Julia, Lean, controls, stress; writes no record)"
-	@echo "  make A16               A16: both Julia certificates, both Lean layers, stress, mutations"
-	@echo "  make A32               A32: Julia certificate, Lean (incl. published constructor), stress"
-	@echo "  make A64               A64: the same for A64"
+	@echo "  ONE POLYGON, QUICKLY: its Julia certificate only (writes no record)"
+	@echo "  make a16  a32  a64  a128  a256  a512  a1024"
+	@echo "                         the family certificate (10 gates); a16 also the article's own"
+	@echo "                         (~10 s each up to a256, ~35 s a512, a few minutes a1024)"
+	@echo
+	@echo "  ONE POLYGON, EVERY LAYER: suite, Julia, Lean, controls, planted defects (writes no record)"
+	@echo "  make a16-complete ... a1024-complete"
+	@echo "                         general Lean theorem for $(shell sed -n 's/^const FAMILY_TRIG_N = (\(.*\))/\1/p' cases/exact_coords.jl);"
+	@echo "                         per-case Lean also for $(shell sed -n 's/^const FAMILY_LEAN_N = (\(.*\))/\1/p' cases/exact_coords.jl);"
+	@echo "                         for the others the Lean stages are SKIP and the verdict INCOMPLETE"
+	@echo "  make A16 / A32 / A64   the same as a16-complete / a32-complete / a64-complete"
 	@echo
 	@echo "  ONE CASE, ONE LAYER"
 	@echo "  make literature-case N=32   the general certifier on one case"
@@ -36,6 +47,8 @@ help:
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
 	@echo "  make lean-family       the same five checks for the family layer (A16, A32, A64)"
+	@echo "  make lean-general      the five checks for the general Lean theorem (A16 ... A256)"
+	@echo "  make lean-general-case N=256  the same, one case"
 	@echo "  make lean-family-certificate  record them as results/lean_family_certificate.toml"
 	@echo "  make lean-family-record       does that record still describe the tree? (seconds)"
 	@echo
@@ -187,14 +200,18 @@ check-all:
 check-lean:
 	tools/check_all.sh lean
 
-A16:
-	tools/check_all.sh candidate 16
+# One polygon: `make a<n>` is its Julia certificate only, in seconds; `make
+# a<n>-complete` is every layer (tools/check_all.sh candidate). The members are
+# FAMILY_N in cases/exact_coords.jl.
+a16 a32 a64 a128 a256 a512 a1024:
+	tools/check_all.sh fast $(@:a%=%)
 
-A32:
-	tools/check_all.sh candidate 32
+a16-complete a32-complete a64-complete a128-complete a256-complete a512-complete a1024-complete:
+	tools/check_all.sh candidate $(patsubst a%-complete,%,$@)
 
-A64:
-	tools/check_all.sh candidate 64
+A16: a16-complete
+A32: a32-complete
+A64: a64-complete
 
 check-case:
 	@test -n "$(N)" || { echo "usage: make check-case N=<4|6|8|16|32|64>"; exit 2; }
@@ -218,3 +235,11 @@ clean:
 	find . -name '*.aux' -o -name '*.log' -o -name '*.out' -o -name '*.toc' \
 	       -o -name '*.bbl' -o -name '*.blg' -o -name '*.synctex.gz' \
 	       | grep -v '^./lean/.lake/' | xargs rm -f
+
+# The general Lean certificate of the family: ONE theorem for every n = 16k
+# (lean/ChiquipoliFamily/Trig/Assemble.lean), kernel-checked data per n.
+lean-general:
+	cd lean && ./verify_trig.sh
+
+lean-general-case:
+	cd lean && TRIG_CASES=$(N) ./verify_trig.sh

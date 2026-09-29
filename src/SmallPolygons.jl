@@ -165,12 +165,102 @@ end
 # element type do not, and give the same matrix.
 _eye(T, n) = [i == j ? one(T) : zero(T) for i in 1:n, j in 1:n]
 
+"""
+    f64_enclosure(M) -> Matrix or nothing
+
+A `Float64` interval copy of the interval array `M`, each entry rounded OUTWARD
+(`interval(Float64, inf, sup)`), so the copy ENCLOSES the original entry by
+entry; `nothing` if some entry is not guaranteed (the caller then keeps the
+original, so an NG flag is never lost in the conversion).
+
+Why. The rank and multiplier blocks are dense linear algebra: a preconditioned
+regularity test and a Krawczyk step, O(n³) interval operations each. In 256-bit
+BigFloat they cost minutes at n = 256; in Float64 intervals (IntervalArithmetic's
+correctly rounded arithmetic, not the BLAS `:fast` mode) seconds. Every
+conclusion stays rigorous: a regular enclosure proves every matrix it contains
+regular, and a Krawczyk inclusion for the wider system encloses the solution of
+the true one. The only price is width, and the margins these blocks certify
+(‖I - CM‖ ≪ 1, λ_min ≫ 10⁻¹⁵) are far above it.
+"""
+f64_enclosure(M) = all(isguaranteed, M) ? map(x -> interval(Float64, inf(x), sup(x)), M) : nothing
+
+# ---------------------------------------------------------------------------
+# Interval matrix products. For Float64 intervals, IntervalArithmetic offers a
+# :fast mode: Rump's midpoint-radius product, computed by OpenBLAS with the
+# rounding mode set downward and upward (a special OpenBLAS build,
+# OpenBLASConsistentFPCSR, whose worker threads inherit the rounding mode). It
+# is ~300 times faster than the entrywise :slow mode at n ~ 1000 and just as
+# rigorous -- provided the platform really rounds as asked. That is checked
+# here, on this machine, before the fast mode is used at all: a sentinel
+# multiplies fixed pseudo-random matrices with full-mantissa entries and
+# requires every entry of the result to contain the EXACT range of the product,
+# computed in Rational{BigInt}. If a single entry fails, every product falls
+# back to the :slow mode. The verdict is cached for the process and reported in
+# the rank and multiplier blocks.
+# ---------------------------------------------------------------------------
+const _FASTMUL_VERIFIED = Ref{Union{Nothing,Bool}}(nothing)
+
+function _sentinel_matrix(state::Ref{UInt64}, m, k)
+    next() = (state[] = state[] * 0x5851f42d4c957f2d + 0x14057b7ef767814f;
+              (Int64(state[] >> 11) - (Int64(1) << 52)) / Float64(1 << 52) * 2.0^(Int(state[] % 17) - 8))
+    return [next() for _ in 1:m, _ in 1:k]
+end
+
+function _exact_contains(C, A, B)
+    Aq = Rational{BigInt}.(A isa AbstractMatrix{<:Interval} ? mid.(A) : A)
+    thinA = !(eltype(A) <: Interval) || all(a -> inf(a) == sup(a), A)
+    Blo = Rational{BigInt}.(inf.(B)); Bhi = Rational{BigInt}.(sup.(B))
+    Alo = thinA ? Aq : Rational{BigInt}.(inf.(A)); Ahi = thinA ? Aq : Rational{BigInt}.(sup.(A))
+    for i in axes(C, 1), j in axes(C, 2)
+        lo = zero(Rational{BigInt}); hi = zero(Rational{BigInt})
+        for t in axes(B, 1)
+            ps = (Alo[i,t]*Blo[t,j], Alo[i,t]*Bhi[t,j], Ahi[i,t]*Blo[t,j], Ahi[i,t]*Bhi[t,j])
+            lo += minimum(ps); hi += maximum(ps)
+        end
+        (Rational{BigInt}(inf(C[i,j])) <= lo && hi <= Rational{BigInt}(sup(C[i,j]))) || return false
+    end
+    return true
+end
+
+function fastmul_verified()
+    _FASTMUL_VERIFIED[] === nothing || return _FASTMUL_VERIFIED[]
+    ok = true
+    st = Ref(0x2026092800000001)
+    for (m, k, p) in ((37, 53, 29), (64, 64, 64), (101, 17, 3), (9, 131, 47))
+        A = _sentinel_matrix(st, m, k)
+        Bm = _sentinel_matrix(st, k, p); Br = abs.(_sentinel_matrix(st, k, p)) .* 1e-13
+        B = [interval(Bm[i,j] - Br[i,j], Bm[i,j] + Br[i,j]) for i in 1:k, j in 1:p]
+        AI = interval.(A)                                   # thin, as a preconditioner
+        C1 = similar(B, m, p); IntervalArithmetic._mul!(IntervalArithmetic.MatMulMode{:fast}(), C1, AI, B, interval(true), interval(false))
+        ok &= _exact_contains(C1, A, B)
+        # interval × interval, as in the Krawczyk step
+        C2 = similar(B, m, p); IntervalArithmetic._mul!(IntervalArithmetic.MatMulMode{:fast}(), C2, [interval(a - 1e-14, a + 1e-14) for a in A], B, interval(true), interval(false))
+        ok &= _exact_contains(C2, [interval(a - 1e-14, a + 1e-14) for a in A], B)
+    end
+    ok &= rounding(Float64) == RoundNearest               # the mode is restored afterwards
+    _FASTMUL_VERIFIED[] = ok
+    return ok
+end
+
+"`A*B` for interval arrays: the verified :fast product for Float64 intervals, else the :slow one."
+function imul(A, B)
+    T = eltype(B) <: Interval ? typeof(inf(first(B))) : eltype(B)
+    if T === Float64 && fastmul_verified()
+        C = similar(B, Interval{Float64}, size(A, 1), size(B)[2:end]...)
+        return IntervalArithmetic._mul!(IntervalArithmetic.MatMulMode{:fast}(), C, A, B, interval(true), interval(false))
+    end
+    return A * B
+end
+matmul_mode() = fastmul_verified() ? "Float64 intervals, :fast product (sentinel verified on this machine)" :
+                                     "Float64 intervals, :slow product (the :fast sentinel failed here)"
+
 "Preconditioned interval regularity test: ||I - inv(mid M)·M||_inf < 1 ⇒ M regular."
 function regularity_test(MI)
-    M0 = BigFloat.(mid.(MI))
-    C = interval.(inv(M0))          # thin: exact BigFloats, keeps the NG flag live
+    T = typeof(inf(first(MI)))      # Float64 or BigFloat: the preconditioner in the same type
+    M0 = T.(mid.(MI))
+    C = interval.(inv(M0))          # thin: exact floats, keeps the NG flag live
     nn = size(MI, 1)
-    E = _eye(eltype(MI), nn) - C*MI
+    E = _eye(eltype(MI), nn) - imul(C, MI)
     # Directed upper bound: row sums as intervals, then the supremum (see the
     # same function in src/a16/linear_algebra.jl).
     bound = maximum(sup(sum(interval(interval_abs_bound(E[i,j])) for j in 1:nn)) for i in 1:nn)
@@ -214,15 +304,16 @@ end
 
 "Linear Krawczyk: rigorously enclose the solution of the square interval system MI·x=bI."
 function krawczyk_linear(MI, bI)
-    M0 = BigFloat.(mid.(MI)); b0 = BigFloat.(mid.(bI))
+    T = typeof(inf(first(MI)))
+    M0 = T.(mid.(MI)); b0 = T.(mid.(bI))
     C0 = inv(M0)
     C = interval.(C0); x0 = interval.(C0*b0); nn = length(x0)
-    Rm = _eye(eltype(MI), nn) - C*MI
-    residual = C*(bI - MI*x0)
-    radius = max(big"1e-50", 10*maximum(interval_abs_bound.(residual)))
+    Rm = _eye(eltype(MI), nn) - imul(C, MI)
+    residual = imul(C, bI - imul(MI, x0))
+    radius = max(T(1e-50), 10*maximum(interval_abs_bound.(residual)))
     for _ in 1:24
         X = [interval(-radius, radius) for _ in 1:nn]
-        K = residual + Rm*X
+        K = residual + imul(Rm, X)
         if all(inf(K[i]) > -radius && sup(K[i]) < radius for i in 1:nn)
             # The certified set is the exact real sum x0 + K(X). Forming its
             # endpoints in BigFloat rounds TO NEAREST and can report a box up
@@ -250,9 +341,12 @@ rigid-invariance argument).
 """
 function general_multipliers(p, n, active, ell)
     D = build_jacobian(p, n, active, ell)
+    Df = f64_enclosure(D)
+    D = Df === nothing ? D : Df                    # see f64_enclosure
+    T = typeof(inf(first(D)))
     nconstr = n + length(active); amb = 2n + 1
     Dt = permutedims(D)
-    g = fill(zero(eltype(D)), amb); g[amb] = interval(BigFloat(n))
+    g = fill(zero(eltype(D)), amb); g[amb] = interval(T(n))
     d = nconstr - (2n - 2)
     # The normalized system has (2n+1-3) + d = nconstr rows only when d >= 0.
     # With fewer than 2n-2 constraints there are not enough equations to pin a
@@ -272,9 +366,10 @@ function general_multipliers(p, n, active, ell)
     gauge = [1, 2, 2*j0 + 1]                       # x_0, y_0, x_j (1-based cols)
     keep = setdiff(1:amb, gauge)
     normidx = d == 0 ? Int[] : sortperm(abs.(y0), rev=true)[1:d]
+    E = eltype(D)                                  # typed, so an empty block (d = 0) keeps it
     M = vcat(Dt[keep, :],
-             [ (col == normidx[r] ? interval(big"1.0") : zero(eltype(D))) for r in 1:d, col in 1:nconstr ])
-    b = vcat(g[keep], [interval(BigFloat(y0[normidx[r]])) for r in 1:d])
+             E[ (col == normidx[r] ? one(E) : zero(E)) for r in 1:d, col in 1:nconstr ])
+    b = vcat(g[keep], [interval(T(y0[normidx[r]])) for r in 1:d])
     regM, _ = regularity_test(M)
     regM || return (pass=false, reason="normalized system not regular")
     sol = krawczyk_linear(M, b)
@@ -295,7 +390,8 @@ function general_multipliers(p, n, active, ell)
           ry[gauge[1]] ry[gauge[2]] ry[gauge[3]];
           rr[gauge[1]] rr[gauge[2]] rr[gauge[3]] ]
     regQ, _ = regularity_test(Q)
-    return (pass = lammin > 0 && regQ, d = d, lammin = lammin, regQ = regQ)
+    return (pass = lammin > 0 && regQ, d = d, lammin = lammin, regQ = regQ,
+            mode = Df === nothing ? "BigFloat intervals" : matmul_mode())
 end
 
 # ---------------------------------------------------------------------------
@@ -428,13 +524,14 @@ function _certify(cand::Candidate, radius)
     else
         M0 = BigFloat.(mid.(A))
         rows, cols = select_minor(M0, rank_target)
-        reg, bound = regularity_test(A[rows, cols])           # rigorous lower bound
+        Af = f64_enclosure(A[rows, cols])                     # see f64_enclosure
+        reg, bound = regularity_test(Af === nothing ? A[rows, cols] : Af)   # rigorous lower bound
         rx, ry, rr = rigid_vectors(p, n)
         maxann = maximum(interval_abs_bound.(vcat(A*rx, A*ry, A*rr)))  # sanity only
         upper_ok = convexity_ok    # Lemma L1 via distinct vertices from convexity
         if reg && upper_ok
             push!(blocks, BlockResult("rank", :CERTIFIED,
-                "regular $(rank_target)×$(rank_target) minor (‖I-CM‖∞=$(bound)<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=$(rank_target), I_eq=R_eq [numerical sanity max|Aρ|=$(maxann)]"))
+                "regular $(rank_target)×$(rank_target) minor (‖I-CM‖∞=$(bound)<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=$(rank_target), I_eq=R_eq [numerical sanity max|Aρ|=$(maxann)] [$(Af === nothing ? "BigFloat intervals" : matmul_mode())]"))
         elseif reg && !convexity_ok
             push!(blocks, BlockResult("rank", :FAIL,
                 "regular minor gives rank≥2n-2, but the upper bound needs Lemma L1, which requires certified convexity (distinct vertices) — convexity not certified here"))
@@ -462,7 +559,7 @@ function _certify(cand::Candidate, radius)
             "feasible and has no KKT multipliers to certify"))
     elseif mc.pass
         push!(blocks, BlockResult("multipliers", :CERTIFIED,
-            "$(licq); certified KKT multipliers with all active-diameter multipliers λ_ij ≥ $(mc.lammin) > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q)"))
+            "$(licq); certified KKT multipliers with all active-diameter multipliers λ_ij ≥ $(mc.lammin) > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q) [$(mc.mode)]"))
     else
         push!(blocks, BlockResult("multipliers", :FAIL,
             "$(licq); could not certify positive multipliers: $(get(mc,:reason,"λmin=$(get(mc,:lammin,NaN))"))"))

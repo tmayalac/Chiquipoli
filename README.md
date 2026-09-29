@@ -106,6 +106,8 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 | Both Lean layers, verified and recorded | `make check-lean` | `bash tools/check_all.sh lean` |
 | One case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress) | `make check-case N=32` | `bash tools/check_all.sh case 32` |
 | One candidate, every layer: A16 (~18 min), A32 (~10 min), A64 (~32 min) | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
+| One polygon, its Julia certificate only, in seconds (A16 … A1024; A1024 a few minutes) | `make a16`, `make a32`, …, `make a1024` | `bash tools/check_all.sh fast 256` |
+| One polygon, every layer incl. Lean (Lean for A16 … A256; A512, A1024 end `INCOMPLETE`) | `make a16-complete`, …, `make a1024-complete` | `bash tools/check_all.sh candidate 256` |
 
 `make A16`, `make A32` and `make A64` run the same stages for each candidate:
 the Julia suite, the general certifier, the family certificate (ten gates,
@@ -148,6 +150,8 @@ Bash or, better, WSL.
 | The same, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | bash: `julia --project=. pipeline/record_lean_family_certificate.jl` |
 | Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
 | One case of the family in Lean (a partial run) | `make lean-family-case N=32` | bash: `cd lean && FAMILY_CASES=32 ./verify_family.sh` |
+| The general Lean theorem of the family (one proof for every n = 16k), five checks on A16 … A256 | `make lean-general` | bash: `cd lean && ./verify_trig.sh` |
+| The same, one case | `make lean-general-case N=256` | bash: `cd lean && TRIG_CASES=256 ./verify_trig.sh` |
 | Plant 16 defects in the A16 layers, and 5 per candidate in the family certificates | `make mutation-check` | bash: `tools/mutation_check.sh` (needs a git clone, clean) |
 | The family stress test: 63 planted defects | `make stress-family` | bash (WSL): `tools/stress_family.sh all` |
 | One case of the family, planted defects | `make stress-case N=32` | bash (WSL): `STRESS_CASES=32 tools/stress_family.sh generator` |

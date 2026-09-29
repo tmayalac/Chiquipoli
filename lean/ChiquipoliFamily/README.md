@@ -18,6 +18,12 @@ not a default target) and verified separately (`./verify_family.sh`, or
 Currently generated: **A16** (a second, independent proof of the A16 result,
 by a different method), **A32** and **A64**.
 
+**A second, general certificate** covers A16 … A256 with one theorem proved
+once for every `n = 16k` (`Trig/Assemble.lean`, `published_of_checks`) and
+kernel-checked data per `n` (`T<n>/`). It proves the same statement,
+`Chiquipoli.Family.T<n>.published_locally_maximal`, without expanding any
+polynomial; see `Trig/README.md` and `../verify_trig.sh`.
+
 ## The headline theorems
 
 | Lean name | Statement |

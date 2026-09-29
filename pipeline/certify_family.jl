@@ -1,7 +1,8 @@
-# The family certificate of one Bingane–Audet polygon A_n (n = 16, 32, 64):
-# the same gates as the dedicated A16 certificate, plus the published source.
+# The family certificate of one Bingane–Audet polygon A_n (n in FAMILY_N,
+# cases/exact_coords.jl: 16, 32, ..., 1024): the same gates as the dedicated A16
+# certificate, plus the published source.
 #
-#     julia --project=. pipeline/certify_family.jl 32        # or: make A32
+#     julia --project=. pipeline/certify_family.jl 32        # or: make a32
 #
 # writes results/family/A32.toml (CHIQUI_NO_RECORD=1: prints only) and exits 1
 # unless the verdict is CERTIFIED.
@@ -19,9 +20,9 @@
 #                          the certified ones EXACTLY          (cases/optigon_exact.jl)
 #   exact_identities       n sides and n-1 active diameters, exactly, in Q(c,s)
 #   root                   interval Newton on Z_root: 0 ∉ F'(Z), N(Z) ⊂ int Z
-#   root_unique_search     exactly one root of Fc in a rational bracket containing
-#                          cos(I_search), by an exact Sturm count; F = LEAD·Fc(cos z)
-#                          there (exact), so F has exactly one zero on I_search
+#   root_unique_search     0 ∉ Fc' on a rational bracket containing cos(I_search)
+#                          (centred interval evaluation), so Fc is monotone there;
+#                          F = LEAD·Fc(cos z) exactly, so F has one zero on I_search
 #   side_length            ℓ = 2 sin(z/2) and n·ℓ enclosed over Z_root
 #   convexity              every support determinant > 0 over Z_cert
 #   inactive_margin        declared actives at distance 1, every other pair < 1
@@ -42,8 +43,8 @@ const QQ = Rational{BigInt}
 const ROOT_RADIUS = big"1e-30"
 const CERT_RADIUS = big"1e-28"
 
-n = length(ARGS) == 1 ? parse(Int, ARGS[1]) : error("usage: certify_family.jl <16|32|64>")
-n in (16, 32, 64) || error("n must be 16, 32 or 64")
+n = length(ARGS) == 1 ? parse(Int, ARGS[1]) : error("usage: certify_family.jl <n>, n in $(FAMILY_N)")
+n in FAMILY_N || error("n must be one of $(FAMILY_N) (cases/exact_coords.jl, FAMILY_N)")
 # The same path for every n: the generic constructor (the one the published
 # source is compared with exactly, below), the candidate's active graph and
 # nominal root, and exact identities from the generic Q(c,s) instance. For
@@ -86,6 +87,31 @@ LEAD = AoverG[end] * rGD
 F_is_LEAD_Fc = EI.iszeropoly(Fcs.B) && QQ.(EI.ptrim(g)) == rGD .* QQ.(EI.ptrim(Fcs.den)) && AoverG ./ AoverG[end] == Fc
 dFc = QQ[Fc[k+1] * k for k in 1:length(Fc)-1]
 pev(p, x) = (v = zero(x); for c in reverse(p); v = v * x + interval(BigFloat, c); end; v)
+# The same polynomial evaluated in the basis centred at c0 = mid(x): the
+# coefficients of p(c0 + t) are computed by repeated synthetic division in
+# interval arithmetic at 256 + 4·deg bits (enough to absorb the cancellation of
+# the shift, whose intermediate terms reach ~4^deg), and only then is the small
+# interval t = x - c0 substituted. Horner in the monomial basis over an
+# interval multiplies its width by roughly Σ|k·p_k|·|x|^k, which for n ≥ 128
+# (degree ≳ 64, coefficients ~ 4^deg) swamps the value; in the centred basis the
+# width is multiplied only by the first Taylor coefficients. Every step is
+# outward rounded, so the result is an enclosure of p(x) like `pev`'s.
+function pev_centred(p, x)
+    d = length(p)
+    c0 = mid(x)                                        # a float: exact as a point
+    q = setprecision(BigFloat, precision(BigFloat) + 4d) do
+        q = [interval(BigFloat, QQ(c)) for c in p]
+        c0I = interval(BigFloat, c0)
+        for i in 1:d-1, j in d-1:-1:i
+            q[j] += c0I * q[j+1]
+        end
+        q
+    end
+    t = x - interval(BigFloat, c0)
+    v = zero(x)
+    for c in reverse(q); v = v * t + c; end
+    return v
+end
 qev(p, x) = (v = zero(QQ); for c in reverse(p); v = v * x + c; end; v)
 
 # --- root: interval Newton on Z_root --------------------------------------------
@@ -94,42 +120,39 @@ Zroot = interval(z0 - ROOT_RADIUS, z0 + ROOT_RADIUS)
 Fnum = cand.root.F
 m = interval(mid(Zroot))
 Fm = Fnum(m)
-Dz = -interval(BigFloat, LEAD) * sin(Zroot) * pev(dFc, cos(Zroot))    # F'(z) = -LEAD sin z Fc'(cos z)
+Dz = -interval(BigFloat, LEAD) * sin(Zroot) * pev_centred(dFc, cos(Zroot))    # F'(z) = -LEAD sin z Fc'(cos z)
 Nz = m - Fm / Dz
 newton_ok = F_is_LEAD_Fc && !in_interval(0, Dz) && isinterior(Nz, Zroot) && isguaranteed(Nz)
 gate("root", newton_ok,
      "interval Newton on Z_root (radius 1e-30): 0 ∉ F'(Z) = $(Dz), N(Z) ⊂ int Z = $(isinterior(Nz, Zroot)); " *
      "F' from the exact identity F = $(LEAD)·Fc(cos z) = $(F_is_LEAD_Fc)")
 
-# --- root_unique_search: exact Sturm count on a rational bracket -----------------
+# --- root_unique_search: Fc strictly monotone on a rational bracket ⊇ cos(I_search)
+# 0 ∉ Fc'([ra, rb]) (centred interval evaluation) makes Fc strictly monotone on
+# [ra, rb], so it has at most one root there; cos is injective on I_search ⊂ (0, π)
+# and F = LEAD·Fc(cos z) exactly with cos 2z ≠ 0, so F has at most one zero on
+# I_search, and the Newton root (inside I_search, checked below) is that zero.
+# This is the argument the Lean layer uses (Fc_mono_search); it replaces an
+# exact Sturm count, whose rational coefficients explode beyond degree ~130
+# (A256: deg Fc = 252). The Sturm count stays in test/literature.jl for n ≤ 64.
 piI = interval(BigFloat, π); nI = interval(BigFloat, n)
-cHiI = cos(piI / nI)                                                 # cos(hi), hi = π/n
-cLoI = cos(interval(BigFloat, 2) * asin(sin(piI / nI) / interval(BigFloat, 2)))  # cos(lo)
+hiI = piI / nI                                                       # hi = π/n
+loI = interval(BigFloat, 2) * asin(sin(hiI) / interval(BigFloat, 2)) # lo
+cHiI = cos(hiI); cLoI = cos(loI)
 G = big(10)^30
 ra = QQ(floor(BigInt, inf(cHiI) * G) - 1, G)                         # a < cos(π/n)
 rb = QQ(ceil(BigInt, sup(cLoI) * G) + 1, G)                          # cos(lo) < b
-dp(q) = length(q) <= 1 ? QQ[0] : QQ.(EI.ptrim([q[k+1] * k for k in 1:length(q)-1]))
-function sturmchain(q)
-    ch = [QQ.(EI.ptrim(q)), dp(q)]
-    while !EI.iszeropoly(ch[end])
-        _, r = EI.pdivrem(ch[end-1], ch[end]); EI.iszeropoly(r) && break
-        push!(ch, QQ.(EI.pscale(r, -1 // 1)))
-    end
-    ch
-end
-chg(ch, x) = (sg = filter(!iszero, [sign(qev(q, x)) for q in ch]); count(i -> sg[i] != sg[i+1], 1:length(sg)-1))
-squarefree = length(EI.pgcd(Fc, dp(Fc))) == 1
-den_ok = !in_interval(0, pev(QQ.(den), hull(interval(BigFloat, ra), interval(BigFloat, rb))))
-ch = sturmchain(Fc)
-nroots = chg(ch, ra) - chg(ch, rb)
-cz = cos(Zroot)
-inside = ra < inf(cz) && sup(cz) < rb
-unique_ok = squarefree && den_ok && nroots == 1 && inside && inf(cHiI) > ra && sup(cLoI) < rb &&
+Cbr = interval(BigFloat, ra, rb)
+den_ok = !in_interval(0, pev(QQ.(den), Cbr))
+dFc_br = pev_centred(dFc, Cbr)
+mono_ok = !in_interval(0, dFc_br) && isguaranteed(dFc_br)
+root_in_search = sup(loI) < inf(Zroot) && sup(Zroot) < inf(hiI)
+unique_ok = mono_ok && den_ok && root_in_search && inf(cHiI) > ra && sup(cLoI) < rb &&
             ra > 0 && F_is_LEAD_Fc
 gate("root_unique_search", unique_ok,
-     "Sturm: Fc has exactly $(nroots) root(s) in [$(Float64(ra)), $(Float64(rb))] ⊃ cos(I_search), " *
-     "I_search = (2 asin(sin(π/$n)/2), π/$n); squarefree = $(squarefree), cos 2z ≠ 0 there = $(den_ok), " *
-     "cos(Z_root) inside = $(inside); F = LEAD·Fc(cos z) exactly, cos injective on I_search ⇒ one zero of F")
+     "Fc' ∈ $(dFc_br) on [$(Float64(ra)), $(Float64(rb))] ⊃ cos(I_search), so 0 ∉ Fc' and Fc is strictly " *
+     "monotone there (at most one root); I_search = (2 asin(sin(π/$n)/2), π/$n), Z_root ⊂ I_search = $(root_in_search), " *
+     "cos 2z ≠ 0 there = $(den_ok); F = LEAD·Fc(cos z) exactly, cos injective on I_search ⇒ F has exactly one zero on I_search")
 
 # --- side_length ----------------------------------------------------------------
 ell = interval(BigFloat, 2) * sin(Zroot / interval(BigFloat, 2))

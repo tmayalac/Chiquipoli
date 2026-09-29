@@ -5,8 +5,8 @@
 #     tools/mutation_check.sh            all mutations
 #     tools/mutation_check.sh julia      only the ones the Julia suite guards
 #     tools/mutation_check.sh lean       only the ones the Lean layer guards
-#     tools/mutation_check.sh family [n] the same five defects for each of A16, A32,
-#                                        A64 (or one n), which the family
+#     tools/mutation_check.sh family [n] the same five defects for each family
+#                                        member (FAMILY_N, or one n), which the family
 #                                        certificate (pipeline/certify_family.jl)
 #                                        must reject
 #
@@ -297,7 +297,7 @@ note ""
 fi
 
 # --- the family certificate, the same five defects for every candidate ------
-# Standardisation means each of A16, A32, A64 faces the same planted defects and
+# Standardisation means each family member faces the same planted defects and
 # the same certificate must reject each one: a digit of its root, one of its
 # active diameters, one byte of the published source, a sign in the harmonic
 # only its own n reaches (the last loop iteration i = n/8 - 1), and the
@@ -317,7 +317,7 @@ run_family_mutation() {  # run_family_mutation <n> <label> <file> <old> <new>
   if family_rejects "$n"; then ok "$label"; else bad "$label — certify_family.jl accepted it (or crashed)"; fi
   git checkout -- "$3"
 }
-FAMN="${2:-16 32 64}"
+FAMN="${2:-$(sed -n 's/^const FAMILY_N = (\(.*\))/\1/p' cases/exact_coords.jl | tr -d ',')}"
 for n in $FAMN; do
   case "$n" in
     16) rootf=src/a16/data.jl; rootold='big"0.19627037213032280086206121185805318446"'
@@ -326,6 +326,14 @@ for n in $FAMN; do
         rootnew='big"0.0981721090090961667722'; edgef=$rootf; edgeold='(7, 24)'; edgenew='(7, 25)' ;;
     64) rootf=cases/A64_bingane_audet/candidate.jl; rootold='big"0.04908729857644960608'
         rootnew='big"0.04908729857644960618'; edgef=$rootf; edgeold='(3, 35)'; edgenew='(3, 37)' ;;
+    128) rootf=cases/A128_bingane_audet/candidate.jl; rootold='big"0.02454368983776405442'
+        rootnew='big"0.02454368983776405452'; edgef=$rootf; edgeold='(7, 72)'; edgenew='(7, 73)' ;;
+    256) rootf=cases/A256_bingane_audet/candidate.jl; rootold='big"0.01227184621555529382'
+        rootnew='big"0.01227184621555529392'; edgef=$rootf; edgeold='(7, 136)'; edgenew='(7, 137)' ;;
+    512) rootf=cases/A512_bingane_audet/candidate.jl; rootold='big"0.00613592314879083030'
+        rootnew='big"0.00613592314879083040'; edgef=$rootf; edgeold='(7, 264)'; edgenew='(7, 265)' ;;
+    1024) rootf=cases/A1024_bingane_audet/candidate.jl; rootold='big"0.00306796157568502975'
+        rootnew='big"0.00306796157568502985'; edgef=$rootf; edgeold='(7, 520)'; edgenew='(7, 521)' ;;
     *) bad "unknown family case $n"; continue ;;
   esac
   run_family_mutation "$n" "root literal: one digit altered" "$rootf" "$rootold" "$rootnew"

@@ -5,6 +5,126 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### The family certificate from A16 to A1024, and one command per polygon
+
+- **Seven members, one list.** `cases/exact_coords.jl` now holds the family
+  members in one place: `FAMILY_N = (16, 32, 64, 128, 256, 512, 1024)` for the
+  Julia family certificate, and `FAMILY_LEAN_N` for the members that also have a
+  Lean certificate. `pipeline/certify_family.jl`, `tools/check_all.sh`,
+  `tools/mutation_check.sh`, `pipeline/check_paper.jl` and the test suite all
+  read it. New candidates are `cases/A128_bingane_audet` …
+  `cases/A1024_bingane_audet`, in the same format as A32 and A64: the active
+  graph written out as data, the root to ~100 digits.
+- **All ten gates, for every member.** A128, A256, A512 and A1024 are
+  CERTIFIED 10 of 10, with the same gates and the same code path as A16. In
+  particular the published OPTIGON source is run unchanged in exact arithmetic
+  and gives exactly the certified vertices and equation. The inactive pair that
+  controls the margin is always `{n/4, 3n/4}`.
+- **Ayala Hoffmann's closed-form graph `G_n`.** `gn_edges(n)` implements the
+  graph of *Moving-Frame Criteria and Powers-of-Two Graph Recurrences*
+  (Section 4). The suite requires every member's active graph to equal it,
+  pair for pair, and the two root-dependent sides to be exactly
+  `{n/8 − 1, n/8}` and `{3n/4, 3n/4 + 1}`, the closing sides of that paper's
+  constructor theorem.
+
+Four changes were needed to go past n = 64. None of them weakens a proof.
+
+- **Extensible exact Chebyshev table.** `cs_cos`/`cs_sin` stopped at degree 40,
+  so n ≥ 128 failed outright. The table now extends by the same recurrence.
+- **The root step evaluates `Fc'` in the centred basis.** Horner in the
+  monomial basis over the root box widened `F'(Z)` to `±10¹⁶` at n = 128:
+  degree ~64 with coefficients ~4^deg. Now the Taylor shift `p(c₀ + t)` is
+  computed in interval arithmetic at `256 + 4·deg` bits and evaluated at the
+  small `t = x − c₀`. Every step is outward rounded.
+- **Root uniqueness by monotonicity, not Sturm.** The exact Sturm chain does
+  not finish at degree 252, because its rational coefficients explode. The gate
+  now proves `0 ∉ Fc'` on a rational bracket containing `cos(I_search)`, so
+  `Fc` is strictly monotone there. It also checks that the Newton root lies
+  inside `I_search`, a condition the Sturm version left implicit. This is the
+  argument the Lean layer already used (`Fc_mono_search`). The Sturm count
+  remains in `test/literature.jl` for n = 16, 32, 64.
+- **Faster linear algebra, same rigour.** The rank and multiplier blocks now
+  convert their interval matrices outward to `Float64` intervals
+  (`f64_enclosure`). They multiply with IntervalArithmetic's `:fast` product:
+  Rump's midpoint-radius algorithm on OpenBLASConsistentFPCSR, with directed
+  rounding. Before that product is trusted on a machine, a sentinel multiplies
+  fixed matrices and requires every entry to contain the exact range of the
+  product, computed in `Rational{BigInt}`. Otherwise the slow entrywise
+  product is used, and the block reports which one ran. The `gcd(den, Fc)` of
+  the exact-identity engine is now memoised per distinct denominator, and the
+  equalities are proved in parallel (`JULIA_NUM_THREADS`).
+
+Measured on the development machine:
+
+| member | before | now | peak memory |
+|---|---|---|---|
+| A128 | — | 10 s | 1 GB |
+| A256 | 538 s | 14 s | 2 GB |
+| A512 | — | 35 s | 5 GB |
+| A1024 | — | ~10 min | 10 GB |
+
+A1024 is dominated by the two root-dependent sides, where polynomials of degree
+~2000 are divided by `Fc`, of degree 1020.
+
+- **Commands per polygon.** `make a16`, `make a32`, …, `make a1024` run that
+  polygon's Julia certificate only, in seconds, and print the ten gates with
+  their bounds. `make a16` also runs the article's dedicated certificate.
+  `make a16-complete`, …, `make a1024-complete` run every layer: the suite,
+  Julia, Lean, controls and planted defects. For a member without a Lean
+  certificate yet, its Lean stages are reported SKIP and the verdict is
+  INCOMPLETE, never PASS. `make A16`, `A32`, `A64` are aliases of the
+  `-complete` targets.
+- **Records.** `results/family/A<n>.toml` for the new members is written by
+  `make check-all`, as for the others. The records of A16, A32 and A64 must be
+  regenerated at a clean tree after this change.
+
+### The general Lean certificate: one theorem for every n = 16k, A16 … A256
+
+- **One proof, data per n.** `lean/ChiquipoliFamily/Trig/` proves once
+  `Chiquipoli.Family.Trig.published_of_checks`: if Boolean checks on finite
+  data pass, then upstream's `Optigon.F n` has exactly one zero in upstream's
+  bracket, and the polygon upstream's code builds there is a strictly convex
+  equilateral small n-gon and a strict local maximiser of the perimeter
+  modulo Euclidean motions. This is the statement of `A<n>/Published.lean`.
+  `lean/generators/family/gen_trig.py n` writes the data and the
+  `decide +kernel` checks (`ChiquipoliFamily/T<n>/`). Nothing it writes is
+  trusted.
+- **Nothing is expanded into polynomials.** Upstream's code is run on symbolic
+  terms, and `vertex_eval` proves this is upstream's code. The squared length
+  of every kind of side and active diameter is proved once for every index.
+  This includes the two closing sides, whose squared length is
+  `F_n(z) + (2 sin(z/2))²`, where `n/8` even is used. Per n the kernel only
+  matches each vertex against a shape witness. Inequalities come from
+  fixed-point interval arithmetic with `K = 384` binary digits.
+- **Rigidity and multipliers in general.** The theorem proves once that a
+  Henneberg order gives infinitesimal rigidity. It also proves once that the
+  reverse Henneberg recursion gives an exact self-stress balancing every
+  vertex, and that an interval re-run of that recursion encloses it. The
+  kernel checks the order, the determinant signs and the enclosures, which
+  give `λ > 0` and a negative side sum.
+- **The root is located against Mathlib's π.** The certificate proves a sign
+  change of `F_n` at the ends of a bracket of half-width `2^-180`, and `F_n' < 0`
+  on an interval containing upstream's whole bracket. The bracket ends are
+  placed against `Real.pi_gt_d20` and `Real.pi_lt_d20`.
+- **Verified by `lean/verify_trig.sh`** (`make lean-general`,
+  `make lean-general-case N=256`), with the same five checks as the family
+  layer. Each case has twelve tampered-data controls. The kernel must refute
+  each one, and each twin, the same check on true data, must compile.
+  `FAMILY_TRIG_N = (16, 32, 64, 128, 256)` in `cases/exact_coords.jl`.
+  `make a<n>-complete` runs the general Lean stage for these members, and also
+  the per-case polynomial layer for A16 … A64, which are thus covered twice
+  in Lean.
+
+Build time of one case, one module at a time, development machine:
+
+| case | build | largest check | peak memory |
+|---|---|---|---|
+| A16 | ~35 s | 6 s | 6 GB |
+| A128 | ~80 s | 17 s (convexity) | 8 GB |
+| A256 | ~3.5 min | 59 s (convexity) | 12.6 GB (the stress recursion) |
+
+Peak memory includes ~5.5 GB of Mathlib shared by every process.
+
 ## [1.1.1] — 2026-09-24
 
 The version the article cites. No certified result changed; v1.1.0 is the same

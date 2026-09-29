@@ -127,7 +127,7 @@ end
     @test strip(Fc_norm) == strip(sextic)
 end
 
-@testset "Bingane–Audet family n = 16, 32, 64 (generic constructor)" begin
+@testset "Bingane–Audet family n = $(join(FAMILY_N, ", ")) (generic constructor)" begin
     setprecision(BigFloat, 256)
     R = Vector{Rational{BigInt}}
     maxerr(p, q) = maximum(abs(p[i][k] - q[i][k]) for i in eachindex(p), k in 1:2)
@@ -136,13 +136,19 @@ end
 
     # (1) The generic constructor IS the upstream one: interval and exact
     # instances against the verbatim OPTIGON transcription, for every n.
-    for n in (16, 32, 64)
+    for n in FAMILY_N
         z, ua, ub = optigon_audet_ngon(n, BigFloat)
         up = vcat([(big"0", big"0")], [(ua[i], ub[i]) for i in 1:n-1])
         pI = audet_coords(n)(interval(z))
         @test maxerr([(mid(pI[i,1]), mid(pI[i,2])) for i in 1:n], up) < big"1e-70"
         pcs = audet_coords_cs(n)
-        @test maxerr([(csval(x, z), csval(y, z)) for (x, y) in pcs], up) < big"1e-60"
+        # Horner in the monomial basis loses about 2·deg ≈ n bits to cancellation
+        # (coefficients ~ 4^deg at c ≈ 1), so evaluate with that much headroom;
+        # the exact equality itself is `optigon_exact`, in the testset below.
+        err = setprecision(BigFloat, 256 + 4n) do
+            maxerr([(csval(x, BigFloat(z)), csval(y, BigFloat(z))) for (x, y) in pcs], up)
+        end
+        @test err < big"1e-60"
     end
 
     # (2) At n = 16 it reproduces the hand-written A16 module: coordinates and Fc.
@@ -152,11 +158,15 @@ end
     Fc16, _ = audet_Fc(16)
     off = R(Fc_poly()); @test Fc16 == off ./ off[end]
 
-    # (3) The structural pattern, observed (not proved) on the three members:
-    # n-1 active diameters, LICQ defect 1, deg Fc = n-4, and exactly two of the
-    # 2n-1 equalities need the root of Fc; the rest hold for every θ.
-    for (n, d) in ((32, "A32_bingane_audet"), (64, "A64_bingane_audet"))
-        cand = loadcand(d)
+    # (3) The structural pattern: n-1 active diameters, LICQ defect 1,
+    # deg Fc = n-4, and exactly two of the 2n-1 equalities need the root of Fc;
+    # the rest hold for every θ. Ayala Hoffmann's constructor theorem proves this
+    # for every n = 2^s (the two are the closing sides {2m-1, 2m}, {6m, 6m+1},
+    # m = n/8); here it is checked exactly on the members up to 256 (512 costs a
+    # minute and is covered by its family certificate, which proves every
+    # equality the same way).
+    for n in filter(n -> 32 <= n <= 256, FAMILY_N)
+        cand = loadcand("A$(n)_bingane_audet")
         @test length(cand.active) == n - 1
         @test n + length(cand.active) - (2n - 2) == 1
         Fc, den = audet_Fc(n)
@@ -166,6 +176,16 @@ end
         all_st = vcat(sides, diams)
         @test count(==(:PROVED), all_st) == 2
         @test count(==(:UNCONDITIONAL), all_st) == 2n - 3
+        m = n ÷ 8                                   # the two root-dependent sides
+        @test sort([i for i in 0:n-1 if sides[i+1] == :PROVED]) == [2m - 1, 6m]
+    end
+
+    # (3b) Every member's active graph (data in its candidate file) is the
+    # closed-form graph G_n of Ayala Hoffmann's paper, pair for pair.
+    for n in FAMILY_N
+        act = n == 16 ? A16Certificate.ACTIVE_EDGES : loadcand("A$(n)_bingane_audet").active
+        @test sort([minmax(i, j) for (i, j) in act]) == gn_edges(n)
+        @test length(gn_edges(n)) == n - 1
     end
 
     # (4) Uniqueness of the constructor root on its bracket, exactly (Sturm),
@@ -247,7 +267,7 @@ end
 # errors show the comparison can fail: a flipped sign or a changed angle in the
 # source is caught, and so is any changed byte (the SHA-256).
 @testset "the published OPTIGON source, run unchanged, is exactly the certified A_n" begin
-    for n in (16, 32, 64)
+    for n in FAMILY_N
         r = optigon_exact(n)
         @test r.sha_ok
         @test r.vertices_ok

@@ -5,7 +5,15 @@
 #     tools/check_all.sh quick        Julia only, no Lean (make check)         ~5 min
 #     tools/check_all.sh lean         the two Lean layers, recorded (make check-lean)
 #     tools/check_all.sh case <n>     one case: n = 4, 6, 8, 16, 32 or 64 (make check-case N=<n>)
-#     tools/check_all.sh candidate <n>  ONE candidate, every layer: n = 16, 32, 64 (make A16, A32, A64)
+#     tools/check_all.sh fast <n>       ONE candidate, its Julia certificate only, in seconds (make a<n>)
+#     tools/check_all.sh candidate <n>  ONE candidate, every layer incl. Lean (make a<n>-complete; A16 = a16-complete)
+#
+# The candidates are the members of the Bingane–Audet family listed in
+# cases/exact_coords.jl: FAMILY_N (Julia certificate), FAMILY_LEAN_N (the
+# per-case polynomial Lean certificate) and FAMILY_TRIG_N (the general Lean
+# certificate: one theorem for every n = 16k, kernel-checked data per n). A
+# member in neither Lean list has its Lean stages reported SKIP, so its verdict
+# is INCOMPLETE.
 #
 # HOW TO READ THE RESULT. Every stage runs even if an earlier one failed, and
 # the run ends with a table: PASS, FAIL, or SKIP with the reason. Three verdicts:
@@ -66,13 +74,23 @@ case "$MODE" in
   lean)  echo "   estimated ~10 min if the Lean libraries are built, ~30 min from scratch; ~13 GB" ;;
   quick) echo "   estimated ~5 min; Julia only" ;;
   case)  echo "   estimated 1-15 min depending on the case" ;;
-  candidate) echo "   estimated on a clean tree: A16 ~18 min, A32 ~10 min, A64 ~32 min" ;;
+  fast)  echo "   estimated 10 s (n <= 256) to a few minutes (n = 1024); Julia only" ;;
+  candidate) echo "   estimated on a clean tree: A16 ~18 min, A32 ~10 min, A64 ~32 min, A128/A256 a few minutes" ;;
 esac
 [ "$memgb" -lt 16 ] && [ "$MODE" != quick ] && echo "   ${YEL}warning${RST}: less than 16 GB of memory; the A64 Lean build may not fit"
 clean_tree && echo "   git tree: clean" || echo "   git tree: ${YEL}dirty${RST} — the stages that need a clean tree will be skipped"
 
+# The family members, read from their single source (cases/exact_coords.jl).
+family_list() { sed -n "s/^const $1 = (\(.*\))/\1/p" cases/exact_coords.jl | tr -d ','; }
+FAMILY_N=$(family_list FAMILY_N); FAMILY_LEAN_N=$(family_list FAMILY_LEAN_N)
+FAMILY_TRIG_N=$(family_list FAMILY_TRIG_N)
+in_list() { case " $2 " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
+# The exact identities are proved in parallel when Julia has threads.
+export JULIA_NUM_THREADS="${JULIA_NUM_THREADS:-auto}"
+
 julia_run() { julia --project=. "$@"; }
 family_case() { (cd lean && FAMILY_CASES="$1" ./verify_family.sh); }
+trig_case() { (cd lean && TRIG_CASES="$1" ./verify_trig.sh); }
 
 # --- the modes ----------------------------------------------------------------
 case "$MODE" in
@@ -80,8 +98,9 @@ quick)
   stage test         "the Julia suite (A16 certificate stages, framework, literature, family)" julia_run test/runtests.jl
   stage literature   "the literature benchmark n = 4, 6, 8, 16, 32, 64 and its broken controls (nothing recorded)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_literature.jl
-  stage family-certs "the family certificates of A16, A32, A64 (10 gates each; nothing recorded)" \
-    bash -c 'for n in 16 32 64; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl $n || exit 1; done'
+  QUICK_N=$(for n in $FAMILY_N; do [ "$n" -le 512 ] && printf '%s ' "$n"; done)
+  stage family-certs "the family certificates of $(echo $QUICK_N | sed 's/[0-9]*/A&/g') (10 gates each; nothing recorded)" \
+    bash -c "for n in $QUICK_N; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
   stage stress-gen   "the family generator refuses 24 planted defects" tools/stress_family.sh generator
   stage family-record "results/lean_family_certificate.toml still describes this tree" julia_run pipeline/record_lean_family_certificate.jl --check
   stage paper-check  "the article and the docs agree with the certificates" julia_run pipeline/check_paper.jl
@@ -91,9 +110,11 @@ lean)
   if lean_ready; then
     stage lean-a16     "A16 Lean layer: five checks, recorded in results/lean_certificate.toml" julia_run pipeline/record_lean_certificate.jl
     stage lean-family  "family Lean layer (A16, A32, A64): five checks, recorded in results/lean_family_certificate.toml" julia_run pipeline/record_lean_family_certificate.jl
+    stage lean-general "the general Lean theorem ($(echo $FAMILY_TRIG_N | sed 's/[0-9]*/A&/g')): five checks, 12 tampered-data controls per case" trig_case "$FAMILY_TRIG_N"
   else
     skip lean-a16    "Lean or the Mathlib cache is missing (make lean-cache)"
     skip lean-family "Lean or the Mathlib cache is missing (make lean-cache)"
+    skip lean-general "Lean or the Mathlib cache is missing (make lean-cache)"
   fi
   ;;
 
@@ -138,17 +159,39 @@ all)
   stage certify-a16  "the A16 interval certificate -> results/a16_certificate.toml, logs/final_run.txt" \
     bash -c 'julia --project=. pipeline/certify_a16.jl | tee logs/final_run.txt; exit ${PIPESTATUS[0]}'
   stage literature   "the literature benchmark -> results/validation_certificate.toml" julia_run pipeline/certify_literature.jl
-  stage family-certs "the family certificates of A16, A32, A64 -> results/family/A<n>.toml" \
-    bash -c 'for n in 16 32 64; do julia --project=. pipeline/certify_family.jl $n || exit 1; done'
+  stage family-certs "the family certificates of $(echo $FAMILY_N | sed 's/[0-9]*/A&/g') -> results/family/A<n>.toml" \
+    bash -c "for n in $FAMILY_N; do julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
   if lean_ready; then
     stage lean-a16     "A16 Lean layer -> results/lean_certificate.toml" julia_run pipeline/record_lean_certificate.jl
     stage lean-family  "family Lean layer -> results/lean_family_certificate.toml" julia_run pipeline/record_lean_family_certificate.jl
+    stage lean-general "the general Lean theorem ($(echo $FAMILY_TRIG_N | sed 's/[0-9]*/A&/g')): five checks, 12 tampered-data controls per case" trig_case "$FAMILY_TRIG_N"
   else
     skip lean-a16    "Lean or the Mathlib cache is missing (make lean-cache)"
     skip lean-family "Lean or the Mathlib cache is missing (make lean-cache)"
+    skip lean-general "Lean or the Mathlib cache is missing (make lean-cache)"
   fi
   # 3. everything against everything
   stage paper-check "the article and the docs agree with every certificate" julia_run pipeline/check_paper.jl
+  ;;
+
+fast)
+  # ONE candidate, its Julia certificate only: the family certificate (ten
+  # gates, the published source run exactly among them) and, for A16, the
+  # article's dedicated eight-gate certificate. No suite, no Lean, no controls;
+  # `make a<n>-complete` runs those. Writes no record in results/.
+  in_list "$CASE" "$FAMILY_N" || { echo "usage: $0 fast <n>, n in: $FAMILY_N"; exit 2; }
+  N="$CASE"
+  stage "certificate-A$N" "the family certificate of A$N: 10 gates, incl. the published source run exactly, root uniqueness, side length, box nesting" \
+    env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl "$N"
+  # the gates themselves, one line each, so the bounds are on screen and not only in the log
+  grep -E '^[a-z_]+ +(PASS|FAIL) ' "$LOGDIR/certificate-A$N.log" | cut -c1-150 | sed 's/^/      /'
+  grep -E '^FAMILY CERTIFICATE A' "$LOGDIR/certificate-A$N.log" | sed 's/^/      /'
+  if [ "$N" = 16 ]; then
+    stage "dedicated-julia-A16" "the article's dedicated A16 interval certificate: eight gates (nothing recorded)" \
+      env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
+    grep -E '^FINAL FIRST-ORDER CERTIFICATE' "$LOGDIR/dedicated-julia-A16.log" | sed 's/^/      /'
+  fi
+  echo "   note: this is the Julia certificate only; make a$N-complete adds the suite, Lean, controls and planted defects"
   ;;
 
 candidate)
@@ -158,25 +201,40 @@ candidate)
   # set of planted defects per candidate. A16 additionally runs its two
   # dedicated layers (the article's own certificate and Lean development),
   # which predate the family layer. Writes no record in results/.
-  case "$CASE" in 16|32|64) ;; *) echo "usage: $0 candidate <16|32|64>"; exit 2 ;; esac
+  in_list "$CASE" "$FAMILY_N" || { echo "usage: $0 candidate <n>, n in: $FAMILY_N"; exit 2; }
   N="$CASE"
   stage test "the Julia suite (incl. A$N: published source run exactly, constructor, family pattern)" julia_run test/runtests.jl
-  stage "general-A$N" "the general certifier on A$N (six blocks)" julia_run pipeline/certify_literature.jl "$N"
+  if in_list "$N" "16 32 64"; then
+    stage "general-A$N" "the general certifier on A$N (six blocks)" julia_run pipeline/certify_literature.jl "$N"
+  fi
   stage "certificate-A$N" "the family certificate of A$N: 10 gates, incl. the published source run exactly, root uniqueness, side length, box nesting" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl "$N"
-  if lean_ready; then
-    stage "lean-A$N" "A$N in Lean, incl. the published constructor: build, no sorry, axioms, 11 controls + twins, regeneration" family_case "$N"
-    stage "stress-gen-A$N" "8 planted generator defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$N" tools/stress_family.sh generator
-    stage "stress-lean-A$N" "the same 8 with the pre-checks off: Lean alone rejects each, inside the planted declaration" env STRESS_CASES="$N" tools/stress_family.sh lean
-  else
-    skip "lean-A$N" "Lean or the Mathlib cache is missing (make lean-cache)"
-    stage "stress-gen-A$N" "8 planted generator defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$N" tools/stress_family.sh generator
-    skip "stress-lean-A$N" "Lean or the Mathlib cache is missing (make lean-cache)"
+  if in_list "$N" "$FAMILY_TRIG_N"; then
+    if lean_ready; then
+      stage "lean-general-A$N" "A$N by the general Lean theorem (one proof for every n = 16k): build, no sorry, axioms, 12 tampered-data controls + twins, regeneration" trig_case "$N"
+    else
+      skip "lean-general-A$N" "Lean or the Mathlib cache is missing (make lean-cache)"
+    fi
+  fi
+  if in_list "$N" "$FAMILY_LEAN_N"; then
+    if lean_ready; then
+      stage "lean-A$N" "A$N in Lean, per-case certificate incl. the published constructor: build, no sorry, axioms, 11 controls + twins, regeneration" family_case "$N"
+      stage "stress-gen-A$N" "8 planted generator defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$N" tools/stress_family.sh generator
+      stage "stress-lean-A$N" "the same 8 with the pre-checks off: Lean alone rejects each, inside the planted declaration" env STRESS_CASES="$N" tools/stress_family.sh lean
+    else
+      skip "lean-A$N" "Lean or the Mathlib cache is missing (make lean-cache)"
+      stage "stress-gen-A$N" "8 planted generator defects, each refused by the generator's exact pre-checks" env STRESS_CASES="$N" tools/stress_family.sh generator
+      skip "stress-lean-A$N" "Lean or the Mathlib cache is missing (make lean-cache)"
+    fi
+  elif ! in_list "$N" "$FAMILY_TRIG_N"; then
+    skip "lean-A$N" "A$N has no Lean certificate yet (FAMILY_LEAN_N / FAMILY_TRIG_N in cases/exact_coords.jl)"
   fi
   if clean_tree; then
     stage "mutations-A$N" "5 planted defects in A$N's data, the published source and the constructor; the family certificate rejects each" \
       tools/mutation_check.sh family "$N"
-    if lean_ready; then
+    if ! in_list "$N" "$FAMILY_LEAN_N"; then
+      in_list "$N" "$FAMILY_TRIG_N" || skip "harness-A$N" "A$N has no Lean certificate yet"
+    elif lean_ready; then
       stage "harness-A$N" "15 sabotages of verify_family.sh and of the published-constructor transcription, in A$N's own files" \
         env HARNESS_CASE="$N" tools/stress_family.sh harness
     else

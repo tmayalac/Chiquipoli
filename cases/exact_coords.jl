@@ -102,6 +102,48 @@ function reinhardt36_cs()
 end
 
 # ---- Bingane–Audet family, general n = 2^s ≥ 16 ------------------------------
+#
+# The members this package certifies, in one place: every script, test and
+# report that iterates over the family reads these tuples.
+#   FAMILY_N       the Julia family certificate (pipeline/certify_family.jl)
+#   FAMILY_LEAN_N  the members with the per-case Lean certificate
+#                  (lean/ChiquipoliFamily/A<n>/, polynomial, gen_family.jl)
+#   FAMILY_TRIG_N  the members with the general Lean certificate: one theorem
+#                  for every n = 16k (lean/ChiquipoliFamily/Trig/Assemble.lean)
+#                  and kernel-checked data per n (ChiquipoliFamily/T<n>/,
+#                  gen_trig.py). 16, 32, 64 are thus covered twice in Lean.
+const FAMILY_N = (16, 32, 64, 128, 256, 512, 1024)
+const FAMILY_LEAN_N = (16, 32, 64)
+const FAMILY_TRIG_N = (16, 32, 64, 128, 256)
+
+"""
+    gn_edges(n) -> Vector{Tuple{Int,Int}}
+
+The graph `G_n` of J. Ayala Hoffmann, *Moving-Frame Criteria and Powers-of-Two
+Graph Recurrences for Equilateral Small Polygons* (Section 4), in closed form:
+
+    E_0 = {{i, i+h}   : 0 ≤ i < h, i ≠ h/2}
+    E_- = {{i, i+h-1} : 0 ≤ i < h, i ≡ 2, 3 (mod 4)}
+    E_+ = {{i, i+h+1} : 0 ≤ i < h, i ≡ 0, 3 (mod 4)}        h = n/2, indices mod n,
+
+returned as sorted pairs `(i, j)`, `i < j`. That paper proves `|E(G_n)| = n - 1`
+and that the published constructor realises every edge as a unit chord for
+every value of its parameter. Here it is used in two ways only: the candidate
+files write their active graph out as data, and `test/literature.jl` checks
+that data against this formula for every member. The certificate never trusts
+either; it proves every listed pair has distance 1 and every other pair < 1.
+"""
+function gn_edges(n::Int)
+    (ispow2(n) && n >= 16) || throw(DomainError(n, "n must be a power of 2 >= 16"))
+    h = n ÷ 2
+    E = Set{Tuple{Int,Int}}()
+    for i in 0:h-1
+        i != h ÷ 2 && push!(E, minmax(i, mod(i + h, n)))
+        mod(i, 4) in (2, 3) && push!(E, minmax(i, mod(i + h - 1, n)))
+        mod(i, 4) in (0, 3) && push!(E, minmax(i, mod(i + h + 1, n)))
+    end
+    return sort!(collect(E))
+end
 # The OPTIGON constructor `cstrt_audet_ngon(n)` written ONCE over an abstract
 # angle algebra, so the same formulas give both the interval coordinates the
 # certifier evaluates and the exact Q(c,s) coordinates the identity engine

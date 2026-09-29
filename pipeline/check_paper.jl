@@ -20,6 +20,11 @@
 using TOML, Printf, SHA
 
 const ROOT  = normpath(joinpath(@__DIR__, ".."))
+# The family members, read from their single source (cases/exact_coords.jl).
+_family(name) = Tuple(parse.(Int, split(match(Regex("^const $name = \\((.*)\\)", "m"),
+    read(joinpath(ROOT, "cases", "exact_coords.jl"), String)).captures[1], ", ")))
+const FAMILY_N = _family("FAMILY_N")
+const FAMILY_LEAN_N = _family("FAMILY_LEAN_N")
 const PAPER = joinpath(ROOT, "paper")
 const PDF   = joinpath(PAPER, "main.pdf")
 const TEX   = joinpath(PAPER, "main.tex")
@@ -102,7 +107,7 @@ section("provenance: the log and every record declare one commit, from a clean t
 let
     recs = vcat(["results/a16_certificate.toml", "results/validation_certificate.toml",
                  "results/lean_certificate.toml", "results/lean_family_certificate.toml"],
-                ["results/family/A$n.toml" for n in (16, 32, 64)])
+                ["results/family/A$n.toml" for n in FAMILY_N])
     decl = Tuple{String,String,Bool}[]          # (artifact, commit, clean)
     nocommit = String[]
     for f in recs
@@ -671,13 +676,13 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
 end
 
 # ---------------------------------------------------------------------------
-# The family layer (A16, A32, A64) is verified locally and recorded in
+# The family layer (FAMILY_LEAN_N) is verified locally and recorded in
 # results/lean_family_certificate.toml with a hash of every file the verdict
 # depends on. The record is only evidence while it describes the tree: an edit
 # to a certificate file, a control, the generator or its Julia inputs after the
 # run makes it stale, and that must fail here rather than pass unnoticed.
 section("the family certificates (pipeline/certify_family.jl), against the tree")
-for n in (16, 32, 64)
+for n in FAMILY_N
     path = joinpath(ROOT, "results", "family", "A$n.toml")
     if !isfile(path)
         skip("results/family/A$n.toml is CERTIFIED and describes the tree")
@@ -705,8 +710,8 @@ let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
         chk("the recorded family certificate is a PASS and describes this tree", ok)
         ok || print(txt)
         rec = TOML.parsefile(fam)
-        chk("the record covers A16, A32 and A64",
-            all(haskey(get(rec, "cases", Dict()), "A$n") for n in (16, 32, 64)))
+        chk("the record covers $(join(("A$n" for n in FAMILY_LEAN_N), ", "))",
+            all(haskey(get(rec, "cases", Dict()), "A$n") for n in FAMILY_LEAN_N))
         sc = get(rec, "scope", Dict())
         chk("the record states the Lean identification with the published constructor",
             any(x -> occursin("published_locally_maximal", x), get(sc, "formalized", String[])))
