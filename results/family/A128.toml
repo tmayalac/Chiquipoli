@@ -60,13 +60,13 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A128 (Bingane–Audet)"
-git_commit = "102bea9b90075c8d414a2c0b66611fbd7a7d2053"
-git_source_clean = false
+git_commit = "a2ba9a62d2315d09d4074eff42e714f609929c77"
+git_source_clean = true
 julia_version = "1.12.6"
 n = 128
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-09-29T15:49:48Z"
+utc = "2026-09-29T22:26:45Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"

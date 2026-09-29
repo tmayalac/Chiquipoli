@@ -208,28 +208,34 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "dc6e7df36c128dfefd231b2df332505e131ad22e"
+git_commit = "a2ba9a62d2315d09d4074eff42e714f609929c77"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.1.1 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-25T01:31:41Z"
+utc = "2026-09-29T22:23:31Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
 [[source_sha256]]
 file = "pipeline/certify_a16.jl"
-sha256 = "707ddceb32327f620befd04cc3e0c074100d794e289005e68b8ecb9e0c4bc584"
+sha256 = "d14cf1910b23a5949102bd541ca25be5a55a135fc97f7eb2a92bcac5c2854517"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
-sha256 = "c0273354ae8be9a9c4a710b7d98130102a5ece26d058c27d0c8cd4e36c7b8bb2"
+sha256 = "48767818358adf53831c0179b365a13661f617635d80709e4b59f4f17d60eecd"
 [[source_sha256]]
 file = "pipeline/certify_literature.jl"
 sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 [[source_sha256]]
+file = "pipeline/certify_radius.jl"
+sha256 = "a128af5f1d0f257df502862a22dcc7389839ae8afa28028883276afd32f0142b"
+[[source_sha256]]
 file = "pipeline/check_paper.jl"
-sha256 = "3950f403913003518a2e22062594805ed23eb202636f3ee35fb7d6bc873d408d"
+sha256 = "3a8c2f560e7aeddd206edafe4d93462e5206eec10da07f8cc6fcfced585d29d8"
+[[source_sha256]]
+file = "pipeline/family_table.jl"
+sha256 = "84bf3d2783bc614836249d8459337246cfaacefe683f71b88dfb1204198f8177"
 [[source_sha256]]
 file = "pipeline/record_lean_certificate.jl"
 sha256 = "0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216"
@@ -262,10 +268,10 @@ file = "src/A16Certificate.jl"
 sha256 = "25f544cfe29066473517d97b6648223e441af2049b33b8ee1a55b6856bd945a5"
 [[source_sha256]]
 file = "src/ExactIdentity.jl"
-sha256 = "689f2bddc490b420c616389bae7afdaec053208eb0a5058e54567856dd3cd4bb"
+sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "6f7f606f5cef44da29fda03b44876a0fab2f48abfcf4f26980311c3e7183699e"
+sha256 = "5ab57525ab6d1d2bcd4ce53d9a9259630783fa360c92b75158a720d0ac2acdf2"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"
@@ -301,7 +307,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "4e5c286575b6f205907ef3d4e27d1bf330d322d7bd7fc6afdff927de323dee5b"
+sha256 = "264c2c5dc7fcd92a63ccc93cf42910bafcda16308c7620f6f1c0459024b2aca5"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"

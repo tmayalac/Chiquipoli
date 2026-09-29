@@ -4,7 +4,7 @@
 bigfloat_precision_bits = 256
 certificate = "explicit radius of strict local maximality of A16 (pipeline/certify_radius.jl)"
 norm = "Euclidean on (R^2)^16 x R, after optimal orientation-preserving alignment (Procrustes)"
-utc = "2026-09-29T15:48:28Z"
+utc = "2026-09-29T22:26:07Z"
 
 [radius]
 alpha_norm_upper_bound = "4.003561251698325095286997375581222347584060738925702783358934812704211614680212"
