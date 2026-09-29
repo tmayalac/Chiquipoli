@@ -44,8 +44,8 @@ note "=== 1. build ==="
 # would otherwise build them in parallel.
 # The theorems proved once for every n (no per-case data).
 t0=$(date +%s)
-if lake build ChiquipoliFamily.Trig.RootAll ChiquipoliFamily.Trig.Strip ChiquipoliFamily.Trig.ConstructorAll >"/tmp/chiqui_trig_build_all.log" 2>&1; then
-  ok "every n: lake build Trig.RootAll, Trig.Strip, Trig.ConstructorAll ($(( $(date +%s) - t0 )) s)"
+if lake build ChiquipoliFamily.Trig.RootAll ChiquipoliFamily.Trig.Strip ChiquipoliFamily.Trig.ConstructorAll ChiquipoliFamily.Trig.P3Final >"/tmp/chiqui_trig_build_all.log" 2>&1; then
+  ok "every n: lake build Trig.RootAll, Trig.Strip, Trig.ConstructorAll, Trig.P3Final ($(( $(date +%s) - t0 )) s)"
 else
   bad "the all-n theorems do not build (see /tmp/chiqui_trig_build_all.log)"
   grep -m5 -E 'error' /tmp/chiqui_trig_build_all.log
@@ -109,9 +109,10 @@ audit=$(mktemp "${TMPDIR:-/tmp}/chiqui_trig_audit.XXXXXX").lean
   echo "import ChiquipoliFamily.Trig.RootAll"
   echo "import ChiquipoliFamily.Trig.Strip"
   echo "import ChiquipoliFamily.Trig.ConstructorAll"
+  echo "import ChiquipoliFamily.Trig.P3Final"
   for t in published_of_checks root_facts sides_eq diams_eq small_of stress_encl bal_zero \
            rigid_of_henneberg stationary_of_bal conv_sound far_sound encl_of_vdOK Shp.nsq_pts \
-           closing "closing'" encF_sound encFd_sound root_unique tab_sound enc_sound vertex_eval root_all Strip.strip_rigid Strip.gn_rigid Strip.problem2 Layout.vertexS_eq ConstructorAll.chords_all ConstructorAll.sides_all ConstructorAll.closing_all ConstructorAll.published_rigid_all ConstructorAll.published_all; do
+           closing "closing'" encF_sound encFd_sound root_unique tab_sound enc_sound vertex_eval root_all Strip.strip_rigid Strip.gn_rigid Strip.problem2 Layout.vertexS_eq ConstructorAll.chords_all ConstructorAll.sides_all ConstructorAll.closing_all ConstructorAll.published_rigid_all ConstructorAll.published_all RungVec.rung_vec P3.force_all P3.local_max_of_positive P3.yy_pos P3.lamR_pos P3.sigS_neg P3.strict_local_max_all; do
     echo "#print axioms Chiquipoli.Family.Trig.$t"
   done
   for c in $CASES; do echo "#print axioms Chiquipoli.Family.T$c.published_locally_maximal"; done

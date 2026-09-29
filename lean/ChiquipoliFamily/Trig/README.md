@@ -120,14 +120,39 @@ Three more modules have no per-case data. Their combinatorics are proved by
   is equilateral, has unit distance on every pair of `G_n`, and is
   infinitesimally rigid.
 
-**Not yet proved for every `n`:**
-* convexity;
-* that no pair outside `G_n` reaches distance `1` (Problem 1);
-* positivity of the multipliers (Problem 3).
+## Problem 3 and strict local maximality, for every `n = 16k`
 
-Until those are proved, the local-maximality statement for all `n` is not
-proved: `published_of_checks` covers `n = 16 … 256` only, through per-case
-kernel checks.
+The modules below give the multipliers of the note on Problem 3 in closed form
+and prove the whole chain in Lean, with no per-case data:
+
+* `RungVec.lean`, `rung_vec`: Lemma R. Along the strip, rung `ρ_i` is
+  `∓Φ_{8k−1−i}`, so consecutive rungs turn by exactly `z`.
+* `P3Core.lean`, `P3Stress.lean`: the stress, i.e. side weights `sigS` and rung
+  weights `lamR`, from the recursion `tau`. `rung_core` is the identity
+  `λ_i u_i − S_{i−1} + S_i = ε_i κ (1, 0)` for one rung.
+* `P3Vertices.lean`, `P3Sym.lean`, `P3Balance.lean`, `force_all`: equilibrium
+  at every vertex.
+  * Interior vertices: the identity above, summed over the vertex's run of rungs.
+  * The gap vertices `A`, `C` and the vertex `h`: directly.
+  * The second half: the symmetry `x ↦ −x`.
+  * The vertex `0`: global equilibrium.
+* `P3Main.lean`, `local_max_of_positive`: Theorem 3.5 (`thm_3_5`), with the
+  rigidity of the strip and the stationarity from `force_all`.
+* `P3Gap.lean`, `yy_pos`: the gap is open, `a = y(z) > 0`, for `n ≥ 32`. The
+  proof uses the mean value theorem, `|y'| ≤ 16` and the closed form of `y(π/n)`.
+* `P3Pos.lean`: the bounds on `τ` and `κ` (`tau_lower`, `tau_pos`) give
+  `λ_j > 0` (`lamR_pos`) and negative side weights (`sigS_neg`). The switch
+  `a → t` uses Jordan's inequality (`switch_ineq`).
+* `P3Final.lean`, **`strict_local_max_all`**: for every `n = 16k`, the unique
+  zero of `F_n` in `(0, π/n)` gives a polygon that no nearby equilateral small
+  `n`-gon beats in side length, modulo Euclidean motions. The case `n = 16` is
+  taken from the per-case certificate `T16`.
+
+**Not yet proved for every `n`:** that the published polygon is itself small
+(Problem 1: no pair outside `G_n` at distance `> 1`) and convex. Until then,
+`strict_local_max_all` says that nearby *feasible* polygons are no better. That
+the published polygon is feasible is proved, per case, for `n = 16 … 256`
+(`published_of_checks`).
 
 ## The checks, per `n`
 
