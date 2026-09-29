@@ -42,6 +42,14 @@ if want 1; then
 note "=== 1. build ==="
 # One module at a time: the check files of A256 peak at ~12 GB each, and lake
 # would otherwise build them in parallel.
+# The theorems proved once for every n (no per-case data).
+t0=$(date +%s)
+if lake build ChiquipoliFamily.Trig.RootAll ChiquipoliFamily.Trig.Strip ChiquipoliFamily.Trig.ConstructorAll >"/tmp/chiqui_trig_build_all.log" 2>&1; then
+  ok "every n: lake build Trig.RootAll, Trig.Strip, Trig.ConstructorAll ($(( $(date +%s) - t0 )) s)"
+else
+  bad "the all-n theorems do not build (see /tmp/chiqui_trig_build_all.log)"
+  grep -m5 -E 'error' /tmp/chiqui_trig_build_all.log
+fi
 for c in $CASES; do
   t0=$(date +%s); built=1
   : >"/tmp/chiqui_trig_build_$c.log"
@@ -98,9 +106,12 @@ audit=$(mktemp "${TMPDIR:-/tmp}/chiqui_trig_audit.XXXXXX").lean
 {
   for c in $CASES; do echo "import ChiquipoliFamily.T$c.Main"; done
   echo "import ChiquipoliFamily.Trig.Assemble"
+  echo "import ChiquipoliFamily.Trig.RootAll"
+  echo "import ChiquipoliFamily.Trig.Strip"
+  echo "import ChiquipoliFamily.Trig.ConstructorAll"
   for t in published_of_checks root_facts sides_eq diams_eq small_of stress_encl bal_zero \
            rigid_of_henneberg stationary_of_bal conv_sound far_sound encl_of_vdOK Shp.nsq_pts \
-           closing "closing'" encF_sound encFd_sound root_unique tab_sound enc_sound vertex_eval; do
+           closing "closing'" encF_sound encFd_sound root_unique tab_sound enc_sound vertex_eval root_all Strip.strip_rigid Strip.gn_rigid Strip.problem2 Layout.vertexS_eq ConstructorAll.chords_all ConstructorAll.sides_all ConstructorAll.closing_all ConstructorAll.published_rigid_all ConstructorAll.published_all; do
     echo "#print axioms Chiquipoli.Family.Trig.$t"
   done
   for c in $CASES; do echo "#print axioms Chiquipoli.Family.T$c.published_locally_maximal"; done
