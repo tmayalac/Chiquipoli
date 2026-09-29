@@ -5,10 +5,15 @@ abstract: >-
   Interval-arithmetic and exact-rational certification of the first-order
   hypotheses for the Bingane-Audet equilateral small hexadecagon, with a Lean 4
   formalisation of the criterion itself, so that the passage from the certified
-  data to strict local maximality is kernel checked end to end.
+  data to strict local maximality is kernel checked end to end. Also covered:
+  the Bingane-Audet family A16 to A1024 in Julia, and A16 to A256 in Lean by
+  kernel-checked data. A Lean proof shows, for every n = 16k, that the polygon
+  built by the published constructor is feasible and a strict local maximiser
+  of the perimeter. An explicit radius of strict local maximality is given for
+  A16.
 type: software
-version: "1.1.1"
-date-released: "2026-09-24"
+version: "1.2.0"
+date-released: "2026-09-29"
 license: MIT
 repository-code: "https://github.com/TilinHub/Chiquipoli"
 keywords:

@@ -5,6 +5,72 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-09-29
+
+The family A16 … A1024 in Julia, A16 … A256 in Lean by kernel-checked data, and
+a Lean proof for every n = 16k. `make check-all` passes on a clean tree:
+11 stages, including the 16 + 35 mutations and the 63 planted family defects.
+
+### Every n = 16k in Lean: the published polygon is a strict local maximiser
+
+`lean/ChiquipoliFamily/Trig/` now proves, **with no per-case data**,
+`Chiquipoli.Family.Trig.P1.published_all_n`. For every n = 16k, upstream's
+`F_n` has exactly one zero `z` in `(0, π/n)`; it lies in `(π/(n+2), π/n)` and is
+simple. The polygon the published OPTIGON constructor builds there:
+- is strictly convex, equilateral and small (`IsFeasibleConvex`);
+- is a strict local maximiser of the perimeter among equilateral small n-gons,
+  modulo Euclidean motions.
+
+This is the statement of `A<n>/Published.lean` for every n = 16k. The case
+n = 16 comes from the per-case certificate `T16`; n ≥ 32 is proved
+analytically. Only Lean's three standard axioms are used, and there is no
+`sorry` and no `native_decide`. `verify_trig.sh`, and hence `make lean-general`
+and `make check-all`, builds every module and audits every headline theorem.
+The chain:
+
+- **The root** (`RootAll.lean`, `root_all`):
+  - a sign change at `π/(n+2)` and `π/n`, where `F_n(π/n)` is in closed form;
+  - the location `|y(z)| ≤ 2 sin²(z/2)`;
+  - `F_n' < 0` at every zero, using `|y'| ≤ 16` and a main term `≥ 2.6`.
+- **Rigidity** (`Strip.lean`): the sides and the pairs of `G_n` form a
+  triangulated strip that leaves out only the two closing sides. Each step adds
+  a triangle with sides `1, 1, ℓ`, so the framework is infinitesimally rigid
+  (`gn_rigid`). `problem2` is Problem 2 of *Moving-Frame Criteria*, with the
+  constructor's direction as a hypothesis.
+- **The constructor** (`Layout.lean`, `ConstructorAll.lean`):
+  - `vertexS_eq` gives the symbolic run of upstream's code for every n = 16k,
+    by a loop invariant;
+  - every pair of `G_n` is at distance 1 (`chords_all`);
+  - every side is `2 sin(z/2)`, the closing sides exactly at a zero of `F_n`.
+- **Problem 3, the multipliers** (`RungVec.lean`, `P3*.lean`):
+  - Lemma R: the rungs turn by exactly `z`;
+  - a self-stress in closed form, with equilibrium at every vertex (`force_all`);
+  - positivity (`lamR_pos`, `sigS_neg`). This needs the gap to be open,
+    `a > 0` (`yy_pos`, by the mean value theorem), and Jordan's inequality at
+    the switches `a → t`.
+  - Theorem 3.5 then gives `strict_local_max_all`.
+- **Problem 1, feasibility** (`P1*.lean`):
+  - every side is `ℓ e(α_x)` with the angle in closed form (`side_all`);
+  - the angles increase with span `< 2π`, hence convexity (`convex_of_angles`,
+    `convex_all`);
+  - for every direction, a pair of support vertices at distance `≤ 1` (a rung,
+    the middle rung, or a gap pair `A–D` of width `a + cos φ ≤ 1`), hence
+    smallness (`small_of_antipodal`, `small_all`).
+
+The theorem covers every n divisible by 16, not only powers of two. A numerical
+check of the stress, of `λ > 0`, of the inactive margin and of convexity at
+n = 48, 80, 96 agrees.
+
+### An explicit radius of strict local maximality for A16
+
+`make radius` (`pipeline/certify_radius.jl`, proof in `docs/guide/radius.md`)
+certifies `r ≥ 6.63 × 10⁻⁴`: within that distance, modulo Euclidean motions,
+no feasible 16-gon has a larger perimeter than A16. The bound comes from an
+exact quadratic Taylor expansion with Procrustes alignment,
+`r = σℓ / (2(1 + ‖α‖₂/λ_min))`. The constant `σ²` is certified by an interval
+Cholesky factorisation (Alefeld–Mayer). The record is
+`results/radius_certificate.toml`; `check_all.sh` runs it.
+
 ### The family certificate from A16 to A1024, and one command per polygon
 
 - **Seven members, one list.** `cases/exact_coords.jl` now holds the family
