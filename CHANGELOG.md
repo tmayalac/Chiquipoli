@@ -3,13 +3,13 @@
 All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.3.0] — 2026-09-30
 
 ### Repository layout
 
 No certified result changed. The theorem names, the article's commands
-(`lean/verify.sh`, `pipeline/*.jl`) and the A16 formal layer (`ChiquipoliLean/`)
-are unchanged.
+(`lean/verify.sh`, `pipeline/*.jl`) and the layout of the A16 formal layer
+(`ChiquipoliLean/`) are unchanged.
 
 - **`cases/`:** `family/A16 … A1024`, `literature/` and `negative/`.
 - **`lean/ChiquipoliFamily/`:** three directories, one per method.
@@ -28,6 +28,42 @@ are unchanged.
 - **Generators:** they write the new paths, and every generated file still
   reproduces byte for byte.
 - **Root directory:** the working notes moved out of it.
+
+### Code and metadata
+
+No certified value changed.
+
+- `src/SmallPolygons.jl`:
+  - the cached `fastmul_verified` verdict is computed under a lock, so
+    concurrent first calls run the sentinel once;
+  - comments now state that the Krawczyk radius search (start, factor 10,
+    24 attempts), the 0.05 gauge threshold and the default `radius` only
+    decide whether a certificate is found. Soundness rests on the inclusion
+    test and on the certified regularity of `Q`, so a bad value can only make
+    a block fail.
+- `.zenodo.json`, which Zenodo reads in preference to `CITATION.cff`, still
+  said version 1.0.0 with the 1.0 description. It is now synced, and
+  `pipeline/check_paper.jl` checks its version against `Project.toml`.
+
+### The article's scope, and what the package checks about it
+
+The article is about A16 alone, and it now says only that. It no longer carries
+the family A32 … A1024, its table, or the Lean layers for n > 16. They stay in
+the package, under "Beyond the article" in the README.
+
+- The rhombus of the article's Section 4 was labelled clockwise, against the
+  convention of Definition 2.1. It is now `(0,0), (1/2,-2/5), (1,0), (1/2,2/5)`,
+  both in the article and in `Instances/SquareAndRhombus.lean`. The proofs are
+  unchanged up to sign.
+- `pipeline/check_paper.jl`:
+  - Table 5 is gone, so the check that it matched `results/family/` is replaced
+    by a check that the article states no result about `A_n` for `n > 16`;
+  - the supplement's citation of the package version is now checked, like the
+    article's. The supplement still cited 1.1.1.
+- README:
+  - a "Beyond the article" section;
+  - Theorem 6.4, the explicit radius, in the map from the article to the code;
+  - `make check-all` takes ~65 min, not ~35.
 
 ## [1.2.0] — 2026-09-29
 

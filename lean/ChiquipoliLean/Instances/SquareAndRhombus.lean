@@ -5,7 +5,7 @@ Two propositions the paper states about explicit small quadrilaterals:
 
   * the **square** is a strict local maximiser (Lemma "Square multiplier and
     rank data" + Proposition "Strict local maximality of the square");
-  * the **rhombus** with vertices `(0,0), (1/2,2/5), (1,0), (1/2,-2/5)` is not
+  * the **rhombus** with vertices `(0,0), (1/2,-2/5), (1,0), (1/2,2/5)` is not
     (Proposition "Rhombus instability").
 
 Both are instantiations of Section 3's machinery at explicit coordinates, so
@@ -174,7 +174,8 @@ theorem square_no_admissible_direction
 
 /-! ## The nonoptimal rhombus
 
-`p₀ = (0,0)`, `p₁ = (1/2, 2/5)`, `p₂ = (1,0)`, `p₃ = (1/2, −2/5)`, with
+`p₀ = (0,0)`, `p₁ = (1/2, −2/5)`, `p₂ = (1,0)`, `p₃ = (1/2, 2/5)`
+(labelled counterclockwise), with
 `ℓ = √41/10` and the single active diameter `{0,2}`.
 
 This one is proved **outright** without needing Theorem 3.5: the realising curve
@@ -186,20 +187,20 @@ def sqdist (a b : ℝ × ℝ) : ℝ := (b.1 - a.1) ^ 2 + (b.2 - a.2) ^ 2
 /-- The paper's deformation: `p₁` and `p₃` move apart vertically at rate `δ`,
 `p₀` and `p₂` stay put. The half-height at time `t` is `2/5 + tδ`. -/
 noncomputable def rhoP (δ t : ℝ) : Fin 4 → ℝ × ℝ :=
-  ![(0, 0), (1/2, 2/5 + t*δ), (1, 0), (1/2, -(2/5 + t*δ))]
+  ![(0, 0), (1/2, -(2/5 + t*δ)), (1, 0), (1/2, 2/5 + t*δ)]
 
 /-- The perimeter along that curve, `L(t) = 4ℓ(t)`. -/
 noncomputable def rhoL (δ t : ℝ) : ℝ := 4 * Real.sqrt (1/4 + (2/5 + t*δ)^2)
 
 @[simp] lemma rhoP_0 (δ t : ℝ) : rhoP δ t 0 = (0, 0) := rfl
-@[simp] lemma rhoP_1 (δ t : ℝ) : rhoP δ t 1 = (1/2, 2/5 + t*δ) := rfl
+@[simp] lemma rhoP_1 (δ t : ℝ) : rhoP δ t 1 = (1/2, -(2/5 + t*δ)) := rfl
 @[simp] lemma rhoP_2 (δ t : ℝ) : rhoP δ t 2 = (1, 0) := rfl
-@[simp] lemma rhoP_3 (δ t : ℝ) : rhoP δ t 3 = (1/2, -(2/5 + t*δ)) := rfl
+@[simp] lemma rhoP_3 (δ t : ℝ) : rhoP δ t 3 = (1/2, 2/5 + t*δ) := rfl
 
 /-- The four vertices, enumerated without touching `Fin` index arithmetic. -/
 lemma rhoP_cases (δ t : ℝ) (i : Fin 4) :
-    rhoP δ t i = (0, 0) ∨ rhoP δ t i = (1/2, 2/5 + t*δ) ∨
-    rhoP δ t i = (1, 0) ∨ rhoP δ t i = (1/2, -(2/5 + t*δ)) := by
+    rhoP δ t i = (0, 0) ∨ rhoP δ t i = (1/2, -(2/5 + t*δ)) ∨
+    rhoP δ t i = (1, 0) ∨ rhoP δ t i = (1/2, 2/5 + t*δ) := by
   fin_cases i
   · exact Or.inl rfl
   · exact Or.inr (Or.inl rfl)

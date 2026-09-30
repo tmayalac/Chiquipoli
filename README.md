@@ -12,7 +12,8 @@ consumes for the Bingane–Audet hexadecagon $A_{16}$.
 ## What is certified
 
 The article's abstract criterion (Theorem 3.5) has exactly two hypotheses. This
-package establishes both for $A_{16}$, and nothing else:
+package establishes both for $A_{16}$ (what else it carries, which the article
+does not use, is under [Beyond the article](#beyond-the-article)):
 
 1. **A multiplier identity holds with every active-diameter multiplier
    strictly positive.**
@@ -71,6 +72,20 @@ motions. `Feasible.thm_3_5` is the general statement. See
 `docs/guide/scope-and-limitations.md` states the full scope, and `docs/audits/referee-report.md` is our
 own adversarial review of this package.
 
+## Beyond the article
+
+The article concerns $A_{16}$ alone. The package also carries, and checks on
+every `make check-all`, results that the article does not state and its proofs
+do not use:
+
+- the same first-order certificate for the Bingane–Audet polygons
+  $A_{32},\dots,A_{1024}$ (`pipeline/certify_family.jl`, `results/family/`);
+- Lean certificates for the published constructor at $A_{16},\dots,A_{256}$, and
+  a Lean proof that for **every** $n = 16k$ the polygon it builds is a strict
+  local maximiser (`lean/ChiquipoliFamily/`, `AllN/Main.lean`);
+- a benchmark on the known optima $n = 4, 6, 8$ and three deliberately broken
+  variants of $A_{16}$ (`pipeline/certify_literature.jl`).
+
 ---
 
 ## Running it
@@ -102,7 +117,7 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 | What it does | macOS / Linux | Windows (Git Bash or WSL) |
 |---|---|---|
 | Quick check: Julia only, writes nothing (~5 min) | `make check` | `bash tools/check_all.sh quick` |
-| Everything, in order, refreshing every record in `results/` (~35 min, 16 GB) | `make check-all` | `bash tools/check_all.sh all` |
+| Everything, in order, refreshing every record in `results/` (~65 min, 16 GB) | `make check-all` | `bash tools/check_all.sh all` |
 | Both Lean layers, verified and recorded | `make check-lean` | `bash tools/check_all.sh lean` |
 | One case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress) | `make check-case N=32` | `bash tools/check_all.sh case 32` |
 | One candidate, every layer: A16 (~18 min), A32 (~10 min), A64 (~32 min) | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
@@ -304,7 +319,7 @@ pipeline/                     THE CERTIFICATES: programs that write results/
   certify_literature.jl         make literature  -> results/validation_certificate.toml
   certify_family.jl             the family certificate of A16 ... A1024 -> results/family/A<n>.toml
   certify_radius.jl             make radius: an explicit radius for A16 -> results/radius_certificate.toml
-  family_table.jl               the article's Table 5, from results/family/
+  family_table.jl               the family table (not in the article), from results/family/
   record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
   record_lean_family_certificate.jl  make lean-family-certificate -> results/lean_family_certificate.toml
   check_paper.jl                make paper-check: the article against every record
@@ -362,6 +377,7 @@ To find the code behind a statement of the article:
 | Prop 6.2(6), rank 30 | `pipeline/stages/04_certify_rank.jl` | `Generated/Rank.lean`, `Instances/A16Rank30.lean` |
 | Theorem 3.5 | (not computed) | `Theory/FirstOrder.lean` … `Theory/FeasibleMain.lean` |
 | Theorem 6.3, A16 is a strict local maximum | (not computed) | `Instances/A16LocalMax.lean` |
+| Theorem 6.4, an explicit radius | `pipeline/certify_radius.jl` | (not formalised) |
 | Proposition 4.2, the square | (not computed) | `Instances/SquareLocalMax.lean` |
 
 Lean paths are under `lean/ChiquipoliLean/`. `docs/guide/provenance-mapping.md`

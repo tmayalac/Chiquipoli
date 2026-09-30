@@ -196,9 +196,12 @@ f64_enclosure(M) = all(isguaranteed, M) ? map(x -> interval(Float64, inf(x), sup
 # requires every entry of the result to contain the EXACT range of the product,
 # computed in Rational{BigInt}. If a single entry fails, every product falls
 # back to the :slow mode. The verdict is cached for the process and reported in
-# the rank and multiplier blocks.
+# the rank and multiplier blocks. The verdict is a property of the machine, not
+# of any candidate, so one per-process cache is the right scope; the lock makes
+# the first computation happen once even if several threads ask at the same time.
 # ---------------------------------------------------------------------------
 const _FASTMUL_VERIFIED = Ref{Union{Nothing,Bool}}(nothing)
+const _FASTMUL_LOCK = ReentrantLock()
 
 function _sentinel_matrix(state::Ref{UInt64}, m, k)
     next() = (state[] = state[] * 0x5851f42d4c957f2d + 0x14057b7ef767814f;
@@ -223,7 +226,14 @@ function _exact_contains(C, A, B)
 end
 
 function fastmul_verified()
-    _FASTMUL_VERIFIED[] === nothing || return _FASTMUL_VERIFIED[]
+    v = _FASTMUL_VERIFIED[]
+    v === nothing || return v                              # cached: no lock needed
+    return lock(_compute_fastmul_verified, _FASTMUL_LOCK)
+end
+
+function _compute_fastmul_verified()
+    v = _FASTMUL_VERIFIED[]
+    v === nothing || return v                              # another thread got here first
     ok = true
     st = Ref(0x2026092800000001)
     for (m, k, p) in ((37, 53, 29), (64, 64, 64), (101, 17, 3), (9, 131, 47))
@@ -310,6 +320,11 @@ function krawczyk_linear(MI, bI)
     C = interval.(C0); x0 = interval.(C0*b0); nn = length(x0)
     Rm = _eye(eltype(MI), nn) - imul(C, MI)
     residual = imul(C, bI - imul(MI, x0))
+    # The loop is a search for a radius at which the Krawczyk inclusion holds,
+    # not a convergence argument: the inclusion test below is sound at every
+    # radius (Krawczyk's theorem), so the starting radius, the factor 10 and the
+    # budget of 24 attempts (radius up to 10^24 times the start) decide only
+    # whether a certificate is found. Exhausting them returns pass=false.
     radius = max(T(1e-50), 10*maximum(interval_abs_bound.(residual)))
     for _ in 1:24
         X = [interval(-radius, radius) for _ in 1:nn]
@@ -359,6 +374,10 @@ function general_multipliers(p, n, active, ell)
                             "multiplier vector can be certified")
     Dt0 = Float64.(mid.(Dt)); y0 = Dt0 \ Float64.(mid.(g))
     # gauge coords {x_i, y_i, x_j} with y_i ≠ y_j (⇒ Q regular)
+    # The threshold 0.05 only picks which vertex j to use: any j with y_j clearly
+    # away from y_0 keeps Q well conditioned. Soundness does not depend on it,
+    # since Q's regularity is certified below (`regularity_test(Q)`); a bad pick
+    # can only make the block fail.
     ys = [mid(p[k+1, 2]) for k in 0:n-1]
     jrel = findfirst(k -> abs(ys[k+1] - ys[1]) > 0.05, 1:n-1)
     jrel === nothing && return (pass=false, reason="no vertex with y≠y_0")
@@ -404,6 +423,13 @@ end
 Run the generic blocks and return a report with an explicit epistemic status
 per block. Never raises on a refuted property; instead marks the block :FAIL
 (this is what negative controls exercise).
+
+`radius` is the half-width of the box `Zbox` around the nominal root. The
+interval blocks are evaluated on the whole box, and a root inside it is
+certified by the sign change at its ends, so the value only has to be large
+enough for the box to contain the root (so that the sign change is there to
+be certified) and small enough for the enclosures to stay narrow at `precision`
+bits; a bad value makes a block fail and cannot make one pass.
 """
 function certify(cand::Candidate; radius=big"1e-24", precision=256)
     # Scoped, not global: a bare `setprecision(BigFloat, precision)` here used to
