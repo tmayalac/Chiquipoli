@@ -50,7 +50,7 @@ n in FAMILY_N || error("n must be one of $(FAMILY_N) (cases/exact_coords.jl, FAM
 # nominal root, and exact identities from the generic Q(c,s) instance. For
 # n = 16 this deliberately does NOT use the dedicated A16 constructor, so that
 # A16 is certified here exactly as A32 and A64 are.
-base = include(joinpath(ROOT, "cases", "A$(n)_bingane_audet", "candidate.jl"))
+base = include(joinpath(ROOT, "cases", "family", "A$(n)", "candidate.jl"))
 let Pn = BigFloat(π) / n
     global cand = Candidate("A$(n)-family", n, audet_coords(n),
         (F = audet_F(n), lo = 2 * asin(sin(Pn) / 2), hi = Pn, nominal = base.root.nominal),
@@ -188,7 +188,7 @@ if get(ENV, "CHIQUI_NO_RECORD", "") == "1"
 else
     files = vcat(["src/" * f for f in readdir(joinpath(ROOT, "src")) if endswith(f, ".jl")],
                  ["cases/exact_coords.jl", "cases/optigon_exact.jl", "cases/upstream/optigon/cstrt_audet_ngon.jl",
-                  "cases/A$(n)_bingane_audet/candidate.jl", "pipeline/certify_family.jl", "Project.toml", "Manifest.toml"])
+                  "cases/family/A$(n)/candidate.jl", "pipeline/certify_family.jl", "Project.toml", "Manifest.toml"])
     commit = try strip(read(`git -C $ROOT rev-parse HEAD`, String)) catch; "(unavailable)" end
     clean = try isempty(strip(read(`git -C $ROOT status --porcelain -- src cases pipeline Project.toml Manifest.toml`, String))) catch; false end
     doc = Dict{String,Any}(

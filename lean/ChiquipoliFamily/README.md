@@ -198,7 +198,7 @@ produce an unchecked certificate.
 inputs are the repository's own exact arithmetic: the generic OPTIGON
 constructor `audet_generic` and `audet_Fc` in `cases/exact_coords.jl`
 (cross-checked against the upstream constructor in `test/literature.jl`), and
-the active graph and root of `cases/A<n>_bingane_audet/candidate.jl`. The
+the active graph and root of `cases/family/A<n>/candidate.jl`. The
 coordinates are reduced to `(sin z · XC(c), YC(c))` with `XC, YC ∈ Q[c]` by
 exact division by `cos 2z`, which the generator asserts. `verify_family.sh`
 re-runs the generator and requires every file to reproduce byte for byte.

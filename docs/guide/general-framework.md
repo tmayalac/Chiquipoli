@@ -316,7 +316,7 @@ Cross-checked against the verbatim upstream transcription for `n = 16, 32, 64`,
 and at `n = 16` against the hand-written `A16Certificate` (coordinates and
 `Fc`, which Proposition 1 reproduces exactly).
 
-**[CERT] n = 32 and n = 64** (`cases/A32_bingane_audet`, `cases/A64_bingane_audet`).
+**[CERT] n = 32 and n = 64** (`cases/family/A32`, `cases/family/A64`).
 Every block of the general certifier passes: existence (IVT), active graph with
 margin (`0.00096`, `0.00012`), strict convexity, `rank = 2n − 2` (`62×62`,
 `126×126` regular minors), certified positive multipliers, and all `2n − 1`

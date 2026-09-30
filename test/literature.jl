@@ -3,8 +3,8 @@
 # whole suite with `make test` (a file on its own lacks the shared setup).
 
 @testset "Literature positive cases certify (local first-order structure)" begin
-    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet",
-              "A32_bingane_audet", "A64_bingane_audet")
+    for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
+              "family/A32", "family/A64")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         @test structural_pass(r)
@@ -16,7 +16,7 @@
         @test st["exact_identities"] == :PROVEN
     end
     # `certify` works at its own precision and leaves the caller's alone (D12).
-    cand = loadcand("n4_regular")
+    cand = loadcand("literature/n4_regular")
     setprecision(BigFloat, 128) do
         certify(cand; radius=big"0")
         @test precision(BigFloat) == 128
@@ -101,8 +101,8 @@ end
 end
 
 @testset "R1+R2 general: certified multipliers and PROVEN exact identities" begin
-    for d in ("n4_regular", "n6_reinhardt", "n8_ahmp2004", "A16_bingane_audet",
-              "A32_bingane_audet", "A64_bingane_audet")
+    for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
+              "family/A32", "family/A64")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         mult = findfirst(b -> b.name == "multipliers", r.blocks)
@@ -166,7 +166,7 @@ end
     # minute and is covered by its family certificate, which proves every
     # equality the same way).
     for n in filter(n -> 32 <= n <= 256, FAMILY_N)
-        cand = loadcand("A$(n)_bingane_audet")
+        cand = loadcand("family/A$(n)")
         @test length(cand.active) == n - 1
         @test n + length(cand.active) - (2n - 2) == 1
         Fc, den = audet_Fc(n)
@@ -183,7 +183,7 @@ end
     # (3b) Every member's active graph (data in its candidate file) is the
     # closed-form graph G_n of Ayala Hoffmann's paper, pair for pair.
     for n in FAMILY_N
-        act = n == 16 ? A16Certificate.ACTIVE_EDGES : loadcand("A$(n)_bingane_audet").active
+        act = n == 16 ? A16Certificate.ACTIVE_EDGES : loadcand("family/A$(n)").active
         @test sort([minmax(i, j) for (i, j) in act]) == gn_edges(n)
         @test length(gn_edges(n)) == n - 1
     end
@@ -223,7 +223,7 @@ end
     end
 
     # (5) Planted errors on A32 are rejected, so its PASS is not vacuous.
-    cand = loadcand("A32_bingane_audet")
+    cand = loadcand("family/A32")
     function variant(; active = cand.active, coords = cand.coords, Fc = first(audet_Fc(32)))
         co = audet_coords_cs(32)
         Candidate(cand.name, 32, coords, cand.root, active,

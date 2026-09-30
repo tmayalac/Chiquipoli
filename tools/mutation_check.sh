@@ -227,13 +227,13 @@ run_julia_mutation \
 
 run_julia_mutation \
   "A64 root literal: one digit altered" \
-  cases/A64_bingane_audet/candidate.jl \
+  cases/family/A64/candidate.jl \
   'big"0.04908729857644960608' \
   'big"0.04908729857644960618'
 
 run_julia_mutation \
   "A32 active graph: edge (7,24) -> (7,25)" \
-  cases/A32_bingane_audet/candidate.jl \
+  cases/family/A32/candidate.jl \
   '(7, 24)' \
   '(7, 25)'
 note ""
@@ -322,17 +322,17 @@ for n in $FAMN; do
   case "$n" in
     16) rootf=src/a16/data.jl; rootold='big"0.19627037213032280086206121185805318446"'
         rootnew='big"0.19627037213032280096206121185805318446"'; edgef=src/a16/data.jl; edgeold='(6,13)'; edgenew='(6,12)' ;;
-    32) rootf=cases/A32_bingane_audet/candidate.jl; rootold='big"0.0981721090090961666722'
+    32) rootf=cases/family/A32/candidate.jl; rootold='big"0.0981721090090961666722'
         rootnew='big"0.0981721090090961667722'; edgef=$rootf; edgeold='(7, 24)'; edgenew='(7, 25)' ;;
-    64) rootf=cases/A64_bingane_audet/candidate.jl; rootold='big"0.04908729857644960608'
+    64) rootf=cases/family/A64/candidate.jl; rootold='big"0.04908729857644960608'
         rootnew='big"0.04908729857644960618'; edgef=$rootf; edgeold='(3, 35)'; edgenew='(3, 37)' ;;
-    128) rootf=cases/A128_bingane_audet/candidate.jl; rootold='big"0.02454368983776405442'
+    128) rootf=cases/family/A128/candidate.jl; rootold='big"0.02454368983776405442'
         rootnew='big"0.02454368983776405452'; edgef=$rootf; edgeold='(7, 72)'; edgenew='(7, 73)' ;;
-    256) rootf=cases/A256_bingane_audet/candidate.jl; rootold='big"0.01227184621555529382'
+    256) rootf=cases/family/A256/candidate.jl; rootold='big"0.01227184621555529382'
         rootnew='big"0.01227184621555529392'; edgef=$rootf; edgeold='(7, 136)'; edgenew='(7, 137)' ;;
-    512) rootf=cases/A512_bingane_audet/candidate.jl; rootold='big"0.00613592314879083030'
+    512) rootf=cases/family/A512/candidate.jl; rootold='big"0.00613592314879083030'
         rootnew='big"0.00613592314879083040'; edgef=$rootf; edgeold='(7, 264)'; edgenew='(7, 265)' ;;
-    1024) rootf=cases/A1024_bingane_audet/candidate.jl; rootold='big"0.00306796157568502975'
+    1024) rootf=cases/family/A1024/candidate.jl; rootold='big"0.00306796157568502975'
         rootnew='big"0.00306796157568502985'; edgef=$rootf; edgeold='(7, 520)'; edgenew='(7, 521)' ;;
     *) bad "unknown family case $n"; continue ;;
   esac

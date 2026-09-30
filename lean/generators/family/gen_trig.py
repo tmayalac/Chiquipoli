@@ -42,7 +42,7 @@ def die(msg):
 
 
 def read_root(n):
-    path = os.path.join(REPO, "cases", f"A{n}_bingane_audet", "candidate.jl")
+    path = os.path.join(REPO, "cases", "family", f"A{n}", "candidate.jl")
     src = open(path).read()
     mt = re.search(r'z_nom\s*=\s*big"([0-9.eE+-]+)"', src)
     return Decimal(mt.group(1)) if mt else None

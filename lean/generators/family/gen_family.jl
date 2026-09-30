@@ -10,7 +10,7 @@
 # upstream in test/literature.jl), reduced here to the form
 # `p_k = (sin z · XC_k(c), YC_k(c))` with XC_k, YC_k ∈ Q[c] by EXACT division —
 # asserted, never assumed. `Fc` is `audet_Fc(n)` (Proposition 1). The active
-# graph and the constructor root are those of cases/A<n>_bingane_audet.
+# graph and the constructor root are those of cases/family/A<n>.
 #
 # WHAT LEAN CHECKS, AND HOW (see Basic.lean for the method):
 #   Poly.lean   the polynomials, the rational interval [clo, chi] around c*
@@ -81,7 +81,7 @@ const FAR_CHUNK = 80
 # ---------------------------------------------------------------------------
 # Exact data
 # ---------------------------------------------------------------------------
-cand = include(joinpath(REPO, "cases", n == 16 ? "A16_bingane_audet" : "A$(n)_bingane_audet", "candidate.jl"))
+cand = include(joinpath(REPO, "cases", "family", "A$(n)", "candidate.jl"))
 active = cand.active
 m = length(active)
 @assert m == n - 1

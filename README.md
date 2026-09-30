@@ -302,7 +302,9 @@ src/                          THE ENGINE: a library, no side effects
 pipeline/                     THE CERTIFICATES: programs that write results/
   certify_a16.jl                make verify      -> results/a16_certificate.toml
   certify_literature.jl         make literature  -> results/validation_certificate.toml
-  certify_family.jl             the family certificate of A16, A32, A64 -> results/family/A<n>.toml
+  certify_family.jl             the family certificate of A16 ... A1024 -> results/family/A<n>.toml
+  certify_radius.jl             make radius: an explicit radius for A16 -> results/radius_certificate.toml
+  family_table.jl               the article's Table 5, from results/family/
   record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
   record_lean_family_certificate.jl  make lean-family-certificate -> results/lean_family_certificate.toml
   check_paper.jl                make paper-check: the article against every record
@@ -314,12 +316,13 @@ pipeline/                     THE CERTIFICATES: programs that write results/
     05_certify_multipliers.jl     Prop 6.2(5): positive multipliers
     06_prove_exact_identities.jl  Lemma 6.1: the 31 equalities, exactly
 
-cases/                        inputs of the literature certificate: one
-                              candidate.jl per case, and 3 broken controls;
-                              exact_coords.jl: exact coordinates, including
-                              the Bingane-Audet constructor for any n = 2^s
+cases/                        THE INPUTS: one candidate.jl per polygon
+  family/A16 ... A1024/         the Bingane-Audet family (FAMILY_N)
+  literature/                   n4_regular, n6_reinhardt, n8_ahmp2004
+  negative/                     3 broken controls, which must be rejected
   upstream/optigon/             OPTIGON's cstrt_audet_ngon.jl, byte for byte (MIT)
-  optigon_exact.jl              runs that file unchanged, in exact arithmetic
+  exact_coords.jl               exact coordinates, the family lists, the constructor for any n = 8m
+  optigon_exact.jl              runs the upstream file unchanged, in exact arithmetic
 test/                         make test: runtests.jl and one file per theme;
                               fixtures/ holds the vendored OPTIGON constructor
 lean/                         THE VERIFIER (see lean/README.md)
@@ -327,12 +330,16 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliLean/Constructor/   the A16 constructor and its root
   ChiquipoliLean/Generated/     written by generators/, never by hand
   ChiquipoliLean/Instances/     the theory at A16 and at the square
-  ChiquipoliFamily/             A32, A64 (and A16 again), a method that scales in n,
-                                and the published constructor (Optigon.lean) proved
-                                equal to each certified polygon; verify_family.sh
+  ChiquipoliFamily/             the family; the published constructor (Optigon.lean)
+    A16/ A32/ A64/                per-case polynomial certificates (verify_family.sh)
+    Trig/                         one theorem for every n = 16k (verify_trig.sh):
+                                  the interval method with data per case (T16 ... T256), and
+                                  the proof with no data, P1Final.published_all_n
+                                  (see Trig/README.md)
   negative_controls/            26 false statements that must not compile
   negative_controls_family/     11 per family case, each with a twin that must compile
-  generators/                   Julia -> Lean, the bridge between the layers
+  negative_controls_trig/       12 per T case, each with a twin that must compile
+  generators/                   Julia/Python -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks
 results/                      every record (TOML; see results/README.md) and the article's tables
 logs/                         final_run.txt; archive/ holds read-only copies

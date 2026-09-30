@@ -44,7 +44,7 @@ tracked_files() = sort!(unique(vcat(
      "cases/exact_coords.jl", "Project.toml", "Manifest.toml",
      "test/fixtures/optigon_reference.jl", "test/literature.jl",
      "cases/optigon_exact.jl", "cases/upstream/optigon/cstrt_audet_ngon.jl"],
-    ["cases/A$(n)_bingane_audet/candidate.jl" for n in CASES],
+    ["cases/family/A$(n)/candidate.jl" for n in CASES],
     walk("lean/ChiquipoliFamily", ".lean"),
     walk("lean/negative_controls_family", ".lean"),
     walk("lean/generators/family", ".jl"),

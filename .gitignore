@@ -55,3 +55,6 @@ Chiquipoli.code-workspace
 # output, not a record: the records are results/*.toml and logs/final_run.txt.
 /logs/check_all/
 __pycache__/
+
+# Working notes (Spanish), not part of the package
+/docs/notes/
