@@ -75,15 +75,15 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "56e002a84838eda72f52c7b9338f8158fe111ae2"
+git_commit = "bb6312c98584a55fb7c82900ebbd2e85fd6a6d30"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
 package = "A16Certificate v1.2.0"
-utc = "2026-09-29T23:45:37Z"
-verify_seconds = 233
+utc = "2026-09-30T03:05:27Z"
+verify_seconds = 243
 
 [scope]
 formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
@@ -96,17 +96,17 @@ sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
 file = "Project.toml"
 sha256 = "ddfd2fcc7a6d137b5d86d95f957510ca52e80347a2827c76e27e6b0485d15590"
 [[source_sha256]]
-file = "cases/A16_bingane_audet/candidate.jl"
+file = "cases/exact_coords.jl"
+sha256 = "cf5485829686d09562b0a77da417fbe6d0215cbf8da0f900d2dbe4ddbb318fb9"
+[[source_sha256]]
+file = "cases/family/A16/candidate.jl"
 sha256 = "afee94b75f3e39148af36d42b6fa23e5fc07fb2eb816b36c5c788b38da1f5727"
 [[source_sha256]]
-file = "cases/A32_bingane_audet/candidate.jl"
-sha256 = "e1498ef03e1a9c599df6296a537b74544e2559b684cee2b9d24ae28f404aade9"
+file = "cases/family/A32/candidate.jl"
+sha256 = "31fb823252f0e8115b85a267120c0aadf47e2427acc24b99fae4df944245e873"
 [[source_sha256]]
-file = "cases/A64_bingane_audet/candidate.jl"
-sha256 = "20246966f712454fc0b2503acbb548c87624839c1a0b57672429b67b9292bb2f"
-[[source_sha256]]
-file = "cases/exact_coords.jl"
-sha256 = "dd6650c6c26826ea28544f31210bb1f221a5c3e4370834450ad6b707adc9f741"
+file = "cases/family/A64/candidate.jl"
+sha256 = "d98a21cd1e9a400a9140580b6024f71cb6da625d7a66e623ff0521dad305d095"
 [[source_sha256]]
 file = "cases/optigon_exact.jl"
 sha256 = "8d3ba4bd6283f6dc59583b850662a8a85aaeb96fcfaea040c8926f1d8909de6e"
@@ -115,625 +115,64 @@ file = "cases/upstream/optigon/cstrt_audet_ngon.jl"
 sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily.lean"
-sha256 = "077796f5b925d4c8b6f1e40c6a46b53a7449113609ebd6e4f23ba7b1bf6b94e6"
+sha256 = "45bbd831e592c218e848d5f787f91a6e7eec1a7057c71ef1ccd92a84b535ac86"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16.lean"
-sha256 = "949d3d6a917ef771cb0612ad556213d513cbe151c7ffce574b19a0f68547046d"
+file = "lean/ChiquipoliFamily/AllN/Constructor.lean"
+sha256 = "239ca052532bb382625cbeb2173955585edd1ca7bd43c3169deba66ed1ad764b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Conv1.lean"
-sha256 = "7027f865d49a990d27da03f7d1e612e023983b0ad32b300d08cd6eea43e01101"
+file = "lean/ChiquipoliFamily/AllN/Feasibility/Angles.lean"
+sha256 = "8c2462fd0c62d48615bb71a037e88d144ed3a53acb9faa38906ff521b4594e24"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Conv2.lean"
-sha256 = "2a0095ab659561b8b28945661eca8124af283eb54df94e1beaed09c4c05713d4"
+file = "lean/ChiquipoliFamily/AllN/Feasibility/PolygonGeometry.lean"
+sha256 = "9d8c6189505d11084b88d729b2a83ca34a92ea52640a57af22ff2ecd2b83f55c"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Conv3.lean"
-sha256 = "c261e9bc31a28e492273430587d49c079a9a2c984560989ad436e1f88fe0cdf1"
+file = "lean/ChiquipoliFamily/AllN/Feasibility/Sides.lean"
+sha256 = "867d4b8bdcaf9458e0fba889d3e148af06c693cce622c6864789bdaa001a5531"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Conv4.lean"
-sha256 = "ecbd31200348c1efca276703132bca54fe85183eebd54bd5d0c36a0da0712711"
+file = "lean/ChiquipoliFamily/AllN/Feasibility/Smallness.lean"
+sha256 = "457edd0585f38aba136a7fe6e6ed1bebda52e0a9078c5bcb42ee7171b8c3ba80"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Encl1.lean"
-sha256 = "b42414af69beb2eec5061c5210a305ac351dd7bc1d863550c00a56e1b31fba7f"
+file = "lean/ChiquipoliFamily/AllN/Layout.lean"
+sha256 = "40470b119eb9a959453b9feb139ba773f6cc7729e13a5446da36ad45265d44d5"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Encl2.lean"
-sha256 = "9b6171fda77db0508696d33ca35d8305a7b967e596206e73c3854fdbc0377ae0"
+file = "lean/ChiquipoliFamily/AllN/Main.lean"
+sha256 = "6f95d1d820d1fe4d3cf0f5675194166a5b702f6fde5bcfbef7d41c2b95321fc2"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Far1.lean"
-sha256 = "03f4aa8357997052c21938230a2c81d208a160f2e53d1ecc6ac40acfa6568f3f"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Balance.lean"
+sha256 = "1f91a98e4aa005aaf87c11685e6f6aa207f2a4211fd09d222d3adeb9d487c6ab"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Far2.lean"
-sha256 = "c4a6af023321d58324f7761057c9f8bd1d3fca0b0ca2c89c6ed63cb44e56682d"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Core.lean"
+sha256 = "3eb4d901bfe5007f61d37ee9ee891dcc77799c75263f0188516606ea2a2e3903"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Geometry.lean"
-sha256 = "862ede911902225d7ac6fb34526ed91cd92e87458dd478d7fc01888b2b1dcac4"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Gap.lean"
+sha256 = "c10d2af8deaead040a4df021feb48399a4fb26377822df0ff07f3994631d091a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Hen.lean"
-sha256 = "3b7d7254934be32a290b44079a597ad61d1b05c16010eb9eeb8167fbb0abf1be"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Positivity.lean"
+sha256 = "4d69e0dac458a8f0160d9ba03dfdfaa8936dfc681d0b2c96a95ac5ad1e0189ec"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Main.lean"
-sha256 = "16a8e05c51e121962ba3ef541f5cc6f222f0cbb9c2bf8402ea9803b272f1f9f0"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Stress.lean"
+sha256 = "51ca7f028e9a34a1431c1249f2488f3e77b28ec83347d130bb9b7327e72bb843"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Poly.lean"
-sha256 = "a3f11985d51c4b334a06e42969de8bb46f1ec416b179ced588bc37591bab7c55"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/StrictLocalMax.lean"
+sha256 = "c6300b85ef5f00f7b94c6acfdb23899262010d1df90c6ea09d3119d16524f638"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Published.lean"
-sha256 = "e9f978374d7e6b2b36a37969b683310f66fe187df9aaeefef1f536b2aeb8091b"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Symmetry.lean"
+sha256 = "2e285fd29a3539c7d63e7a436b504099f700e8ee844122fe80f044a22d93d897"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Root.lean"
-sha256 = "7da36177687e8242ce89814307177b126e56c7eba94590a3cd015b624b096bcd"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Theorem35.lean"
+sha256 = "4a3b3933d29136028f168d46601dbc99eeee46af4592334c1283f12bf2214489"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Sides1.lean"
-sha256 = "124518186f61dc7dac39310aea9f1e6e60ff95ea590f5208ed8e279630c96bf4"
+file = "lean/ChiquipoliFamily/AllN/Multipliers/Vertices.lean"
+sha256 = "e8cc9f7922fff388c5611a91299055b69f2ce020827a65c27a06d85b4cccc6df"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Sides2.lean"
-sha256 = "318a430ea2b4992202837406d6c216fd7fb4e55795f047f243f22db0caf1b1e7"
+file = "lean/ChiquipoliFamily/AllN/Root.lean"
+sha256 = "2f813b9a38b1e8232bf63d9ecd4974d618ef487966d7e5d1c670694a802c3755"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressDef.lean"
-sha256 = "b3be52a4cba2aec80ab1561f3e77c34c27ba2a55063cc4a7cf1b3507b6f69b44"
+file = "lean/ChiquipoliFamily/AllN/RungVector.lean"
+sha256 = "7db167589a60fb0fda42d66a7347724d08313a57586d7d64a4c53df70b94dcbf"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressEnc1.lean"
-sha256 = "7955a54672d42188fcbc0dff17e34069821081ad11f7fc4fdde47eb4b54d9811"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressEnc2.lean"
-sha256 = "10f8a58094002fcfa1ded0955457e41c59344e2b39a4b63e5e84afe16701029a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressEnc3.lean"
-sha256 = "1ba7c115df5e9f5cff4a3990be9659c940bf519fbe421bc28aa370a3f6046775"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressEnc4.lean"
-sha256 = "dd7d904c6535fd1a815d9afce59ea1ab0cd6e55537af7a03818247f8a3eabce2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/StressSign.lean"
-sha256 = "e5b23995d61160316c627559db2e7e7361eb1cb6acc9422f0ea1d90533be2ebd"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A16/Unique.lean"
-sha256 = "9e06e3ce37c3eb5946b12953c3c28ba64adb735c76c1ce14acafebfbce06b584"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32.lean"
-sha256 = "c87213ad604997a3478123457baee9d89e97e35811247a8948d4584525801e66"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv1.lean"
-sha256 = "c5f5f215d68bfff1b59de7bc72134e6205605739462d2b092fd1d6b28afab330"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv10.lean"
-sha256 = "811221e1b47595eb717bb1394d797f010ab6b4bf32d509edb97a894119a5d681"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv11.lean"
-sha256 = "bfb1388c4effc9c2dcaf7bfe35429c53c0516cb0711fcf629942008d28540320"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv12.lean"
-sha256 = "2dfc8c1f6914c738b8aad42f84e0043a8cf9394e60f28c67c419891c2515577f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv13.lean"
-sha256 = "c05c65f9543472a7375c5c2fb830f761ff6ac47767ac6bb3b4a6b376fe430789"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv14.lean"
-sha256 = "63c5c38179f75bfd6d687d45da0c7d2db396afe34f249a942bcbcb13130b6f8f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv15.lean"
-sha256 = "36bf9ecb64f3d6410a186efb178331144973c499afb00b8e562f493c933b8b7b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv16.lean"
-sha256 = "20a7d00ede4a80b1da23f8a367939a160e1164a72efd26796756ae2f6cbab245"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv2.lean"
-sha256 = "cf50f8993bee75432ca3f88abc19f8d053b63bd26dcf18ce442375467fcaa1b2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv3.lean"
-sha256 = "f719cd49d5f4f0cedc0c1e88e58dd74e12f97e2a08b4346630486034b84cdfeb"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv4.lean"
-sha256 = "f446e53ae7ccdcd1afa334010bf7c6cfe0c92657e4768e97db9faff127a6a6db"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv5.lean"
-sha256 = "7f27510e2ae928628bf397ef272d430ba040b2c231015d972b99d5728d0b91ca"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv6.lean"
-sha256 = "e501015ba6e0c65044113cdcb61bfc7454074086d9ffc116abcbf076a77bd9b2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv7.lean"
-sha256 = "8ffe17018b88d4d6e3079a12208c42acbf2bdac08330bf7fc3f35cc91ee7ede1"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv8.lean"
-sha256 = "37ba0338af7168fa92e74e14dc7fa07140d8cca39cbafcda174a22d27b9f0ba7"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Conv9.lean"
-sha256 = "414027d5939cf16854ddd3a23578434a01fa2108785fffa9f4718e7d6edf73a3"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Encl1.lean"
-sha256 = "1c5ac062cda8d83e862ae88f4542c9cb8650ab8a884cb3397ea3bdf68b9c3492"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Encl2.lean"
-sha256 = "e0fc604a67143de931d2e31be0e3624ff45b7c8210226920eb22657146e21b14"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Encl3.lean"
-sha256 = "aa631ef6303acebabe91957878b11ae5f7e434c7de039d4dec66ca3c1636c42f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Encl4.lean"
-sha256 = "0a474a0f5861b644668b3a2627df984ea30efb59813be9ef0cba18d848d2e1d0"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far1.lean"
-sha256 = "b900bb05fa5919365a8e8fbc53dbe861f9cc30f99cb9bfa448c51b3180334b2a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far2.lean"
-sha256 = "307090c79d8be80170c92b43b7ac9af8af555b4979ae00520e4a8b676ae71148"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far3.lean"
-sha256 = "06fc4f631ede847219446962f1a3bc26f38c8a385370da455f9bebe5964ff83a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far4.lean"
-sha256 = "4933c0ef6fc4be7ff209721868362511bff8522440665def216014d7e65d452f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far5.lean"
-sha256 = "07256471ae481a406bceaf5f26d0754609cb999f965b41ef9e0cb0b551a62aab"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Far6.lean"
-sha256 = "547694c22c85112f25ccdfd8fd1f7bbf0c280e8b4c9ea036d772121f71daf54b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Geometry.lean"
-sha256 = "37430d087ca318143762ae94841ee69c3307557d3bc5d8280b8eb8c48c574cf4"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Hen.lean"
-sha256 = "32e606bb1fcbf99c54b67dfa585519ee8eda71fdf8ee3dc15a56360648ffc48d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Main.lean"
-sha256 = "e8f280d163f0597407199640372216edd333660a002c5080b525c8c51bf79c35"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Poly.lean"
-sha256 = "d4f5e9377ad0a696ef1bce250be9873cabca43839959f194e4e0bc6deb19ad32"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Published.lean"
-sha256 = "2403fbadcd464b54d0c2c4bf49981945939e19a16815918021f0775fa76601c3"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Root.lean"
-sha256 = "f557c4a41634b6e66178d5cd185c070d421745b7f756bf1824aa7ecc11c5fe86"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Sides1.lean"
-sha256 = "8cbef8c8885968f42bf500d09ec8fa83581344035dbe42b1f51a5e3eda68262a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Sides2.lean"
-sha256 = "9137a771cfe42ab6cc0ba73201381b6b3f810e3b60112684f2c48c7636e21a02"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Sides3.lean"
-sha256 = "937f102d3aa10174f962db28fdd67f8902f1ad1ea122c7b00ca036bb6b5a83dd"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Sides4.lean"
-sha256 = "e2375d3fcdec9b741aa2ece0b27126e00867d5a071acccfc36b2b58c57f2f76e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressDef.lean"
-sha256 = "860346e9ac0f1749ceae8bceca1e85424a4918dee48a9feefb8e3178eeb5b44e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc1.lean"
-sha256 = "ffd6c419461e2ddd4418219a4ed68c275a2537a8b9b1f0a05b1d8c4d21f791bb"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc2.lean"
-sha256 = "abfa7cb4ad54e2a1219dc84041ec5a9a4d1516f748df7cef7182d008cd61cfcc"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc3.lean"
-sha256 = "472e5d6cfee75b6380f91d075fb9b93dd171e4faa7a9b205edfd8778cf24aa0e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc4.lean"
-sha256 = "72733ddbc73b4ffc18ebc9d6788a3cff8360de1b72cf330609f1b7614f6cd75c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc5.lean"
-sha256 = "e6afb03cd1bd2c7f8718d807c3d77e25b943365d83de4ec9393e7fc2c245d9f1"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc6.lean"
-sha256 = "de92d31d8fb7798c16a7a8dddc480d56d6c079602acdf31055cc9c3f72bcbb5d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc7.lean"
-sha256 = "3546581d89a254a60c299e634e56578880100406601de5d10eadd0f387b8f680"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressEnc8.lean"
-sha256 = "76f6453c579343d2deedd6d0057869b186c63cd6d671a48f02f8368d6debe346"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/StressSign.lean"
-sha256 = "393d12a213a4e02f3b20422d1dfa1333cc3e54c6895d50a7aeafed0f32ec5eee"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A32/Unique.lean"
-sha256 = "567634a2c2f54530a2db912b3d853c717de757600dee058a6a6904a10809d606"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64.lean"
-sha256 = "d2d8540aded8a605e6cef0cfd418585ffd5e10f9e7a279ef8544588ab5973ee9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv1.lean"
-sha256 = "3c96ac49baaecf4a71f23e855fab5db1901faa4291ee969c780f8c0a7c2357f2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv10.lean"
-sha256 = "a5c3749b6be85ae32281af2834e7c620d7f941798b43d7e24f99179fe10919d9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv11.lean"
-sha256 = "08bacbe2ca65f257995bd4b9a49a1354872ff6a5cbc05b331dc5d5a1d73c7a98"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv12.lean"
-sha256 = "f5423023e54ab3d49de4a15ba8b295e264da8fad1df3ab04ff48809843db90ed"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv13.lean"
-sha256 = "320d7bc9905d59511e1027eb53a5a0a0f3b1b3590ca41b733754225a07e94b72"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv14.lean"
-sha256 = "e4d312dd64ede556a6169c44a114ba760947cfc0c6f1645a83835259ed04d15f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv15.lean"
-sha256 = "ab8a4bc0db2d757df1c99fa44fa03c5b79e8a7a3078783f779110a5ecbf9d580"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv16.lean"
-sha256 = "1611342e21dc1ffd020146d8e5d559d26a10a30b4598d5438d1c78058052fb40"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv17.lean"
-sha256 = "86bb473381cc126fba347cdc7247696526838d11ea850834e6ba9eb5cb13d63d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv18.lean"
-sha256 = "5a9bbcce69034fb7b794c98c4f47e879f36fa6efefd0b74c93c9ae4319c208a6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv19.lean"
-sha256 = "33ce2bd0f956bc9ccde68d7a30fec0e709d39aab032d080d1276d6f725738f3c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv2.lean"
-sha256 = "bca14c9d03de549837af4186e62c5ca01070cba48010c8114b2fbb7c78f94add"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv20.lean"
-sha256 = "da1e92ab8edd8b2464f8b041c176060e5b74bb2dcbc4a7fa23fea4d35fb5cdb8"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv21.lean"
-sha256 = "6983c7a7f2071071318908e7578a37fa35d235a5393685ff3a51153868c2679d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv22.lean"
-sha256 = "829de09464e8356bf205ce74c8556e6a549962734c3242ed2c10de0af0046c03"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv23.lean"
-sha256 = "09abe1f583d3b87c194c471a1d6076f2c1c3ff41ae6d74c825553a0405c5adc5"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv24.lean"
-sha256 = "efd36177f7c32b05d9ceae0bdc9fd01ee65f81b7b9fc6337eefa2aaf9d7af79d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv25.lean"
-sha256 = "d23953d1f02560926c2ed19a5de144cb85202c4944256e96fadb48b81150a897"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv26.lean"
-sha256 = "d0e92692347572f96a226ecb1728aec422733afc571859301cb1b466c63aea84"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv27.lean"
-sha256 = "5c5203909dd5262ce93dd228a0c350487ac176343013f6ca5a3588125b9812ca"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv28.lean"
-sha256 = "9ec6efd0ebc6c5f9431288a6a53f2fd960aae6f2a0ba7768bf158b312221e3e8"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv29.lean"
-sha256 = "b2b2c1d9abd73396ed378f1d61029fc01de32034cf11bf94a0c63959aebe6b37"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv3.lean"
-sha256 = "48de8807adba03551993a4fc917f89a0d686ed89da4d3fd9868e0214ade3e6ac"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv30.lean"
-sha256 = "03f79acae6a9875e85a84822c658a3d3f495035dc476d74553237af0ab8d0caa"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv31.lean"
-sha256 = "9cea161d6eed44f63784e483850481149d16147e5cd995e543a69863c028466e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv32.lean"
-sha256 = "80c6b27797750138029a483f19831c9b21411689b74f65e3b29349c790fadf6b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv33.lean"
-sha256 = "326eabe985c94f18b55a167841aa8e236c6705fe69ca9ebf4f42b6de1cfe9bd2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv34.lean"
-sha256 = "af6869063539252ffa2e6f82d3c4bee03763ec323eb50c3076f895397866191f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv35.lean"
-sha256 = "d1d1b6742d0a340c26d04d06688f0b3585203369e659a8bef6c50e8926bf08ef"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv36.lean"
-sha256 = "33d011e8cdab93dfb62fcd515c04afb2cf1af5f9b8076df4351292738a8c635f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv37.lean"
-sha256 = "bd4679c7d7b2fe2544b3f1b721e3cd15f026ae5e7ab089aa19f50096ee1fb99a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv38.lean"
-sha256 = "cfc5663c9b93b1704645fba82be499b43dc1958714bd9a1474adec2ac3488233"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv39.lean"
-sha256 = "cc3d123adf15a15ee34d8f28bde5bb56facf36b7ac2dfab2d2936c05ddf6e01e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv4.lean"
-sha256 = "0bb5fe2f82473d4099eea3576ad0ce7afa3f4449987a42e291ec6646721c749a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv40.lean"
-sha256 = "912154bf4deb1fcf3b4d8c3e1e993907d5044c98e4826359669011fdc4fd35b6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv41.lean"
-sha256 = "9616e7d06585327671f07248c39fb6f2f29d0d719314551011a0f0146c7b761c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv42.lean"
-sha256 = "5fe8f28c4cb1dcb164cfbd37eb57b61cd82a658d9e53fcf41a8f1aaeb2f71479"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv43.lean"
-sha256 = "ba8ef6ed99e0281d3c5e28d5e5a4923deccdbebd0fb3bc7589f53aa119714cd9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv44.lean"
-sha256 = "362da5e7095f9f3b60c784c0a228c814121e01976de3243ea834a107a6e342b9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv45.lean"
-sha256 = "3b853697465f8433fa00e43922168f62862ea4628c36483136768ff18c03dc08"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv46.lean"
-sha256 = "b867802398da59fba40e09af007e99de7d38369510e579b20abcead5f9d3fabf"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv47.lean"
-sha256 = "937e16d6e687c761a12aff6b6a9664a750894d9838cb6318bba7b85bd99936e2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv48.lean"
-sha256 = "bd04e642ea700b790e7cbdb83943f1f6ac5b7d50814a80be38aee946d0841aaa"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv49.lean"
-sha256 = "858a1e1442ea2c8b4a29e9910e752376072d9e5f205ea3177cf6d4bab511fbd7"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv5.lean"
-sha256 = "77ebc1a0796ed5fa70862e6823471dd9c9a205cea6856731212608b193e1e640"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv50.lean"
-sha256 = "0f8e15176a53d4fb0e1f2b5461e501ee9e1a477d213aee3e3558bfe0ff8a38ba"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv51.lean"
-sha256 = "56ddbf8e79c67b1e6c474a9461c45c78819a7e8c7ba2b91db56fb1b4589006b9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv52.lean"
-sha256 = "26e49d61523dc0a1275454398410d338c8608266ff15ad7707e89d6222d42e0c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv53.lean"
-sha256 = "c55ec08ed55497a1125e0a363a82faf5feaf262145f8a2cfd3bd72785fbb8abb"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv54.lean"
-sha256 = "f22365b22f2c37998dda2027b5beb1c19fa0ef84a640cdfc7bc48e1c8c693c7e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv55.lean"
-sha256 = "2284ce3ea229e8ea600924609584ef6302ba2c83f3ec6909b66a306d43d71456"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv56.lean"
-sha256 = "2adb4b745d888e3eed3712a2838be80e611d138084b2e8be8428885c0f0a8b86"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv57.lean"
-sha256 = "12a495421041a48f162626b5bae24294c12f8db9271247cfc2a053a8a344cbbf"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv58.lean"
-sha256 = "b17102fc1d7c0e9058f8ef25977a88185643bbe3c65ceeb1516ceb15224cc4ea"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv59.lean"
-sha256 = "9e1ca0bf8d22a842077e1322b2cacda11bd7a0802c9dc9818e9499d707a31ca1"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv6.lean"
-sha256 = "12b582a179156686a17b97531edc2327c3b3e90d4ccd29e1bd5cd3fa5a91372d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv60.lean"
-sha256 = "19d55f5cd5edb2d2ac38b8d5b1883dfe82839ad9a75f5c7fcff72070bd886798"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv61.lean"
-sha256 = "0624b364711857be0436d511ec2b744a91f8a91681876c461dd200390079baa5"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv62.lean"
-sha256 = "89c101f6814bb2af13738e4d7f37cbfde48ff5bfcabb4fde5581385f4a150017"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv63.lean"
-sha256 = "f816a7e7621c408f978d4a9b2619cd45bf81578b6cbe03c8be667a2e1da0a538"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv64.lean"
-sha256 = "1110a8f6fc9175df799b23213a51b9ff27c7f94755376116377a4d72111af11a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv65.lean"
-sha256 = "0a471e75176dfbb339b8b43b74630c4db3366608fff2c8b510c81513966e2dda"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv66.lean"
-sha256 = "4c2e682c00766b60de47d7b621a630dd1650dcf6962554105c6070f4d965a8c0"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv67.lean"
-sha256 = "2d7bb06f89c68b386d3a136b06e79e3c117a17e2204384e956458c77a9880eb7"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv7.lean"
-sha256 = "2639983dd40decb7dfac9f43c04d5794ec27aa58a906f75c056fd5e8905ded88"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv8.lean"
-sha256 = "1e1319d55763e08ff2c963a09162d9b6063960a86937319310f8e75e1e1fcc83"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Conv9.lean"
-sha256 = "126a7941e0ba73295f0c929ad9b93729ab6cec4cf47a7d3d9619533659bff445"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl1.lean"
-sha256 = "df54bb22f9b8a85ba6edffa2c17b78499aaba1832ad2ef04b642c6b5e054ba1d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl2.lean"
-sha256 = "f54728bfdedd8d1db00c6e1b8480a17604ac3b78166cad1bbb27f16a476c5ae5"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl3.lean"
-sha256 = "f3a8906eead95cbada56ba82954f6fd51ba9bcd7a0e91673e16f57b02013e445"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl4.lean"
-sha256 = "38e82af7803501d658c9ac23379a156f4cb0dbb3480a60576d827df5d9c624ca"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl5.lean"
-sha256 = "1d4cdc5c19d837b2a78ad06a1ca97b87f244da89da4d014640b7f389f22e69a1"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl6.lean"
-sha256 = "20cfc24284ce114d8a2a681f9fed47eed78843326a88fdaaf5451a8629d041f0"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl7.lean"
-sha256 = "6dfae8fb9e776964e748e88b3a71cfeabfdcc26073feff604e7eb995047dd6e6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Encl8.lean"
-sha256 = "54a655907d6e440d2a74949f2b70b4135fc96c1fca7257708a893cbe1bd00e2d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far1.lean"
-sha256 = "07c4dc9b4053207037c04b71682ec6392c0c22ec3572a46573a4823ab14e2974"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far10.lean"
-sha256 = "c3c0e5f2239eb08f27e6018c6050afca801f2600c25fc7a3f1633cf5a7218db6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far11.lean"
-sha256 = "364ab9dc89e2c8c8d402cf2e179e6896b2e512e503da19cc895132c878790a43"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far12.lean"
-sha256 = "bd07270976c2b6a8255f6c08bbaac537c6cdc550cf57a5dbd586f9156c835920"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far13.lean"
-sha256 = "467c77fb33a39c2ba31d352e5753fe0a702306980f39ba55bb663e3af3c93210"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far14.lean"
-sha256 = "8f5d1a3dda30ad1e0e80b5e067f4f53d7b357ef0aac030d7061c74efec365d4b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far15.lean"
-sha256 = "12e859283f62423d2c6686f1a8b3a5b4063f3c550f6cc25743e609498c521972"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far16.lean"
-sha256 = "358a57cb167325dae0f030bdb45d8f212288b0c4d1affa85ae4162376df7513c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far17.lean"
-sha256 = "e0ab3b73a36e403c03f2722d6d9b64c7a64b0420ba77974c925344b7ce0ab571"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far18.lean"
-sha256 = "e48763503638de155ae0f76512149896b87ff01858dffae81f0563f34c31044d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far19.lean"
-sha256 = "054d68080691f7fa431f160ffbcb742d49a757f89d3a6e0b8a2aabb587088a8f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far2.lean"
-sha256 = "8ac12612a9942276ec45aaca8f7f63a6e584f1de44d07c79a91b195b93d27be5"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far20.lean"
-sha256 = "8b57e713c11c696d572013b3a1fda5e69b50a5df2887286d84924d1c21cfe4b9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far21.lean"
-sha256 = "2a080e0785940d8620cea0d14fc09820e0edc1ec8a1c78bae5b64850fe54c48e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far22.lean"
-sha256 = "23107cb52d53a061000dde8b24ed6f0c4b238db1a3a352cbcbdd2218d2e3a12b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far23.lean"
-sha256 = "9417a0414f38b936ae2bc3f7d07e9b5ffe0e5754a8c2168be9637c3efd68fb0d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far24.lean"
-sha256 = "a522161f7e671a13928ea25e69e3d222364900b09575639b9f1ba5e935fb08a1"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far25.lean"
-sha256 = "a8495b8e2f8e57204d651a3231d47210c4365a902740dc14139f56effb837445"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far3.lean"
-sha256 = "8df0710b926e12f1ff0c4e0b27ea47f4a3e9365c2213ed4ae282dd13af76f2ea"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far4.lean"
-sha256 = "4fabacdba23657dbe263d705d3af8f66ecf1af0bc12edff3bfe650fbb82eff84"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far5.lean"
-sha256 = "d648da4ccdeb3b3da18b5598c50331a7e433794582739bbd76b17e30e3c8c6d8"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far6.lean"
-sha256 = "c4388366e56bcea78116f08c234ece3d06a3c400a0bb0de6058d7079eb823075"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far7.lean"
-sha256 = "9398852d81ae319e1a956aaa4d75a771fadd37fce22088d6300073132e5a3646"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far8.lean"
-sha256 = "41e1df69f89a884c2ef6c53aabf58d6214bea9e23c0fe3fb47e013de83173fc6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Far9.lean"
-sha256 = "65264110af05591eca5715e30529824093f58f82d87b06a68f70b83a95ace864"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Geometry.lean"
-sha256 = "7711be5781abaa473a6837d7005467553bee72c850eafe479e8de41212b8b2d6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Hen.lean"
-sha256 = "bf32b758e8354bea5e2d0078d9bdc807582c5a5093dfe84d6d1b123025f34711"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Main.lean"
-sha256 = "fafd494ad889a8d6b9003fa05bd7c212ac6aae13a97a1a3e005ff82cb20f8d0e"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Poly.lean"
-sha256 = "113b1aafa710ec0af1b0217911f19196c37966d5115621f600823fc8502b887b"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Published.lean"
-sha256 = "0b7ad7b30d720c56f992d8bf6d1a4980bb2215508d8e8a53b107dbc73276a0a8"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Root.lean"
-sha256 = "d87caf6cc4bb937eea4518c050f89d64bdb277c8ad84e8f5efc76547c8351a44"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides1.lean"
-sha256 = "9e8b8bef10c854a227a134521ae8fa89f077f370138dddc30625c627c9cf0f1f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides2.lean"
-sha256 = "4f8edd3a95c4273435c535960317cd8c100c74443e3043b157f7d53e87d9d5d2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides3.lean"
-sha256 = "e5db2eee7dd3f335cc5d3c7c880d1455987c95c25a16a64b11ae790ea816bd24"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides4.lean"
-sha256 = "992b7fdeeba17ca2f6595ef5fe96124480c31a5d09030ca2cfa2cfda0103c6ab"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides5.lean"
-sha256 = "54c22b40f50cebe13836963bbd76477748e786cebb0d9a71fe6195a4cfd2780a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides6.lean"
-sha256 = "66bb3eda5f5ca7fbedf3f37096a314a9822cedde630f21d748c92fc8f19e295a"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides7.lean"
-sha256 = "33038bdbee2a8841d4a0a2f771f6f4c482da005334ef5ee4da5bcc6eb90a5a53"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Sides8.lean"
-sha256 = "4e2abd4cde7cdb8017dd94889fd1661e4e150d2b9b2cc0b75759181e72abe788"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressDef.lean"
-sha256 = "325857b859ebfebf44363283aebc9d1486749281c546d1b67b047a89848705b2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc1.lean"
-sha256 = "533034bf56c97ffc29ab8d3ecc26cfc50f6bbbd401e733399aa863d994d5bc48"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc10.lean"
-sha256 = "1e3841cc10ca2a077b23c54bc76801fb914b6b7a6a92489ed1e5e214123abbf6"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc11.lean"
-sha256 = "7a5e68fe360a13f9b3de83242e22ea477bb4a476970a4baadf1efb6d1fdceba9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc12.lean"
-sha256 = "1e9f85003fa385f33c5a8d33adcc35f31b9f43ff2f72a7e9b975d0ef8a75fc99"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc13.lean"
-sha256 = "e6a2d5b0f19965d7a7321b7db2d8c7cc0480d970a35249a966c6f9ecb12918de"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc14.lean"
-sha256 = "4f8cb79c7de8a0c13eb1128e70a1ae3f7cd15ada52e41280d4499b357161e52d"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc15.lean"
-sha256 = "dddd7b4278bc6027461c7e44706fb5a9f666a274814b88df69db802efc52bdd5"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc16.lean"
-sha256 = "bf503ba7686f0ca810cca6fecefdc711c6f92235b7012cf82bea251b076d1bec"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc2.lean"
-sha256 = "5545614a6f655c4a975e3422f92fd2862cd9481c7befa91b3e366c2d85ec57ee"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc3.lean"
-sha256 = "6db504271ad93ebf5747abb37155119f80974e6c8c2ed7c984baff6d2dd9a2d2"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc4.lean"
-sha256 = "2f5ba444428524ebc9af7bfdacda0afcf7b127542a03e0b470d7e89c4017b03c"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc5.lean"
-sha256 = "7aefd800fb5ac746119ae6e4090b192061b550ff11da6763c93c1f63d552df55"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc6.lean"
-sha256 = "a7cbb6215ea56fdbbc32a0c29db9b1a667be065e932491bcc0f01c9cd96615af"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc7.lean"
-sha256 = "27ef6da7b9758c8b8366dfb6315bd684d7dbabe39c823fd90489ee4641b90474"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc8.lean"
-sha256 = "116e7708e0ee302ea29b8104224f2763306e8c2f9dc252962003fdd1db0079d9"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressEnc9.lean"
-sha256 = "cce423841c249de6522ff16ea07d25c2f672db6ce1238a947986472f16d33cf4"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/StressSign.lean"
-sha256 = "f96f2b4dae89e02f8bcbdb9c93565d1bda91a1e2f412f05b20a07b3ac573025f"
-[[source_sha256]]
-file = "lean/ChiquipoliFamily/A64/Unique.lean"
-sha256 = "717cc4d4359db6a57c9992604ac99e728eb563cf274523c8cf71f337dc100ed1"
+file = "lean/ChiquipoliFamily/AllN/Strip.lean"
+sha256 = "ce7dca8ebffcb9508f679f31053e23f632255d98de21bbbe5eacceeb4d1f44bf"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Audit.lean"
 sha256 = "863d9cf0ffdb42f770988f7066958593a08c09e7219973e7c0335ba72b193587"
@@ -744,239 +183,800 @@ sha256 = "b0f577ddd6fcf4485c352793ba63839c8ca211afd0e4654e79cd7471edb4efec"
 file = "lean/ChiquipoliFamily/Chebyshev.lean"
 sha256 = "00a91df75319e78e9d1f5fdbbb5c8722e6416011b58a3f41c73353206a53532f"
 [[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Assemble.lean"
+sha256 = "d6d169928b1e177996174f84e4cf99802ba6b3dbe0bf09c7bcdbbe4f5a75e4cf"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Base.lean"
+sha256 = "34e9b9ca8c5e1df75aa49c800e5ee078ba9a23795d1f60f96b561d18e9f40798"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Checks.lean"
+sha256 = "21e9ae9c34b9c61a7036145988a2fa6d909f804cb01881d7f8fa6ec177f7f879"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/FDeriv.lean"
+sha256 = "344847627c2b104a97f7331d6eeaf134cffc58c43254c29b3f90051ccebc5088"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/FI.lean"
+sha256 = "9aafb0c2215eed3e0d41e5b371be0e61b61144efcdb48a561bd38c7ec24435c6"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/FSide.lean"
+sha256 = "083803629f9cdab790ee71e6a6d2deda0bc7dbd531485fbc6920f4dfb1a9ca2d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Henneberg.lean"
+sha256 = "467354260d1df76f101d513da0f8bc053195efd29af781ee40842a6d05fba53f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Interp.lean"
+sha256 = "7af89980b3079480476f104fbe64cba408a97ebf11b926d53b0059553af26c01"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Root.lean"
+sha256 = "e71dcbaafa2c4177cde4fbbdfd4d000d742353c52e2497b0bf45d5764e5a7b25"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Shapes.lean"
+sha256 = "df7e14ba70d8a141fc85912290cd049b879d4928120e6d7cdf8d5371e9341584"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Stress.lean"
+sha256 = "4d8c2dfaed50282e38967b08de1cfe28415a78ca688a54303631b9af6633da3f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks1.lean"
+sha256 = "bf49207ac049578284ac3c9accb4d478fa36b6ffca6a316f5a8dcb96881fd709"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks2.lean"
+sha256 = "1f83823c43f0cbf1eeaeaf2fdea20a58e894a5e935890a6ad607f9205d37333c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks3.lean"
+sha256 = "d0625ee2ceb48178e26128a06a34dabe57706ac9cba70e9ab70d4f4e1d92433b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks4.lean"
+sha256 = "d095c45ef15f26f5ba90cb74fe09a1034621f24ac701d432ba32c7591512fc27"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks5.lean"
+sha256 = "a937af7795e8140086a76b6f47858af66b2fd3ec182e83f1d509faf175fc86ff"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks6.lean"
+sha256 = "4818e275aeed9b9a99173da1310006b2f47f665644f1d1df9ff413f36cd8f6b5"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Checks7.lean"
+sha256 = "498b5ebd8e0d95691f12b86cb621685390d8cc34765f178e01246443cfb96545"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Data.lean"
+sha256 = "e88a8c53fb9efc9f960c9fa16b6b035738dc859b6ca414a9f50fdfd106be3232"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T128/Main.lean"
+sha256 = "b95a2beb6589bc25323d40e0b00c960fb62a1375b8df8062a470ebe4bd8423a7"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks1.lean"
+sha256 = "06550dd8b78380aafbd19ed30c8135ca9f822536fb9395abb58817a546e73b1e"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks2.lean"
+sha256 = "4b7c67073875579465ebf92de2efb12b4f28a111d4c680519e9c6d0d8e805003"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks3.lean"
+sha256 = "d92f1892fc32ae6669b4de7375fe138cf725ba4502825cdc4a931da0e8ffdb05"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks4.lean"
+sha256 = "e3545ef1c7b77f882a0f3d871d7bca492608490083e4d62d984367bb55e51d2b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks5.lean"
+sha256 = "42f6c84f36475412e0da15f824746e330c39bb900a56eeb364220e0bfacbacc1"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks6.lean"
+sha256 = "0e858aed3b7f0d9b23ed6e3929fd75bce48e1c19e4f8ab12c506843556f12102"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Checks7.lean"
+sha256 = "52dba97c727d7f131b7370e9fa05fd13724e42f5987240f82a07c4a879e01033"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Data.lean"
+sha256 = "7101df972095d130f5e8c0050e51ca6168f8cf48961ace6327214d8cce298487"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T16/Main.lean"
+sha256 = "6c70abcbefec2191526fdc47e9cabfe5ebf9cfd3cf9ed62aed459ba9e9842ed8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks1.lean"
+sha256 = "e2cbb46050aec2266a02573668ac06b6cde73c5ae3c7fa991afe4f4aec3074b0"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks2.lean"
+sha256 = "fa5f7d8dbe56622fd021a37aa808b22486574983ea20615ffa53949624f4f43d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks3.lean"
+sha256 = "a8d2047ed6b276df5e35e9a21525f59e10d39a8133a2a7fc6d76fcaafbbf0e98"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks4.lean"
+sha256 = "5f0d261e9b7c0e0bb63b8f402001553c410fb0f3d2647a57b2788a0a8fb46ccd"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks5.lean"
+sha256 = "be7bb5b29eae642e3a16a349e9b2db0451a2c2fe25b99cda7c21468eaab67dec"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks6.lean"
+sha256 = "4336847016ceaf784e56163129ae2c8b074fb5bc6c22ce4e32589eb5a5b325e1"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Checks7.lean"
+sha256 = "7e0d6302c05a193fa0a029fdc34ff2ac61cf87f504b9dfc2eda2c97ffe7a9b6e"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Data.lean"
+sha256 = "04cafeacbc00bfd72eb59e609044f60ff669deb0750fdb6b724f953e7019c3bc"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T256/Main.lean"
+sha256 = "4e71a726b34310e6f307684784c4356dd6f3488d9889c4f59120bcfa147b8546"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks1.lean"
+sha256 = "6729c57bb8162372f1fdb08440069a7b85133c223c0e1df2c466a2afb44e6d39"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks2.lean"
+sha256 = "3ae356f4ce7acdfac5a34a80aafafe1bc75969092001c4d677166d52859287ae"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks3.lean"
+sha256 = "0be98cef06ac9d65a4e75c1884a46adfb437cf1fa123fc32a7b750d3801d867d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks4.lean"
+sha256 = "0ff6ca6f40ebf2d295d4a71693ffbfa4756dce213d1b8e9a5e0fe6895fa2d18c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks5.lean"
+sha256 = "4b6840ef9a8c917a5c111143fc9f22a996dd84f06caa15dad3b5bbb5ba793746"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks6.lean"
+sha256 = "c1e63d22a92bff9e230db4de16f0d850a7d974803809879bc68aac68c0370041"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Checks7.lean"
+sha256 = "5551aa9f55d5dd21fe653e1ce00abcb1dbbb163ded812de1dcf321fc07c8b211"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Data.lean"
+sha256 = "5166e9b684fa1947e363192c7ae7ba197847ed6b5df2c946534b93aa587db1ec"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T32/Main.lean"
+sha256 = "4970ffd7d246ee21f0498417a280326f32fa0c5be29821e1205b5c97ef194f7e"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks1.lean"
+sha256 = "7acf9a609429b8da64bda5ca0cb2b573678ad360720637e5599595975b76492c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks2.lean"
+sha256 = "dc0387c4859da9a42ce537f08441395a8e806cdf325a0bba26a4e465a4e55885"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks3.lean"
+sha256 = "9808d46e3526dd58ff6b852e54fc86656f709900e0ac8f56dec8ee992fdb4cef"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks4.lean"
+sha256 = "53e7ba6a6c7cc8b1962f9729854fa679678758a3152ccc67e918a8ba43eea1a2"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks5.lean"
+sha256 = "9d28b635b55f6df2a9a95dc9c1567e271c4390cd3c0e9db3a522c281314d6df8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks6.lean"
+sha256 = "5b9dce25b147ddc42521ab25e314a3ef68750062c3dd909c7f7288950b92e81b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Checks7.lean"
+sha256 = "f0a872f386a5177e415e64c396bb4b9320d44494594f3926a7174b1fd414c0cb"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Data.lean"
+sha256 = "719451af14ab9c5ed605e9f1e024d7f86a76fd6b4eac4bab2496cddf03cfef98"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/T64/Main.lean"
+sha256 = "1afe3da394dd07832da531bd68d7c0e56b60ff1221254d3afaaf396e0697e598"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Interval/Term.lean"
+sha256 = "a9bfdb046ee77d7b3328206ca0d40e7ae0b13047209d33700a3076f8364782b9"
+[[source_sha256]]
 file = "lean/ChiquipoliFamily/Optigon.lean"
 sha256 = "b7518d804d374f27dde29d67de671c8bf60e7d3038cdd6607b8adef27aab097a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks1.lean"
-sha256 = "2267bbd8c9a4f9af269d81ce074c97aeac61026b01577bd20f53a4fbac9298dd"
+file = "lean/ChiquipoliFamily/Polynomial/A16.lean"
+sha256 = "cc41429e1fd38d4c92624ffbe1d9edaa968e5ad4fa5f70847bf49b96ac9981d8"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks2.lean"
-sha256 = "30874a21d9ac746bfe5d1e75d5b4d0942bc03e113dd29d80263895e5dfa75aec"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Conv1.lean"
+sha256 = "71e53909fbbe3cf08ebc146ae117c93f74570fc1737f4b2c5ae31e894cc76e95"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks3.lean"
-sha256 = "1889b6d30546e952618801f3529aa66ce40062390c4f9c3a3a1ec3fddb0e0136"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Conv2.lean"
+sha256 = "0e307909ba79e03b16b9f1ef590d8f5849b07b71c83c1226dd2f8a2b427da62f"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks4.lean"
-sha256 = "c9e19070cc9bbbd6113e7b20d2a42253a449b331a3c863ce024e957d940f5869"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Conv3.lean"
+sha256 = "9d04772d80a4820815c3d5384f867348a8449bd69c985cc03f82e7e0d23f3d7d"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks5.lean"
-sha256 = "8914d306ac8728dfd67e332a87f42f22aa388996a1b56899731da074784913ac"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Conv4.lean"
+sha256 = "441f318df112911aa610f8ff3b0e15a4cce359d219a2240e66ad7ed5969b701f"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks6.lean"
-sha256 = "2e73d0197c5eb4a20c216b6d2392ebb2daeeb4ed61bfcb5f0bb0449633eda089"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Encl1.lean"
+sha256 = "463ddbbffc2930dfdd43b1ba3e7789ad726d573fa077dc20888435f5629475b5"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Checks7.lean"
-sha256 = "94fbdcc99b33bfcc56a5141dcd12522a0ad5629e3cabe197d668d5092217f3ce"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Encl2.lean"
+sha256 = "3bc0d39be344a82fd9d3acff735c0e1da9566e7e06e873f924117b5d09c37706"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Data.lean"
-sha256 = "16edff014cf83c44525ecd4c5fad3d5cda0e9e8606effc5e6a367932a58a4593"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Far1.lean"
+sha256 = "859a8c118d6791fb3e666feeeedf3cd76ed485aaccd2f41c56e368870307c571"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T128/Main.lean"
-sha256 = "5897d2f9abdbc8fd6d39e96537764d68f10cd305f827de234c74c09625944362"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Far2.lean"
+sha256 = "20290e9b83682d6e792ff031d8ae3fdd8a7613f0a287cdf46afe4df38df9d3ee"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks1.lean"
-sha256 = "acd89c43e551127fa08fd8c0305beb69923a927009ad1449e02dadb1d14c89ec"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Geometry.lean"
+sha256 = "26ddb59564246df2aed29934376cb521301b2d78d4fede3f7f93b66202a8130b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks2.lean"
-sha256 = "d6d30964fb71d3741e9a2f4ccb53069e969395d97dac87950c5961256038a9bb"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Hen.lean"
+sha256 = "18ee023da9f8a2fadf447c44ff118b4fed70cbdc024be2bcfc35d1d7fa76ba24"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks3.lean"
-sha256 = "e65e54f0da2a3fa54d128b1d4f73543baae754ea08c6666b114cdc098493a17a"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Main.lean"
+sha256 = "bc3ce02d8a5a02eadab28f7fc6f088816474b49a085a96fd472e3461c4da8b97"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks4.lean"
-sha256 = "266588a302302b93f9ddda1883b3508e70e0cbc38e8c483ae80545628e940411"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Poly.lean"
+sha256 = "a3f11985d51c4b334a06e42969de8bb46f1ec416b179ced588bc37591bab7c55"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks5.lean"
-sha256 = "e0e4fb207dcfbea743b62ca0f77c7a20e802e164fbe45ccb268d312a8632bf11"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Published.lean"
+sha256 = "3fccc2986da406090b6a841fd60be84e88925d2a63b73c13c1e00f8fd9a9da42"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks6.lean"
-sha256 = "27bea2ad5623b05e074a3602266e4f4427d2df10e684b02b9e109b12b071c16a"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Root.lean"
+sha256 = "ba800d78b97ca02f9a35c85a1485ee4b2ad5c0d4ca03166acade2cb93cf2a92a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Checks7.lean"
-sha256 = "090360c3ed43740054b4c8895b9f3c392b3e8c835cc802afb3318beea345d186"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Sides1.lean"
+sha256 = "006f93910e1bec978359f82c3328c59404128694bbeaadf6e84dbaad92d8ab6d"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Data.lean"
-sha256 = "b3fe0c1ec962675e210bd47c606b34c367f881498526f1a75a245893d798fda0"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Sides2.lean"
+sha256 = "0b57832e16eef9993bf4bc592c7743acc6d4f04e7141c8596d55574de454209b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T16/Main.lean"
-sha256 = "f094e26612b5aed0cf09f4e9791f60b44addc3ed41d3d6b1e27db45fafd70e89"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressDef.lean"
+sha256 = "d97d49d3f85b25c69150dc312bcfc81d042351ac3799d47eba269b0cc39865cf"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks1.lean"
-sha256 = "a0e6f1ab3f463afb0b893f39cf5295aedf644472f19e5f5b9f193269693ec803"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressEnc1.lean"
+sha256 = "ae5b7c73042308b31a200f4bd37a0a77de02fda282393ca90366674c3fb76803"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks2.lean"
-sha256 = "c7b0227a4a3c4d09902ba059b57eda3367c33832ef146f8fc7eed09524646b86"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressEnc2.lean"
+sha256 = "97d392b6838b2811fae7c9405c8cff099f929728db0801fee0931c4aa59a8b0d"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks3.lean"
-sha256 = "fdebf2539f633afe6900d2ea8c29a837cb8dee5ed2fff54bdf813fe6a891f170"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressEnc3.lean"
+sha256 = "648ad7dc4bc88cf3ff528b32fe392926e22cdcb46644ca893e92d5d673831ec8"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks4.lean"
-sha256 = "98df9ce76fab21f2e63167d6e34d57847d495e4a12e59329afe76d61ac4b3f41"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressEnc4.lean"
+sha256 = "c0eba6bcfa1cdd4e842b63fac22e9fc7beefb7dadfa1b2552cc3969df6bc374e"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks5.lean"
-sha256 = "d83a659a43a446918170776304ea7d139728ff12a91ebe6e45538eecb4b0ff3a"
+file = "lean/ChiquipoliFamily/Polynomial/A16/StressSign.lean"
+sha256 = "57e78c27addaa0c80cbd42a30a7657200a05a34520df80eb219ec399b7b13119"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks6.lean"
-sha256 = "a0006edb45585b7d26584cfd3466c5a7a129de93b48dd32a0434196347056030"
+file = "lean/ChiquipoliFamily/Polynomial/A16/Unique.lean"
+sha256 = "39e3f644ef3a28e0baa67411fed213e79024757417522b3abd6dbd1e34eb4e29"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Checks7.lean"
-sha256 = "f9c0cebb05ef4f7c79f1f281314af8921a29e573a8359081fa0e1614218b9bbb"
+file = "lean/ChiquipoliFamily/Polynomial/A32.lean"
+sha256 = "92a40deb50248bc85b42b122d9ac2e5cb19a7e2e8a721a9ddfb36c58621566db"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Data.lean"
-sha256 = "3215af53216d6353d14c80bb04dd5076cdf7de3d5bfae9fccb6eeff93cc0b4fa"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv1.lean"
+sha256 = "1fd24e760a20821a944453f880bc99595405b17719508c5472ed7899d55bb9cc"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T256/Main.lean"
-sha256 = "d3f2a2de97a056c2b9d90cd06f6b91712ef5919b7f9fbc16a13547313acddf2a"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv10.lean"
+sha256 = "e8bc3e0a271b953dd68b741264c0614d4dfe953c2c8e0fae2a6082cd08930cea"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks1.lean"
-sha256 = "71524ae18fd896180dc4ee2de9dbc517f7f075a4458eda5bf705f47ee6607fa8"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv11.lean"
+sha256 = "8d5b371efb5e25f81eba3fbffbf2dec8e827818b99105f9ff3eb4a0077a07d81"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks2.lean"
-sha256 = "aac8e980770443a73b58836b89c6ffe51e24432cb1f5725cdda772e41bd4f9bd"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv12.lean"
+sha256 = "48cc15ae279b11a01a7604452d5c3b6c55d903cf2af5fc0e0c042820aae49291"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks3.lean"
-sha256 = "7d315d6361c5b2e8c6036b726a700c98ae12a4e507ca3e970bfa4a4c0ea33db2"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv13.lean"
+sha256 = "fa147e58da2c489342a1ac4e328b56f7d1d7ffb31afbc02dbcc041e46ac9710b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks4.lean"
-sha256 = "5f7a51cab61944749584d1e465e13e28190e663bd3927579eba5e07d5536eec0"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv14.lean"
+sha256 = "c9fa29147546d2a291650157193ae6ca71261f3572025c6b42fb1beffc6d750f"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks5.lean"
-sha256 = "7079269ae380e1b2ddad8b325a818dcd5f00699bf45823085f749e05eedb94b7"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv15.lean"
+sha256 = "34a1132fd45e901af4508f7d49d06c5278b9c9bde93a299d5b6e332d9fab6434"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks6.lean"
-sha256 = "e21f9823e724a29dd3fbd9bd4ffdf3c7ab200c9300efd0dac0d180512e57e06c"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv16.lean"
+sha256 = "2969f80fcb294fa57134ea865bb727fd0ef94d2845c33d2b99553708bdf6a97a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Checks7.lean"
-sha256 = "e944252877adb40b8f4cc5f929bdd17c6279c25f02c5c197c17778d6938d4564"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv2.lean"
+sha256 = "0bcaec5e3d74981bdb08f0b29ecde99e0f3e27159628cd9b86ff71fd99b0583b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Data.lean"
-sha256 = "848cc7a9f9055d27f3a33cc55b7382c4187a862a4bc170c136e3aa9edf4fedbe"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv3.lean"
+sha256 = "1386a3cef73df37c50fbea561f51d9371ef1203126df7d1e585dddf517fd44dd"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T32/Main.lean"
-sha256 = "0b71de59e302034252bb4d15881ee5cd85ab8d51f2ff3f9dacb4b4f2f098e0ba"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv4.lean"
+sha256 = "013f13178ca6cb04cec4daa1a4cbc9e7c929d625ba9b3e67dbd51480130e6636"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks1.lean"
-sha256 = "224b9a9f390c9207eaed43b8c77d271677d6a43afc511b1859b1ad3c7d2a173c"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv5.lean"
+sha256 = "6c1fd4d56329d82c93e3027a2f87680a7f843892cec87df1eb991f97f06a608b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks2.lean"
-sha256 = "6d16ed780bbd8b6c6417585dee064f30fd4910a2efe7147ad07221d706d7e50b"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv6.lean"
+sha256 = "28feb4274c0148079558c3fccfd01dff61eb723a14ff81fcffd2e77d8272dba4"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks3.lean"
-sha256 = "7205b8fa699b5bdeea691cfe652745b2775ee6cd00515d93ab0d216ec7d5db18"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv7.lean"
+sha256 = "ec624283849e1ac5e72f495c9239424ac13a9c3092667313e3b92ef881363538"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks4.lean"
-sha256 = "05c8700b819dbc0a887f29f7a95a5cd9d84c1f4ce206bc00f6187978c14388cb"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv8.lean"
+sha256 = "ca67a6c6859d2f5023cccb08d41daf94b1b35b4014d21a17a4409992c7ecc161"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks5.lean"
-sha256 = "2b373da520a11c1680a210ece9f393d62a22454c005ecacfdf88298329fcf6b2"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Conv9.lean"
+sha256 = "ab407b6832c160f2f25784cdacf048bf1457ae5b0769afd9b45ea59135ba112b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks6.lean"
-sha256 = "ea819ec7f5b8d78df624d6714cf32c1545a78de94ea06ea299b940941564ba94"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Encl1.lean"
+sha256 = "d3bd079698dace9ebbb43d68b0397a0c947b782cc2aefe1c0ccfd60458e0dc2c"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Checks7.lean"
-sha256 = "04f7e9245b09993021f0998a4de6eac8fd619c96f7d089a476d663d002e50d06"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Encl2.lean"
+sha256 = "e38aae001baa4a78ed550781959ea5f381f42dbed1e050fc72c07519a1e310b9"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Data.lean"
-sha256 = "2cba39a2373ef412ea711b4958ed4154ceee1a0c70abbc1db7813d2e75098ac2"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Encl3.lean"
+sha256 = "6c920a653b749df0dda13248cc3e475609e405f90eb43c9420024b6d662dc03c"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/T64/Main.lean"
-sha256 = "ca2779f70355ff5e3b56858655cf2db9194ae187f277eeb7d376fcf7ab3d7b71"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Encl4.lean"
+sha256 = "6a4db4019a4c0da0a9d94db8e659712b09dcc7839189849ec3aa5a6e00ffdfa2"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Assemble.lean"
-sha256 = "72a1b8b55adbaa28bb6f029afed69f3cb9b20e7d3ebe4a4c981b8a2bd4386abb"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far1.lean"
+sha256 = "68b35848eacd46cc9b7b8c5ef7ec39cd2339b3847fe0082a5352a471576b0853"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Base.lean"
-sha256 = "1cd01209d13ac275742a9a4da7275626bd5360502bd5924f6964efa8a90af99f"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far2.lean"
+sha256 = "febc5431324fac2fec5fa88544c0390cb584b2e8796a4e02f06a15de68723e55"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Checks.lean"
-sha256 = "04504a5ef9410289a5ebd64fffb0c18e72a80faf98654cf969ee24017ae908d1"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far3.lean"
+sha256 = "4b22c1fd71b9ee49ff9a0b9e1ccd2e6c4f894cf6199a4395926b191311971eb0"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/ConstructorAll.lean"
-sha256 = "5dcdb284510302be09e036acd45f31ab676ee74a06a3d9a2399bc7eb34fb4b11"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far4.lean"
+sha256 = "a72eadc62fb8f094cc7662097dbb86738460a8d933318024985e52169f890a33"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/FDeriv.lean"
-sha256 = "f1551759ee9ba8c08b17adfa8e7e6bf0c320f0a7c1f547df921ceb1df0fa6904"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far5.lean"
+sha256 = "640dd8cb4dcc37ec4e32794dfc50c13baf0ad27d171914c96edda2e47f29982a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/FI.lean"
-sha256 = "9aafb0c2215eed3e0d41e5b371be0e61b61144efcdb48a561bd38c7ec24435c6"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Far6.lean"
+sha256 = "ea4b4e1544f9ad1ef8c2fb79c500112ff55735e74c8f7b48ef8662709cfe8c8e"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/FSide.lean"
-sha256 = "d57a4b3045caa61a63d71d337370363c4426868f03e423900c73e5c7ee39d3a4"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Geometry.lean"
+sha256 = "6731ace989d043cd085f9f16b5c2a3e6e06cb6037501014be1eccd7393cacd6b"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Henneberg.lean"
-sha256 = "cb69e38eea43b9c4103ad1c9403a2c861d1106afef1cca593447d3c0afd09aca"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Hen.lean"
+sha256 = "73d0d6e2e969e1dc4c95aa4093776830f5b550adb63efb7cf4425933161663ed"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Interp.lean"
-sha256 = "a51d4c331c4878cb9e2e97762fede41fae6e1c5ba4b7623e62fe2b0705fb0281"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Main.lean"
+sha256 = "1476675324c3c8afe04184efe931b18874faa4fcbe19b3031e73308294ea1525"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Layout.lean"
-sha256 = "83e4814b8947b69f7c9df5bb60d3d3a4c7d9e203ba23babae4fd8e47abc394ac"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Poly.lean"
+sha256 = "d4f5e9377ad0a696ef1bce250be9873cabca43839959f194e4e0bc6deb19ad32"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P1Angles.lean"
-sha256 = "907d5faf83097ffde0d2cb3435c4088016e2b44df5aa0e303f6e59bffcb056bd"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Published.lean"
+sha256 = "5c81acd8f1910aae6e85564adb39fada858b49a8fe4700e8a6941b379ec66319"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P1Final.lean"
-sha256 = "68a8d807f2b0a54167a01eebcadfd10fd3cb92f43813fce1838301d48c3720b0"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Root.lean"
+sha256 = "0f948f35317ae73a70807c8a8403d95e1a5187351b72a422e8be783fd2056e08"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P1Generic.lean"
-sha256 = "27396e52157efce40e720e93f6af9c204ce40e742c730a3b0f3ff40cb0262338"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Sides1.lean"
+sha256 = "b12822a5a159091c7e98e288ebcfe362219d36f48590868ecba9f9aeec385ca0"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P1Sides.lean"
-sha256 = "21a35f51f20073db7b705550642246c646bee5015895f26a971c8f5a59d5ed34"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Sides2.lean"
+sha256 = "ee014b8ab158b8d607e399524ddd75ac8ea8ae01311dfd4a414d1e5f061c0237"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P1Small.lean"
-sha256 = "c96137483d98e4c3116e5cb060dfb3f49f089f6613d93e3f7efb632fc97f0392"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Sides3.lean"
+sha256 = "715710253155cfcb6bbfa285f2a8583e11beaed2428499259c350daa4fbaf8ce"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Balance.lean"
-sha256 = "615727c4b140d7d19dfe8ecce937e0e820130267c8e89f8b7c5144267ad94c56"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Sides4.lean"
+sha256 = "b52ec2623a17abca42036197e5e11f97f86c174b19940b14c2960c563eccd452"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Core.lean"
-sha256 = "3eb4d901bfe5007f61d37ee9ee891dcc77799c75263f0188516606ea2a2e3903"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressDef.lean"
+sha256 = "d0988672fa101c9526428baa480065e844dd4adcd68faa61eee0f176152bdfb2"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Final.lean"
-sha256 = "7e5fe3bf3cb3284ac39359cf5b3a58468ee0f84d7d946a6c9fcf59168ea31006"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc1.lean"
+sha256 = "4ca405ec83e58a8acd7dd3f965baf0eb3862b688297346e8a991072609cc2946"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Gap.lean"
-sha256 = "c835a7912ee8682d5f9b91b4fb9f0e465ae14449d61b7bae376b4223f565f173"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc2.lean"
+sha256 = "e39e78d20976b2968321e597663dfead5bfa703f3bc903156b8d4bfc71683168"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Main.lean"
-sha256 = "a51c009fdbe17617e11eb88aa8852314038af8a9d637327f2a7d4f6561163670"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc3.lean"
+sha256 = "4de3007622f2d909bda8dbe85fdfa53f0f541e5b585f62e1ae2b28751c8789db"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Pos.lean"
-sha256 = "e4f8418ce312ec20b05e18d901bebb5f79d4d68797279a8c7c6a6e5c92f53adc"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc4.lean"
+sha256 = "f782e1c21e15be76c916ca9c3166091e460e18482e90596345fca06a61e2274f"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Stress.lean"
-sha256 = "78b4a36db3974a1cc8b9775b023d939c347e3d814cd146d1465a000931d34886"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc5.lean"
+sha256 = "310c91b45894de935bf03ba406197dd1d4c11ce7a4dd7c0d087174b626731cc0"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Sym.lean"
-sha256 = "eafcc7489698d80dc41e64a9e58ff2482df26a19025c107f0c35db4bb3f6afd3"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc6.lean"
+sha256 = "14c8943d2c45badb79e73d7968e14cd1ac642b1f71b87ecd5b634c58dbad5c4f"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/P3Vertices.lean"
-sha256 = "8a5478709a64f81323402824abe779697f2c370cf7f51d548e3c25adad142850"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc7.lean"
+sha256 = "833684db29f40e968d29a16dca336b09f06378b2176b90c1b8542eba2ae6fca4"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Root.lean"
-sha256 = "e249cc2f94052d0d9020050b93ae22778de79a4e3ff74a35e53200a6e495b2f9"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressEnc8.lean"
+sha256 = "48550db78196ddd0b65e4552de5ec2720135ed895d13cea1e62bf237067938cf"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/RootAll.lean"
-sha256 = "1512541ebda7669e47bcd1f4e8c8143f75254af34ec58097972af00aa65c2939"
+file = "lean/ChiquipoliFamily/Polynomial/A32/StressSign.lean"
+sha256 = "19aafa569d63326010feefb2dc34107ca579673fe81da20515f889ce762f8e98"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/RungVec.lean"
-sha256 = "84c297ffd998027e66575b5b1f2db566b0076524b92ab1a5d330b5967898cd2d"
+file = "lean/ChiquipoliFamily/Polynomial/A32/Unique.lean"
+sha256 = "30e26969d0d2ec22d48ae61f6af8580d24636f9b3600fbfb9a7304e79bef1ac5"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Shapes.lean"
-sha256 = "638ddbff426b483b50f02e547ce2b48fff118cffe57827541124c04e9083b04d"
+file = "lean/ChiquipoliFamily/Polynomial/A64.lean"
+sha256 = "47fd1c6465222a38d4fb83fd5e946348d0b2065323db6a5b23449298ac9fe310"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Stress.lean"
-sha256 = "882fe72cb889f7caf716d352712d688eacf406d259fab171fabc97009668c39b"
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv1.lean"
+sha256 = "e394dbda77c8e732950daa38938c450aa4e36fc11e9367573bf2a1c487143f9d"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Strip.lean"
-sha256 = "1d357205284f73aeabfa76de2097e7568436c5caef25b25041c343c15a119d6d"
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv10.lean"
+sha256 = "c2138407f603e1dd94a502eeef3ecc12699dcd3cb7041ddab9a06e1ebcc0323a"
 [[source_sha256]]
-file = "lean/ChiquipoliFamily/Trig/Term.lean"
-sha256 = "a380294db14d4cebf1df5a11d6afe312090a16e243da7d5cc44cf5e21daf7dac"
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv11.lean"
+sha256 = "acc105ff4adb22351e420a376090be0afc64275d26815c9abc2e640947672293"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv12.lean"
+sha256 = "ec972addcc30862171cfabeb48385ffa1e1cdc6e719d8aceff37646465a03e16"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv13.lean"
+sha256 = "aa29c3e17fee9fca76a69121d574bad2b1e76746468cd651e2c4347f1034327c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv14.lean"
+sha256 = "1b9bffee97f631deb7a4c03227b49bb4d3efed0bed2f971c8266430b1d6210b8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv15.lean"
+sha256 = "0f394f6ccbbc26668229b8fdd2500ed32db9c94b273a0c24b065746d83990f97"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv16.lean"
+sha256 = "f2d468f0a5ecbb6b80a028933115f53ff6e95da742c2c97404cc0eeca81edadb"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv17.lean"
+sha256 = "a70e29229101ac5c90e33d98d9a4d343e4a01c99b06de5311bd2a02e1597dd3f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv18.lean"
+sha256 = "0cdb3c81f61144cb613a855c729e79ebbb5c9c2b3d99e5f24cb9615d2fa871fc"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv19.lean"
+sha256 = "3009b7a4e7694b4ca6939197b29509f42307f3c21820d39688454884b59cb73a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv2.lean"
+sha256 = "07fd7f5f81f8095d86d76b96e7739c4ab87d263eb55e0c91eb10be56bac04f9a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv20.lean"
+sha256 = "2c6584a43cca1631c8f1d946816b7eac15c9bc2a613f1ecc06be4d8bf0b355e3"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv21.lean"
+sha256 = "ae5d62076cc4ada7d7bfd0374f479e803be1203cfdaee14fc6765a8ae8e626b2"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv22.lean"
+sha256 = "c93676abb12e041e65c0767219757e8035bd91342411441c20260219f99b7b2b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv23.lean"
+sha256 = "3a24bcc2d3634724d529698955b80d98a191bb5d7107be54e0ef7815cb56dc8f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv24.lean"
+sha256 = "d0b9040042bb3b509bc14227ea233e4e5aed3cd5f07156c6d85a2a91abaef45a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv25.lean"
+sha256 = "f296b5d4f9cc3025f7be2b028f0cbc2e078c60885fe7ac26b4dba5696647d6bc"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv26.lean"
+sha256 = "be5d1c387ff5ab02278b5c0f9f1c75bc8a8d7c810e008531d1a78c733118f08a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv27.lean"
+sha256 = "c4be632961d5ddb2aeac957a552ce7688764e533646ff35ed6a93d3f4430b58a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv28.lean"
+sha256 = "a3e2df06b23471c2fe8eed549199a1118bf606a6822f5bda4765505b212ef30e"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv29.lean"
+sha256 = "c01ee6ddd93fd5d36ee62035b34521ec33db863629da340c184ec839b4ab0d27"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv3.lean"
+sha256 = "ff1716ce8be2366b2180b8ccfee985776acdb64f153ed65c2e279d0528926c32"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv30.lean"
+sha256 = "9934c78caf05172320d27dd6631939a379f11c20fdfc64070b23efbaf185c4cc"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv31.lean"
+sha256 = "ec9b6cbd66c3597d0eeb616b43d4be99f4c8f30a22b20ba52671fbe7355421cd"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv32.lean"
+sha256 = "181b129d6e9f7c706ae847f038c0316484a1a8cd98255cf87b96d5bd9918c8f1"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv33.lean"
+sha256 = "902d50fa1c769f6114bb0329c3255c9152ff718736e7dbb47928bbb757cf95ac"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv34.lean"
+sha256 = "7a2cf44120f36c98bbb5f55c05fbf53914daee62e0dc5901fef7e2e10c874c83"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv35.lean"
+sha256 = "d8653ac192d7e2be60ac8fa94b581a5ecbadb19cb1a21e3d8523acbb3a78f1ea"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv36.lean"
+sha256 = "1c7d1887dabb8abca0250a5e89db3fd3d519302b94f9ef6d4b95d29fa2ea529d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv37.lean"
+sha256 = "629d1c179300a7b39d41cfd6faf41c82f11659d7df344260cad6e4e800d2edbb"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv38.lean"
+sha256 = "68d70f671f8144343c3fa0569f3ed2412e79c0f3217d53b9645714997ac73437"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv39.lean"
+sha256 = "5a83c04d79a42bc6b31c7f849ffbe1543078d9fcd0449697dce10f517f5174fe"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv4.lean"
+sha256 = "3d336ed5d11e40976d602815281ad0d8b9e6192be3c2368d05cb06f9eb45c3d8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv40.lean"
+sha256 = "38282ccef3de7f7dd3478a6e5825fd771a3ead83d126ecb53862df6ad4ebef14"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv41.lean"
+sha256 = "fe32ebe1e4dbf02976a08d77a9c4d2422c894d20461b044a284c7802c4a47134"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv42.lean"
+sha256 = "7d9d379d6882f4be613650ed6820ae9e054306e60581a6323d7c9a966f9bd107"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv43.lean"
+sha256 = "ce28950d5a77812b309ab5377a82c881a2a807f983464347f528e54d46a21cef"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv44.lean"
+sha256 = "86a5fb5782af4ed664768ddedb40d04bb10ddcf24bb6dd4702a0c1e412383f15"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv45.lean"
+sha256 = "06cfc2b500b8a4b66d91cba2b4d1e2e7c635c5ae0f7a5d38affe29f832bd5c0c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv46.lean"
+sha256 = "df77b37f3d07faae3e8cf4138286996217da444a4e313e6e28aca7f040873a4e"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv47.lean"
+sha256 = "b8b7842396aecc2269ec08119cd4a8225a3ffa049285dc127d8af5b6f1b97eda"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv48.lean"
+sha256 = "3b6d0760d84d5dd8cac2de4f4c01fada5604c0846d9a0a548abf37a6c8a26130"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv49.lean"
+sha256 = "50a60b22533cbaf99e125e0bc6279aad0223130ff47647d4c53abbaf36e68961"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv5.lean"
+sha256 = "95f64015cc3e18b407c5a730989e6c88367c4e1f1701613c29489b673135b0cd"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv50.lean"
+sha256 = "a9aa80a45bbe302e9f4b779bdf2d3bd44b8deca233ab7f45dbd76ac089af1c0a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv51.lean"
+sha256 = "a7061b92ddfa18b633adaeff8f4379b13f402bf48364564f7f0933dc11788b3a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv52.lean"
+sha256 = "7818fd1fe911e954a27e2550f0d155b224ca780d9976057715d057beb436a3bd"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv53.lean"
+sha256 = "d5e0f13c4908e3fbd5afcba558f5e6751a31bd5f820340559dafbc6315137673"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv54.lean"
+sha256 = "823ea7e21fa573864af33bbce6ec715609ea7ad6ac600f20c2efbff1ea1d6b4d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv55.lean"
+sha256 = "4584bc44ff106d2f011ec4332dbb6ae4b6b4c849bcbfbd8dc5e161b38de6795b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv56.lean"
+sha256 = "41daeae55710d257f8bb962eca8c46f63b8f936e951daafa6275f18487b903f8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv57.lean"
+sha256 = "b9d6180336d235506d8bfd9cbd060a760219b94ef4a596c53c1b2b065df54ca5"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv58.lean"
+sha256 = "33679561463e2b42db3a4571243b575bd9cd056382bc6f0de1fa97b551450c34"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv59.lean"
+sha256 = "d1146c1f00e472aa13664a9d74cbbde98479c84dbf3a66df5f4c72007d9c1f13"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv6.lean"
+sha256 = "2eeda6876c2ca41d1d87d1864752411758fa98d3596410db44aa9d831d99140a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv60.lean"
+sha256 = "f20d05a74fb2b11ed30cc6f4157cdc1dee3016fa533b04788ff6e5137e2642c9"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv61.lean"
+sha256 = "7c8edb2371e6d24d1586c9c6177c20f8d3d21e8717d26b366eccfe615dd2473b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv62.lean"
+sha256 = "a79318af3998d7c0523d6d362ffc54dcda0c1bc5731595b522c3b77c355fbbc6"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv63.lean"
+sha256 = "361e3314baa6b30834830ea0aaba220f6a5189a44496ce42eacf90e0ba7ebe0f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv64.lean"
+sha256 = "d563faae555f391c6545bc11c98810ea51c9d066028cc004b846b443e3be60e6"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv65.lean"
+sha256 = "b226fc7e72ff36be07cd7e9166908eebaff72d51a89929e98a52787c2c8fd56a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv66.lean"
+sha256 = "84fd894b156ab8645bd574b9ab67660fa057032cec550349378b501611bccb8a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv67.lean"
+sha256 = "2c3e7206915151ee8ff29ca47c3e4eeaca5855e9bdc367c5335fff32c6b4f50b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv7.lean"
+sha256 = "cf5d31795308790165076d7c3750b613c002ee7f8a9ccbef73fed3a8cd1085ad"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv8.lean"
+sha256 = "9c510c9e9e04f4e9e543b97d15f80d22a119fb7b529fa48a8f6c2477d4025d37"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Conv9.lean"
+sha256 = "d50d605fc843eb78507bc09480126c6a9e4fdffe2c87cd2f4b5e104d4632509c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl1.lean"
+sha256 = "d63a1dcfb8fe4bf3e0e22066e7e7b9ac4880be3a4b21d2ec8dfa4c79ce32d2d0"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl2.lean"
+sha256 = "9b536444f90bc91da38e53ef74f094237dcc5bedb3798a6fc679847d72a994ca"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl3.lean"
+sha256 = "673297ee6e4b2b50df46d15d18a22f92cee239c3778d95936474fc0495b05405"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl4.lean"
+sha256 = "626aa3e253caaaa28578029df829cfca855e22445c6c7b619f97bd85551a6ebf"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl5.lean"
+sha256 = "f4e7b9ff5f76dca5894234d9127cf34e4401fd6b8e7817767001a00c864ec232"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl6.lean"
+sha256 = "dbf27262a4d3a7a93df0a93ee8c758419511a3695ff362df40c7113ec6c3fdd0"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl7.lean"
+sha256 = "1fd63dcbf75cedb5658ee5571f7bbad2b73368695f696abfebec762d6f284028"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Encl8.lean"
+sha256 = "2987468bd3281d0161a2504746637a2f26239f754981acfb84f6695c94858a5a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far1.lean"
+sha256 = "f8542d8628d4457db739a2c0487411c94d63216550b8293060cbacb11562f26b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far10.lean"
+sha256 = "fa6687d7cd9d74d47b21af4712bf24f74c1f701720f517103a702e5f6104e0ad"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far11.lean"
+sha256 = "a231fb62b702daf0604e9e3117b037f5a4ac87b497c57baf14d5f9547e362bcf"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far12.lean"
+sha256 = "cfbe596c8209bdba26efaba9a904cee7fdad278e1ce4fdff3e415d79bd6a5664"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far13.lean"
+sha256 = "ef76f33b3b34dc89a8e9009cce18f699aea748e240107f7fc58e2b94a471c535"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far14.lean"
+sha256 = "4da0302f3622b0bdc892d945f63ea2e71ef8c526c44f0cd5370468f93db62cf4"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far15.lean"
+sha256 = "82d10c078ec72a843c264354e681e7ed382cd9bda0de8678362a580d26728f47"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far16.lean"
+sha256 = "18382b0a9cdc570334a53008241a78bad228ee2ab91b504ba5edd6994556a2c8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far17.lean"
+sha256 = "7ec0ff14aba3063e4fe7e5331f0a7981a1b1021c69deb271653555c228969f6b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far18.lean"
+sha256 = "7a6c3f82a234075de72f4cfa80450a95ba4a41bc3f6e8bebd1a9e82d64956590"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far19.lean"
+sha256 = "d112161996e5db6c64f892a84ce942899e4dcd980d6bf75ab12265ad6318db25"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far2.lean"
+sha256 = "d59c464f519eaa263eefdcec1656ff9a21541eea54d18a1d8a3b4c78d26fb010"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far20.lean"
+sha256 = "7f585511175a2099ad576cfc9b32ef9544929dbc380ad4de54c9bd568126ac94"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far21.lean"
+sha256 = "ded363fb8e6506704f68e238a1a86f684a5f996e032fc062dad928001d176f12"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far22.lean"
+sha256 = "288cf492e631dfd42a05f8a9368a93b2cbcb0d237ba62d5008385986310bd150"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far23.lean"
+sha256 = "3eeffc438461bc42bf38844eb8770a9ed4d1b7db7b853f7100cb3051853b6cbf"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far24.lean"
+sha256 = "7d69a75c78a8cf4da089156d70e0327106a60f75d0cbd413eadb119791ad7c4c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far25.lean"
+sha256 = "5f895cad5484b474caf578a17a650096f945b44142095f62a62af1df8fc96098"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far3.lean"
+sha256 = "bc6cb82243af6a8fae6db6b874d0e71f1a111ea6aa445105cb54393978239cfe"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far4.lean"
+sha256 = "01403d1475e9b5f4674f5af1cbb7d5eee6f9c59079956c80f985a86069b1cfe5"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far5.lean"
+sha256 = "c92bbf288841813d31eb7e44b6663ab410dc772c814b8eae4e5972c331db08b5"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far6.lean"
+sha256 = "296b6a826fb904fc9e413b6577490263f815d2974f3cc8098f4a2aebf014b795"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far7.lean"
+sha256 = "df32befd338b9cc3d5e41361b9c44732aaefc3515d76a99018463155bc16e770"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far8.lean"
+sha256 = "7a6c150767aacac9c97a37cce89c1143949b1b8941790a38604d82fa40b8b1f3"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Far9.lean"
+sha256 = "2b061fde8ad6421ec2d4bf626361cdaade924a8c0d808126245473d3991582fe"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Geometry.lean"
+sha256 = "6a6a8182992f38ea6bb4247b199088a3e54017bce20bb35c9d4714858892d224"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Hen.lean"
+sha256 = "b023bf08c32d6e5cd23b9781cd0206d61b1151d91c0f24be4230cd528e4c8175"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Main.lean"
+sha256 = "805554418e8fdfa3eaa17031c7be389c08274e38afc86f8460fec571716eef7b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Poly.lean"
+sha256 = "113b1aafa710ec0af1b0217911f19196c37966d5115621f600823fc8502b887b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Published.lean"
+sha256 = "1d7dd1457769c38793f0ce78ab1963acad4cdd9dff9a7b7c6730bf9d871cac21"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Root.lean"
+sha256 = "95fcde9727bcc7ae16d5d13560b272596f9e4cc7c8ab56b91bcf892f2b59dd56"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides1.lean"
+sha256 = "f34da205126913f8345d02d95c1e987409f83a87bb974d267d97889bbdd51e65"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides2.lean"
+sha256 = "274b26554edb75d9885f87f0142a33180d2cbf43e2c78ae0137f230177708d44"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides3.lean"
+sha256 = "091ae24e616a58a4c591e95fd2f0f3cd7abac76a83b0bdb568d224da14b1f296"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides4.lean"
+sha256 = "11df1027606322830387da9cb5e49b7890d799ee933135c867977cd69a169284"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides5.lean"
+sha256 = "f33a06b46da7b57a6b58a0d871ec5603b0abb79e29e4ae5c336ef837af6b096f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides6.lean"
+sha256 = "f2688bbb2c611eeefdfebfa85e21e76fe060b52a0150709559a30c12c8ba7fb4"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides7.lean"
+sha256 = "2468ec6fdfec81fb1f40aed2c7996866300d2776d7c5a658021325d3c1388cad"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Sides8.lean"
+sha256 = "88819540b39bbec089ec9cb768491d682ec2f40efa0ff88f781df2ddb5f16ce8"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressDef.lean"
+sha256 = "44a55c4f1e54c46ecd228ad5eb9b9e10849952ab965f3c6604b5483aa625f672"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc1.lean"
+sha256 = "679dd46c4327c3020acd238e6291f2a965ca7291b457597433cf38c0ee16c4bd"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc10.lean"
+sha256 = "294ccdc8fbd230ab5f1f6dd28437e054bee0d814a77d155176dee00a3fe3393b"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc11.lean"
+sha256 = "5403113dd08653155acd2995aa0f6980aa43a94be755fe1ec2f89c9573a7a68f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc12.lean"
+sha256 = "5e9ba69d12c0060395fe408bdcf765b817dfb74af59632f3e673c5ccb5f1557d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc13.lean"
+sha256 = "3ab1d2e421cfd34725352534c118729f596f71f2848ca5418d5ea1174c5ddaaa"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc14.lean"
+sha256 = "dc46a61d2332b4fd644167c9bd6bc41d2a0d22a6312b60a4ce695556451587ee"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc15.lean"
+sha256 = "e22b1b41d71c26ee71f9cf18e8f921d4c86276d811bbeca4f9619b8813f0db65"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc16.lean"
+sha256 = "3f8928957b83a5bb320c56af4bbbb6e01cc9aa496112b6e482eef9766fce3a31"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc2.lean"
+sha256 = "11011c3402d96b6a8052d0e84f8254b24deecebe8cd7ffd65162f3f7badeb84f"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc3.lean"
+sha256 = "f1a0bbcac29545edc77b64e9a722bcb6428a103c467947850a034f84e665a4de"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc4.lean"
+sha256 = "56eb275bc0b3072a16ea8bfa4d2d0972e87e09f64761f3f83f351d142938dc5c"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc5.lean"
+sha256 = "81d70b8852f0f40f0223367890f3b8ff90283ff787114903ecb373787a987a98"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc6.lean"
+sha256 = "6f2b2aec3f0f999bf0e4a3e21625da7ab8241fd2266c3ff46979aea928049883"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc7.lean"
+sha256 = "b3bb48632425acf0579026689fe758106d54e9b801f21c07f221ad9567b4043d"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc8.lean"
+sha256 = "0c85337d226530697dd40e4ca136a38fabe39ee67756ca971086f65ca183607a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressEnc9.lean"
+sha256 = "5b49dd99124e30e98c30da87a16667121a9c356560aea55829f7f4526cceb47a"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/StressSign.lean"
+sha256 = "0127bd1da3686366789bed0839164cfb477eb38eb822d3d544ef0833f71d0ee6"
+[[source_sha256]]
+file = "lean/ChiquipoliFamily/Polynomial/A64/Unique.lean"
+sha256 = "94d125bf67ce0e9c44adab758708297a7c2a6750c20d6bc754e0ca1fc68641cf"
 [[source_sha256]]
 file = "lean/generators/family/gen_family.jl"
-sha256 = "c4ead82cb64acf45fc5b93775b231b4c5335bb33d6dc0df5881b0ea4d7090d29"
+sha256 = "895a919265706e14faf419e2e913a840b43475e3c7e4f6159ffdfcd717c621d4"
 [[source_sha256]]
 file = "lean/lake-manifest.json"
 sha256 = "1d11f2d56001800312d7ce55d726636454c10dab0e5e58584b58722420c17d1e"
@@ -988,205 +988,205 @@ file = "lean/lean-toolchain"
 sha256 = "62c2d9c0fc1ec4c67e151c11eff41ca004ef38e179cf9476c230406e6defedef"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc01_convexity_sign.lean"
-sha256 = "c1dd2c9faedd71aae6312711c654de060bc3018d4cf0eb827e59ac2959ecb583"
+sha256 = "ad5a2906465707c316ca860b6ba2f8195cebc0913e80546743831ecb51dd6a78"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc02_inactive_margin.lean"
-sha256 = "a2193cb9f96774568b374c26fbc9097cef5a601eff75e22475f8d12752cadf30"
+sha256 = "4cf966d2fce9411397dd57cfb2ab8676588fb6f5abce62171bd20b50083bdef4"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc03_side_needs_Fc.lean"
-sha256 = "c06868d9905df08a29618df845c0eb9cf2f5150197ea1015f7ac81ae7e5d3e68"
+sha256 = "84d0af976f277cad695acc26a90e669eb0924a948b3cc0f7ecc3f4e3a634a658"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc04_stress_sign.lean"
-sha256 = "78d22804bd482ba086ca36818f3c134a4dcc01c6b2124b8df025f04f821440a9"
+sha256 = "cb513f2d5447f8ee1e5d9bec0527f1de80b594121e11dbb35bfd44a25d44f964"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc05_rigidity_needs_bars.lean"
-sha256 = "41ace72bb02200888a961205fa375dcceb1ca2010482759c9828bc58b5912d29"
+sha256 = "49723708cb446b134166cc4158133eb71937e803e26344aae18a72750e901152"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc06_root_sign.lean"
-sha256 = "c88dc0c64aa984798ba33eba700070d5ab88c96592a51c20dfbf1ab917194bfb"
+sha256 = "e7e23c8fc5620fec0e88ea2ab013649b46da6ebfd2fe7bc3b5f0f8a7bbef9130"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc07_bracket_nonempty.lean"
-sha256 = "7da31ce6660ae75c89c53e984b0be488744f302f879b122ef3d8f4854353e5aa"
+sha256 = "7a03435bcb9c162a8a85c1fe270c4ab6fa43eaf98923aba818edcd5f33ab540a"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc08_henneberg_degenerate.lean"
-sha256 = "3c63f61cda889a9ff70240961fd16096009f6461a34bada458e4f5ab0e1c04eb"
+sha256 = "3cdf402ed9d8d66a66731f2ead3e023251fa9e07dc83a3127ce414206142b471"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc09_enclosure_tight.lean"
-sha256 = "f5de72ec0ea726da6025a8332cde10f5d17066858962ae2b977193b2c00c6edf"
+sha256 = "ec029e9595e50081d5221dc4be9f7ae69ba13e5fec3c694f2a4902e984182ac2"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc10_uniqueness_is_local.lean"
-sha256 = "4fb0e33b1c85c4a3b53700ed3a37894ea8d0b63cf264ade480fa42bbe4e4aed9"
+sha256 = "2904b9744a325862b497dacc07320b153ac4d121e59f64a8f44d1a4419e7cde2"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/fnc11_published_bracket.lean"
-sha256 = "33e5072357542fab0123898f08add7154e5cfc8a3b5c33452309f0e851d2efea"
+sha256 = "3617c6158d6568a3b5a8d9347ce8ad32d1a7cbec924fe8c689061e33ab475ce1"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc01_convexity_sign.lean"
-sha256 = "ba52a2459a7c15d8dc06dcb417650aa79ac80cd43d9106afff5fe648b02aee05"
+sha256 = "81a847ec5cbec8e95c929db5bf3536747e740028a7e0b41cdaf9d5107372c2a9"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc02_inactive_margin.lean"
-sha256 = "e1379731ea9438a6be9e2d548d7b1050200fc7589655a532980125be1c48741f"
+sha256 = "a30fa62baaad74d983c212e707fdb77a90217ace0d8b0244cc9a991d90092d20"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc03_side_needs_Fc.lean"
-sha256 = "28dc42a89bde234d32d35d0c13ac7ea6238effc0189535e6588d7735f107e13c"
+sha256 = "aa2427414aa26a35bf018c75a97b7046cbd9c403f6374305bb3e62fbc650b5ff"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc04_stress_sign.lean"
-sha256 = "ca677dd9a3321d5dcb812edb42fb507048594cb71af706bbf74c2f90e31506eb"
+sha256 = "7daa6ac0512db19cae76c2233e0026b1595c627b0b69e1921c6808194c97a3b0"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc05_rigidity_needs_bars.lean"
-sha256 = "8cf5503d5cc2ba6a6fbfe964c720cec4ba17990f5aae8983cb5d6dcd1e302383"
+sha256 = "6c486cd9fc0b8e97a93a98886fe59f5fc6051c79297fc7219a5bd8d458888da2"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc06_root_sign.lean"
-sha256 = "c9ebd7b88b1e0b6e48b8ce919737bf2b7f2b50242562fe6e20be1b210d6c4b73"
+sha256 = "97a135d5957a29a308391c70494298d6e52d35b8ce88add8391793ac97614817"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc07_bracket_nonempty.lean"
-sha256 = "eedcbeb1a78b9aecf6976c6618cef81e593de1767b528fa20d4ff5247d901af4"
+sha256 = "8abf0dc95a31057df96ff64ec6e7db8d75491ea88a0361147ec7e6aa21425c87"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc08_henneberg_degenerate.lean"
-sha256 = "f6dbfe8535c60dcc548c543a217859e1d3dd27de59df93f4af975f9eea840fa9"
+sha256 = "e65a634d45adb80093899aefc09e391cf864a3166c30c415ab5ebc7d043c915b"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc09_enclosure_tight.lean"
-sha256 = "041e280410757f7af1ae1b0125c4fba3fff9820d36ccdda5a53e0c9b65bb8c05"
+sha256 = "0fa95180ad3fa921801ae9a7347ffe7bc9aa01059947cf19e9c3ecd6eef825dc"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc10_uniqueness_is_local.lean"
-sha256 = "a5dcd719b169ba9da70e998294d32e6f6df2e14c2ec5c0bad514d477f2e1cd1e"
+sha256 = "39fc4f37091d58f4e9d258d5420c0670488661848a1daf496409423b6e6c5a78"
 [[source_sha256]]
 file = "lean/negative_controls_family/A16/twin/fnc11_published_bracket.lean"
-sha256 = "c3c73caaadff67246c3627d697ba868ee8dcbd9b37ca2d9b7fe4134202e78de4"
+sha256 = "6cc59d83f690335e5611fe504aff3a3c56b1ac657215184f613e0c5dd1b96000"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc01_convexity_sign.lean"
-sha256 = "93ac68b5ba8b99b239677251ce1111529afa7b7ad938bbfc4d17e13065b2c4ac"
+sha256 = "6e185ec8452271e198aaeb6120ed9cd5813410d6a8929640f2566a0c74a12dc8"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc02_inactive_margin.lean"
-sha256 = "ab9d99df357d207ae2e0776a5988e8738afa2279c1911de845f219366493d728"
+sha256 = "08967393c8f15fc20574b07c6c230fe0aee5ce4e62c71a0d68c0a321349330c3"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc03_side_needs_Fc.lean"
-sha256 = "55036ec6213bdee96ee27ce1a3964bc9a253214106b133c462caab403a59e287"
+sha256 = "565f46315e03c13ca2323d0019b92c6027038a66d5a58519a2e050341bba4d9d"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc04_stress_sign.lean"
-sha256 = "a3193cc1d8fc804189d8fbdf962c00c6acb4a4df11f2a70c28a72a20c72a59e2"
+sha256 = "2e5ede01c6632ee15632146014365511ef13c4cac1f2cb390261fa0bedb88efa"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc05_rigidity_needs_bars.lean"
-sha256 = "f0a6881d8aa23bf7d9a2dd9e17d5744456936602dc49d35908cb30873b19882b"
+sha256 = "bfc212fafe259cb8f3e82d1ae76b30de5bacc3e4eb34294a571338a10a7419b0"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc06_root_sign.lean"
-sha256 = "9e1ad6101ee6d5f7e7d3266cafb8c75d0c43b0d1acbc0100bc6650e2908ab656"
+sha256 = "6757b07403522e8b6e2a0b4a5c701ba2a2aea64105776c7bd7e7772a1990754f"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc07_bracket_nonempty.lean"
-sha256 = "d1d97937ee4988b981e29e0301279d3cae398ae9ad9b23048faeec1b8be81af4"
+sha256 = "8a9281b43fdf9d9d8655c1612f98430fd3eb4bf4206ddda367d07b8a4307e67d"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc08_henneberg_degenerate.lean"
-sha256 = "6ec7008691fc3e923087a1955d8e3544e14cdfaf9396f56c1f1c86d92f7b74f0"
+sha256 = "7ed3a8a674e5520ae3b6126b9391769c6049603f942708cccd1e9979c17c99a1"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc09_enclosure_tight.lean"
-sha256 = "0c60a2f3a80142c140d1a4679d8befe131fe374c21418c30c2ecb18e4e5a8936"
+sha256 = "e8699c4f3b24aa1b26e267618a9891062f58d9b9e3fca11373a864a97345ff84"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc10_uniqueness_is_local.lean"
-sha256 = "2389f6be7329eee71829c6017e013d6a56fd4ec264d561d149a92c6ddecd0e02"
+sha256 = "31feee8d79f4dfc5f60ccfd869e850cddd3abeef3a4e70c624d95363320e32a3"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/fnc11_published_bracket.lean"
-sha256 = "2c7c26c37b3c88f3092a867571d653dd6e72df40d60c12103685d3c15aa394db"
+sha256 = "6d6445943ded100b7bf73cc9652e46ff5abe5a5a9228f0ab3408c2e8359493b1"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc01_convexity_sign.lean"
-sha256 = "64933b6b93857b76afcc63726addbbdeb9f9f6776d9f09c4eed970d7321f3153"
+sha256 = "cd54924460e7043fa8988e49e0a6df45849cd5bb3f1dad45c2cc21f8b2b2e64f"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc02_inactive_margin.lean"
-sha256 = "0f28b1d0c0526ef70437ebed130284f7b7b92579b9e5c8dd9bdcc91cf1a51193"
+sha256 = "9b1a7fab9d87cb2be7b9add2356468fe3b4ca8f94c58ca0e2159d986516dd24a"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc03_side_needs_Fc.lean"
-sha256 = "b7210d73c46798508a3ac99aa8b0dc9fc550fa489413213f01a2a31dcb7a8182"
+sha256 = "0fd1a5de56fca5906a57462872e0cfee4d3b31f5a9206861d2a4223b619f86b4"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc04_stress_sign.lean"
-sha256 = "fa7198a73f4bbfae8af67053ed8d92b53da5dc2ddb1f757b39ff52f9344605ec"
+sha256 = "e5be08b527e6838c9b04c6e7c1d513dd5b5653b862f7ce0dd1b8954dbda16217"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc05_rigidity_needs_bars.lean"
-sha256 = "2e68e866edb4a66aa6745cb2b81dc500f1648278e9b3a76801c86dd37488f7e5"
+sha256 = "1cfa3003b799522692c09d193347fd2ce52018d0920d338a79d483355a524b89"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc06_root_sign.lean"
-sha256 = "ab759161e6de05dfa32595d59fa5605acb08543aa7804042a18906ff39e4187c"
+sha256 = "bcad347d49b23175a94397320c8759ddc514be91930691a5feda6303a4f39d0d"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc07_bracket_nonempty.lean"
-sha256 = "c06b79a07f09098351b9123fe7e6399dd81897ee7fe68292e5a62b40fb0656f9"
+sha256 = "39ec956f69ca9322666c9fb0a2aabcbf84d622965cecc363a2648f57bea090ee"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc08_henneberg_degenerate.lean"
-sha256 = "0d6935ff411d7c164ecd78db030a880521f2e8f7cabf0cb5679dd0ac236c7bb5"
+sha256 = "c5b38486fdb03bbfcfbcf854bd54d1f29c58d007518ed603a72bea21a04bd082"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc09_enclosure_tight.lean"
-sha256 = "d35c98e7d89c468f6bad3fc6d68aa203e763e6e903e1c7640c359439a8c6d110"
+sha256 = "4d2f2422882b354e8ba7d6ef9fe879d21030905fcc014d713d89611c1912d032"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc10_uniqueness_is_local.lean"
-sha256 = "03ef1953c5b3608c4f077fa8863495d7dc3cda340f634089bf44be9007e458c5"
+sha256 = "0d951811d82e348c297e8e8555a9e8c29fddb28339a108be96246d00c87be7c7"
 [[source_sha256]]
 file = "lean/negative_controls_family/A32/twin/fnc11_published_bracket.lean"
-sha256 = "a9a9f6705905199ca4e2ed14e96f3b821fd9016fc7359d6f154ed19f5fbc926c"
+sha256 = "181d94f8b3712def8e5b45dfd5b9d950d03e18b8116a536d400862bfc2277da7"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc01_convexity_sign.lean"
-sha256 = "c2ec164b0dab9ffe4c1e42e1fe5f76d3cd9c823750dc9a96dc23264aae406537"
+sha256 = "5ec950a7934a4fdc4efcd6ece1485a2a62060bffdf5e3821d67650fa7859f4c3"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc02_inactive_margin.lean"
-sha256 = "0b2fa43d2ac4a34ba5bf93c77b5f98b4933fb25e673d97e85962b0b67d699989"
+sha256 = "4d410591c3a8718f91452966e7157441995e53754e3749c10d30c3d4d27a85a6"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc03_side_needs_Fc.lean"
-sha256 = "a3c532f370226cca5a94a93fd4cf022426b4a7c002a3ba4b8b57e597b6af095e"
+sha256 = "b7e98bb61e953e782dcbb3d781d154e8dec0d1566b582bcc08bc7aa71f0dd3d5"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc04_stress_sign.lean"
-sha256 = "a9b94d1db4abab8e706119a627bfc3eeb15a1bc700342be17d2b5326c947c77d"
+sha256 = "d73d956f4d53aa4e0b4d494737020e648d9e27c6081de98ddfc441490680dc9c"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc05_rigidity_needs_bars.lean"
-sha256 = "d76b705a1402d34c7fb5b141442b0f25adb1ceee189bb82997e30f81c44fa93c"
+sha256 = "d59ed7ba84a50c7a0ac27fb5eed1aa2e9da38899ea6d972309183e057330dd07"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc06_root_sign.lean"
-sha256 = "14f5a934cd819f2f6d5f907c11b25ded30140c4fd31bfc83fb9449584abd6f85"
+sha256 = "e14091e761faac581064f9e5b9a1831414cc0b2ebb00be1832a42d9ca7d08497"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc07_bracket_nonempty.lean"
-sha256 = "4f860f72b7cb36faa42f733bfd19f6a6dde1e9935d678260203b3be970bce85f"
+sha256 = "903160ffef3ef2ccb94847b5dffd448520039610d866f671d65a460bcb779e34"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc08_henneberg_degenerate.lean"
-sha256 = "70de305bca3380488ba058fecd8da1a7eaa120bca86cec653efd9e0bc9018f09"
+sha256 = "3520bdec73e87dcf8f8998085ea6370ccb7a51404e08ac3584f298d839dfb93a"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc09_enclosure_tight.lean"
-sha256 = "ee78d72d3b54a82e690f3ae0cdaf8ef61cae73b802e5a4b01fc222bec2b5f16c"
+sha256 = "10459211e48232eafb87c4443eb8f943c47a683d2e61de8bdccab6a123c4c0c2"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc10_uniqueness_is_local.lean"
-sha256 = "a76846ec75d85d2ea66fe13079e707ba0aa891d55494852bd6f18fcb32ca5568"
+sha256 = "b9bff3cc546b89a7cbbd6ca851a397282d63a12fb61d5a5705f2a063f12c2615"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/fnc11_published_bracket.lean"
-sha256 = "4595b67aaadab5cdf1d4d7995386e28dccda7ff8678e085c97121a4fbb16eeff"
+sha256 = "4d0fb10c60c4f8efcecbe3420187f03f8cf1e0e78559ce892bda928a759344a8"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc01_convexity_sign.lean"
-sha256 = "60526c7a31cafcb59a01b4207fb44f80393d592e52a2f663e55dfaee043f0116"
+sha256 = "7758384805caab64d0e30a5174fad839f14a5fb3207cd7c56a96a854c02f96e9"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc02_inactive_margin.lean"
-sha256 = "d1bb372f18310f69ee559268916b80e07f4d626892c031e8889177a880d37468"
+sha256 = "14fc667271ff74b6559a83a3054a8f1b46b1038f19ebc598539175b308d765ed"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc03_side_needs_Fc.lean"
-sha256 = "db790d20ee636f70aaa751c1b52d5f8abde5ccd57f709594349825cb897a45c0"
+sha256 = "960eaab7fa7b260d6dd5d2eb0c7c8addd33468723e8ff6a49332047d7e08bf37"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc04_stress_sign.lean"
-sha256 = "3c183fba629082707fc8e0aae00653e1c8c904edb212ad57a151108f7d152e53"
+sha256 = "28afec5a79ccda8a74d7ada4b39b8dea7b327c2990910ca86b783de4df98b510"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc05_rigidity_needs_bars.lean"
-sha256 = "ab1cfe14c2c8354a82465ffb1e82b1ccd361136be70fd0972047762eb522dda7"
+sha256 = "ab90b5aece792bac05b67c197bb68f7f3c0920c4708e2b647906940832d85591"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc06_root_sign.lean"
-sha256 = "8f843ea9985185740b425f444d0606d849a873d22085e0fc4289f96f9824c379"
+sha256 = "b74bd7e1ab01ae80d1e16466610e3afbc15e10b4b3d7e70886cd406f5dabf5b1"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc07_bracket_nonempty.lean"
-sha256 = "ae676b0ea66211061f777cf0f851a08c35891680e9d771eea96780fcd0dab7d3"
+sha256 = "b52b2110ac829e55077842d6039048066d2a2663856d935b145590e862c03f8c"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc08_henneberg_degenerate.lean"
-sha256 = "719be70e048adf40d2c10e3313a146e20d7122c99563247f01c00629d4ce9728"
+sha256 = "7aaa606d63f0991357ee8fa6cbf5fd36a7a5e5a74e3e3de1a14270b5c0ea082f"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc09_enclosure_tight.lean"
-sha256 = "b76486fee3086cc8247f642612607e475fe4b3ee76cfe1a5549d30b783676aec"
+sha256 = "3a3cc5f5ea5571ee45c8e43170bfa273363091c4c7ea867296fc2efde44c4707"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc10_uniqueness_is_local.lean"
-sha256 = "35c553edc6ac49268175a7c1e81897d15862d65ab42bca18798cda020abf8453"
+sha256 = "ec971e317818117009cdbfaac6ca36fa3245ac67f897b92b42ae2f56b91fc719"
 [[source_sha256]]
 file = "lean/negative_controls_family/A64/twin/fnc11_published_bracket.lean"
-sha256 = "eb7e49bb4b7df80c3e4ef1323185603e9d86ef3d74cf24953eea22df7b71d63f"
+sha256 = "2c11a2140897ee980ed57fa99a0dbd1e37c5c1d306306bd67fb5d805cfb7a685"
 [[source_sha256]]
 file = "lean/verify_family.sh"
-sha256 = "613f87a337f17a791d1f8a34c422e8ae4d92e73e5a2b590967cd7d4f7714c04f"
+sha256 = "b7dd9359c6539e4bafaeaa3de6d4dc75abd23439c6d542a50c691b6a61941378"
 [[source_sha256]]
 file = "src/A16Certificate.jl"
 sha256 = "25f544cfe29066473517d97b6648223e441af2049b33b8ee1a55b6856bd945a5"
@@ -1219,7 +1219,7 @@ file = "test/fixtures/optigon_reference.jl"
 sha256 = "7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "264c2c5dc7fcd92a63ccc93cf42910bafcda16308c7620f6f1c0459024b2aca5"
+sha256 = "943ec611b8276a1540d201aff90daa76397b7be91bb85768351b188b2a0b944e"
 
 [theorems]
 axiom_audited_theorems = 65
