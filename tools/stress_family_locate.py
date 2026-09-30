@@ -26,7 +26,7 @@ def case_imports(path, n):
 
 def upstream(scratch, tracked, n, rel):
     n = int(n)
-    casedir = os.path.join("ChiquipoliFamily", "A%d" % n)
+    casedir = os.path.join("ChiquipoliFamily", "Polynomial", "A%d" % n)
     seen, todo, bad = set(), case_imports(os.path.join(scratch, rel), n), []
     while todo:
         mod = todo.pop()

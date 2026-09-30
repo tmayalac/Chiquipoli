@@ -150,8 +150,8 @@ Bash or, better, WSL.
 | The same, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | bash: `julia --project=. pipeline/record_lean_family_certificate.jl` |
 | Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
 | One case of the family in Lean (a partial run) | `make lean-family-case N=32` | bash: `cd lean && FAMILY_CASES=32 ./verify_family.sh` |
-| The general Lean theorem of the family (one proof for every n = 16k), five checks on A16 … A256 | `make lean-general` | bash: `cd lean && ./verify_trig.sh` |
-| The same, one case | `make lean-general-case N=256` | bash: `cd lean && TRIG_CASES=256 ./verify_trig.sh` |
+| The general Lean theorem of the family (one proof for every n = 16k), five checks on A16 … A256 | `make lean-general` | bash: `cd lean && ./verify_general.sh` |
+| The same, one case | `make lean-general-case N=256` | bash: `cd lean && TRIG_CASES=256 ./verify_general.sh` |
 | Plant 16 defects in the A16 layers, and 5 per candidate in the family certificates | `make mutation-check` | bash: `tools/mutation_check.sh` (needs a git clone, clean) |
 | The family stress test: 63 planted defects | `make stress-family` | bash (WSL): `tools/stress_family.sh all` |
 | One case of the family, planted defects | `make stress-case N=32` | bash (WSL): `STRESS_CASES=32 tools/stress_family.sh generator` |
@@ -331,14 +331,14 @@ lean/                         THE VERIFIER (see lean/README.md)
   ChiquipoliLean/Generated/     written by generators/, never by hand
   ChiquipoliLean/Instances/     the theory at A16 and at the square
   ChiquipoliFamily/             the family; the published constructor (Optigon.lean)
-    A16/ A32/ A64/                per-case polynomial certificates (verify_family.sh)
-    Trig/                         one theorem for every n = 16k (verify_trig.sh):
-                                  the interval method with data per case (T16 ... T256), and
-                                  the proof with no data, P1Final.published_all_n
-                                  (see Trig/README.md)
+    Polynomial/A16 A32 A64/       per-case polynomial certificates (verify_family.sh)
+    Interval/                     one theorem for every n = 16k, kernel-checked data
+      T16 ... T256/                 per case (verify_general.sh)
+    AllN/                         the proof for every n = 16k, no data:
+                                  Main.published_all_n (see AllN/README.md)
   negative_controls/            26 false statements that must not compile
-  negative_controls_family/     11 per family case, each with a twin that must compile
-  negative_controls_trig/       12 per T case, each with a twin that must compile
+  negative_controls_family/     11 per polynomial case, each with a twin that must compile
+  negative_controls_interval/   12 per interval case, each with a twin that must compile
   generators/                   Julia/Python -> Lean, the bridge between the layers
   verify.sh                     make lean: the five checks
 results/                      every record (TOML; see results/README.md) and the article's tables

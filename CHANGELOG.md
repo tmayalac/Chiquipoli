@@ -5,6 +5,30 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Repository layout
+
+No certified result changed. The theorem names, the article's commands
+(`lean/verify.sh`, `pipeline/*.jl`) and the A16 formal layer (`ChiquipoliLean/`)
+are unchanged.
+
+- **`cases/`:** `family/A16 … A1024`, `literature/` and `negative/`.
+- **`lean/ChiquipoliFamily/`:** three directories, one per method.
+  - `Polynomial/A16 A32 A64` holds the per-case polynomial certificates.
+  - `Interval/` holds the theorem `published_of_checks` with its data per case
+    `T16 … T256` (formerly `Trig/` and `T<n>/`).
+  - `AllN/` holds the proof for every `n = 16k` with descriptive file names,
+    formerly `RootAll`, `ConstructorAll`, `P3*` and `P1*` in `Trig/`: `Root`,
+    `Strip`, `Layout`, `Constructor`, `RungVector`, `Multipliers/` (`Core`,
+    `Stress`, `Vertices`, `Symmetry`, `Balance`, `Theorem35`, `Gap`,
+    `Positivity`, `StrictLocalMax`), `Feasibility/` (`PolygonGeometry`,
+    `Sides`, `Angles`, `Smallness`) and `Main`.
+- **Renamed:**
+  - `lean/verify_trig.sh` is now `lean/verify_general.sh` (`make lean-general`);
+  - `lean/negative_controls_trig/` is now `lean/negative_controls_interval/`.
+- **Generators:** they write the new paths, and every generated file still
+  reproduces byte for byte.
+- **Root directory:** the working notes moved out of it.
+
 ## [1.2.0] — 2026-09-29
 
 The family A16 … A1024 in Julia, A16 … A256 in Lean by kernel-checked data, and

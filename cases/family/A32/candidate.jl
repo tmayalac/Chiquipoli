@@ -4,7 +4,7 @@
 # Status: OPEN. A32 is the Bingane–Audet construction for n = 2^s, NOT a
 #   proven global optimum. This framework certifies its LOCAL first-order
 #   structure only. Unlike A16 there is no dedicated Julia module; the Lean
-#   certificate is lean/ChiquipoliFamily/A32 (make lean-family).
+#   certificate is lean/ChiquipoliFamily/Polynomial/A32 (make lean-family).
 #
 # Reference: C. Bingane, C. Audet, "Tight bounds on the maximal perimeter of
 #   convex equilateral small polygons", Archiv der Mathematik 119 (2022)

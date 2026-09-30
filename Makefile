@@ -239,12 +239,12 @@ clean:
 	       | grep -v '^./lean/.lake/' | xargs rm -f
 
 # The general Lean certificate of the family: ONE theorem for every n = 16k
-# (lean/ChiquipoliFamily/Trig/Assemble.lean), kernel-checked data per n.
+# (lean/ChiquipoliFamily/Interval/Assemble.lean), kernel-checked data per n.
 lean-general:
-	cd lean && ./verify_trig.sh
+	cd lean && ./verify_general.sh
 
 lean-general-case:
-	cd lean && TRIG_CASES=$(N) ./verify_trig.sh
+	cd lean && TRIG_CASES=$(N) ./verify_general.sh
 
 # An explicit radius r of the strict local maximality of A16 (docs/guide/radius.md).
 radius:

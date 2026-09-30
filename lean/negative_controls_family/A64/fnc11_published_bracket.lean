@@ -4,7 +4,7 @@
 -- cos 2z > 0, so F = 1152921504606846976·Fc(cos z), and Fc changes sign at least twice for
 -- c in (cos(π/4), 1). Uniqueness claimed on (0, π/4), with the proof of the
 -- headline theorem; the twin is upstream's own bracket (lo, hi), where it holds.
-import ChiquipoliFamily.A64
+import ChiquipoliFamily.Polynomial.A64
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A64

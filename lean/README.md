@@ -496,8 +496,11 @@ generators/                    the Julia programs that write ChiquipoliLean/Gene
 ## The Bingane–Audet family (`ChiquipoliFamily/`)
 
 A separate library, `ChiquipoliFamily`, proves the same local-maximality
-statement for other members `A_n` of the family (currently A32 and A64, and A16
-again, independently), with a method that scales where the one above does not:
+statement for other members `A_n` of the family, by three methods:
+`Polynomial/` (per case: A16, A32, A64), `Interval/` (one theorem, data per
+case: A16 … A256; `./verify_general.sh`) and `AllN/` (an analytic proof for
+every `n = 16k`). The polynomial layer uses a method that scales where the one
+above does not:
 vertex enclosures plus sign lemmas proved once for every `n`; `I_eq ⊆ R_eq` by a
 Henneberg construction instead of dense elimination; and the multipliers as a
 self-stress built by the same Henneberg order, with no `Fc`. It is not a default
@@ -511,4 +514,5 @@ Each case has eleven negative controls in `negative_controls_family/A<n>/`, each
 paired with a twin (`twin/`) that must compile, and the whole layer has a
 stress test, `tools/stress_family.sh` (`make stress-family`), that plants
 generator defects and requires both the generator and Lean to reject each one.
-See `ChiquipoliFamily/README.md`.
+The interval layer has twelve controls per case in
+`negative_controls_interval/T<n>/`. See `ChiquipoliFamily/README.md`.

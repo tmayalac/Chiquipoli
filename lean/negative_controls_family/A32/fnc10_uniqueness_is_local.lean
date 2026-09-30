@@ -3,7 +3,7 @@
 -- Fc has at least 11 roots in [0, 1] (exact sign changes on a rational grid);
 -- the certified root is the only one in the article's search bracket [slo, shi],
 -- not in [0, 1]. Uniqueness claimed on [0, 1] with the certificate's proof.
-import ChiquipoliFamily.A32
+import ChiquipoliFamily.Polynomial.A32
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A32

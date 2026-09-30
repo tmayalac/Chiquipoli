@@ -3,7 +3,7 @@
 -- Side 15 is one of the two sides (15, 48) that hold only at a root of Fc.
 -- Claimed for every c, by `ring` (the proof of an unconditional side); the twin
 -- is side 0, which is unconditional.
-import ChiquipoliFamily.A64
+import ChiquipoliFamily.Polynomial.A64
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A64

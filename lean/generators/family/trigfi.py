@@ -1,4 +1,4 @@
-# Python mirror of ChiquipoliFamily/Trig/{FI,Base,Interp,Term}.lean — the SAME integer
+# Python mirror of ChiquipoliFamily/Interval/{FI,Base,Interp,Term}.lean — the SAME integer
 # operations, so data computed here passes the kernel's `subset` checks exactly.
 K = 384
 S = 2 ** K

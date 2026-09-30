@@ -90,7 +90,7 @@ export JULIA_NUM_THREADS="${JULIA_NUM_THREADS:-auto}"
 
 julia_run() { julia --project=. "$@"; }
 family_case() { (cd lean && FAMILY_CASES="$1" ./verify_family.sh); }
-trig_case() { (cd lean && TRIG_CASES="$1" ./verify_trig.sh); }
+trig_case() { (cd lean && TRIG_CASES="$1" ./verify_general.sh); }
 
 # --- the modes ----------------------------------------------------------------
 case "$MODE" in

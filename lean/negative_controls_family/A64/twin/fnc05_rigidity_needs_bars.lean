@@ -3,7 +3,7 @@
 -- Infinitesimal rigidity from the 64 SIDE constraints alone. A 64-gon with free
 -- diameters has a 61-dimensional space of non-trivial flexes, so this is false;
 -- the Henneberg proof must not go through without the diameter bars.
-import ChiquipoliFamily.A64
+import ChiquipoliFamily.Polynomial.A64
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A64

@@ -11,6 +11,6 @@ directory is generated. See `lean/ChiquipoliFamily/README.md`.
 import ChiquipoliFamily.Basic
 import ChiquipoliFamily.Optigon
 import ChiquipoliFamily.Chebyshev
-import ChiquipoliFamily.A16
-import ChiquipoliFamily.A32
-import ChiquipoliFamily.A64
+import ChiquipoliFamily.Polynomial.A16
+import ChiquipoliFamily.Polynomial.A32
+import ChiquipoliFamily.Polynomial.A64

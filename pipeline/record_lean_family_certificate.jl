@@ -141,7 +141,7 @@ function case_numbers(n)
         "side_stress_sum_upper_bound" => g(r"Σα ≤ ([0-9.e+-]+)"),
         "search_bracket_cos" => g(r"search bracket (\[[^\]]*\])"),
         "Fc_derivative_lower_bound" => g(r"\|Fc'\| ≥ ([0-9.e+-]+)"),
-        "generated_files" => length(filter(f -> endswith(f, ".lean"), readdir(joinpath(LEAN, "ChiquipoliFamily", "A$n")))),
+        "generated_files" => length(filter(f -> endswith(f, ".lean"), readdir(joinpath(LEAN, "ChiquipoliFamily", "Polynomial", "A$n")))),
         "headline" => "Chiquipoli.Family.A$n.locally_maximal_unique",
     )
 end

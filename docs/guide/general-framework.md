@@ -324,8 +324,8 @@ side and active-diameter equalities `PROVEN`. Uniqueness of the constructor
 root on its bracket is proved exactly by a Sturm count on `Fc` (one real root
 in the image interval of `cos`, out of 19 and 37 real roots). Planted errors
 (wrong `Fc`, a spurious active pair, a vertex moved by `1e−20`) are rejected.
-**Lean.** A32 and A64 are also proved in Lean 4 (`lean/ChiquipoliFamily/A32/`,
-`lean/ChiquipoliFamily/A64/`, headline `Chiquipoli.Family.A<n>.locally_maximal_unique`): the root is the unique one in
+**Lean.** A32 and A64 are also proved in Lean 4 (`lean/ChiquipoliFamily/Polynomial/A32/`,
+`lean/ChiquipoliFamily/Polynomial/A64/`, headline `Chiquipoli.Family.A<n>.locally_maximal_unique`): the root is the unique one in
 the article's search interval, and the configuration is a strict local maximiser
 of the perimeter modulo Euclidean motions, through the general `thm_3_5`. The
 same generator re-proves A16 independently. The method differs from the A16

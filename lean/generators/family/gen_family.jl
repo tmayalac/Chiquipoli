@@ -2,7 +2,7 @@
 #
 #     julia --project=. lean/generators/family/gen_family.jl 32
 #
-# writes lean/ChiquipoliFamily/A32/*.lean. The general lemmas every file relies
+# writes lean/ChiquipoliFamily/Polynomial/A32/*.lean. The general lemmas every file relies
 # on are in lean/ChiquipoliFamily/Basic.lean, proved once for all n.
 #
 # SOURCE OF TRUTH. The exact coordinates are those of `audet_coords_cs(n)` in
@@ -45,7 +45,7 @@ setprecision(BigFloat, 512)
 n = parse(Int, ARGS[1])
 
 # Output root: `lean/` by default. CHIQUI_OUTDIR writes the same tree
-# (ChiquipoliFamily/A<n>/, ChiquipoliFamily/A<n>.lean,
+# (ChiquipoliFamily/Polynomial/A<n>/, ChiquipoliFamily/Polynomial/A<n>.lean,
 # negative_controls_family/A<n>/) somewhere else instead, so that
 # verify_family.sh can regenerate into a scratch directory and diff, and the
 # stress test (tools/stress_family.sh) can plant defects without ever touching
@@ -71,10 +71,10 @@ guard(ok::Bool, msg) = (ok || UNGUARDED) ? nothing : error("pre-check failed: " 
 "The one planted defect, and where it lands; printed for the stress test."
 planted(file, decl) = println("MUTATED ", MUTATE, " ", file, " ", decl)
 
-const OUTDIR = joinpath(LEANOUT, "ChiquipoliFamily", "A$n")
+const OUTDIR = joinpath(LEANOUT, "ChiquipoliFamily", "Polynomial", "A$n")
 const NCDIR = joinpath(LEANOUT, "negative_controls_family", "A$n")
 const NS = "Chiquipoli.Family.A$n"
-const MOD = "ChiquipoliFamily.A$n"
+const MOD = "ChiquipoliFamily.Polynomial.A$n"
 const CONV_CHUNK = 60
 const FAR_CHUNK = 80
 
@@ -149,7 +149,7 @@ end
 RHO = rup(2rho)
 # mutation `encl`: a vertex centre off by 10⁴ρ — the enclosure of XC1 now claims
 # a centre the polynomial never comes near on the interval.
-MUTATE == "encl" && (cx[1] += 10^4 * RHO; planted("ChiquipoliFamily/A$n/Encl1.lean", "encX1"))
+MUTATE == "encl" && (cx[1] += 10^4 * RHO; planted("ChiquipoliFamily/Polynomial/A$n/Encl1.lean", "encX1"))
 
 # ---- sign-layer margins, all checked exactly here ------------------------------
 function det_margin(x0, x1, x2, y0, y1, y2)
@@ -435,7 +435,7 @@ function margin_expr(x0, x1, x2, y0, y1, y2)
     " - (|$(lr(y1)) - $(lr(y0))| * (2 * rho) + |$(lr(x2)) - $(lr(x0))| * (2 * rho) + (2 * rho) * (2 * rho))"
 end
 conv_chunks = collect(Iterators.partition(triples, CONV_CHUNK))
-MUTATE == "conv" && planted("ChiquipoliFamily/A$n/Conv1.lean", "convD_0_2")
+MUTATE == "conv" && planted("ChiquipoliFamily/Polynomial/A$n/Conv1.lean", "convD_0_2")
 for (ci, ch) in enumerate(conv_chunks)
     local buf = IOBuffer()
     print(buf, header("**A$n: support determinants, part $ci of $(length(conv_chunks)).** Each is positive on\n`[clo, chi]`, from the vertex enclosures by `det_lb`.", [prev]))
@@ -464,7 +464,7 @@ far_chunks = [collect(ch) for ch in Iterators.partition(farpairs, FAR_CHUNK)]
 # mutation `far`: the first active diameter listed among the non-active pairs —
 # an active-graph transcription error. It is at distance exactly 1.
 MUTATE == "far" && (far_chunks[1] = vcat([active[1]], far_chunks[1]);
-                    planted("ChiquipoliFamily/A$n/Far1.lean", "far_$(active[1][1])_$(active[1][2])"))
+                    planted("ChiquipoliFamily/Polynomial/A$n/Far1.lean", "far_$(active[1][1])_$(active[1][2])"))
 for (fi, ch) in enumerate(far_chunks)
     local buf = IOBuffer()
     print(buf, header("**A$n: non-active pairs, part $fi of $(length(far_chunks)).** Each is at squared distance\n`< 1`, from the vertex enclosures by `sqd_ub`.", [prev]))
@@ -492,7 +492,7 @@ side_pieces = String[]
 FC_SIDES = sort([i for i in 0:n-1 if side_quot[i] !== nothing])
 # mutation `side`: the first side that holds only at a root of Fc, proved as if
 # it held for every c (`ring` alone).
-MUTATE == "side" && planted("ChiquipoliFamily/A$n/Sides1.lean", "side_$(FC_SIDES[1])")
+MUTATE == "side" && planted("ChiquipoliFamily/Polynomial/A$n/Sides1.lean", "side_$(FC_SIDES[1])")
 for i in 0:n-1
     j = mod(i + 1, n)
     lhs = "(1 - c ^ 2) * (XC$j c - XC$i c) ^ 2 + (YC$j c - YC$i c) ^ 2 = 2 - 2 * c"
@@ -517,7 +517,7 @@ global buf = IOBuffer()
 print(buf, header("**A$n: the Henneberg determinants.** Pin side `0 → 1`; then each vertex, in\nthe order below, is joined to two pinned vertices by bars with independent\ndirections. Each determinant is positive on `[clo, chi]` by `det_lb`.", [prev]))
 # mutation `hen`: the first Henneberg vertex pinned by two bars to the SAME
 # vertex — a degenerate step, determinant identically 0.
-MUTATE == "hen" && planted("ChiquipoliFamily/A$n/Hen.lean", "henD_$(HEN[1][1])")
+MUTATE == "hen" && planted("ChiquipoliFamily/Polynomial/A$n/Hen.lean", "henD_$(HEN[1][1])")
 for (k, i, j0) in HEN
     j = (MUTATE == "hen" && k == HEN[1][1]) ? i : j0
     guard(hmargin(k, i, j) > 0, "Henneberg determinant at vertex $k (hn)")
@@ -578,7 +578,7 @@ order_defs = copy(extra)
 # reverse recursion solves — the classic transcription error. The stress it
 # defines no longer balances that vertex.
 KMUT = reverse(HEN)[1][1]
-MUTATE == "stress" && planted("ChiquipoliFamily/A$n/StressDef.lean", "bal_$KMUT")
+MUTATE == "stress" && planted("ChiquipoliFamily/Polynomial/A$n/StressDef.lean", "bal_$KMUT")
 for (k, i, j) in reverse(HEN)
     (_, _, p, q) = hbar[k]
     Fx = force(k, "X", others(k)); Fy = force(k, "Y", others(k))
@@ -693,7 +693,7 @@ prev = "$MOD.StressSign"
 # mutation `root`: the signs of Fc at the ends of the bracket swapped — the
 # bracket would still "contain a root" by the IVT, from two false evaluations.
 sclaim = MUTATE == "root" ? -sFclo : sFclo
-MUTATE == "root" && planted("ChiquipoliFamily/A$n/Root.lean", "Fc_clo,Fc_chi")
+MUTATE == "root" && planted("ChiquipoliFamily/Polynomial/A$n/Root.lean", "Fc_clo,Fc_chi")
 guard(sclaim == Int(sign(peval(Fc, CLO))) && -sclaim == Int(sign(peval(Fc, CHI))), "the claimed signs of Fc at clo, chi")
 lohi = sclaim < 0 ? ("Fc clo < 0", "0 < Fc chi", "intermediate_value_Ioo", "Ioo (Fc clo) (Fc chi)") :
                     ("0 < Fc clo", "Fc chi < 0", "intermediate_value_Ioo'", "Ioo (Fc chi) (Fc clo)")
@@ -1028,7 +1028,7 @@ guard(DLB > 0, "the derivative bound is not positive")
 # mutation `unique`: a derivative bound above the value of |Fc'| at the end slo
 # of the bracket — false at that point, so no proof of it can exist.
 MUTATE == "unique" && (DLB = sgn * peval(dF, SLO) + QQ(1, 10^6);
-                       planted("ChiquipoliFamily/A$n/Unique.lean", "dFc_lb"))
+                       planted("ChiquipoliFamily/Polynomial/A$n/Unique.lean", "dFc_lb"))
 println("  uniqueness: search bracket [$(Float64(SLO)), $(Float64(SHI))], sign(Fc') = $sgn, |Fc'| ≥ $(Float64(DLB))")
 
 # HasDerivAt chain for the Horner form written by `lp`
@@ -1414,11 +1414,11 @@ emit("Published", String(take!(buf)))
 prev = "$MOD.Published"
 
 # root module of the case
-open(joinpath(LEANOUT, "ChiquipoliFamily", "A$n.lean"), "w") do io
-    print(io, "/-\nAUTO-GENERATED by `lean/generators/family/gen_family.jl $n` — do not edit by hand.\n\nThe Lean certificate of A$n; see `ChiquipoliFamily/A$n/Unique.lean` and, for the\nsame statement about the published constructor, `ChiquipoliFamily/A$n/Published.lean`.\n-/\nimport $MOD.Published\n")
+open(joinpath(LEANOUT, "ChiquipoliFamily", "Polynomial", "A$n.lean"), "w") do io
+    print(io, "/-\nAUTO-GENERATED by `lean/generators/family/gen_family.jl $n` — do not edit by hand.\n\nThe Lean certificate of A$n; see `ChiquipoliFamily/Polynomial/A$n/Unique.lean` and, for the\nsame statement about the published constructor, `ChiquipoliFamily/Polynomial/A$n/Published.lean`.\n-/\nimport $MOD.Published\n")
 end
 files = sort(filter(f -> endswith(f, ".lean"), readdir(OUTDIR)))
-println("wrote $(length(files)) files to lean/ChiquipoliFamily/A$n/: ", join(files, " "))
+println("wrote $(length(files)) files to lean/ChiquipoliFamily/Polynomial/A$n/: ", join(files, " "))
 
 # ---------------------------------------------------------------------------
 # negative_controls_family/A<n>/ — the same ten controls for every case

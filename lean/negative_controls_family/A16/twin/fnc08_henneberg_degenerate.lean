@@ -3,7 +3,7 @@
 -- Vertex 9, the first one the Henneberg construction adds, pinned by two bars to
 -- the SAME vertex 0 instead of to 0 and 1. The determinant is identically 0; the
 -- same proof must not certify it positive.
-import ChiquipoliFamily.A16
+import ChiquipoliFamily.Polynomial.A16
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A16

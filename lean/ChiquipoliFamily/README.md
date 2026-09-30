@@ -15,14 +15,19 @@ not a default target) and verified separately (`./verify_family.sh`, or
 `make lean-family` from the repository root). Nothing in `ChiquipoliLean/`,
 `verify.sh`, or the counts the article quotes depends on it.
 
-Currently generated: **A16** (a second, independent proof of the A16 result,
-by a different method), **A32** and **A64**.
+The library has three parts, each proving the same statement by a different
+method:
 
-**A second, general certificate** covers A16 … A256 with one theorem proved
-once for every `n = 16k` (`Trig/Assemble.lean`, `published_of_checks`) and
-kernel-checked data per `n` (`T<n>/`). It proves the same statement,
-`Chiquipoli.Family.T<n>.published_locally_maximal`, without expanding any
-polynomial; see `Trig/README.md` and `../verify_trig.sh`.
+| directory | method | covers | verify |
+|---|---|---|---|
+| `Polynomial/A<n>/` | per case, everything expanded into polynomials in `cos z` | A16, A32, A64 | `../verify_family.sh` |
+| `Interval/T<n>/` | one theorem for every `n = 16k` (`Interval/Assemble.lean`, `published_of_checks`), kernel-checked interval data per `n` | A16 … A256 | `../verify_general.sh` |
+| `AllN/` | an analytic proof for every `n = 16k`, no data (`AllN/Main.lean`, `published_all_n`) | every `n = 16k` | `../verify_general.sh` |
+
+Shared by all three: `Basic.lean` (lemmas proved once for every `n`),
+`Optigon.lean` (the published constructor, transcribed), `Chebyshev.lean`,
+and `Audit.lean` (the axiom audit). See `Interval/README.md` and
+`AllN/README.md`.
 
 ## The headline theorems
 
@@ -194,7 +199,7 @@ produce an unchecked certificate.
 
 ## Where the data comes from
 
-`lean/generators/family/gen_family.jl <n>` writes `ChiquipoliFamily/A<n>/`. Its
+`lean/generators/family/gen_family.jl <n>` writes `ChiquipoliFamily/Polynomial/A<n>/`. Its
 inputs are the repository's own exact arithmetic: the generic OPTIGON
 constructor `audet_generic` and `audet_Fc` in `cases/exact_coords.jl`
 (cross-checked against the upstream constructor in `test/literature.jl`), and

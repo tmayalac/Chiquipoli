@@ -12,7 +12,7 @@
 #   3. every audited theorem depends only on Lean's three standard axioms;
 #   4. every case's negative controls do NOT compile, and each control's twin
 #      -- the same proof of the true statement -- DOES;
-#   5. every generated file (ChiquipoliFamily/A<n>/, the root module A<n>.lean,
+#   5. every generated file (ChiquipoliFamily/Polynomial/A<n>/, the root module A<n>.lean,
 #      the shared ChiquipoliFamily/Chebyshev.lean, negative_controls_family/A<n>/)
 #      reproduces byte for byte from
 #      lean/generators/family/gen_family.jl.
@@ -175,12 +175,12 @@ if command -v julia >/dev/null 2>&1; then
   for c in $CASES; do
     scratch=$(mktemp -d "${TMPDIR:-/tmp}/chiqui_family_A$c.XXXXXX")
     if (cd .. && CHIQUI_OUTDIR="$scratch" julia --project=. lean/generators/family/gen_family.jl "$c" >"$scratch.log" 2>&1); then
-      d=$( { diff -rq "$scratch/ChiquipoliFamily/A$c" "ChiquipoliFamily/A$c";
-             diff -q "$scratch/ChiquipoliFamily/A$c.lean" "ChiquipoliFamily/A$c.lean";
+      d=$( { diff -rq "$scratch/ChiquipoliFamily/Polynomial/A$c" "ChiquipoliFamily/Polynomial/A$c";
+             diff -q "$scratch/ChiquipoliFamily/Polynomial/A$c.lean" "ChiquipoliFamily/Polynomial/A$c.lean";
              diff -q "$scratch/ChiquipoliFamily/Chebyshev.lean" "ChiquipoliFamily/Chebyshev.lean";
              diff -rq "$scratch/negative_controls_family/A$c" "negative_controls_family/A$c"; } 2>&1 || true)
       if [ -z "$d" ]; then
-        ok "A$c: $(ls ChiquipoliFamily/A$c/*.lean | wc -l | tr -d ' ') certificate files, the root module and $(find negative_controls_family/A$c -name '*.lean' | wc -l | tr -d ' ') control/twin files reproduce byte for byte"
+        ok "A$c: $(ls ChiquipoliFamily/Polynomial/A$c/*.lean | wc -l | tr -d ' ') certificate files, the root module and $(find negative_controls_family/A$c -name '*.lean' | wc -l | tr -d ' ') control/twin files reproduce byte for byte"
       else
         bad "A$c: tracked files differ from a fresh run of the generator"; printf '%s\n' "$d" | head -10
       fi

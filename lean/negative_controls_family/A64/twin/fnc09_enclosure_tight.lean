@@ -3,7 +3,7 @@
 -- The enclosure of XC48 claimed with radius 1.7375277187822416e-14, half the distance its
 -- polynomial actually reaches from the centre at an end of the bracket. The
 -- certified radius rho is not slack either way: the twin is the certificate's.
-import ChiquipoliFamily.A64
+import ChiquipoliFamily.Polynomial.A64
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A64

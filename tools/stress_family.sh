@@ -245,7 +245,7 @@ else
   sed 's/set_option maxHeartbeats 4000000/set_option maxHeartbeats 1/' "$NC/fnc09_enclosure_tight.lean" > "$SCRATCH/c" && cp "$SCRATCH/c" "$NC/fnc09_enclosure_tight.lean"
   harness "a control that fails only by timing out" 4 "$H" 'wrong reason'
 
-  printf '\n-- a hand edit\n' >> lean/ChiquipoliFamily/A$H/Unique.lean
+  printf '\n-- a hand edit\n' >> lean/ChiquipoliFamily/Polynomial/A$H/Unique.lean
   harness "a hand edit of a generated certificate file" 5 "$H" 'differ from a fresh run'
 
   printf '\n-- a hand edit\n' >> "$NC/fnc02_inactive_margin.lean"
@@ -269,7 +269,7 @@ io.open(p, "w", encoding="utf-8").write(s.replace(o, n))
 PY
     then err "$1 (could not apply)"; return; fi
     local out
-    if out=$(cd lean && lake build ChiquipoliFamily.A$H.Published 2>&1); then
+    if out=$(cd lean && lake build ChiquipoliFamily.Polynomial.A$H.Published 2>&1); then
       bad "$1 -- Lean still proves the transcription equals the certified polygon"
     elif printf '%s' "$out" | grep -qE "error: .*Optigon\.lean"; then
       err "$1 -- the slip broke Optigon.lean itself, not the identification"

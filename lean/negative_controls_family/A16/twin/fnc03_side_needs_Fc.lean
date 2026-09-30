@@ -3,7 +3,7 @@
 -- Side 3 is one of the two sides (3, 12) that hold only at a root of Fc.
 -- Claimed for every c, by `ring` (the proof of an unconditional side); the twin
 -- is side 0, which is unconditional.
-import ChiquipoliFamily.A16
+import ChiquipoliFamily.Polynomial.A16
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 20000
 namespace Chiquipoli.Family.A16

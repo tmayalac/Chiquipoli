@@ -502,7 +502,7 @@ Correspondence with this repository, which **is** that supplementary package:
 | exact rational polynomial arithmetic | `Rational{BigInt}` in `src/a16/exact_algebra.jl` |
 | formal layer | `lean/`, kernel-checked; see `lean/README.md` for its scope |
 | the published constructor, run unchanged (Section 5 of the article) | `cases/upstream/optigon/cstrt_audet_ngon.jl` (byte for byte), `cases/optigon_exact.jl`, test *the published OPTIGON source, run unchanged, …* in `test/literature.jl` |
-| the same, proved in Lean for its transcription | `lean/ChiquipoliFamily/Optigon.lean`, `lean/ChiquipoliFamily/A16/Published.lean` (`published_locally_maximal`) |
+| the same, proved in Lean for its transcription | `lean/ChiquipoliFamily/Optigon.lean`, `lean/ChiquipoliFamily/Polynomial/A16/Published.lean` (`published_locally_maximal`) |
 
 ---
 
