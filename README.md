@@ -387,7 +387,7 @@ goes through Section 6 of the article line by line.
 
 ## Where to start reading
 
-0. `docs/article/README.md` — each row of the article's Table 2, mapped to its script, its record field and its Lean declaration.
+0. `docs/article/README.md` — each row of the article's Table 3 (and Table 4 for A32, A64), mapped to its script, its record field and its Lean declaration.
 1. `docs/guide/certificate-spec.md` — the canonical statement of what is certified.
 2. `results/a16_certificate.toml` — the gates and values, machine-readable.
 3. `docs/guide/provenance-mapping.md` — line-by-line mapping of code to the article's

@@ -8,9 +8,9 @@ Resource 1 (the supplement) and in the files listed below.
 Paths are relative to the repository root. Lean paths are under
 `lean/ChiquipoliLean/`.
 
-## Table 2 of the article, row by row
+## Table 3 of the article, row by row
 
-| Row of Table 2 | Script | Field in `results/a16_certificate.toml` | Lean declaration |
+| Row of Table 3 | Script | Field in `results/a16_certificate.toml` | Lean declaration |
 |---|---|---|---|
 | 29 differences ≡ 0; sides {3,4}, {12,13} = F_c | `pipeline/stages/06_prove_exact_identities.jl` | `exact_identities` | `all_sides`, `all_active_diameters` (`Constructor/A16Exists.lean`); `Fc_cos_eq_Ffun` (`Constructor/Coordinates.lean`) |
 | det Q = y₁ − 1 < 0 | `pipeline/stages/05_certify_multipliers.jl` | `multipliers` (`omitted_residual_matrix_regularity_bound`) | (the exact argument of Subsection 6.4) |
@@ -24,7 +24,7 @@ Paths are relative to the repository root. Lean paths are under
 | ‖α‖₂ < 4.004; s₃₀(A)² ≥ 0.09119; r ≥ 6.63·10⁻⁴ | `pipeline/certify_radius.jl` | `results/radius_certificate.toml` | not formalised |
 | I_eq = R_eq, Theorem 6.3 | (consequence) | — | `A16_Ieq_imp_R` (`Instances/A16FirstOrder.lean`); `A16_locally_maximal` (`Instances/A16LocalMax.lean`) |
 | Theorem 3.5 | (not computed) | — | `thm_3_5` (`Theory/FeasibleMain.lean`) |
-| Table 3, Proposition 6.5 and Theorem 6.6: A32 and A64 | `pipeline/certify_family.jl 32` / `64` | `results/family/A32.toml`, `A64.toml` | `Chiquipoli.Family.A32.published_locally_maximal`, `…A64…` (`lean/ChiquipoliFamily/Polynomial/`) |
+| Table 4, Proposition 6.5 and Theorem 6.6: A32 and A64 | `pipeline/certify_family.jl 32` / `64` | `results/family/A32.toml`, `A64.toml` | `Chiquipoli.Family.A32.published_locally_maximal`, `…A64…` (`lean/ChiquipoliFamily/Polynomial/`) |
 
 The bounds in the Lean column are formalised at rounder constants than the
 article prints; the supplement explains why, and why the Lean multipliers are
@@ -32,7 +32,7 @@ a different member of the same affine family.
 
 ## Where the rest is
 
-- **Full-precision values:** each bound of Table 2 at twenty digits, with the
+- **Full-precision values:** each bound of Table 3 at twenty digits, with the
   critical pair {4,12} and the minimal multiplier edge {6,13}. See Section
   "The certified values in full" of Online Resource 1, and
   `results/a16_certificate.toml`.
