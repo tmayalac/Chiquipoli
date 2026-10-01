@@ -208,13 +208,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "6bc5b76bdc2ec82391a2e4ea8e43265db6b67ae5"
+git_commit = "4db7d1177c0395e5b528a3d8d3ca1fff566e9c23"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-package = "A16Certificate v1.3.0 [AH26]"
+package = "A16Certificate v1.3.1 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-09-30T14:50:12Z"
+utc = "2026-10-01T01:54:14Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -232,7 +232,7 @@ file = "pipeline/certify_radius.jl"
 sha256 = "a128af5f1d0f257df502862a22dcc7389839ae8afa28028883276afd32f0142b"
 [[source_sha256]]
 file = "pipeline/check_paper.jl"
-sha256 = "e5336cfcc25ffa94160589608ac92155b24012f31bb7fe703c0e5a0da1d02e0e"
+sha256 = "944493db9906b1be104e4f97af7d249aba34d38be699dc026b40ccb5da117ec2"
 [[source_sha256]]
 file = "pipeline/family_table.jl"
 sha256 = "84bf3d2783bc614836249d8459337246cfaacefe683f71b88dfb1204198f8177"
@@ -319,7 +319,7 @@ file = "test/runtests.jl"
 sha256 = "74cd4ac0761f601073221f25607df6d06aab15138bd6dd7155bab5fbdd0681d4"
 [[source_sha256]]
 file = "Project.toml"
-sha256 = "a4e185221d1feff8594b61ea088e429c5790ccd3f4cce08eaa11e9248069cb55"
+sha256 = "2100267870e08277f0761433f1b4805d92bd17988d043a6611b60376a8617607"
 [[source_sha256]]
 file = "Manifest.toml"
 sha256 = "a2a555283e8442ce0f56e1638c34544a95d466f5f583b6756dad2f8725a09e57"
