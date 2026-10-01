@@ -214,8 +214,9 @@ else
         end
         return seen
     end
-    seen = lambda_rows(lam, pdftext)
-    chk("Table 2(b): all 15 displayed lambda match the certificate",
+    # Since 1.3.0 the multiplier table is in the supplement; read both PDFs.
+    seen = lambda_rows(lam, pdftext * "\n" * suptext)
+    chk("multiplier table (b): all 15 displayed lambda match the certificate",
         length(seen) == 15 && all(abs(lam[k] - v) <= big"5e-9" for (k, v) in seen))
     chk("every certified lambda has a strictly positive lower endpoint",
         all(parse(BigFloat, e["lower"]) > 0 for e in gates["multipliers"]["lambda_enclosure"]))
@@ -234,8 +235,8 @@ else
         end
         return d
     end
-    shown = alpha_rows(pdftext)
-    chk("Table 2(a): all 16 displayed alpha match the certificate",
+    shown = alpha_rows(pdftext * "\n" * suptext)
+    chk("multiplier table (a): all 16 displayed alpha match the certificate",
         length(shown) == 16 && all(abs(alp[i] - shown[i]) <= big"5e-9" for i in 0:15))
     chk("the 16 displayed alpha sum to -16 within display rounding",
         length(shown) == 16 && abs(sum(values(shown)) + 16) < big"1e-7")
@@ -257,7 +258,9 @@ p  = coordinates(Zr)
 if havepdf
     function coord_rows(txt, p)
         rows = collect(eachmatch(
-            r"(?m)^\s*(\d{1,2})\s+(-?[01]\.\d{10})\s+(-?[01]\.\d{10})\s*$", txt))
+            # Since 1.3.1 Table 1 prints two vertices per line (i = 0..7 beside
+            # i = 8..15), so each (index, x, y) triple is matched wherever it is.
+            r"(?<![\d.])(\d{1,2})\s+(-?[01]\.\d{10})\s+(-?[01]\.\d{10})(?!\d)", txt))
         bad = 0
         for m in rows
             i = parse(Int, m.captures[1])
@@ -309,7 +312,8 @@ end
 # software. Each printed formula is checked against `coordinates` at the root
 # and at two other parameters, so the printed map is the certified one.
 section("the vertex map printed in Section 5, against the code")
-let i5 = findfirst("\\section{The extracted", texsrc0),
+let i5 = something(findfirst("\\section{The extracted", texsrc0),
+                    findfirst("\\section{The Bingane--Audet polygons", texsrc0), Some(nothing)),
     j5 = findfirst("\\section{Certified verification of", texsrc0)
     if i5 === nothing || j5 === nothing
         skip("Section 5 prints the vertex map of the certified constructor")
@@ -387,8 +391,13 @@ end
 # once (min lambda printed as 0.09186678 > 0.0918667776...).
 section("every number Section 6 prints, read from the article's source")
 using LinearAlgebra
-const SEC6 = let i = findfirst("\\section{Certified verification of", texsrc0),
-                 j = findfirst("\\section{Local and global questions}", texsrc0)
+# Section 6 runs to the next \section, or to the bibliography if it is the last
+# one (the "Local and global questions" section that followed it was removed in
+# 1.3.0).
+const SEC6 = let i = findfirst("\\section{Certified verification of", texsrc0)
+    j = i === nothing ? nothing :
+        something(findnext("\\section{", texsrc0, last(i) + 1),
+                  findnext("\\begin{thebibliography}", texsrc0, last(i) + 1), Some(nothing))
     (i === nothing || j === nothing) ? "" : texsrc0[first(i):prevind(texsrc0, first(j))]
 end
 const SEC6_CHECKS = [
@@ -428,8 +437,24 @@ else
     # the perimeters of Table 5 are checked row by row in their own section below
     famtab = isfile(joinpath(ROOT, "results", "tables", "table5_family.tex")) ?
              read(joinpath(ROOT, "results", "tables", "table5_family.tex"), String) : ""
+    # Section 6 prints the bounds rounded in the safe direction (since 1.3.0);
+    # the full values are in the supplement and checked above. Each rounded
+    # interval must contain the certified enclosure.
+    rounded = [("[0.1959554930055385,0.1959554930055386]", big"0.1959554930055385", big"0.1959554930055386", ell_lo, ell_hi),
+               ("[3.135287888088616,3.135287888088617]",   big"3.135287888088616",  big"3.135287888088617",  per_lo, per_hi)]
+    chk("Section 6: the rounded enclosures of ell and 16 ell contain the certified ones",
+        all(occursin(lit, flat6) && lo <= clo && chi <= hi for (lit, lo, hi, clo, chi) in rounded))
+    cert_or(g, k) = parse(BigFloat, gates[g][k])
+    chk("Section 6: each rounded bound is on the safe side of the certificate",
+        occursin(">0.00748", flat6) && big"0.00748" < cert_or("convexity", "min_support_determinant") &&
+        occursin(">0.00809", flat6) && big"0.00809" < cert_or("inactive_margin", "inactive_margin_lower_bound") &&
+        occursin(">0.09186", flat6) && big"0.09186" < cert_or("multipliers", "min_lambda_lower_bound") &&
+        occursin("<1.5\\times10^{-25}", flat6) && cert_or("rank", "preconditioned_regularity_bound") < big"1.5e-25" &&
+        occursin("<2\\times10^{-25}", flat6))
     stray = unique([m.match for m in eachmatch(r"\d+\.\d{6,}", flat6)
-                    if !any(k -> occursin(m.match, k), printed) && !occursin(m.match, famtab)])
+                    if !any(k -> occursin(m.match, k), printed) &&
+                       !any(r -> occursin(m.match, r[1]), rounded) && !occursin(m.match, famtab) &&
+                       !(m.match in ("0.0981721090", "3.1402460942", "0.0490872986", "3.1412717079"))])
     isempty(stray) ? pass(SEC6_CHECKS[2]) :
         fail(SEC6_CHECKS[2], "unchecked: " * join(stray, ", "))
 
@@ -454,9 +479,10 @@ else
         cp = gates["inactive_margin"]["critical_pair"],
         rr = parse(BigFloat, cert["meta"]["z_root_radius"]),
         rc = parse(BigFloat, cert["meta"]["z_cert_radius"])
+        flatsup = replace(supsrc0, r"\s+" => "", "\\," => "")
         chk(SEC6_CHECKS[4],
-            occursin("attainedattheedge\\(\\{$(emin[1]),$(emin[2])\\}\\)", flat6) &&
-            occursin("attainedatthepair\\(\\{$(cp[1]),$(cp[2])\\}\\)", flat6) &&
+            occursin("attainedattheedge\\(\\{$(emin[1]),$(emin[2])\\}\\)", flat6 * flatsup) &&
+            occursin("attainedatthepair\\(\\{$(cp[1]),$(cp[2])\\}\\)", flat6 * flatsup) &&
             abs(rr / big"1e-30" - 1) < big"1e-60" && occursin("radius\\(10^{-30}\\)", flat6) &&
             abs(rc / big"1e-28" - 1) < big"1e-60" && occursin("radius\\(10^{-28}\\)", flat6))
     end
@@ -542,8 +568,8 @@ let rc = joinpath(ROOT, "results", "radius_certificate.toml")
         flat = replace(texsrc0, r"\s+" => "", "\\," => "")
         # the numbers the article prints, and the direction each must hold in
         pr = (r = big"6.63e-4", s2 = big"0.09119", a = big"4.004", lam = big"0.09186", ell = big"0.1959")
-        printed_ok = all(occursin(x, flat) for x in ("6.63\\times10^{-4}", "\\sigma^2\\geq0.09119",
-                         "\\|\\alpha\\|_2\\leq4.004", "\\lambda_{\\min}\\geq0.09186", "\\ell\\geq0.1959"))
+        printed_ok = all(occursin(x, flat) for x in ("6.63\\times10^{-4}", "\\sigma^2=0.09119",
+                         "\\|\\alpha\\|_2<4.004", "\\lambda_{\\min}>0.09186", "\\ell>0.1959"))
         chk("the article prints r, sigma^2, |alpha|_2, lambda_min and ell of Theorem thm:a16-radius", printed_ok)
         chk("each printed constant is on the safe side of the certified one",
             pr.r <= cert("r_lower_bound") && pr.s2 <= cert("sigma_squared_lower_bound") &&
@@ -554,18 +580,42 @@ let rc = joinpath(ROOT, "results", "radius_certificate.toml")
     end
 end
 
-# The article is about A16 alone. The family A_n (n = 32 ... 1024) and its Lean
-# layers are part of the package, not of the article, which once carried them
-# as a subsection and a table (Table 5, until 1.3.0). Keep them out: a result
-# about another polygon, stated in the article, would need its own proof there.
-section("scope: the article concerns A16 only")
+# Since 1.3.1 the article covers A16, A32 and A64 (the cases that also have a
+# per-case Lean certificate). The larger cases of the package (A128 ... A1024,
+# the general theorem) are not in it: a result stated in the article needs its
+# proof there.
+section("scope: the article concerns A16, A32 and A64")
 if isempty(texsrc0)
-    skip("the article states no result about A_n for n > 16")
+    skip("the article states no result about A_n for n > 64")
 else
-    chk("the article states no result about A_n for n > 16",
+    chk("the article states no result about A_n for n > 64",
         !occursin("Auto-generated by pipeline/family_table.jl", texsrc0) &&
-        !occursin(r"A_\{?(32|64|128|256|512|1024)\b", texsrc0) &&
+        !occursin(r"A_\{?(128|256|512|1024)\b", texsrc0) &&
         !occursin(r"Family\.T\d+", texsrc0))
+    # Table 3: every printed value of A32 and A64 against results/family/A<n>.toml
+    function family_table_ok(tex)
+        flat = replace(tex, r"\s+" => "", "\\," => "")
+        ok = true
+        e(x) = parse(BigFloat, x)
+        for (n, zs, per, det, dlt, lam, cm) in ((32, "0.0981721090", "3.1402460942", "9.43e-4", "9.62e-4", "2.32e-2", "3e-14"),
+                                                (64, "0.0490872986", "3.1412717079", "1.18e-4", "1.18e-4", "5.36e-3", "7e-14"))
+            rec = TOML.parsefile(joinpath(ROOT, "results", "family", "A$n.toml"))
+            g = Dict(x["id"] => x for x in rec["gate"])
+            num(id, pat) = parse(BigFloat, match(pat, g[id]["detail"]).captures[1])
+            P = e(g["side_length"]["perimeter"])
+            zlo = num("box_nesting", r"Z_root = \[([0-9.e+-]+)")
+            ok &= rec["verdict"] == "CERTIFIED"
+            ok &= abs(round(zlo, digits=10) - e(zs)) < big"1e-12" && abs(round(P, digits=10) - e(per)) < big"1e-12"
+            ok &= num("convexity", r"min inf = ([0-9.e+-]+)") > e(det)
+            ok &= num("inactive_margin", r"margin≥([0-9.e+-]+)") > e(dlt)
+            ok &= num("multipliers", r"λ_ij ≥ ([0-9.e+-]+)") > e(lam)
+            ok &= num("rank", r"‖I-CM‖∞=([0-9.e+-]+)") < e(cm)
+            ok &= all(occursin(x, flat) for x in (zs, per))
+        end
+        return ok
+    end
+    chk("Table 3: z_n, n ell and every A32/A64 margin agree with the family certificates, on the safe side",
+        family_table_ok(texsrc0))
 end
 
 section("IntervalArithmetic's own guarantee flag, on every certified quantity")

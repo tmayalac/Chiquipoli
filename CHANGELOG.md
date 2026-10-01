@@ -3,6 +3,105 @@
 All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.1] — 2026-09-30
+
+The article's computational sections were shortened with the supervisor
+(Sections 5–6 went from about 7 pages to about 4; the article from 17 pages to
+14). No certified value changed.
+
+- **The article** now prints each bound rounded in the direction that preserves
+  it. Its full-precision values moved to the supplement, in a new section "The
+  certified values in full", together with the multiplier table.
+- **The article now covers A16, A32 and A64.** This was decided with the supervisor.
+  - Theorem A, the abstract and the conclusion state all three; the explicit
+    radius stays for A16.
+  - A new Subsection 6.8 gives the constructor and the diameter graph of A32 and
+    A64 (the Bingane–Audet rule), Proposition 6.5 with Table 3 (certified
+    margins, rounded on the safe side), Theorem 6.6, and the per-case Lean
+    certificates.
+  - Online Resource 1 lists E_D(A32) and E_D(A64) and the multiplier
+    normalisation.
+  - Section 5 now presents the three polygons together, as Bingane and Audet
+    present theirs:
+    - the general constructor, F_n and the diameter-graph rule;
+    - Table 1 (z_n, nℓ, |E_D| for n = 16, 32, 64);
+    - Figure 4, three panels, with coordinates from the certified constructor,
+      drawn as in Bingane–Audet's figures: the diameter graph coloured by the
+      parts of its rule (axis red dotted, pendant edges blue, path thin black),
+      no vertex dots, and (A_n, L(A_n)) under each panel;
+    - then A16 in detail.
+    Subsection 6.8 keeps only the certificate of A32 and A64.
+    Section 5 is split into "5.1 The construction" (all three polygons) and
+    "5.2 The hexadecagon A16 in detail", which says why A16 is written out in
+    full. Online Resource 1 gives the coordinates of A32 and A64, 10 decimals,
+    from the certified constructor.
+  - Table 4: size of the certified systems (rank minors 30, 62, 126;
+    multiplier systems 31, 63, 127) and the measured cost of
+    `pipeline/certify_family.jl` for n = 16, 32, 64. The cost is 10.6–10.9 s and
+    1.3–1.5 GB on an Apple M5 Pro (24 GB), almost independent of n.
+  - `check_paper.jl` reads Table 3 against `results/family/A32.toml` and
+    `A64.toml`, and now forbids statements about A_n only for n > 64.
+- **Remark 3.7(i) was wrong.** It said "no constraint qualification holds" at A16;
+  the claim was in the article since its first version. Only linear independence
+  fails (31 active constraints of rank 30). The 16 side gradients are independent,
+  and the one linear dependence has diameter coefficients of both signs, so MFCQ
+  holds; an independent audit found this, and a separate computation confirmed it.
+  The remark and the introduction now say only what is true: LICQ fails, and the
+  criterion assumes no constraint qualification. No theorem used the claim.
+- **An independent audit compared four versions** of the article (paper/versions/).
+  It found no lost mathematics. Restored, from earlier versions:
+  - the one-line justifications (interval Newton, regularity of M, Cholesky,
+    ℓ < 1, t_k > 0);
+  - every figure cited in the text;
+  - the displacement in the radius proof renamed ξ, which no longer clashes with u_ij;
+  - "convex" defined.
+- **References:**
+  - Mossinghoff 2008 appeared in *Tapas in Experimental Mathematics* (Contemp.
+    Math. 457), not in *Discrete Geometry and Optimization*. This was wrong
+    since the first draft.
+  - OPTIGON is cited as 2020, as its author cites it.
+- **Table 1** lists all sixteen vertices, in two blocks of eight. It is the first published list of the coordinates of A16.
+- **Section 7** ("Local and global questions") is removed.
+- **`pipeline/check_paper.jl`** follows the new layout:
+  - it reads the multiplier table from the supplement;
+  - it requires all 16 rows of Table 1, printed two per line;
+  - it checks that every rounded bound printed in Section 6 is on the safe side
+    of the certificate;
+  - it finds the end of Section 6 without relying on the title of Section 7.
+- **CI** reconciles the article against the committed records before
+  regenerating any of them.
+- **The article, prepared for *Discrete & Computational Geometry*:**
+  - a new abstract of about 200 words;
+  - the main result stated as Theorem A in the introduction;
+  - the introduction rewritten, citing Mossinghoff (DCG 2006), the Audet–Hansen–Messine
+    survey, the equilateral width and area work of Bingane and coauthors, and
+    the 2026 preprint of Guo and Luo on the general problem for n = 16, 32, 64;
+  - numbered references with DOIs;
+  - no "Statements and Declarations" section: they go in the journal's submission
+    form, and the model papers do not print one;
+  - 12 pages: short formulas moved inline and the figures slightly smaller. No mathematical statement or proof changed;
+  - 19 references instead of 31. The referents' papers have 14–27. Cut: the
+    interval-analysis classics (Rump's survey stays), Rockafellar–Wets, Mathlib,
+    Tucker, Hales, the AHM survey, Mossinghoff 2011, and two of Bingane's general
+    papers;
+  - short paragraphs, 2–6 lines, as in the referents' papers:
+    - the proof of Theorem 3.5 in three steps;
+    - Remarks 3.6–3.7 condensed, the three specific features listed;
+    - the square's vertex equations displayed;
+    - Subsection 6.8 in three paragraphs;
+  - the supplement retitled "Online Resource 1".
+  - the format of Bingane, Mossinghoff and Audet's papers, including their DCG ones:
+    - a short declarative abstract (172 words; DCG asks for 150–250);
+    - an introduction in dated prose, ending "The remainder of this paper is
+      organized as follows";
+    - the term "diameter graph";
+    - figures in which solid lines join vertices at unit distance and dashed
+      lines outline the polygon;
+    - the software named with its versions, and a link to the code;
+    - a four-sentence Conclusion, the only place that says global optimality is open.
+- **`docs/article/README.md`:** each row of the article's Table 2, mapped to its
+  script, its record field and its Lean declaration.
+
 ## [1.3.0] — 2026-09-30
 
 ### Repository layout

@@ -74,15 +74,17 @@ own adversarial review of this package.
 
 ## Beyond the article
 
-The article concerns $A_{16}$ alone. The package also carries, and checks on
-every `make check-all`, results that the article does not state and its proofs
-do not use:
+The article concerns $A_{16}$, $A_{32}$ and $A_{64}$ (its Theorem A; the
+explicit radius is for $A_{16}$). The package also carries, and checks on every
+`make check-all`, results that the article does not state and its proofs do not
+use:
 
-- the same first-order certificate for the Bingane–Audet polygons
-  $A_{32},\dots,A_{1024}$ (`pipeline/certify_family.jl`, `results/family/`);
-- Lean certificates for the published constructor at $A_{16},\dots,A_{256}$, and
-  a Lean proof that for **every** $n = 16k$ the polygon it builds is a strict
-  local maximiser (`lean/ChiquipoliFamily/`, `AllN/Main.lean`);
+- the same first-order certificate for $A_{128},\dots,A_{1024}$
+  (`pipeline/certify_family.jl`, `results/family/`);
+- Lean certificates for the published constructor at $A_{128}$ and $A_{256}$
+  (the article uses those of $A_{16}$, $A_{32}$, $A_{64}$), and a Lean proof that
+  for **every** $n = 16k$ the polygon it builds is a strict local maximiser
+  (`lean/ChiquipoliFamily/`, `AllN/Main.lean`);
 - a benchmark on the known optima $n = 4, 6, 8$ and three deliberately broken
   variants of $A_{16}$ (`pipeline/certify_literature.jl`).
 
@@ -385,6 +387,7 @@ goes through Section 6 of the article line by line.
 
 ## Where to start reading
 
+0. `docs/article/README.md` — each row of the article's Table 2, mapped to its script, its record field and its Lean declaration.
 1. `docs/guide/certificate-spec.md` — the canonical statement of what is certified.
 2. `results/a16_certificate.toml` — the gates and values, machine-readable.
 3. `docs/guide/provenance-mapping.md` — line-by-line mapping of code to the article's

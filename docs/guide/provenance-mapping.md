@@ -340,7 +340,7 @@ allows dependent rows, and Theorem 3.5 does not require LICQ.
   agreeing **digit for digit** with the article's positivity bound, attributed
   there to the edge $\{6,13\}$. The 15 values of `Y[17:31]`, the Krawczyk
   enclosure produced by this code at radius $10^{-28}$, agree digit for digit
-  with the 15 values printed in the article's Table 2, including that minimum.
+  with the 15 values printed in the supplement's multiplier table, including that minimum.
 - **System solved.** $M(z)\,y=b(z)$ is **31×31**: 30 of the 33 stationarity
   equations — the variables in `COLS_MINOR`, which omits $x_1,y_1,x_8$,
   **exactly the three the article omits** — plus the normalisation row. $M$ is

@@ -12,7 +12,7 @@ abstract: >-
   of the perimeter. An explicit radius of strict local maximality is given for
   A16.
 type: software
-version: "1.3.0"
+version: "1.3.1"
 date-released: "2026-09-30"
 license: MIT
 repository-code: "https://github.com/TilinHub/Chiquipoli"
