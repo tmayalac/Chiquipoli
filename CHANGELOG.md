@@ -5,6 +5,30 @@ All notable changes to this project are recorded here. The format follows
 
 ## [1.3.1] — 2026-09-30
 
+### Originality and attribution (after release, 2026-10-01)
+
+- **Copied text, now rewritten.** The second sentence of the abstract repeated,
+  word for word, the abstract of Bingane–Audet (2022), which the supervisor
+  found. A search of the article against eight papers on arXiv by the cited
+  authors found four more phrases taken from them:
+  - "a polygon is small if";
+  - "the main result of this paper is the following";
+  - "the remainder of this paper is organized as follows";
+  - "rounded at the last printed digit".
+
+  All are rewritten. `tools/originality_check.py` (`make originality`) now runs
+  that search on demand.
+- **Global optimality corrected.** Bingane–Audet (2022, Props. 1–2) exhibit
+  Z32 and Z64 of larger perimeter, so A32 and A64 are not global maximisers. The
+  introduction said that paper did not address optimality, and the conclusion
+  called global optimality open for all three. Both are corrected: the article
+  now states that for n = 32, 64 the perimeter has at least two local maxima,
+  and that the global question is open only for A16.
+- **Attribution corrected.** The Reinhardt polygons are enumerated in Mossinghoff
+  (2011) and Hare–Mossinghoff (DCG 2013), now cited, not in Mossinghoff (2006).
+  Mossinghoff (2006) is now cited for what it does: polygons within O(1/n⁵) of
+  the maximal perimeter for n a power of two.
+
 The article's computational sections were shortened with the supervisor
 (Sections 5–6 went from about 7 pages to about 4; the article from 17 pages to
 14). No certified value changed.

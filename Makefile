@@ -246,6 +246,11 @@ lean-general:
 lean-general-case:
 	cd lean && TRIG_CASES=$(N) ./verify_general.sh
 
+# Text of the article that repeats, word for word, a paper it cites (downloads the
+# cited arXiv papers into a temporary directory; needs pdftotext).
+originality:
+	python3 tools/originality_check.py
+
 # An explicit radius r of the strict local maximality of A16 (docs/guide/radius.md).
 radius:
 	julia --project=. pipeline/certify_radius.jl
