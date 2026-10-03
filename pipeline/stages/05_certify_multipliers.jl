@@ -9,7 +9,7 @@ function run_multipliers_interval(; radius=big"1e-28")
 
     # The paper normalises the one-parameter multiplier family by
     # lambda_{0,9} = 1/5 EXACTLY (Section 6, eq. for the normalisation, and
-    # Table 2's caption). `interval(big"0.2")` is the thin interval at the
+    # Table S2's caption, Online Resource 1). `interval(big"0.2")` is the thin interval at the
     # nearest 256-bit BigFloat to 1/5, which is NOT 1/5: it differs by about
     # 1e-78. Certifying with it proves the statement for fl(1/5) rather than
     # for the rational the paper names. Enclosing 1/5 with directed rounding
@@ -38,7 +38,7 @@ function run_multipliers_interval(; radius=big"1e-28")
         return (pass=false, reason="normalized multiplier solve failed",
                 lambda_lower=nothing, alpha_sum=nothing,
                 alpha_balance_diagnostic=false, multiplier_enclosure=nothing,
-                omitted_bound=nothing, Z=Z)
+                omitted_bound=nothing, normalized_regularity_bound=reg_bound, Z=Z)
     end
 
     Y = sol.enclosure
@@ -82,7 +82,8 @@ function run_multipliers_interval(; radius=big"1e-28")
 
     return (pass=final_pass, reason="", lambda_lower=lambda_lower,
             alpha_sum=alpha_sum, alpha_balance_diagnostic=alpha_balance_diagnostic,
-            multiplier_enclosure=Y, omitted_bound=omitted_bound, Z=Z)
+            multiplier_enclosure=Y, omitted_bound=omitted_bound,
+            normalized_regularity_bound=reg_bound, Z=Z)
 end
 
 (abspath(PROGRAM_FILE) == @__FILE__) && run_multipliers_interval()

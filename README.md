@@ -151,7 +151,7 @@ Bash or, better, WSL.
 | What it does | macOS / Linux | Windows (PowerShell unless marked bash) |
 |---|---|---|
 | Install the pinned dependencies (once) | `julia --project=. -e "using Pkg; Pkg.instantiate()"` | same |
-| Run the test suite (772 assertions; 773 with `OPTIGON_DIR` set) | `make test` | `julia --project=. test/runtests.jl` |
+| Run the test suite (820 assertions; 821 with `OPTIGON_DIR` set) | `make test` | `julia --project=. test/runtests.jl` |
 | **The A16 certificate** → `results/a16_certificate.toml` | `make verify` | `julia --project=. pipeline/certify_a16.jl \| Tee-Object -FilePath logs/final_run.txt` |
 | The same, without writing any record | `CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl` | `$env:CHIQUI_NO_RECORD="1"; julia --project=. pipeline/certify_a16.jl; Remove-Item Env:CHIQUI_NO_RECORD` |
 | The family certificate of one candidate (ten gates) → `results/family/A32.toml` | `julia --project=. pipeline/certify_family.jl 32` | same |

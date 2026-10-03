@@ -172,7 +172,8 @@ for (id, name, good) in (("exact_identities", "exact_identities", :PROVEN), ("co
 end
 
 # --- box_nesting, by endpoints --------------------------------------------------
-Zcert = interval(z0 - CERT_RADIUS, z0 + CERT_RADIUS)
+# The box certify() actually evaluated (not a rebuilt copy of it).
+Zcert = rep.meta[:Zbox]
 gate("box_nesting", inf(Zcert) < inf(Zroot) && sup(Zroot) < sup(Zcert),
      "Z_root = [$(inf(Zroot)), $(sup(Zroot))] strictly inside Z_cert, by endpoints")
 
@@ -195,6 +196,8 @@ else
         "meta" => Dict{String,Any}("certificate" => "family certificate of A$n (Bingane–Audet)",
             "utc" => Dates.format(now(UTC), "yyyy-mm-ddTHH:MM:SS") * "Z", "julia_version" => string(VERSION),
             "git_commit" => commit, "git_source_clean" => clean, "precision_bits" => 256,
+            "intervalarithmetic_version" => string(pkgversion(IntervalArithmetic)),
+            "matmul_mode" => SmallPolygons.matmul_mode(),
             "root_radius" => string(ROOT_RADIUS), "cert_radius" => string(CERT_RADIUS), "n" => n),
         "gate" => gates,
         "certified" => final_pass,

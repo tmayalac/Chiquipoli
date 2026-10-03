@@ -5,6 +5,57 @@ All notable changes to this project are recorded here. The format follows
 
 ## [1.3.1] — 2026-09-30
 
+### Notation and essential-content pass (after release, 2026-10-03)
+
+- **Notation.** One meaning per symbol: the Jacobian is `B = D(e,d)` (was `A`,
+  beside the polygons `A_n`), the exact-identity polynomials `Δ_i`, the slice
+  basis `τ_i` (was `T_i`, beside Chebyshev `T_k`), calligraphic neighbourhoods,
+  `W_n` for Mossinghoff's polygons, `z*` for the exact root and `z` only for the
+  38-digit nominal one (a box of radius 1e-30 about the 16-digit value printed
+  before would not contain `z*`).
+- **Rank criterion stated once** (Definition 2.8: rank ≤ 2n−2, with equality iff
+  hypothesis (ii)) and used by the square, Theorem 6.3 and Theorem 6.6.
+- **Orphans removed without renumbering** the results that Lean and the records
+  cite (Theorem 3.5, Proposition 3.8, Proposition 4.2, Lemma 6.1, Proposition 6.2,
+  Theorems 6.3 and 6.4): unused asides and margins, Figure 1 and the
+  examples figure, repeated values. The cost table moved to Online Resource 1
+  without timing digits that no record supports.
+- **Claims made exact.** Lean scope (coarser constants in Prop. 6.2(3)–(4),
+  another multiplier vector in (5)); Float64 linear algebra for A32/A64 and how
+  its product is rounded; Q certified regular, not det evaluated; the
+  global question for n=32, 64 conditional on Z_n throughout; Guo–Luo related to
+  the equilateral problem; DOIs added after checking each against Crossref.
+- **Guo–Luo maximisers are not equilateral** (n = 16, 32, 64): by their Lemma 3.1
+  and Proposition 4.1 the sides are chords 2 sin(α_j/2) with Σα_j = π, and equal
+  sides would attain L_n, impossible for n a power of two. A KKT solve of their
+  winning codes reproduces M_n to 30/46/53 digits with unequal sides. The
+  equilateral problem therefore stays open; the conclusion says so again.
+- **Records and comments.** The radius record now declares Julia and
+  IntervalArithmetic versions, commit and clean tree, and joins the provenance
+  check; family records declare the library version and the product mode; the
+  A16 record carries ‖Id−C₀M₀‖∞; the family box-nesting gate compares against the
+  box `certify()` evaluated. Stale cross-references in Lean comments, generators,
+  `check_paper.jl` labels and the README test count corrected.
+
+### Article audit (after release, 2026-10-02)
+
+- **Feasible class corrected.** "Convex" meant all support determinants
+  `det(p_{i+1}-p_i, p_j-p_i) >= 0`, which a square traversed four times
+  satisfies (external audit); in that larger class the perimeter exceeds pi, so
+  the conclusion's compactness argument proved nothing. Feasible now means the
+  closure of strictly convex, positively labelled tuples. The local theorems are
+  unchanged (the Lean `thm_3_5` assumes no convexity of competitors).
+- **Global claim attributed.** That Z32 and Z64 are small and convex is stated,
+  not proved, by Bingane–Audet; the abstract and conclusion now attribute it,
+  and say "local but not global maximiser" instead of "two local maxima".
+- **Statements about the code made exact.** I_search is OPTIGON's root bracket,
+  not ours; the A32/A64 rank and multiplier steps use Float64 intervals with a
+  verified-rounding product; the family Lean layer is `lean/verify_family.sh`;
+  the n = 8 Sturm count is in the test suite; the radius record has no commit
+  field; Table 5 re-measured (9.1/9.2/9.5 s, 1.4/1.4/1.6 GB, same machine).
+- **Citations.** Bingane (J. Glob. Optim. 2022, O(1/n^6)) and Krawczyk added;
+  Vincze cited for attainment only; IntervalArithmetic.jl authors completed.
+
 ### Originality and attribution (after release, 2026-10-01)
 
 - **Copied text, now rewritten.** The second sentence of the abstract repeated,

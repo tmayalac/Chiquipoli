@@ -183,14 +183,14 @@ multipliers form a 1-parameter affine family. The normalisation is pinned at
 computed in Julia — whose midpoint `0.0026679` coincides with the independent
 least-squares solution.
 
-#### These are **not** the paper's Table 2 multipliers
+#### These are **not** the multipliers of Table S2 (Online Resource 1)
 
 A referee comparing numbers will find no agreement, so it is said here plainly.
-The paper (and the Julia certificate, which reproduces Table 2 exactly, min
+Table S2 (and the Julia certificate, which reproduces it exactly, min
 `λ ≥ 0.0918667776833353997`) exhibits one point of that affine family; Lean
 exhibits a **different** one. The ratio is not even constant:
 
-| edge | paper Table 2 | Lean | ratio |
+| edge | Table S2 | Lean | ratio |
 |---|---|---|---|
 | `(0,7)` | 0.23567685 | 0.00266916 | 0.01133 |
 | `(0,9)` | 0.20000000 | 0.00266667 | 0.01333 |

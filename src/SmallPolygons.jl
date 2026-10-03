@@ -175,8 +175,9 @@ original, so an NG flag is never lost in the conversion).
 
 Why. The rank and multiplier blocks are dense linear algebra: a preconditioned
 regularity test and a Krawczyk step, O(n³) interval operations each. In 256-bit
-BigFloat they cost minutes at n = 256; in Float64 intervals (IntervalArithmetic's
-correctly rounded arithmetic, not the BLAS `:fast` mode) seconds. Every
+BigFloat they cost minutes at n = 256; in Float64 intervals seconds. The
+products use IntervalArithmetic's `:fast` midpoint-radius mode (BLAS under
+directed rounding), guarded by the run-time sentinel `fastmul_verified()`. Every
 conclusion stays rigorous: a regular enclosure proves every matrix it contains
 regular, and a Krawczyk inclusion for the wider system encloses the solution of
 the true one. The only price is width, and the margins these blocks certify
@@ -630,7 +631,9 @@ function _certify(cand::Candidate, radius)
         end
     end
 
-    return CertifyReport(cand.name, n, blocks, cand.meta)
+    # The evaluation box is returned with the report, so a caller compares
+    # against the box actually used rather than a rebuilt copy of it.
+    return CertifyReport(cand.name, n, blocks, merge(cand.meta, Dict{Symbol,Any}(:Zbox => Zbox)))
 end
 
 # ---------------------------------------------------------------------------

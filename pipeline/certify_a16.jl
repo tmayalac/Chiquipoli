@@ -262,9 +262,12 @@ function emit_a16_certificate(projroot, final_pass, r2, rl, r3, r4, r5, r6,
                 "status"=> r5.pass ? "CERTIFIED" : "FAIL", "passed"=>r5.pass,
                 "min_lambda_lower_bound"=>_s(r5.lambda_lower),
                 "omitted_residual_matrix_regularity_bound"=>_s(r5.omitted_bound),
+                # ‖Id - C0 M0‖∞ of the normalised square system (Table 3 of the
+                # article prints < 2e-25); recorded so it is checkable from the record.
+                "normalized_matrix_regularity_bound"=>_s(r5.normalized_regularity_bound),
                 "alpha_sum_contains_minus16_diagnostic"=>r5.alpha_balance_diagnostic,
                 # Prop 6.2(5) states that the FULL multiplier enclosures are recorded
-                # here, and the paper's Table 2 displays their midpoints. Emitting only
+                # here, and Table S2 of Online Resource 1 displays their midpoints. Emitting only
                 # the minimum left both claims unverifiable from the released artifact:
                 # a referee could not check a single entry of that table. The 31
                 # enclosures below are the certified Krawczyk output, in the packing

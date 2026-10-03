@@ -113,13 +113,12 @@ def Equilateral (x : Amb n) : Prop := ∀ i : Fin n, eC i x = 0
 /-- The feasible set the blow-up argument actually uses: an equilateral small
 `n`-gon, with no convexity imposed.
 
-WHY CONVEXITY IS NOT HERE. The paper's Theorem 3.5 quantifies over *convex*
-equilateral small polygons, and uses convexity exactly once, to know that a
-competitor near `p` inherits `p`'s labelled cyclic order — so that "side `i`"
-and "the active diameter `{i,j}`" name the same constraints for the competitor
-as for `p`. In this formalisation the constraints are indexed by labels from the
-start (`eC i`, `dC i j`), so they already name the same thing, and the
-implication is free. The blow-up then needs nothing else from convexity:
+WHY CONVEXITY IS NOT HERE. The paper's Theorem 3.5 is stated for convex
+competitors, but, as its Remark 3.6 records, the proof uses of the competitors
+only the side and active diameter constraints. Here those constraints are
+indexed by labels from the start (`eC i`, `dC i j`), so "side `i`" and "the
+active diameter `{i,j}`" name the same constraints for a competitor as for `p`
+without any appeal to its cyclic order. The blow-up then needs nothing else from convexity:
 hypotheses (i) and (ii) of the theorem are conditions at `p`, and the slice of
 Lemma 3.4 needs only `p i ≠ p j` for a single pair, again at `p`.
 
@@ -131,8 +130,9 @@ convex competitor near `p` really does carry `p`'s labelling. -/
 def IsFeasible (x : Amb n) : Prop :=
   Small x.1 ∧ Equilateral x ∧ 0 < x.2
 
-/-- The paper's feasible set: additionally strictly convex, with `p`'s labelled
-cyclic order. -/
+/-- Strictly convex competitors with `p`'s labelled cyclic order. Near a
+strictly convex `p` these are the competitors of the paper's feasible class (the
+closure of strictly convex positively labelled tuples). -/
 def IsFeasibleConvex (x : Amb n) : Prop :=
   ConvexOrdered x.1 ∧ IsFeasible x
 

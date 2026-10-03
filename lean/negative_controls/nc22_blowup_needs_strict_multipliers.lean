@@ -1,6 +1,6 @@
 -- NEGATIVE CONTROL. Must FAIL to compile.
 -- Theorem 3.5 requires STRICTLY positive active-diameter multipliers — the
--- strict complementarity of Lemma 3.6, which is what forces every active
+-- strict complementarity of Lemma 3.3, which is what forces every active
 -- differential to vanish once the first variation does. With merely nonnegative
 -- multipliers the argument stops at `no_ascent` and never reaches `I_eq`.
 -- Weakening `0 < lam e` to `0 <= lam e` must not go through.

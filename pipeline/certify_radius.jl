@@ -114,6 +114,18 @@ function run_radius(; radius=big"1e-28")
             ell_lower=inf(ell), Z=Z)
 end
 
+# Commit and clean-tree flag, as in the other records: the load-bearing source
+# directories and the project files must match HEAD.
+function _radius_git_state(projroot)
+    try
+        commit = strip(read(`git -C $projroot rev-parse HEAD`, String))
+        st = read(`git -C $projroot status --porcelain -- src pipeline cases Project.toml Manifest.toml`, String)
+        return commit, isempty(strip(st))
+    catch
+        return "(unavailable)", false
+    end
+end
+
 if abspath(PROGRAM_FILE) == @__FILE__
     res = run_radius()
     println("\n============================================================")
@@ -127,6 +139,10 @@ if abspath(PROGRAM_FILE) == @__FILE__
                 "certificate" => "explicit radius of strict local maximality of A16 (pipeline/certify_radius.jl)",
                 "utc" => Dates.format(now(UTC), "yyyy-mm-ddTHH:MM:SS") * "Z",
                 "bigfloat_precision_bits" => precision(BigFloat),
+                "julia_version" => string(VERSION),
+                "intervalarithmetic_version" => string(pkgversion(IntervalArithmetic)),
+                "git_commit" => _radius_git_state(projroot)[1],
+                "git_source_clean" => _radius_git_state(projroot)[2],
                 "norm" => "Euclidean on (R^2)^16 x R, after optimal orientation-preserving alignment (Procrustes)"),
             "radius" => Dict{String,Any}(
                 "r_lower_bound" => string(res.r),

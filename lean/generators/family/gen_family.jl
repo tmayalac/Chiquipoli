@@ -9,7 +9,7 @@
 # cases/exact_coords.jl (the generic OPTIGON constructor, cross-checked against
 # upstream in test/literature.jl), reduced here to the form
 # `p_k = (sin z · XC_k(c), YC_k(c))` with XC_k, YC_k ∈ Q[c] by EXACT division —
-# asserted, never assumed. `Fc` is `audet_Fc(n)` (Proposition 1). The active
+# asserted, never assumed. `Fc` is `audet_Fc(n)` (Subsection 5.1 of the article). The active
 # graph and the constructor root are those of cases/family/A<n>.
 #
 # WHAT LEAN CHECKS, AND HOW (see Basic.lean for the method):
@@ -387,7 +387,7 @@ global buf = IOBuffer()
 print(buf, header("""**A$n: the polynomial layer.** Every vertex of the Bingane–Audet `$n`-gon is
 `p_k = (sin z · XC_k(cos z), YC_k(cos z))` with `XC_k, YC_k ∈ Q[c]` (exact
 division by `cos 2z`, asserted by the generator). `Fc` is the constructor
-equation reduced to `c = cos z` (Proposition 1). `[clo, chi]` is a rational
+equation reduced to `c = cos z` (Subsection 5.1 of the article). `[clo, chi]` is a rational
 interval of width about `10⁻¹⁷` around the root; `c0`, `r0` centre it.""",
     ["ChiquipoliFamily.Basic"]))
 println(buf, """

@@ -2,7 +2,7 @@
 The headline statement: an A16 configuration exists, and it is *exactly*
 equilateral with *exactly* unit active diagonals.
 
-This is Lemma 6.1 of `Bigotes.pdf` together with the existence half of
+This is Lemma 6.1 of the article together with the existence half of
 Proposition 6.2(1), stated for the explicit Bingane–Audet constructor and
 proved end to end inside the Lean kernel.
 -/

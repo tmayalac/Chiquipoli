@@ -36,8 +36,8 @@ pinned at `λ_(0,9) = 1//375`, chosen inside the feasible window
 `(0.00074, 0.00459)` computed in Julia. The tightest λ clears `0.0012465`
 against the uniform declared bound `1//1000`.
 
-NOT the paper's Table 2. The paper — and the Julia certificate, which
-reproduces Table 2 exactly — exhibits a different point of that affine family,
+NOT those of Table S2 (Online Resource 1 of the article). That table — and the
+Julia certificate, which reproduces it exactly — exhibits a different point of that affine family,
 and the ratio between the two is not even constant (0.0110 to 0.0138 across
 edges). Theorem 3.5 asks only that *some* vector exist with every active
 diameter multiplier strictly positive; both points witness that. Lean certifies
