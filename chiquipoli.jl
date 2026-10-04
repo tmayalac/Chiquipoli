@@ -48,21 +48,60 @@ function banner()
 end
 
 const RULE = 86
-section(t) = (println(); println(sty("═"^RULE, :blue)); println("  ", sty(t, :bold));
-              println(sty("═"^RULE, :blue)))
+rulew() = min(RULE, clamp(something(tryparse(Int, get(ENV, "COLUMNS", "")), displaysize(stdout)[2]), 60, 140) - 2)
+section(t) = (println(); println(sty("═"^rulew(), :blue)); println("  ", sty(t, :bold));
+              println(sty("═"^rulew(), :blue)))
 note(s) = println("  ", sty(s, :dim))
 
-# A box-drawn table. `right` lists the columns aligned to the right.
-function table(header, rows; right = Int[])
+# A box-drawn table. `right` lists the columns aligned to the right. Column
+# `wrap` (the last by default; give the prose column, never a file name) is
+# wrapped between words to fit the terminal, never cut; rows that wrap are
+# separated by a rule.
+termcols() = clamp(something(tryparse(Int, get(ENV, "COLUMNS", "")), displaysize(stdout)[2]), 60, 140)
+
+function wrapcell(s, w)
+    out = String[]; cur = ""
+    for word in split(plain(s), ' ')
+        while width(word) > w
+            isempty(cur) || (push!(out, cur); cur = "")
+            push!(out, first(word, w)); word = chop(word; head = length(first(word, w)), tail = 0)
+        end
+        if isempty(cur)
+            cur = String(word)
+        elseif width(cur) + 1 + width(word) <= w
+            cur *= " " * word
+        else
+            push!(out, cur); cur = String(word)
+        end
+    end
+    push!(out, cur)
+    return out
+end
+
+function table(header, rows; right = Int[], wrap = length(header))
     isempty(rows) && return note("(nothing to show)")
-    n = length(header)
+    n = length(header); c = wrap
     w = [maximum(width(r[j]) for r in vcat([header], rows)) for j in 1:n]
+    room = termcols() - (2 + 3n + 1) - (sum(w) - w[c])
+    w[c] = clamp(w[c], 0, max(room, 16))
     line(l, m, r) = println("  ", sty(l * join(("─"^(x + 2) for x in w), m) * r, :dim))
-    row(cells; bold = false) = println("  ", sty("│", :dim),
-        join((" " * pad(bold ? sty(c, :bold) : c, w[j]; right = j in right) * " "
-              for (j, c) in enumerate(cells)), sty("│", :dim)), sty("│", :dim))
+    function row(cells; bold = false)
+        last = width(cells[c]) > w[c] ? wrapcell(cells[c], w[c]) : [string(cells[c])]
+        for (k, piece) in enumerate(last)
+            cs = [j == c ? piece : k == 1 ? cells[j] : "" for j in 1:n]
+            println("  ", sty("│", :dim),
+                join((" " * pad(bold ? sty(c, :bold) : c, w[j]; right = j in right) * " "
+                      for (j, c) in enumerate(cs)), sty("│", :dim)), sty("│", :dim))
+        end
+        return length(last) > 1
+    end
+    wraps = any(r -> width(r[c]) > w[c], rows)
     line("┌", "┬", "┐"); row(header; bold = true); line("├", "┼", "┤")
-    foreach(row, rows); line("└", "┴", "┘")
+    for (i, r) in enumerate(rows)
+        row(r)
+        wraps && i < length(rows) && line("├", "┼", "┤")
+    end
+    line("└", "┴", "┘")
 end
 
 # ── reading the records ─────────────────────────────────────────────────────
@@ -130,7 +169,7 @@ function status()
         push!(rows, ["benchmark", "known optima + $neg broken controls",
                      ok == length(bs) ? "PASS $ok/$(length(bs))" : "FAIL $ok/$(length(bs))", "validation_certificate.toml"])
     end
-    table(["article", "statement · method", "verdict", "record in results/"], [[x[1], x[2], verdict(x[3]), x[4]] for x in rows])
+    table(["article", "statement · method", "verdict", "record in results/"], [[x[1], x[2], verdict(x[3]), x[4]] for x in rows]; wrap = 2)
     note("Global optimality is not claimed for any polygon.")
 
     section("A₁₆ · THE HYPOTHESES OF THEOREM 3.5, GATE BY GATE (Proposition 6.2)")
@@ -160,7 +199,7 @@ function status()
             g === nothing && continue
             push!(rows, [art, what, haskey(val_of, id) ? (try val_of[id](g) catch; "—" end) : "—", verdict(string(g["status"]))])
         end
-        table(["article", "hypothesis", "certified", "status"], rows)
+        table(["article", "hypothesis", "certified", "status"], rows; wrap = 2)
         note("Equalities: exact arithmetic in ℚ[c]. Inequalities: outward-rounded intervals, 256 bits.")
     end
 
@@ -223,7 +262,7 @@ function status()
                      string(get(m, "utc", "—"))[1:min(end, 10)], verdict(describes_tree(r))])
     end
     head = try strip(read(`git -C $ROOT rev-parse --short HEAD`, String)) catch; "—" end
-    table(["record (results/)", "commit", "clean tree", "date", "matches the sources"], rows)
+    table(["record (results/)", "commit", "clean tree", "date", "matches the sources"], rows; wrap = 5)
     note("HEAD is $head. A record is evidence while its SHA256 hashes match the tree.")
     note("Full check: julia --project=. chiquipoli.jl records")
 

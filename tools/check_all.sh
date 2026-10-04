@@ -47,7 +47,8 @@ else
   RED=""; GRN=""; YEL=""; CYN=""; DIM=""; BLD=""; RST=""
 fi
 COLS=$(tput cols 2>/dev/null || echo 100)
-{ [ "$COLS" -gt 140 ] || [ "$COLS" -lt 60 ]; } && COLS=140
+[ "$COLS" -gt 140 ] && COLS=140
+[ "$COLS" -lt 60 ] && COLS=60
 export CA_COLS="$COLS" CA_RED="$RED" CA_GRN="$GRN" CA_YEL="$YEL" CA_DIM="$DIM" CA_BLD="$BLD" CA_RST="$RST"
 
 rule() { local s="" k; for ((k = 0; k < COLS - 2; k++)); do s+="$1"; done; printf "  ${DIM}%s${RST}\n" "$s"; }
@@ -74,27 +75,47 @@ banner() {
 }
 
 # A box-drawn table from tab-separated rows on stdin; the first row is the
-# header. Widths are counted in characters (perl), so ∈, ℓ and ⊂ align, and the
-# last column is cut to the terminal width. PASS / FAIL / SKIP are coloured.
+# header. Widths are counted in characters (perl), so ∈, ℓ and ⊂ align. The
+# last column is wrapped between words to fit the terminal, never cut; rows
+# that wrap are separated by a rule. PASS / FAIL / SKIP are coloured.
 table() {
   perl -CSD -Mutf8 -e '
     my @r = map { chomp; [split /\t/, $_, -1] } <STDIN>; exit unless @r;
     my $n = @{$r[0]}; my @w = (0) x $n;
     for my $x (@r) { for my $j (0..$n-1) { my $l = length($x->[$j] // ""); $w[$j] = $l if $l > $w[$j]; } }
     my $fixed = 2 + 3*$n + 1; $fixed += $w[$_] for 0..$n-2;
-    my $room = $ENV{CA_COLS} - $fixed; $room = 12 if $room < 12; $w[$n-1] = $room if $w[$n-1] > $room;
+    my $room = $ENV{CA_COLS} - $fixed; $room = 16 if $room < 16; $w[$n-1] = $room if $w[$n-1] > $room;
     my ($D,$B,$Z) = ($ENV{CA_DIM},$ENV{CA_BLD},$ENV{CA_RST});
-    sub cell { my ($s,$w) = @_; $s //= ""; $s = substr($s,0,$w-1)."…" if length($s) > $w; $s . " " x ($w - length($s)) }
+    sub wrap { my ($s,$w) = @_; my @out; my $cur = "";
+      for my $word (split / /, $s // "") {
+        while (length($word) > $w) { push @out, $cur if length $cur; $cur = ""; push @out, substr($word,0,$w); $word = substr($word,$w) }
+        if (!length $cur) { $cur = $word } elsif (length($cur) + 1 + length($word) <= $w) { $cur .= " $word" } else { push @out, $cur; $cur = $word }
+      }
+      push @out, $cur; return @out }
+    sub cell { my ($s,$w) = @_; $s //= ""; $s . " " x ($w - length($s)) }
     sub col { my $s = shift; my $c = $s =~ /^\s*(PASS|CERTIFIED|PROVEN)/ ? $ENV{CA_GRN} : $s =~ /^\s*FAIL/ ? $ENV{CA_RED} : $s =~ /^\s*SKIP/ ? $ENV{CA_YEL} : ""; $c ? "$c$s$Z" : $s }
     sub line { my ($l,$m,$e) = @_; print "  $D$l", join($m, map { "─" x ($_+2) } @w), "$e$Z\n" }
+    my @lines = map { [wrap($_->[$n-1], $w[$n-1])] } @r;
+    my $wraps = grep { @$_ > 1 } @lines[1..$#lines];
     line("┌","┬","┐");
     for my $i (0..$#r) {
-      my @c = map { cell($r[$i][$_], $w[$_]) } 0..$n-1;
-      @c = $i == 0 ? map { "$B$_$Z" } @c : map { col($_) } @c;
-      print "  $D│$Z ", join(" $D│$Z ", @c), " $D│$Z\n";
-      line("├","┼","┤") if $i == 0;
+      for my $k (0..$#{$lines[$i]}) {
+        my @c = map { cell($k == 0 ? $r[$i][$_] : "", $w[$_]) } 0..$n-2;
+        push @c, cell($lines[$i][$k], $w[$n-1]);
+        @c = $i == 0 ? map { "$B$_$Z" } @c : map { col($_) } @c;
+        print "  $D│$Z ", join(" $D│$Z ", @c), " $D│$Z\n";
+      }
+      line("├","┼","┤") if $i == 0 || ($wraps && $i < $#r);
     }
     line("└","┴","┘");'
+}
+
+# A note under a stage, wrapped to the terminal width with a hanging indent.
+note() {
+  printf '%s' "$1" | perl -CSD -Mutf8 -e '
+    my ($w,$D,$Z) = ($ENV{CA_COLS} - 4, @ENV{qw(CA_DIM CA_RST)}); my $t = <STDIN>; my $cur = ""; my @o;
+    for my $x (split / /, $t) { if (length($cur) + 1 + length($x) > $w && length $cur) { push @o, $cur; $cur = "      $x" } else { $cur = length $cur ? "$cur $x" : $x } }
+    push @o, $cur; print "  $D$_$Z\n" for @o'
 }
 
 # The checks a stage reports, one per line as [name]  PASS  detail: its own
@@ -284,7 +305,7 @@ case)
       skip "lean-family-A$CASE" "Lean or the Mathlib cache is missing (make lean-cache)"
       stage "stress-A$CASE" "8 planted defects, refused by the generator" env STRESS_CASES="$CASE" tools/stress_family.sh generator
     fi
-    [ "$CASE" = 16 ] && printf "\n  ${DIM}note: A16 also has its dedicated certificate: make verify (Julia) and make lean (Lean)${RST}\n"
+    [ "$CASE" = 16 ] && { printf "\n"; note "note: A16 also has its dedicated certificate: make verify (Julia) and make lean (Lean)"; }
   fi
   ;;
 
@@ -342,7 +363,7 @@ fast)
     stage "dedicated-julia-A16" "the article's dedicated A16 interval certificate: eight gates (nothing recorded)" \
       env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
   fi
-  printf "\n  ${DIM}note: the Julia certificate only; make a%s-complete adds the suite, Lean, controls and planted defects${RST}\n" "$N"
+  printf "\n"; note "note: the Julia certificate only; make a$N-complete adds the suite, Lean, controls and planted defects"
   ;;
 
 candidate)

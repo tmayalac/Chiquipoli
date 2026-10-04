@@ -61,6 +61,8 @@ All notable changes to this project are recorded here. The format follows
   bar on an interactive terminal (expected fraction and time left, or a sweep);
   Ctrl-C stops the running stage; a summary table at the end. Presentation only:
   no stage changed.
+  Long cells (the notes of a stage, a statement) wrap between words to the
+  terminal width instead of being cut; file names are never split.
 
 ### Article audit (after release, 2026-10-02)
 
