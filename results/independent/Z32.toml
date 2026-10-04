@@ -1,0 +1,56 @@
+# Independent cross-check of Z32 — written by pipeline/independent/verify.py; do not edit.
+name = "Z32"
+n = 32
+status = "CERTIFIED: hypotheses of the first-order criterion hold"
+precision_bits = 256
+implementation = "pipeline/independent/verify.py (Python standard library; no Julia, no IntervalArithmetic.jl)"
+t_enclosure = ["0.098174428669642793400150", "0.098174428669642793400151"]
+active_diameter_edges = [[0, 11], [0, 12], [0, 13], [0, 14], [0, 15], [0, 16], [0, 17], [0, 18], [0, 19], [0, 20], [0, 21], [1, 21], [2, 21], [3, 21], [4, 21], [5, 21], [6, 21], [7, 21], [8, 21], [8, 22], [9, 22], [10, 23], [10, 24], [11, 24], [11, 25], [11, 26], [11, 27], [11, 28], [11, 29], [11, 30], [11, 31]]
+omitted_ambient_coordinates = [0, 1, 32]
+conclusion = "Strict local maximality modulo orientation-preserving Euclidean motions among convex equilateral small polygons. Global maximality is not established."
+verifier_sha256 = "2140ae953acc4142ce72332632d11e655fcb150a9d4878f30388215b431116da"
+
+[sources]
+constructor = "Bingane and Audet, Arch. Math. 119 (2022), Section 4, Props. 1 and 2; reconstructed from the stated paths, pendant edges and reflection"
+
+[root]
+lower = "0.098174428669642793400150336002680887941106817537968235501880"
+upper = "0.098174428669642793400150336002680887941106817537968235557933"
+width_below = "1e-55"
+derivative_lower = "-3.172054494481"
+derivative_upper = "-3.172054494480"
+left_endpoint_residual = ["0.0000000000000000000000000000000000000000000000000000000448433688889131", "0.0000000000000000000000000000000000000000000000000000000448433688889132"]
+right_endpoint_residual = ["-0.0000000000000000000000000000000000000000000000000000001329564347858945", "-0.0000000000000000000000000000000000000000000000000000001329564347858944"]
+method = "IVT with exact interval endpoint signs; interval derivative excludes zero"
+
+[sides_and_diameters]
+identically_zero_side_differences = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+root_equation_side_indices = [9, 22]
+exact_active_diameter_count = 31
+proved_in = "Q[c,s,y]/(s^2+c^2-1), by coefficient comparison"
+
+[sides_and_diameters.root_equations_terms]
+F32 = 30
+
+[geometry]
+inactive_pair_count = 465
+inactive_margin_lower_bound = "0.000112613111761810"
+nearest_inactive_pair = [9, 23]
+support_determinant_count = 960
+minimum_support_determinant_lower_bound = "0.000943948800860439"
+minimum_support_indices = [24, 26]
+side_enclosure = ["0.098135007311455261145981", "0.098135007311455261145982"]
+perimeter_enclosure = ["3.140320233966568356671422", "3.140320233966568356671423"]
+
+[linear_certificate]
+system_dimension = 63
+regularity_norm_upper_bound = "0.000000000000010822"
+uniform_multiplier_error_upper_bound = "0.000000000000000136"
+minimum_diameter_multiplier_lower_bound = "0.003992764996506799"
+certified_rank = 62
+active_equality_kernel_dimension = 3
+omitted_stationarity_recovery = "Rigid-motion annihilation; restriction determinant = -1 exactly."
+
+[multiplier_pin]
+column = 32
+value = "11/200 (approx.; a float used as an exact dyadic)"

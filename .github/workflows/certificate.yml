@@ -72,6 +72,17 @@ jobs:
           julia --project=. pipeline/certify_literature.jl | tee /tmp/lit.txt
           grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt
 
+      - name: the independent cross-check (a second implementation, Python)
+        #
+        # No Julia, no IntervalArithmetic.jl: the numerical gates of A16, A32,
+        # A64, Z32 and Z64 again, after the verifier has rejected its own
+        # planted defects. Its records carry no timing, so the drift check
+        # below also covers them.
+        run: |
+          python3 pipeline/independent/verify.py --self-test
+          python3 pipeline/independent/verify.py | tee /tmp/indep.txt
+          grep -q 'INDEPENDENT CROSS-CHECK: PASSED' /tmp/indep.txt
+
       - name: the certificate must not have drifted from what is committed
         run: |
           git diff --stat -- results/ | tee /tmp/diff.txt

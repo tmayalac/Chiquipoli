@@ -7,7 +7,7 @@
         a16 a32 a64 a128 a256 a512 a1024 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
-        check-records status radius
+        check-records status radius independent
 
 help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
@@ -53,6 +53,7 @@ help:
 	@echo
 	@echo "  make status            what is certified, in tables, read from results/"
 	@echo "  make check-records     every record against the tree, the hashes and the Lean layer"
+	@echo "  make independent       A16, A32, A64, Z32, Z64 again, by a second implementation (Python, ~5 s)"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
 	@echo "  make stress-family     the same for A16/A32/A64: generator, Lean and harness"
@@ -111,6 +112,13 @@ status:
 # the Lean layer and the family records, against the tree.
 check-records:
 	julia --project=. pipeline/check_records.jl
+
+# A second implementation of the numerical gates (Python standard library only):
+# its own planted defects must all be rejected, then A16, A32, A64, Z32, Z64.
+# Writes results/independent/<polygon>.toml.
+independent:
+	python3 pipeline/independent/verify.py --self-test
+	python3 pipeline/independent/verify.py
 
 # --- the Lean layer (see lean/README.md for scope) -------------------------
 

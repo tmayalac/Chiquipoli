@@ -169,6 +169,14 @@ function status()
         push!(rows, ["benchmark", "known optima + $neg broken controls",
                      ok == length(bs) ? "PASS $ok/$(length(bs))" : "FAIL $ok/$(length(bs))", "validation_certificate.toml"])
     end
+    z32 = val === nothing ? nothing : let bs = get(val, "benchmark", Any[]); i = findfirst(b -> get(b, "name", "") == "z32-bingane-audet", bs); i === nothing ? nothing : bs[i] end
+    push!(rows, ["new", "Z₃₂ strict local maximiser · Julia, general certifier",
+                 z32 === nothing ? "absent" : (get(z32, "expectation_met", false) === true && all(v -> v in ("CERTIFIED", "PROVEN", "CONSISTENT"), values(get(z32, "blocks", Dict()))) ? "CERTIFIED" : "NOT CERTIFIED"),
+                 "validation_certificate.toml"])
+    ind = Dict(nm => rec("results/independent/$nm.toml") for nm in ("A16", "A32", "A64", "Z32", "Z64"))
+    nind = count(r -> r !== nothing && startswith(get(r, "status", ""), "CERTIFIED"), values(ind))
+    push!(rows, ["new", "A₁₆, A₃₂, A₆₄, Z₃₂, Z₆₄ again · Python, independent",
+                 nind == 5 ? "CERTIFIED 5/5" : nind == 0 ? "absent" : "NOT CERTIFIED $nind/5", "independent/*.toml"])
     table(["article", "statement · method", "verdict", "record in results/"], [[x[1], x[2], verdict(x[3]), x[4]] for x in rows]; wrap = 2)
     note("Global optimality is not claimed for any polygon.")
 
@@ -229,6 +237,23 @@ function status()
             verdict(get(f, "verdict", "?"))])
     end
     table(["polygon", "root z_n", "perimeter nℓ", "min det ≥", "δ_inact ≥", "min λ ≥", "verdict"], rows; right = 2:6)
+
+    section("THE INDEPENDENT CROSS-CHECK · the same gates, a second implementation")
+    rows = Any[]
+    for nm in ("A16", "A32", "A64", "Z32", "Z64")
+        r = ind[nm]
+        if r === nothing; push!(rows, [nm, "—", "—", "—", "—", "—", "absent"]); continue; end
+        g = get(r, "geometry", Dict()); l = get(r, "linear_certificate", Dict())
+        push!(rows, [nm, first(get(g, "perimeter_enclosure", ["—"])[1], 12),
+                     num(get(g, "minimum_support_determinant_lower_bound", nothing)),
+                     num(get(g, "inactive_margin_lower_bound", nothing)),
+                     num(get(l, "minimum_diameter_multiplier_lower_bound", nothing)),
+                     hi(big(get(l, "regularity_norm_upper_bound", "1")); d = 3),
+                     verdict(startswith(get(r, "status", ""), "CERTIFIED") ? "CERTIFIED" : "NOT CERTIFIED")])
+    end
+    table(["polygon", "perimeter ≥", "min det ≥", "δ_inact ≥", "min λ ≥", "‖I − CM‖∞ ≤", "verdict"], rows; right = 2:6)
+    note("Python standard library only, integer interval arithmetic; it shares no code with the Julia pipeline.")
+    note("A₁₆, A₃₂, A₆₄ agree with the Julia records to every printed digit. Z₆₄ is certified by this check only.")
 
     section("THE FORMAL LAYER · Lean 4")
     if lean === nothing
@@ -312,7 +337,7 @@ function condensed(out)
     for l in split(replace(out, r"\e\[[0-9;]*m" => ""), '\n')
         if (m = match(r"^\s*(.+?) PASS = (true|false)\s*$", l)) !== nothing
             add(m.captures[1], m.captures[2] == "true")
-        elseif (m = match(r"^([a-z_]+)\s{2,}(PASS|FAIL)\s+(.*)$", l)) !== nothing
+        elseif (m = match(r"^([A-Za-z][A-Za-z0-9_]*)\s{2,}(PASS|FAIL)\s+(.*)$", l)) !== nothing
             add(m.captures[1], m.captures[2] == "PASS", m.captures[3])
         elseif occursin(r"^(edge|diam) \(\d+,\d+\):", l)
             nid += 1; occursin("PROVED", l) && (nidok += 1)
@@ -322,7 +347,7 @@ function condensed(out)
             nok += 1
         elseif (m = match(r"^\s*(.+?)\s+\*\*\*\s*(.*?)\s*\*\*\*\s*$", l)) !== nothing
             add(m.captures[1], false, m.captures[2])
-        elseif occursin(r"^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE)", l)
+        elseif occursin(r"^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|INDEPENDENT CROSS-CHECK)", l)
             push!(heads, strip(l))
         end
     end
@@ -358,7 +383,7 @@ end
 function live_detail(logf)
     isfile(logf) || return ""
     t = replace(read(logf, String), r"\e\[[0-9;]*m" => "")
-    k = count(r"PASS = true", t) + count(r"(?m)^[a-z_]+\s{2,}PASS\s", t)
+    k = count(r"PASS = true", t) + count(r"(?m)^[A-Za-z][A-Za-z0-9_]*\s{2,}PASS\s", t)
     k > 0 && return "$k checks passed so far"
     k = count(r"(?m)\s+ok$", t)
     k > 0 && return "$k checks ok so far"
@@ -427,6 +452,9 @@ tasks = Dict{String,Function}(
     "family"  => v -> all(n -> run!("family · A$n", julia("pipeline/certify_family.jl", string(n)),
                                     Regex("FAMILY CERTIFICATE A$n: CERTIFIED"); verbose = v,
                                     show = "julia --project=. pipeline/certify_family.jl $n", key = "family_A$n"), (32, 64)),
+    "independent" => v -> run!("independent · a second implementation, in Python", `python3 pipeline/independent/verify.py`,
+                           r"INDEPENDENT CROSS-CHECK: PASSED"; verbose = v,
+                           show = "python3 pipeline/independent/verify.py", key = "independent"),
     "test"    => v -> run!("test · the Julia suite", julia("test/runtests.jl"), nothing; verbose = v,
                            show = "julia --project=. test/runtests.jl"),
     "records" => v -> run!("records · against the tree and the Lean layer", julia("pipeline/check_records.jl"),
@@ -460,10 +488,11 @@ function help()
         ["verify", "re-run the A₁₆ certificate (Theorem 6.3)"],
         ["radius", "re-run the explicit radius (Theorem 6.4)"],
         ["family", "re-run A₃₂ and A₆₄ (Theorem 6.6)"],
+        ["independent", "re-check A₁₆, A₃₂, A₆₄, Z₃₂, Z₆₄ with a second implementation (Python, no Julia)"],
         ["test", "the Julia test suite"],
         ["records", "every record against the tree and the Lean layer"],
         ["lean", "the A₁₆ Lean layer (needs lake and the Mathlib cache)"],
-        ["all", "test, verify, radius, family, records"]])
+        ["all", "test, verify, radius, family, independent, records"]])
     note("--verbose streams each script's own output. Nothing here writes a record.")
 end
 
@@ -477,9 +506,9 @@ function main(args)
     elseif task == "status"
         status(); return 0
     elseif task == "all"
-        STEPS[] = 6                       # test, verify, radius, family A32 and A64, records
+        STEPS[] = 7                       # test, verify, radius, family A32 and A64, independent, records
         ok = true
-        for t in ("test", "verify", "radius", "family", "records")
+        for t in ("test", "verify", "radius", "family", "independent", "records")
             ok &= tasks[t](verbose)
         end
         summary(); return ok ? 0 : 1

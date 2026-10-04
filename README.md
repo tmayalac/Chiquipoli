@@ -100,7 +100,22 @@ use:
   for **every** $n = 16k$ the polygon it builds is a strict local maximiser
   (`lean/ChiquipoliFamily/`, `AllN/Main.lean`);
 - a benchmark on the known optima $n = 4, 6, 8$ and three deliberately broken
-  variants of $A_{16}$ (`pipeline/certify_literature.jl`).
+  variants of $A_{16}$ (`pipeline/certify_literature.jl`);
+- $Z_{32}$, the polygon of larger perimeter that Bingane and Audet report for
+  $n = 32$ (perimeter $3.1403202\ldots$, against $3.1402461\ldots$ for $A_{32}$):
+  the same blocks as every candidate, including the exact identities
+  (`cases/literature/z32_bingane_audet/`). It is rebuilt from their Proposition 1,
+  not from OPTIGON, which ships only the $A_n$ constructor, so that it is the
+  polygon of the paper is a comparison with the paper that no program makes;
+- **an independent cross-check** (`pipeline/independent/verify.py`, `make
+  independent`): the numerical gates computed a second time, in Python's standard
+  library, with its own integer interval arithmetic and no Julia, for $A_{16}$,
+  $A_{32}$, $A_{64}$, $Z_{32}$ and $Z_{64}$ (`results/independent/`). For the
+  $A_n$ it ports the vendored OPTIGON file line by line and agrees with the
+  Julia records to every printed digit; it rejects its own six planted defects.
+  $Z_{64}$ (two unknowns, $t$ and $y$) is certified by this check only. It does
+  not prove the equalities of the sides and diameters of $A_n$ (the Julia
+  pipeline does, exactly) nor the uniqueness of the root on the search interval.
 
 ---
 
@@ -339,6 +354,7 @@ pipeline/                     THE CERTIFICATES: programs that write results/
   record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
   record_lean_family_certificate.jl  make lean-family-certificate -> results/lean_family_certificate.toml
   check_records.jl              make check-records: every record against the tree and the Lean layer
+  independent/verify.py         make independent: A16 A32 A64 Z32 Z64 by a second implementation (Python)
   stages/                       the six steps of certify_a16.jl, in order
     01_nominal_configuration.jl   the configuration, uncertified
     02_certify_root.jl            Prop 6.2(1): interval Newton, uniqueness
@@ -349,7 +365,7 @@ pipeline/                     THE CERTIFICATES: programs that write results/
 
 cases/                        THE INPUTS: one candidate.jl per polygon
   family/A16 ... A1024/         the Bingane-Audet family (FAMILY_N)
-  literature/                   n4_regular, n6_reinhardt, n8_ahmp2004
+  literature/                   n4_regular, n6_reinhardt, n8_ahmp2004, z32_bingane_audet
   negative/                     3 broken controls, which must be rejected
   upstream/optigon/             OPTIGON's cstrt_audet_ngon.jl, byte for byte (MIT)
   exact_coords.jl               exact coordinates, the family lists, the constructor for any n = 8m

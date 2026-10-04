@@ -385,12 +385,24 @@ function general_multipliers(p, n, active, ell)
     j0 = jrel
     gauge = [1, 2, 2*j0 + 1]                       # x_0, y_0, x_j (1-based cols)
     keep = setdiff(1:amb, gauge)
-    normidx = d == 0 ? Int[] : sortperm(abs.(y0), rev=true)[1:d]
     E = eltype(D)                                  # typed, so an empty block (d = 0) keeps it
-    M = vcat(Dt[keep, :],
-             E[ (col == normidx[r] ? one(E) : zero(E)) for r in 1:d, col in 1:nconstr ])
-    b = vcat(g[keep], [interval(T(y0[normidx[r]])) for r in 1:d])
-    regM, _ = regularity_test(M)
+    # Which multipliers to pin is a choice, not a claim: the pinned system is
+    # CERTIFIED regular below, so no pick can make the verdict unsound, only
+    # fail. The multiplier of largest magnitude is tried first; a kernel
+    # direction of M that vanishes there makes the pinned system singular
+    # (Z32 of Bingane and Audet is such a case: the sides have equal multipliers
+    # that the kernel does not touch), so the next ones are tried in turn. The
+    # first pick succeeds for every A_n, so nothing is retried there.
+    order = sortperm(abs.(y0), rev=true)
+    M = b = nothing; regM = false
+    for r0 in 1:(d == 0 ? 1 : nconstr - d + 1)
+        normidx = d == 0 ? Int[] : order[r0:r0+d-1]
+        M = vcat(Dt[keep, :],
+                 E[ (col == normidx[r] ? one(E) : zero(E)) for r in 1:d, col in 1:nconstr ])
+        b = vcat(g[keep], [interval(T(y0[normidx[r]])) for r in 1:d])
+        regM, _ = regularity_test(M)
+        regM && break
+    end
     regM || return (pass=false, reason="normalized system not regular")
     sol = krawczyk_linear(M, b)
     sol.pass || return (pass=false, reason="Krawczyk did not contract")

@@ -1,0 +1,53 @@
+# Independent cross-check of A32 — written by pipeline/independent/verify.py; do not edit.
+name = "A32"
+n = 32
+status = "CERTIFIED: hypotheses of the first-order criterion hold"
+precision_bits = 256
+implementation = "pipeline/independent/verify.py (Python standard library; no Julia, no IntervalArithmetic.jl)"
+t_enclosure = ["0.098172109009096166672231", "0.098172109009096166672232"]
+active_diameter_edges = [[0, 15], [0, 16], [0, 17], [1, 17], [2, 17], [2, 18], [3, 18], [3, 19], [3, 20], [4, 20], [4, 21], [5, 21], [6, 21], [6, 22], [7, 22], [7, 23], [7, 24], [8, 25], [9, 25], [10, 25], [10, 26], [11, 26], [11, 27], [11, 28], [12, 28], [12, 29], [13, 29], [14, 29], [14, 30], [15, 30], [15, 31]]
+omitted_ambient_coordinates = [0, 1, 32]
+conclusion = "Strict local maximality modulo orientation-preserving Euclidean motions among convex equilateral small polygons. Global maximality is not established."
+verifier_sha256 = "2140ae953acc4142ce72332632d11e655fcb150a9d4878f30388215b431116da"
+
+[sources]
+constructor = "OPTIGON cstrt_ngon/cstrt_audet_ngon.jl, ported line by line"
+upstream_sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
+graph_and_nominal_root_file = "cases/family/A32/candidate.jl"
+graph_and_nominal_root_sha256 = "31fb823252f0e8115b85a267120c0aadf47e2427acc24b99fae4df944245e873"
+
+[root]
+lower = "0.098172109009096166672231870051241111915647126137018093282375"
+upper = "0.098172109009096166672231870051241111915647126137018093356820"
+width_below = "1e-55"
+derivative_lower = "-3.135247110441"
+derivative_upper = "-3.135247110440"
+left_endpoint_residual = ["0.0000000000000000000000000000000000000000000000000000001372942800356167", "0.0000000000000000000000000000000000000000000000000000001372942800356168"]
+right_endpoint_residual = ["-0.0000000000000000000000000000000000000000000000000000000961059960249318", "-0.0000000000000000000000000000000000000000000000000000000961059960249317"]
+method = "IVT with exact interval endpoint signs; interval derivative excludes zero"
+
+[sides_and_diameters]
+sides_and_active_diameters = "interval enclosures contain the target; exactness is certified by the Julia pipeline"
+
+[geometry]
+inactive_pair_count = 465
+inactive_margin_lower_bound = "0.000962332648154472"
+nearest_inactive_pair = [8, 24]
+support_determinant_count = 960
+minimum_support_determinant_lower_bound = "0.000943881999240923"
+minimum_support_indices = [12, 14]
+side_enclosure = ["0.098132690444955897265016", "0.098132690444955897265017"]
+perimeter_enclosure = ["3.140246094238588712480514", "3.140246094238588712480515"]
+
+[linear_certificate]
+system_dimension = 63
+regularity_norm_upper_bound = "0.000000000000015854"
+uniform_multiplier_error_upper_bound = "0.000000000000000215"
+minimum_diameter_multiplier_lower_bound = "0.023234027995460476"
+certified_rank = 62
+active_equality_kernel_dimension = 3
+omitted_stationarity_recovery = "Rigid-motion annihilation; restriction determinant = -1 exactly."
+
+[multiplier_pin]
+column = 34
+value = "54777825910/517694698173 (approx.; a float used as an exact dyadic)"

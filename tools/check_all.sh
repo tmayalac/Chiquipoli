@@ -136,7 +136,7 @@ details() {
       push @o, $c; return @o }
     sub add { my ($n,$ok,$d) = @_; my $k = lc $n; return if $seen{$k}++; $d = $ref{$n} // "" unless defined $d && length $d; push @E, [$n, $ok, $d] }
     s/\e\[[0-9;]*m//g; chomp;
-    if (/^([a-z_]+)\s{2,}(PASS|FAIL)\s+(.*)$/) { add($1, $2 eq "PASS", $3) }
+    if (/^([A-Za-z][A-Za-z0-9_]*)\s{2,}(PASS|FAIL)\s+(.*)$/) { add($1, $2 eq "PASS", $3) }
     elsif (/^\s*(.+?) PASS = (true|false)\s*$/) { add($1, $2 eq "true") }
     elsif (/^(edge|diam) \(\d+,\d+\):/) { $ni++; $nok++ if /PROVED/ }
     elsif (/^Chiquipoli\s+\|\s+(\d+)\s+(\d+)/) { add("test suite", $1 == $2, "$1 of $2 assertions") }
@@ -174,6 +174,9 @@ live_detail() {
     literature*|general-*)
       last=$(grep -oE '── Certify: [^ ]+' "$log" | tail -1); k=$(grep -c '── Certify: ' "$log")
       [ -n "$last" ] && printf 'case %s: %s' "$k" "${last#── Certify: }" ;;
+    independent*)
+      k=$(grep -cE '^[AZ][0-9]+  PASS' "$log")
+      [ "$k" -gt 0 ] && printf '%s polygons cross-checked so far' "$k" ;;
     lean*|dedicated-lean*)
       last=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -E '^=== [0-9]+\. ' | tail -1)
       [ -n "$last" ] && printf 'step %s' "$(printf '%s' "$last" | sed -E 's/^=== ([0-9]+)\. (.*) ===$/\1: \2/')" ;;
@@ -290,6 +293,14 @@ in_list() { case " $2 " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
 export JULIA_NUM_THREADS="${JULIA_NUM_THREADS:-auto}"
 
 julia_run() { julia --project=. "$@"; }
+# The independent cross-check: another implementation, in Python's standard
+# library, of the numerical gates (pipeline/independent/verify.py). Its own
+# planted defects must all be rejected before its verdict counts.
+indep() { python3 pipeline/independent/verify.py --self-test && python3 pipeline/independent/verify.py "$@"; }
+indep_stage() {   # <stage name> <what> <polygons...>; a skip when there is no python3
+  local name="$1" what="$2"; shift 2
+  if have python3; then stage "$name" "$what" indep "$@"; else skip "$name" "python3 is not on PATH"; fi
+}
 family_case() { (cd lean && FAMILY_CASES="$1" ./verify_family.sh); }
 trig_case() { (cd lean && TRIG_CASES="$1" ./verify_general.sh); }
 
@@ -298,8 +309,9 @@ run_mode() {
 case "$MODE" in
 quick)
   stage test         "the Julia suite (A16 certificate stages, framework, literature, family)" julia_run test/runtests.jl
-  stage literature   "the literature benchmark n = 4, 6, 8, 16, 32, 64 and its broken controls (nothing recorded)" \
+  stage literature   "the literature benchmark n = 4, 6, 8, 16, 32, 64, Z32 and its broken controls (nothing recorded)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_literature.jl
+  CHIQUI_NO_RECORD=1 indep_stage independent "the independent cross-check (Python, no Julia): A16, A32, A64, Z32, Z64, and its own 6 planted defects (nothing recorded)" A16 A32 A64 Z32 Z64
   QUICK_N=$(for n in $FAMILY_N; do [ "$n" -le 512 ] && printf '%s ' "$n"; done)
   stage family-certs "the family certificates of $(echo $QUICK_N | sed 's/[0-9]*/A&/g') (10 gates each; nothing recorded)" \
     bash -c "for n in $QUICK_N; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
@@ -373,6 +385,7 @@ all)
     skip lean-family "Lean or the Mathlib cache is missing (make lean-cache)"
     skip lean-general "Lean or the Mathlib cache is missing (make lean-cache)"
   fi
+  indep_stage independent "the independent cross-check (Python, no Julia): A16, A32, A64, Z32, Z64, and its own 6 planted defects -> results/independent/<polygon>.toml" A16 A32 A64 Z32 Z64
   # 3. everything against everything
   stage records "every record agrees with the tree and the Lean layer" julia_run pipeline/check_records.jl
   ;;
@@ -408,6 +421,9 @@ candidate)
   fi
   stage "certificate-A$N" "the family certificate of A$N: 10 gates, incl. the published source run exactly, root uniqueness, side length, box nesting" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl "$N"
+  if in_list "$N" "16 32 64"; then
+    CHIQUI_NO_RECORD=1 indep_stage "independent-A$N" "A$N cross-checked by a second implementation (Python, no Julia, own interval arithmetic) and its own planted defects (nothing recorded)" "A$N"
+  fi
   if in_list "$N" "$FAMILY_TRIG_N"; then
     if lean_ready; then
       stage "lean-general-A$N" "A$N by the general Lean theorem (one proof for every n = 16k): build, no sorry, axioms, 12 tampered-data controls + twins, regeneration" trig_case "$N"

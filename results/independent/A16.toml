@@ -1,0 +1,53 @@
+# Independent cross-check of A16 — written by pipeline/independent/verify.py; do not edit.
+name = "A16"
+n = 16
+status = "CERTIFIED: hypotheses of the first-order criterion hold"
+precision_bits = 256
+implementation = "pipeline/independent/verify.py (Python standard library; no Julia, no IntervalArithmetic.jl)"
+t_enclosure = ["0.196270372130322800862061", "0.196270372130322800862062"]
+active_diameter_edges = [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9], [2, 10], [3, 10], [3, 11], [3, 12], [4, 13], [5, 13], [6, 13], [6, 14], [7, 14], [7, 15]]
+omitted_ambient_coordinates = [0, 1, 16]
+conclusion = "Strict local maximality modulo orientation-preserving Euclidean motions among convex equilateral small polygons. Global maximality is not established."
+verifier_sha256 = "2140ae953acc4142ce72332632d11e655fcb150a9d4878f30388215b431116da"
+
+[sources]
+constructor = "OPTIGON cstrt_ngon/cstrt_audet_ngon.jl, ported line by line"
+upstream_sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
+graph_and_nominal_root_file = "src/a16/data.jl"
+graph_and_nominal_root_sha256 = "d8eccb690967adfcf71266db2694407fcc5f9a4e62e9b18ab9365496a7f6e9b4"
+
+[root]
+lower = "0.196270372130322800862061211858053184461275535551407040652508"
+upper = "0.196270372130322800862061211858053184461275535551407040726953"
+width_below = "1e-55"
+derivative_lower = "-3.110968029126"
+derivative_upper = "-3.110968029125"
+left_endpoint_residual = ["0.0000000000000000000000000000000000000000000000000000001196487467078877", "0.0000000000000000000000000000000000000000000000000000001196487467078878"]
+right_endpoint_residual = ["-0.0000000000000000000000000000000000000000000000000000001119440978865051", "-0.0000000000000000000000000000000000000000000000000000001119440978865050"]
+method = "IVT with exact interval endpoint signs; interval derivative excludes zero"
+
+[sides_and_diameters]
+sides_and_active_diameters = "interval enclosures contain the target; exactness is certified by the Julia pipeline"
+
+[geometry]
+inactive_pair_count = 105
+inactive_margin_lower_bound = "0.008099710658135729"
+nearest_inactive_pair = [4, 12]
+support_determinant_count = 224
+minimum_support_determinant_lower_bound = "0.007488204930698924"
+minimum_support_indices = [4, 6]
+side_enclosure = ["0.195955493005538522899608", "0.195955493005538522899609"]
+perimeter_enclosure = ["3.135287888088616366393736", "3.135287888088616366393737"]
+
+[linear_certificate]
+system_dimension = 31
+regularity_norm_upper_bound = "0.000000000000005251"
+uniform_multiplier_error_upper_bound = "0.000000000000000185"
+minimum_diameter_multiplier_lower_bound = "0.101926716523201395"
+certified_rank = 30
+active_equality_kernel_dimension = 3
+omitted_stationarity_recovery = "Rigid-motion annihilation; restriction determinant = -1 exactly."
+
+[multiplier_pin]
+column = 16
+value = "184059782297/844937169867 (approx.; a float used as an exact dyadic)"

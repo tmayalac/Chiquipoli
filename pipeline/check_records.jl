@@ -353,6 +353,41 @@ for n in FAMILY_N
     chk("A$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))
 end
 
+# ---------------------------------------------------------------------------
+# The independent cross-check (pipeline/independent/verify.py): the same gates
+# computed a second time, in another language and with another interval
+# arithmetic, for A16, A32, A64 and for Z32, Z64. Its records say what was run;
+# what must hold here is that they describe THIS verifier and THIS source, and
+# that for the polygons both implementations certify, the two agree on the
+# perimeter to every digit the Python record prints.
+section("the independent cross-check (pipeline/independent/verify.py), against the tree")
+let verifier = joinpath(ROOT, "pipeline", "independent", "verify.py"),
+    upstream = joinpath(ROOT, "cases", "upstream", "optigon", "cstrt_audet_ngon.jl")
+    vsha = isfile(verifier) ? bytes2hex(open(sha256, verifier)) : ""
+    for name in ("A16", "A32", "A64", "Z32", "Z64")
+        path = joinpath(ROOT, "results", "independent", "$name.toml")
+        if !isfile(path)
+            skip("results/independent/$name.toml is CERTIFIED and describes the tree")
+            continue
+        end
+        rec = TOML.parsefile(path)
+        chk("$name: independent cross-check CERTIFIED, by this verifier",
+            startswith(get(rec, "status", ""), "CERTIFIED") && get(rec, "verifier_sha256", "") == vsha)
+        src = get(rec, "sources", Dict())
+        if name[1] == 'A'
+            gf = joinpath(ROOT, get(src, "graph_and_nominal_root_file", "?"))
+            chk("$name: it read the active graph and the root from the tree, and ported the vendored OPTIGON file",
+                isfile(gf) && get(src, "graph_and_nominal_root_sha256", "") == bytes2hex(open(sha256, gf)) &&
+                get(src, "upstream_sha256", "") == bytes2hex(open(sha256, upstream)))
+            fam = TOML.parsefile(joinpath(ROOT, "results", "family", "$name.toml"))
+            per = parse(BigFloat, only(g["perimeter"] for g in fam["gate"] if g["id"] == "side_length"))
+            enc = get(get(rec, "geometry", Dict()), "perimeter_enclosure", ["1", "0"])
+            chk("$name: Python's perimeter enclosure contains the Julia one ($(enc[1])…)",
+                parse(BigFloat, enc[1]) <= per <= parse(BigFloat, enc[2]))
+        end
+    end
+end
+
 section("the family layer, against its recorded Lean certificate")
 let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
     if !isfile(fam)

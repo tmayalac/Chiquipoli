@@ -3,6 +3,33 @@
 All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Z32 and an independent cross-check
+
+- **Z32** (`cases/literature/z32_bingane_audet/`): the Bingane–Audet 32-gon of
+  larger perimeter (3.1403202…, against 3.1402461… for A32), through the
+  general certifier: root, equilaterality, active graph and margin, convexity,
+  rank, positive multipliers, and the exact identities (32 sides and 31 active
+  diameters in Q(c,s)). Rebuilt from their Proposition 1; the paper's own
+  constructor file ships only the A_n. Test: its perimeter, above A32's and
+  below Reinhardt's bound.
+- **`general_multipliers`** (`src/SmallPolygons.jl`) tries further pin columns
+  when the first one (largest min-norm multiplier) gives a singular normalised
+  system, as it does for Z32, whose sides carry equal multipliers outside the
+  kernel. The pinned system is certified regular afterwards, so no choice can
+  make a verdict unsound; for A16, A32, A64 the first pick is unchanged.
+- **Independent cross-check** (`pipeline/independent/verify.py`,
+  `make independent`, `results/independent/`): the numerical gates a second
+  time, in Python's standard library with integer interval arithmetic, for
+  A16, A32, A64, Z32 and Z64. The A_n are a line-by-line port of the vendored
+  OPTIGON file; the Z_n exact identities are proved in Q[c,s,y]/(s²+c²−1). It
+  agrees with the Julia records for A16, A32, A64 to every printed digit
+  (checked by `check_records.jl`), and rejects its own six planted defects.
+  Z64, which has two unknowns (t, y), is certified by this check only.
+- `check_all.sh` gains the stage `independent` (quick, all, candidate);
+  `chiquipoli.jl` the task `independent` and a table in `status`; CI runs it.
+
 ## [1.3.1] — 2026-09-30
 
 ### Notation and essential-content pass (after release, 2026-10-03)
