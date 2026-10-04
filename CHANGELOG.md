@@ -42,6 +42,18 @@ All notable changes to this project are recorded here. The format follows
   the checks that read the article, `make paper`, `make paper-check` and the
   originality check moved to `paper/`, which is not distributed. `.zenodo.json`
   removed; its version check runs only if the file is present.
+- **One entry point for a reader.** `julia --project=. chiquipoli.jl` (`make
+  status`) prints, in tables read from `results/`, every result of the article
+  with its verdict and record, the hypotheses of Theorem 3.5 for A16 gate by
+  gate, the data of A16, A32, A64, the Lean layer, and whether each record still
+  matches the sources; its tasks (`verify`, `radius`, `family`, `test`,
+  `records`, `lean`, `all`) re-run the scripts unchanged and end in a summary.
+  Every bound is printed rounded in the direction that keeps it true. It never
+  writes a record and is outside the hashed sources.
+- **The mutation harness reports a moved HEAD.** On 2026-10-04 a commit made
+  during a run captured a planted defect, which the `git checkout` restore could
+  then no longer remove. `tools/mutation_check.sh` now records HEAD at the start
+  and fails, loudly, if it changed.
 
 ### Article audit (after release, 2026-10-02)
 

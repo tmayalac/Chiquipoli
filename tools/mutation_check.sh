@@ -93,6 +93,12 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 2
 fi
 
+# The restore below is `git checkout`, i.e. back to HEAD. If anything commits
+# while a defect is planted (an editor's commit button, another session), the
+# defect becomes HEAD and the restore can no longer remove it. That happened
+# once (2026-10-04); record HEAD so a moved HEAD is reported, never missed.
+START_HEAD="$(git rev-parse HEAD)"
+
 MOVED_NC=""
 restore() {
   git checkout -- src/a16 lean/ChiquipoliLean/Audit.lean \
@@ -100,6 +106,12 @@ restore() {
   rm -f lean/ChiquipoliLean/Theory/ZZ_mutation_probe.lean
   if [ -n "$MOVED_NC" ] && [ -f "/tmp/$MOVED_NC" ]; then
     mv "/tmp/$MOVED_NC" "lean/negative_controls/$MOVED_NC"
+  fi
+  if [ "$(git rev-parse HEAD)" != "$START_HEAD" ]; then
+    printf "${RED}WARNING: HEAD moved during the mutation run (%s -> %s).${RST}\n" \
+      "${START_HEAD:0:7}" "$(git rev-parse --short HEAD)" >&2
+    printf "  A commit was made while defects were planted and may contain one.\n" >&2
+    printf "  Inspect it with: git show HEAD\n" >&2
   fi
 }
 trap restore EXIT INT TERM
@@ -357,6 +369,11 @@ if [ -z "$(git status --porcelain)" ]; then
 else
   bad "working tree NOT restored:"
   git status --porcelain | sed 's/^/            /'
+fi
+if [ "$(git rev-parse HEAD)" = "$START_HEAD" ]; then
+  ok "HEAD unchanged during the run"
+else
+  bad "HEAD moved during the run (${START_HEAD:0:7} -> $(git rev-parse --short HEAD)): a commit made while defects were planted may contain one"
 fi
 
 note ""

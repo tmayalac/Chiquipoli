@@ -7,6 +7,20 @@ The package certifies, by rigorous interval arithmetic and exact rational
 algebra, the computational hypotheses that the article's first-order criterion
 consumes for the Bingane–Audet hexadecagon $A_{16}$.
 
+## Start here
+
+```
+julia --project=. chiquipoli.jl            # what is certified, read from results/ (seconds)
+julia --project=. chiquipoli.jl all        # re-run the certificates and the tests (~2 min)
+julia --project=. chiquipoli.jl help       # every task
+```
+
+The first command prints, in tables, each result of the article with its
+verdict and record, the hypotheses of Theorem 3.5 for $A_{16}$ gate by gate,
+the data of $A_{16}$, $A_{32}$, $A_{64}$, the Lean layer, and whether every
+record still matches the sources. `chiquipoli.jl` only presents: it reads
+`results/` and runs the scripts below unchanged, and never writes a record.
+
 ---
 
 ## What is certified
@@ -159,6 +173,7 @@ Bash or, better, WSL.
 | One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
 | The nominal configuration, uncertified | `make nominal` | `julia --project=. pipeline/stages/01_nominal_configuration.jl` |
 | Compare with your own copy of OPTIGON, byte for byte | `OPTIGON_DIR=/path/to/optigon make test` | `$env:OPTIGON_DIR="C:\path\to\optigon"; julia --project=. test/runtests.jl` |
+| What is certified, in tables, from the records | `make status` | `julia --project=. chiquipoli.jl` |
 | Every record against the tree, the source hashes and the Lean layer | `make check-records` | `julia --project=. pipeline/check_records.jl` |
 | Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean; lake exe cache get` |
 | The five Lean checks of the A16 layer | `make lean` | bash: `cd lean && ./verify.sh` |

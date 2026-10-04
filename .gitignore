@@ -54,6 +54,8 @@ Chiquipoli.code-workspace
 # Per-stage logs of tools/check_all.sh (make check, check-all, ...). Local run
 # output, not a record: the records are results/*.toml and logs/final_run.txt.
 /logs/check_all/
+# Full output of each task run through chiquipoli.jl.
+/logs/ui/
 __pycache__/
 
 # Working notes (Spanish), not part of the package

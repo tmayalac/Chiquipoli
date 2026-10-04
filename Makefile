@@ -7,7 +7,7 @@
         a16 a32 a64 a128 a256 a512 a1024 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
-        check-records radius
+        check-records status radius
 
 help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
@@ -52,6 +52,7 @@ help:
 	@echo "  make lean-family-certificate  record them as results/lean_family_certificate.toml"
 	@echo "  make lean-family-record       does that record still describe the tree? (seconds)"
 	@echo
+	@echo "  make status            what is certified, in tables, read from results/"
 	@echo "  make check-records     every record against the tree, the hashes and the Lean layer"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
@@ -99,6 +100,11 @@ stress-family-generator:
 # Freezes the current log under a timestamped, read-only name.
 archive-log:
 	tools/archive_log.sh logs/final_run.txt
+
+# --- the summary -----------------------------------------------------------
+# What is certified, read from results/: tables, no computation.
+status:
+	julia --project=. chiquipoli.jl status
 
 # --- the records ----------------------------------------------------------
 # Every certificate verdict, the provenance of every record (one commit, a clean
