@@ -5,7 +5,7 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
-### Z32 and an independent cross-check
+### Z32, Z64 and an independent cross-check
 
 - **Z32** (`cases/literature/z32_bingane_audet/`): the Bingane–Audet 32-gon of
   larger perimeter (3.1403202…, against 3.1402461… for A32), through the
@@ -14,6 +14,15 @@ All notable changes to this project are recorded here. The format follows
   diameters in Q(c,s)). Rebuilt from their Proposition 1; the paper's own
   constructor file ships only the A_n. Test: its perimeter, above A32's and
   below Reinhardt's bound.
+- **Z64** (`cases/literature/z64_bingane_audet/`), the same, from Proposition 2.
+  Its two unknowns (t, y) become one: the first equation is solved for y in
+  closed form, the second is the root. Exact identities in Q[c,s,y] with a ring
+  of the candidate's own (62 diameters identically 1, 60 sides identically ℓ²,
+  the other four are the two defining equations, as polynomials); the engine's
+  detail line names the ring through `meta[:exact_ring]`. Where the radicand is
+  not positive on the box, r is the entire line, so every certificate fails
+  instead of a clipped square root passing. The paper gives no angle for the
+  pendant edges; the ones used are proved to make each a diameter.
 - **`general_multipliers`** (`src/SmallPolygons.jl`) tries further pin columns
   when the first one (largest min-norm multiplier) gives a singular normalised
   system, as it does for Z32, whose sides carry equal multipliers outside the
@@ -26,7 +35,6 @@ All notable changes to this project are recorded here. The format follows
   OPTIGON file; the Z_n exact identities are proved in Q[c,s,y]/(s²+c²−1). It
   agrees with the Julia records for A16, A32, A64 to every printed digit
   (checked by `check_records.jl`), and rejects its own six planted defects.
-  Z64, which has two unknowns (t, y), is certified by this check only.
 - `check_all.sh` gains the stage `independent` (quick, all, candidate);
   `chiquipoli.jl` the task `independent` and a table in `status`; CI runs it.
 

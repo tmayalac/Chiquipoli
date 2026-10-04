@@ -1,10 +1,10 @@
-# The literature benchmark (n = 4, 6, 8, 16, 32, 64, and Z32) and its negative controls.
+# The literature benchmark (n = 4, 6, 8, 16, 32, 64, and Z32, Z64) and its negative controls.
 # Included by runtests.jl inside the outer "Chiquipoli" testset; run the
 # whole suite with `make test` (a file on its own lacks the shared setup).
 
 @testset "Literature positive cases certify (local first-order structure)" begin
     for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
-              "family/A32", "family/A64", "literature/z32_bingane_audet")
+              "family/A32", "family/A64", "literature/z32_bingane_audet", "literature/z64_bingane_audet")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         @test structural_pass(r)
@@ -34,6 +34,17 @@ end
         @test big"3.1403202339665" < PZ < big"3.1403202339666"
         @test PZ > PA
         @test PZ < 2 * 32 * sin(BigFloat(π) / 64)          # Reinhardt's bound L_32
+    end
+end
+
+@testset "Z64 is the Bingane–Audet polygon of larger perimeter than A64" begin
+    setprecision(BigFloat, 256) do
+        z = loadcand("literature/z64_bingane_audet").root.nominal
+        a = loadcand("family/A64").root.nominal
+        PZ = 64 * 2 * sin(z / 2); PA = 64 * 2 * sin(a / 2)
+        @test big"3.1412752155113" < PZ < big"3.1412752155114"
+        @test PZ > PA
+        @test PZ < 2 * 64 * sin(BigFloat(π) / 128)         # Reinhardt's bound L_64
     end
 end
 
@@ -116,7 +127,7 @@ end
 
 @testset "R1+R2 general: certified multipliers and PROVEN exact identities" begin
     for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
-              "family/A32", "family/A64", "literature/z32_bingane_audet")
+              "family/A32", "family/A64", "literature/z32_bingane_audet", "literature/z64_bingane_audet")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         mult = findfirst(b -> b.name == "multipliers", r.blocks)

@@ -639,7 +639,7 @@ function _certify(cand::Candidate, radius)
                 "disagree, so nothing is proved here"))
         else
             push!(blocks, BlockResult("exact_identities", allgood ? :PROVEN : :FAIL,
-                "$(nsides) sides + $(ndiams) active diameters proved by exact Q(c,s) algebra ($(nu) hold for all θ; $(nc) hold at the root of Fc); side/diameter equalities hold EXACTLY, not only enclosed"))
+                "$(nsides) sides + $(ndiams) active diameters proved by exact $(get(cand.meta, :exact_ring, "Q(c,s)")) algebra ($(nu) hold for all θ; $(nc) hold at the root of Fc); side/diameter equalities hold EXACTLY, not only enclosed"))
         end
     end
 

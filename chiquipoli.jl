@@ -169,10 +169,12 @@ function status()
         push!(rows, ["benchmark", "known optima + $neg broken controls",
                      ok == length(bs) ? "PASS $ok/$(length(bs))" : "FAIL $ok/$(length(bs))", "validation_certificate.toml"])
     end
-    z32 = val === nothing ? nothing : let bs = get(val, "benchmark", Any[]); i = findfirst(b -> get(b, "name", "") == "z32-bingane-audet", bs); i === nothing ? nothing : bs[i] end
-    push!(rows, ["new", "Z₃₂ strict local maximiser · Julia, general certifier",
-                 z32 === nothing ? "absent" : (get(z32, "expectation_met", false) === true && all(v -> v in ("CERTIFIED", "PROVEN", "CONSISTENT"), values(get(z32, "blocks", Dict()))) ? "CERTIFIED" : "NOT CERTIFIED"),
-                 "validation_certificate.toml"])
+    for (zn, sub) in (("z32", "₃₂"), ("z64", "₆₄"))
+        zb = val === nothing ? nothing : let bs = get(val, "benchmark", Any[]); i = findfirst(b -> get(b, "name", "") == "$zn-bingane-audet", bs); i === nothing ? nothing : bs[i] end
+        push!(rows, ["new", "Z$sub strict local maximiser · Julia, general certifier",
+                     zb === nothing ? "absent" : (get(zb, "expectation_met", false) === true && all(v -> v in ("CERTIFIED", "PROVEN", "CONSISTENT"), values(get(zb, "blocks", Dict()))) ? "CERTIFIED" : "NOT CERTIFIED"),
+                     "validation_certificate.toml"])
+    end
     ind = Dict(nm => rec("results/independent/$nm.toml") for nm in ("A16", "A32", "A64", "Z32", "Z64"))
     nind = count(r -> r !== nothing && startswith(get(r, "status", ""), "CERTIFIED"), values(ind))
     push!(rows, ["new", "A₁₆, A₃₂, A₆₄, Z₃₂, Z₆₄ again · Python, independent",
@@ -253,7 +255,7 @@ function status()
     end
     table(["polygon", "perimeter ≥", "min det ≥", "δ_inact ≥", "min λ ≥", "‖I − CM‖∞ ≤", "verdict"], rows; right = 2:6)
     note("Python standard library only, integer interval arithmetic; it shares no code with the Julia pipeline.")
-    note("A₁₆, A₃₂, A₆₄ agree with the Julia records to every printed digit. Z₆₄ is certified by this check only.")
+    note("A₁₆, A₃₂, A₆₄ agree with the Julia records to every printed digit.")
 
     section("THE FORMAL LAYER · Lean 4")
     if lean === nothing

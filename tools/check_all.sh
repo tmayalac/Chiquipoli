@@ -309,7 +309,7 @@ run_mode() {
 case "$MODE" in
 quick)
   stage test         "the Julia suite (A16 certificate stages, framework, literature, family)" julia_run test/runtests.jl
-  stage literature   "the literature benchmark n = 4, 6, 8, 16, 32, 64, Z32 and its broken controls (nothing recorded)" \
+  stage literature   "the literature benchmark n = 4, 6, 8, 16, 32, 64, Z32, Z64 and its broken controls (nothing recorded)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_literature.jl
   CHIQUI_NO_RECORD=1 indep_stage independent "the independent cross-check (Python, no Julia): A16, A32, A64, Z32, Z64, and its own 6 planted defects (nothing recorded)" A16 A32 A64 Z32 Z64
   QUICK_N=$(for n in $FAMILY_N; do [ "$n" -le 512 ] && printf '%s ' "$n"; done)
