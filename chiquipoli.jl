@@ -341,11 +341,16 @@ function print_checks(rows, heads)
     for (n, ok, d) in rows
         b = "[" * n * "]"
         width(b) > nw && (b = first(b, nw - 2) * "…]")
-        room = max(cols - 4 - nw - 2 - 4 - 2 - 2, 10)
-        d = string(d); width(d) > room && (d = first(d, room - 1) * "…")
-        println("    ", pad(b, nw), "  ", ok ? sty("PASS", :green) : sty("FAIL", :red), "  ", d)
+        room = max(cols - 4 - nw - 2 - 4 - 2 - 2, 16)
+        ps = isempty(string(d)) ? [""] : wrapcell(string(d), room)
+        println("    ", pad(b, nw), "  ", ok ? sty("PASS", :green) : sty("FAIL", :red), "  ", ps[1])
+        foreach(x -> println(" "^(4 + nw + 2 + 4 + 2), sty(x, :dim)), ps[2:end])
     end
-    foreach(h -> println("    ", sty("→ ", :dim), verdict(h)), heads)
+    for h in heads
+        ps = wrapcell(h, cols - 6)
+        println("    ", sty("→ ", :dim), verdict(ps[1]))
+        foreach(x -> println("      ", verdict(x)), ps[2:end])
+    end
 end
 
 # What a running script has done so far, read from its log: checks passed,
@@ -400,7 +405,8 @@ function run!(task, cmd, ok_pattern; dir = ROOT, verbose = false, show = "",
     good = okrun && (verbose || ok_pattern === nothing || occursin(ok_pattern, out))
     v = good ? "PASS" : "FAIL"
     rel = relpath(logf, ROOT)
-    println("  ", pad("[" * replace(key, "_" => " ") * "]", 36), " ", verdict(v), "  ", sty(@sprintf("%.0f s · %s", dt, rel), :dim))
+    println("  ", pad("[" * replace(key, "_" => " ") * "]", 36), " ", verdict(v), "  ", sty(@sprintf("%.0f s", dt), :dim))
+    println("    ", sty("log: " * rel, :dim))
     if !verbose
         rows, heads = condensed(out)
         isempty(rows) && isempty(heads) || print_checks(rows, heads)

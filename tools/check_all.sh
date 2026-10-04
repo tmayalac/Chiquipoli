@@ -57,8 +57,11 @@ upper() { printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
 heading() {
   printf '%s · %s' "$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]')" "$2" | perl -CSD -Mutf8 -ne '
     my ($w,$B,$D,$Z) = ($ENV{CA_COLS} - 4, @ENV{qw(CA_BLD CA_DIM CA_RST)});
-    $_ = substr($_,0,$w-1)."…" if length($_) > $w;
-    my ($a,$b) = split / · /, $_, 2; print "  $B$a$Z $D·$Z $b\n"'
+    chomp; my ($a,$b) = split / · /, $_, 2; my $ind = length($a) + 3; my $room = $w - $ind; $room = 20 if $room < 20;
+    my @o; my $c = "";
+    for my $x (split / /, $b // "") { if (length $c && length($c) + 1 + length($x) > $room) { push @o, $c; $c = $x } else { $c = length $c ? "$c $x" : $x } }
+    push @o, $c;
+    print "  $B$a$Z $D·$Z ", shift(@o), "\n"; print "  ", " " x $ind, "$_\n" for @o'
 }
 
 banner() {
@@ -126,6 +129,11 @@ details() {
   perl -CSD -Mutf8 -ne '
     BEGIN { ($G,$R,$D,$Z) = @ENV{qw(CA_GRN CA_RED CA_DIM CA_RST)}; $W = $ENV{CA_COLS} - 4;
             %ref = ("strict monotonicity on search interval" => "Prop 6.2(1) · 0 ∉ F′(I_search)", "domain" => "Prop 6.2(1) · Z_root ⊂ I_search", "derivative" => "Prop 6.2(1) · 0 ∉ F′(Z_root)", "Newton" => "Prop 6.2(1) · N(Z_root) ⊂ int Z_root", "unique root in box" => "Prop 6.2(1)", "unique root in whole search interval" => "Prop 6.2(1)", "strict convexity" => "Prop 6.2(3) · 224 support determinants > 0", "inactive" => "Prop 6.2(4) · 105 inactive pairs at distance < 1", "minor regular" => "Prop 6.2(6) · ‖I − CM‖∞ < 1", "rank 30" => "Prop 6.2(6) · rank D(e,d) = 30", "normalized matrix" => "§6.4 · the normalised system M₀ is regular", "Krawczyk" => "Prop 6.2(5) · the multipliers are enclosed", "all lambdas positive" => "Prop 6.2(5) · every λ_ij > 0", "omitted equations recovered" => "§6.4 · the three omitted equations hold", "nominal ell inside its certified enclosure" => "Prop 6.2(2)", "root box inside the interior of the boxes of 03, 04, 05" => "§6.3 · Z_root ⊂ int Z_cert"); }
+    sub wrapw { my ($s,$w) = @_; my @o; my $c = "";
+      for my $x (split / /, $s // "") {
+        while (length($x) > $w) { push @o, $c if length $c; $c = ""; push @o, substr($x,0,$w); $x = substr($x,$w) }
+        if (!length $c) { $c = $x } elsif (length($c) + 1 + length($x) <= $w) { $c .= " $x" } else { push @o, $c; $c = $x } }
+      push @o, $c; return @o }
     sub add { my ($n,$ok,$d) = @_; my $k = lc $n; return if $seen{$k}++; $d = $ref{$n} // "" unless defined $d && length $d; push @E, [$n, $ok, $d] }
     s/\e\[[0-9;]*m//g; chomp;
     if (/^([a-z_]+)\s{2,}(PASS|FAIL)\s+(.*)$/) { add($1, $2 eq "PASS", $3) }
@@ -134,16 +142,18 @@ details() {
     elsif (/^Chiquipoli\s+\|\s+(\d+)\s+(\d+)/) { add("test suite", $1 == $2, "$1 of $2 assertions") }
     elsif (/^\s*(.+?)\s+\*\*\*\s*(.*?)\s*\*\*\*\s*$/) { add($1, 0, $2) }
     elsif (/^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|LEAN FAMILY CERTIFICATE)/) {
-      my $c = /FAIL|NOT /i ? $R : $G; push @H, "    $D→$Z $c$_$Z" }
+      my $c = /FAIL|NOT /i ? $R : $G; my @p = wrapw($_, $W - 6);
+      push @H, "    $D→$Z $c" . shift(@p) . "$Z"; push @H, "      $c$_$Z" for @p }
     END {
       if ($ni) { @E = grep { lc($_->[0]) ne "exact identities" } @E;
                  push @E, ["exact identities", $nok == $ni, "Lemma 6.1 · $nok of $ni equalities, exact in Q[c]"] }
       my $nw = 0; for (@E) { my $l = length($_->[0]) + 2; $nw = $l if $l > $nw } $nw = 44 if $nw > 44;
       for (@E) {
         my ($n,$ok,$d) = @$_; my $b = "[$n]"; $b = substr($b,0,$nw-2)."…]" if length($b) > $nw;
-        my $room = $W - 4 - $nw - 2 - 4 - 2; $room = 10 if $room < 10;
-        $d = substr($d,0,$room-1)."…" if length($d) > $room;
-        printf "    %-*s  %s%s%s  %s\n", $nw, $b, $ok ? $G : $R, $ok ? "PASS" : "FAIL", $Z, $d;
+        my $room = $W - 4 - $nw - 2 - 4 - 2; $room = 16 if $room < 16;
+        my @p = wrapw($d, $room); my $ind = " " x (4 + $nw + 2 + 4 + 2);
+        printf "    %-*s  %s%s%s  %s\n", $nw, $b, $ok ? $G : $R, $ok ? "PASS" : "FAIL", $Z, shift(@p);
+        print "$ind$D$_$Z\n" for @p;
       }
       print "$_\n" for @H }' "$1"
 }
@@ -221,11 +231,13 @@ stage() {
   fi
   dt=$(( $(date +%s) - t0 ))
   if [ "$rc" -eq 0 ]; then
-    printf "  %-36s ${GRN}${BLD}PASS${RST}  ${DIM}%ds · %s${RST}\n" "[$name]" "$dt" "${log#$ROOT/}"
+    printf "  %-36s ${GRN}${BLD}PASS${RST}  ${DIM}%ds${RST}\n" "[$name]" "$dt"
+    printf "    ${DIM}log: %s${RST}\n" "${log#$ROOT/}"
     details "$log"
     record "$name" PASS "$dt" "$what"
   else
-    printf "  %-36s ${RED}${BLD}FAIL${RST}  ${DIM}%ds · %s${RST}\n" "[$name]" "$dt" "${log#$ROOT/}"
+    printf "  %-36s ${RED}${BLD}FAIL${RST}  ${DIM}%ds${RST}\n" "[$name]" "$dt"
+    printf "    ${DIM}log: %s${RST}\n" "${log#$ROOT/}"
     details "$log"
     printf "    ${DIM}last lines of the log:${RST}\n"
     tail -6 "$log" | sed $'s/\033\\[[0-9;]*m//g; s/^/      /'

@@ -72,6 +72,9 @@ All notable changes to this project are recorded here. The format follows
   what the mode needs (about 13 GB for the A64 Lean steps), with a warning when
   it may not fit. Hard-coded durations are gone from the help, the README and
   the script header.
+  Every line now fits the terminal: the detail of each check, the stage headings
+  and the verdict lines wrap under their column instead of being cut, and each
+  stage's log path has its own line.
 
 ### Article audit (after release, 2026-10-02)
 
