@@ -56,7 +56,7 @@ end
 # archive, so a referee runs this outside a git checkout, and collapsing that
 # case into "dirty" printed a raw exception and two `fatal:` lines from git as
 # the first thing they saw. Absent provenance is not failed provenance: it is
-# reported as such, and `check_paper.jl` skips the clean-tree check rather than
+# reported as such, and `check_records.jl` skips the clean-tree check rather than
 # failing it. Inside a checkout the guarantee is unchanged.
 # True only when there is a COMMIT to tie this run to. Two distinct situations
 # fail it, and both must be quiet: the distributed archive, which is not a

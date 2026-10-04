@@ -218,8 +218,7 @@ make lean-certificate                                         # writes results/l
 make lean-family                                              # family layer (A16, A32, A64): 5 checks
 make lean-family-certificate                                  # writes results/lean_family_certificate.toml
 
-make paper                                                    # compile a16.tex, audit the LaTeX log
-make paper-check                                              # reconcile the article vs certificate + Lean
+make check-records                                            # every record vs the tree, the hashes and Lean
 tools/mutation_check.sh                                     # 16 planted defects, all must be rejected
 tools/stress_family.sh all                                    # 63 planted defects in the family layer
 

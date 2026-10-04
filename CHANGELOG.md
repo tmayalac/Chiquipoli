@@ -36,6 +36,12 @@ All notable changes to this project are recorded here. The format follows
   A16 record carries ‖Id−C₀M₀‖∞; the family box-nesting gate compares against the
   box `certify()` evaluated. Stale cross-references in Lean comments, generators,
   `check_paper.jl` labels and the README test count corrected.
+- **Author's tools out of the package.** `pipeline/check_paper.jl` is split: the
+  checks of the records against the tree, the hashes and the Lean layer are now
+  `pipeline/check_records.jl` (`make check-records`, run by CI and `check-all`);
+  the checks that read the article, `make paper`, `make paper-check` and the
+  originality check moved to `paper/`, which is not distributed. `.zenodo.json`
+  removed; its version check runs only if the file is present.
 
 ### Article audit (after release, 2026-10-02)
 

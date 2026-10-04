@@ -49,10 +49,7 @@ jobs:
       - name: test suite
         run: julia --project=. test/runtests.jl
 
-      - name: reconcile the article's claims against the certificate and Lean
-        # The article (paper/) is a working copy and is not tracked, so the
-        # checks that read the typeset article report as skipped here. The ones
-        # that read the certificate, the sources and the Lean layer all run.
+      - name: the records against the tree, the source hashes and the Lean layer
         #
         # It runs BEFORE the certificates below, against the records exactly as
         # committed. Those steps rewrite results/a16_certificate.toml,
@@ -62,7 +59,7 @@ jobs:
         # never pass (it failed on every push from 2026-09-25 to 1.3.0 for that
         # reason alone). Whether the records are reproducible is the drift
         # step's question, not this one's.
-        run: julia --project=. pipeline/check_paper.jl
+        run: julia --project=. pipeline/check_records.jl
 
       - name: the A16 certificate
         run: |

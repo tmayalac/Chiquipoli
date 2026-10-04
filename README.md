@@ -159,7 +159,7 @@ Bash or, better, WSL.
 | One literature case only (`4`, `6`, `8`, `16`, `32`, `64`, `neg`, or a name) | `make literature-case N=8` | `julia --project=. pipeline/certify_literature.jl 8` |
 | The nominal configuration, uncertified | `make nominal` | `julia --project=. pipeline/stages/01_nominal_configuration.jl` |
 | Compare with your own copy of OPTIGON, byte for byte | `OPTIGON_DIR=/path/to/optigon make test` | `$env:OPTIGON_DIR="C:\path\to\optigon"; julia --project=. test/runtests.jl` |
-| The article against the certificates | `make paper-check` | `julia --project=. pipeline/check_paper.jl` |
+| Every record against the tree, the source hashes and the Lean layer | `make check-records` | `julia --project=. pipeline/check_records.jl` |
 | Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean; lake exe cache get` |
 | The five Lean checks of the A16 layer | `make lean` | bash: `cd lean && ./verify.sh` |
 | The same, recorded → `results/lean_certificate.toml` | `make lean-certificate` | bash: `julia --project=. pipeline/record_lean_certificate.jl` |
@@ -180,10 +180,9 @@ Bash or, better, WSL.
 in the table). `CHIQUI_NO_RECORD=1` works the same for
 `pipeline/certify_literature.jl` and `pipeline/certify_family.jl`.
 
-The article itself is not distributed, so `make paper` has nothing to compile
-in a fresh clone, and `make paper-check` checks the certificates, the source
-hashes and the claims about Lean, and reports the article checks as skipped
-(`PARTIAL`), never as passed.
+`make check-records` needs nothing outside this repository: it checks every
+certificate verdict, the provenance and source hashes of every record, the
+published bounds, the Lean layer and the family records against the tree.
 
 ### Notes for Windows
 
@@ -324,7 +323,7 @@ pipeline/                     THE CERTIFICATES: programs that write results/
   family_table.jl               the family table (not in the article), from results/family/
   record_lean_certificate.jl    make lean-certificate -> results/lean_certificate.toml
   record_lean_family_certificate.jl  make lean-family-certificate -> results/lean_family_certificate.toml
-  check_paper.jl                make paper-check: the article against every record
+  check_records.jl              make check-records: every record against the tree and the Lean layer
   stages/                       the six steps of certify_a16.jl, in order
     01_nominal_configuration.jl   the configuration, uncertified
     02_certify_root.jl            Prop 6.2(1): interval Newton, uniqueness
@@ -399,7 +398,7 @@ goes through Section 6 of the article line by line.
 Every artifact records the Git commit it was produced at, whether the working
 tree was clean, the language and library versions, and a SHA256 per load-bearing
 source file. The archived log declares the same commit as the certificates, and
-`make paper-check` fails if the log and the records do not all declare one
+`make check-records` fails if the log and the records do not all declare one
 commit from a clean tree.
 
 Exact equalities are never inferred from an interval evaluation that contains

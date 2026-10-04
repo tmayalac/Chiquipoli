@@ -1,4 +1,4 @@
-# The article's table of the family A_n, n = 16, ..., 1024, written from the
+# The table of the family A_n, n = 16, ..., 1024 (not in the article), written from the
 # family certificates (results/family/A<n>.toml) and nothing else.
 #
 #     julia --project=. pipeline/family_table.jl      -> results/tables/table5_family.tex
@@ -6,7 +6,6 @@
 # Every printed lower bound is the certified bound ROUNDED DOWN to four
 # significant digits, so the printed number is itself a certified lower bound;
 # the perimeter is printed to ten decimals from an enclosure of width < 1e-27.
-# `make paper-check` requires the article to contain exactly these rows.
 module FamilyTable
 using TOML, Printf
 

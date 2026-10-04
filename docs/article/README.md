@@ -48,10 +48,10 @@ a different member of the same affine family.
   the `[meta]` and `source_sha256` entries of every record.
 - **Independent SymPy check of Lemma 6.1:**
   `tools/independent_check/independent_check.py`.
-- **How the article is kept consistent with all of this:**
-  `pipeline/check_paper.jl` (`make paper-check`). It compares every number the
-  article prints with the records, and checks that each rounded bound is on the
-  safe side.
+- **How the records are kept consistent with the tree:**
+  `pipeline/check_records.jl` (`make check-records`). It checks every
+  certificate verdict, the provenance and source hashes of every record, the
+  published bounds against the certified values, and the Lean layer.
 
 ## Reproducing
 

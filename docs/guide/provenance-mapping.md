@@ -367,7 +367,7 @@ allows dependent rows, and Theorem 3.5 does not require LICQ.
   that test **is** a gate (`omitted_pass` enters `final_pass`). The two routes
   are independent proofs of the same statement. Earlier versions of this file
   cited the interval sign $y_8-y_1>0$ instead; that sign is still checked, by
-  `pipeline/check_paper.jl`, but it is no longer the argument the article uses.
+  `pipeline/check_records.jl`, but it is no longer the argument the article uses.
 - **Positivity $\lambda_{ij}>0$:** a strict interval lower bound. This is a
   valid proof of a strict inequality; the "zero trap" concerns *equalities*, and
   does not apply.

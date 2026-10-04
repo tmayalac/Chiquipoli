@@ -7,9 +7,7 @@
         a16 a32 a64 a128 a256 a512 a1024 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
-        paper paper-build paper-check radius
-
-PAPER := paper
+        check-records radius
 
 help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
@@ -54,8 +52,7 @@ help:
 	@echo "  make lean-family-certificate  record them as results/lean_family_certificate.toml"
 	@echo "  make lean-family-record       does that record still describe the tree? (seconds)"
 	@echo
-	@echo "  make paper             compile paper/main.tex + supplement and audit the logs"
-	@echo "  make paper-check       reconcile the article against the certificate and Lean"
+	@echo "  make check-records     every record against the tree, the hashes and the Lean layer"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
 	@echo "  make stress-family     the same for A16/A32/A64: generator, Lean and harness (~15 min)"
@@ -103,63 +100,12 @@ stress-family-generator:
 archive-log:
 	tools/archive_log.sh logs/final_run.txt
 
-# --- the article ----------------------------------------------------------
-# The article is paper/main.tex, with paper/supplement.tex beside it;
-# paper/archive/ holds the frozen previous version. All of paper/ is a working
-# copy and is not tracked (see .gitignore), so these targets are how the article
-# is held to the certificate.
-#
-# `paper` compiles both and audits the LaTeX logs. The audit is deliberately
-# case-insensitive and does not key on the word "Warning": LaTeX writes
-# "Reference ... undefined" in lower case, and pdfTeX writes "Missing
-# character" with no severity word at all, so a naive grep for "Warning" or
-# "Undefined" passes a document with unresolved references and dropped glyphs.
-# Both mistakes were made here before this target existed.
-#
-# Order matters. The supplement uses `xr` to cite the article's own numbering,
-# so it reads main.aux; TEXINPUTS puts the build directory on the search path.
-paper:
-	@if [ -f $(PAPER)/main.tex ]; then $(MAKE) --no-print-directory paper-build; \
-	 else echo "$(PAPER)/main.tex not present; nothing to compile"; fi
-
-# Internal: every recipe line runs inside $(PAPER)/, where the article, its
-# build directory and the Overleaf latexmkrc live.
-paper-build:
-	@cd $(PAPER) && mkdir -p .texbuild
-	@cd $(PAPER) && for i in 1 2 3; do pdflatex -interaction=nonstopmode -halt-on-error \
-	    -output-directory=.texbuild main.tex >/dev/null 2>&1 || \
-	    { echo "FAIL  pdflatex errored on main.tex"; exit 1; }; done
-	@cd $(PAPER) && cp .texbuild/main.pdf main.pdf
-	@cd $(PAPER) && if [ -f supplement.tex ]; then \
-	   for i in 1 2 3; do TEXINPUTS=.texbuild: pdflatex -interaction=nonstopmode \
-	       -halt-on-error -output-directory=.texbuild supplement.tex >/dev/null 2>&1 || \
-	       { echo "FAIL  pdflatex errored on supplement.tex"; exit 1; }; done; \
-	   cp .texbuild/supplement.pdf supplement.pdf; \
-	 fi
-	@cd $(PAPER) && rc=0; for f in main supplement; do \
-	   log=.texbuild/$$f.log; [ -f "$$log" ] || continue; \
-	   n=$$(LC_ALL=C grep -aicE '(reference|citation)[^.]*undefined' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n unresolved reference or citation"; rc=1; }; \
-	   n=$$(LC_ALL=C grep -ac 'Missing character' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n missing character (glyph dropped)"; rc=1; }; \
-	   n=$$(LC_ALL=C grep -ac 'Font shape' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n undefined font shape"; rc=1; }; \
-	   n=$$(LC_ALL=C grep -aicE 'multiply.defined' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n multiply defined label"; rc=1; }; \
-	   n=$$(LC_ALL=C grep -ac '^!' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n TeX error"; rc=1; }; \
-	   n=$$(LC_ALL=C grep -acE '^Overfull .hbox \([0-9]{2,}\.' $$log); \
-	     [ "$$n" -eq 0 ] || { echo "FAIL  $$f: $$n overfull hbox over 10pt"; rc=1; }; \
-	 done; \
-	 if [ $$rc -eq 0 ]; then \
-	   echo "PAPER BUILD PASS  main $$(pdfinfo main.pdf | awk '/Pages/{print $$2}') pp, supplement $$(pdfinfo supplement.pdf | awk '/Pages/{print $$2}') pp, logs clean"; \
-	 fi; exit $$rc
-
-# Reconciles every number and claim in the article against the regenerated
-# certificate and against the Lean sources. Reads the compiled PDFs, since a
-# mistyped table cell is invisible in the LaTeX source until it is typeset.
-paper-check:
-	julia --project=. pipeline/check_paper.jl
+# --- the records ----------------------------------------------------------
+# Every certificate verdict, the provenance of every record (one commit, a clean
+# tree), the SHA256 of every load-bearing source file, the published bounds,
+# the Lean layer and the family records, against the tree.
+check-records:
+	julia --project=. pipeline/check_records.jl
 
 # --- the Lean layer (see lean/README.md for scope) -------------------------
 
@@ -245,11 +191,6 @@ lean-general:
 
 lean-general-case:
 	cd lean && TRIG_CASES=$(N) ./verify_general.sh
-
-# Text of the article that repeats, word for word, a paper it cites (downloads the
-# cited arXiv papers into a temporary directory; needs pdftotext).
-originality:
-	python3 tools/originality_check.py
 
 # An explicit radius r of the strict local maximality of A16 (docs/guide/radius.md).
 radius:

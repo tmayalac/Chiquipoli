@@ -41,7 +41,7 @@ lean/lakefile.olean
 *.synctex.gz
 *.toc
 
-# LaTeX build directory for `make paper` (now paper/.texbuild/, covered above).
+# LaTeX build directory (paper/.texbuild/ is covered above).
 /.texbuild/
 
 # Reference PDFs kept alongside the working copy of the article; not part of

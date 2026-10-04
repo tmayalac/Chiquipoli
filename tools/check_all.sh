@@ -103,7 +103,7 @@ quick)
     bash -c "for n in $QUICK_N; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
   stage stress-gen   "the family generator refuses 24 planted defects" tools/stress_family.sh generator
   stage family-record "results/lean_family_certificate.toml still describes this tree" julia_run pipeline/record_lean_family_certificate.jl --check
-  stage paper-check  "the article and the docs agree with the certificates" julia_run pipeline/check_paper.jl
+  stage records     "every record agrees with the tree and the Lean layer" julia_run pipeline/check_records.jl
   ;;
 
 lean)
@@ -172,7 +172,7 @@ all)
     skip lean-general "Lean or the Mathlib cache is missing (make lean-cache)"
   fi
   # 3. everything against everything
-  stage paper-check "the article and the docs agree with every certificate" julia_run pipeline/check_paper.jl
+  stage records "every record agrees with the tree and the Lean layer" julia_run pipeline/check_records.jl
   ;;
 
 fast)

@@ -6,7 +6,7 @@
 # The first form runs lean/verify_family.sh (all five checks, all cases) and
 # writes results/lean_family_certificate.toml. The second runs nothing: it
 # recomputes the SHA-256 of every file the record lists and says whether the
-# record still describes the tree, in seconds. `make paper-check` calls it.
+# record still describes the tree, in seconds. `make check-records` calls it.
 #
 # WHY THIS EXISTS. The project runs locally, not in CI, so a verification that
 # is not written down leaves no evidence that it happened, or of what it was run
