@@ -36,7 +36,136 @@ cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
 [ -f "$ROOT/Makefile" ] && [ -f "$ROOT/src/A16Certificate.jl" ] || { echo "not the repository root: $ROOT"; exit 2; }
 
-RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; BLD=$'\033[1m'; RST=$'\033[0m'
+# --- presentation (only presentation: the stages below are unchanged) --------
+# Colours, the banner and the moving progress bar only on an interactive
+# terminal; a log or `nohup` run gets plain lines.
+TTY=0; [ -t 1 ] && TTY=1
+if [ "$TTY" = 1 ] && [ -z "${NO_COLOR:-}" ]; then
+  RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; CYN=$'\033[36m'
+  DIM=$'\033[2m'; BLD=$'\033[1m'; RST=$'\033[0m'
+else
+  RED=""; GRN=""; YEL=""; CYN=""; DIM=""; BLD=""; RST=""
+fi
+COLS=$(tput cols 2>/dev/null || echo 100)
+{ [ "$COLS" -gt 140 ] || [ "$COLS" -lt 60 ]; } && COLS=140
+export CA_COLS="$COLS" CA_RED="$RED" CA_GRN="$GRN" CA_YEL="$YEL" CA_DIM="$DIM" CA_BLD="$BLD" CA_RST="$RST"
+
+rule() { local s="" k; for ((k = 0; k < COLS - 2; k++)); do s+="$1"; done; printf "  ${DIM}%s${RST}\n" "$s"; }
+upper() { printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
+# The heading of a stage, cut to the terminal width (characters, not bytes).
+heading() {
+  printf '%s · %s' "$(upper "$1")" "$2" | perl -CSD -Mutf8 -ne '
+    my ($w,$B,$D,$Z) = ($ENV{CA_COLS} - 4, @ENV{qw(CA_BLD CA_DIM CA_RST)});
+    $_ = substr($_,0,$w-1)."…" if length($_) > $w;
+    my ($a,$b) = split / · /, $_, 2; print "  $B$a$Z $D·$Z $b\n"'
+}
+
+banner() {
+  [ "$TTY" = 1 ] || return 0
+  printf "\n${CYN}${BLD}"
+  printf '  %s\n' \
+    " ██████╗██╗  ██╗██╗ ██████╗ ██╗   ██╗██╗██████╗  ██████╗ ██╗     ██╗" \
+    "██╔════╝██║  ██║██║██╔═══██╗██║   ██║██║██╔══██╗██╔═══██╗██║     ██║" \
+    "██║     ███████║██║██║   ██║██║   ██║██║██████╔╝██║   ██║██║     ██║" \
+    "██║     ██╔══██║██║██║▄▄ ██║██║   ██║██║██╔═══╝ ██║   ██║██║     ██║" \
+    "╚██████╗██║  ██║██║╚██████╔╝╚██████╔╝██║██║     ╚██████╔╝███████╗██║" \
+    " ╚═════╝╚═╝  ╚═╝╚═╝ ╚══▀▀═╝  ╚═════╝ ╚═╝╚═╝      ╚═════╝ ╚══════╝╚═╝"
+  printf "${RST}\n  ${DIM}exact, interval and formal verification of equilateral small polygons${RST}\n"
+}
+
+# A box-drawn table from tab-separated rows on stdin; the first row is the
+# header. Widths are counted in characters (perl), so ∈, ℓ and ⊂ align, and the
+# last column is cut to the terminal width. PASS / FAIL / SKIP are coloured.
+table() {
+  perl -CSD -Mutf8 -e '
+    my @r = map { chomp; [split /\t/, $_, -1] } <STDIN>; exit unless @r;
+    my $n = @{$r[0]}; my @w = (0) x $n;
+    for my $x (@r) { for my $j (0..$n-1) { my $l = length($x->[$j] // ""); $w[$j] = $l if $l > $w[$j]; } }
+    my $fixed = 2 + 3*$n + 1; $fixed += $w[$_] for 0..$n-2;
+    my $room = $ENV{CA_COLS} - $fixed; $room = 12 if $room < 12; $w[$n-1] = $room if $w[$n-1] > $room;
+    my ($D,$B,$Z) = ($ENV{CA_DIM},$ENV{CA_BLD},$ENV{CA_RST});
+    sub cell { my ($s,$w) = @_; $s //= ""; $s = substr($s,0,$w-1)."…" if length($s) > $w; $s . " " x ($w - length($s)) }
+    sub col { my $s = shift; my $c = $s =~ /^\s*(PASS|CERTIFIED|PROVEN)/ ? $ENV{CA_GRN} : $s =~ /^\s*FAIL/ ? $ENV{CA_RED} : $s =~ /^\s*SKIP/ ? $ENV{CA_YEL} : ""; $c ? "$c$s$Z" : $s }
+    sub line { my ($l,$m,$e) = @_; print "  $D$l", join($m, map { "─" x ($_+2) } @w), "$e$Z\n" }
+    line("┌","┬","┐");
+    for my $i (0..$#r) {
+      my @c = map { cell($r[$i][$_], $w[$_]) } 0..$n-1;
+      @c = $i == 0 ? map { "$B$_$Z" } @c : map { col($_) } @c;
+      print "  $D│$Z ", join(" $D│$Z ", @c), " $D│$Z\n";
+      line("├","┼","┤") if $i == 0;
+    }
+    line("└","┴","┘");'
+}
+
+# The checks a stage reports, one per line as [name]  PASS  detail: its own
+# "X PASS = true" lines, the gates of a family certificate, the exact
+# identities counted once, the test totals, the failures of the records check,
+# and the verdict lines the scripts print.
+details() {
+  perl -CSD -Mutf8 -ne '
+    BEGIN { ($G,$R,$D,$Z) = @ENV{qw(CA_GRN CA_RED CA_DIM CA_RST)}; $W = $ENV{CA_COLS} - 4;
+            %ref = ("strict monotonicity on search interval" => "Prop 6.2(1) · 0 ∉ F′(I_search)", "domain" => "Prop 6.2(1) · Z_root ⊂ I_search", "derivative" => "Prop 6.2(1) · 0 ∉ F′(Z_root)", "Newton" => "Prop 6.2(1) · N(Z_root) ⊂ int Z_root", "unique root in box" => "Prop 6.2(1)", "unique root in whole search interval" => "Prop 6.2(1)", "strict convexity" => "Prop 6.2(3) · 224 support determinants > 0", "inactive" => "Prop 6.2(4) · 105 inactive pairs at distance < 1", "minor regular" => "Prop 6.2(6) · ‖I − CM‖∞ < 1", "rank 30" => "Prop 6.2(6) · rank D(e,d) = 30", "normalized matrix" => "§6.4 · the normalised system M₀ is regular", "Krawczyk" => "Prop 6.2(5) · the multipliers are enclosed", "all lambdas positive" => "Prop 6.2(5) · every λ_ij > 0", "omitted equations recovered" => "§6.4 · the three omitted equations hold", "nominal ell inside its certified enclosure" => "Prop 6.2(2)", "root box inside the interior of the boxes of 03, 04, 05" => "§6.3 · Z_root ⊂ int Z_cert"); }
+    sub add { my ($n,$ok,$d) = @_; my $k = lc $n; return if $seen{$k}++; $d = $ref{$n} // "" unless defined $d && length $d; push @E, [$n, $ok, $d] }
+    s/\e\[[0-9;]*m//g; chomp;
+    if (/^([a-z_]+)\s{2,}(PASS|FAIL)\s+(.*)$/) { add($1, $2 eq "PASS", $3) }
+    elsif (/^\s*(.+?) PASS = (true|false)\s*$/) { add($1, $2 eq "true") }
+    elsif (/^(edge|diam) \(\d+,\d+\):/) { $ni++; $nok++ if /PROVED/ }
+    elsif (/^Chiquipoli\s+\|\s+(\d+)\s+(\d+)/) { add("test suite", $1 == $2, "$1 of $2 assertions") }
+    elsif (/^\s*(.+?)\s+\*\*\*\s*(.*?)\s*\*\*\*\s*$/) { add($1, 0, $2) }
+    elsif (/^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|LEAN FAMILY CERTIFICATE)/) {
+      my $c = /FAIL|NOT /i ? $R : $G; push @H, "    $D→$Z $c$_$Z" }
+    END {
+      if ($ni) { @E = grep { lc($_->[0]) ne "exact identities" } @E;
+                 push @E, ["exact identities", $nok == $ni, "Lemma 6.1 · $nok of $ni equalities, exact in Q[c]"] }
+      my $nw = 0; for (@E) { my $l = length($_->[0]) + 2; $nw = $l if $l > $nw } $nw = 44 if $nw > 44;
+      for (@E) {
+        my ($n,$ok,$d) = @$_; my $b = "[$n]"; $b = substr($b,0,$nw-2)."…]" if length($b) > $nw;
+        my $room = $W - 4 - $nw - 2 - 4 - 2; $room = 10 if $room < 10;
+        $d = substr($d,0,$room-1)."…" if length($d) > $room;
+        printf "    %-*s  %s%s%s  %s\n", $nw, $b, $ok ? $G : $R, $ok ? "PASS" : "FAIL", $Z, $d;
+      }
+      print "$_\n" for @H }' "$1"
+}
+
+# Typical durations (seconds), for the progress bar; 0 = unknown, the bar then
+# moves without promising a fraction.
+est_for() {
+  case "$1" in
+    test) echo 42 ;;   certify-a16|dedicated-julia-A16) echo 6 ;;   radius|radius-A16) echo 5 ;;
+    certificate-A16|certificate-A32|certificate-A64|certificate-A128) echo 11 ;;
+    records|family-record) echo 6 ;;   literature) echo 160 ;;   family-certs) echo 420 ;;
+    mutation-check) echo 900 ;;   stress-family) echo 900 ;;
+    *) echo 0 ;;
+  esac
+}
+
+# A moving bar while the stage runs: filled to the expected fraction (never
+# 100 % before it ends) with the time left, or a block sweeping back and forth.
+PROGRESS_PID=""
+progress() {
+  local pid="$1" name="$2" est="$3" t0 el i=0 w=26 k f p bar eta
+  local spin=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
+  t0=$(date +%s)
+  while kill -0 "$pid" 2>/dev/null; do
+    el=$(( $(date +%s) - t0 )); bar=""
+    if [ "$est" -gt 0 ]; then
+      # fraction from the frame counter (one frame = 0.12 s): smooth, no subprocess
+      f=$(( i * 12 * w / (est * 100) )); [ "$f" -gt $((w - 1)) ] && f=$((w - 1))
+      for ((k = 0; k < w; k++)); do [ "$k" -lt "$f" ] && bar+="█" || bar+="░"; done
+      [ "$el" -lt "$est" ] && eta="~$((est - el)) s left" || eta="nearly done"
+    else
+      p=$(( i % (2 * (w - 5)) )); [ "$p" -ge $((w - 5)) ] && p=$(( 2 * (w - 5) - p ))
+      for ((k = 0; k < w; k++)); do { [ "$k" -ge "$p" ] && [ "$k" -lt $((p + 5)) ]; } && bar+="█" || bar+="░"; done
+      eta=""
+    fi
+    printf "\r  ${CYN}%s${RST} %-24s ${CYN}%s${RST} %4ds ${DIM}%s${RST}\033[K" "${spin[$((i % 10))]}" "$name" "$bar" "$el" "$eta"
+    i=$((i + 1)); sleep 0.12
+  done
+  printf "\r\033[K"
+}
+# Ctrl-C stops the running stage too (a background job ignores SIGINT), and a
+# planted-defect harness receives TERM, which runs its restore.
+trap '[ -n "$PROGRESS_PID" ] && kill -TERM "$PROGRESS_PID" 2>/dev/null; printf "\n"; exit 130' INT TERM
 MODE="${1:-all}"; CASE="${2:-}"
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 LOGDIR="$ROOT/logs/check_all/$STAMP"
@@ -48,37 +177,62 @@ record() { NAMES+=("$1"); RESULTS+=("$2"); TIMES+=("$3"); NOTES+=("$4"); }
 # stage <name> <what it establishes> <command...>
 stage() {
   local name="$1" what="$2"; shift 2
-  local log="$LOGDIR/$name.log" t0 dt
-  printf "\n${BLD}── %s${RST} — %s\n" "$name" "$what"
+  local log="$LOGDIR/$name.log" t0 dt rc
+  printf "\n"; rule "═"; heading "$name" "$what"; rule "═"
   t0=$(date +%s)
-  if "$@" >"$log" 2>&1; then
-    dt=$(( $(date +%s) - t0 )); printf "   ${GRN}PASS${RST} (%ds)\n" "$dt"; record "$name" PASS "$dt" "$what"
+  if [ "$TTY" = 1 ]; then
+    "$@" >"$log" 2>&1 &
+    PROGRESS_PID=$!
+    progress "$PROGRESS_PID" "$name" "$(est_for "$name")"
+    wait "$PROGRESS_PID"; rc=$?; PROGRESS_PID=""
   else
-    dt=$(( $(date +%s) - t0 )); printf "   ${RED}FAIL${RST} (%ds) — last lines of %s:\n" "$dt" "${log#$ROOT/}"
+    "$@" >"$log" 2>&1; rc=$?
+  fi
+  dt=$(( $(date +%s) - t0 ))
+  if [ "$rc" -eq 0 ]; then
+    printf "  %-36s ${GRN}${BLD}PASS${RST}  ${DIM}%ds · %s${RST}\n" "[$name]" "$dt" "${log#$ROOT/}"
+    details "$log"
+    record "$name" PASS "$dt" "$what"
+  else
+    printf "  %-36s ${RED}${BLD}FAIL${RST}  ${DIM}%ds · %s${RST}\n" "[$name]" "$dt" "${log#$ROOT/}"
+    details "$log"
+    printf "    ${DIM}last lines of the log:${RST}\n"
     tail -6 "$log" | sed $'s/\033\\[[0-9;]*m//g; s/^/      /'
     record "$name" FAIL "$dt" "log: ${log#$ROOT/}"
   fi
 }
-skip() { printf "\n${BLD}── %s${RST}\n   ${YEL}SKIP${RST} — %s\n" "$1" "$2"; record "$1" SKIP 0 "$2"; }
+skip() {
+  printf "\n"; rule "═"; printf "  ${BLD}%s${RST}\n" "$(upper "$1")"; rule "═"
+  printf "  %-36s ${YEL}${BLD}SKIP${RST}  %s\n" "[$1]" "$2"; record "$1" SKIP 0 "$2"
+}
 
 have() { command -v "$1" >/dev/null 2>&1; }
 clean_tree() { git rev-parse --git-dir >/dev/null 2>&1 && [ -z "$(git status --porcelain)" ]; }
 lean_ready() { have lake && [ -d lean/.lake/packages/mathlib ]; }
 
 # --- preflight ----------------------------------------------------------------
-printf "${BLD}Chiquipoli — check_all (%s%s)${RST}  logs: %s\n" "$MODE" "${CASE:+ $CASE}" "${LOGDIR#$ROOT/}"
+banner
 have julia || { echo "julia is not on PATH; nothing can run"; exit 2; }
 if [ "$(uname)" = Darwin ]; then memgb=$(( $(sysctl -n hw.memsize) / 1073741824 )); else memgb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1048576 )); fi
 case "$MODE" in
-  all)   echo "   estimated ~35 min; the A64 Lean steps need ~13 GB (this machine: ${memgb} GB)" ;;
-  lean)  echo "   estimated ~10 min if the Lean libraries are built, ~30 min from scratch; ~13 GB" ;;
-  quick) echo "   estimated ~5 min; Julia only" ;;
-  case)  echo "   estimated 1-15 min depending on the case" ;;
-  fast)  echo "   estimated 10 s (n <= 256) to a few minutes (n = 1024); Julia only" ;;
-  candidate) echo "   estimated on a clean tree: A16 ~18 min, A32 ~10 min, A64 ~32 min, A128/A256 a few minutes" ;;
+  all)   EST="~35 min; the A64 Lean steps need ~13 GB" ;;
+  lean)  EST="~10 min if the Lean libraries are built, ~30 min from scratch; ~13 GB" ;;
+  quick) EST="~5 min; Julia only" ;;
+  case)  EST="1-15 min depending on the case" ;;
+  fast)  EST="10 s (n <= 256) to a few minutes (n = 1024); Julia only" ;;
+  candidate) EST="on a clean tree: A16 ~18 min, A32 ~10 min, A64 ~32 min" ;;
+  *) EST="—" ;;
 esac
-[ "$memgb" -lt 16 ] && [ "$MODE" != quick ] && echo "   ${YEL}warning${RST}: less than 16 GB of memory; the A64 Lean build may not fit"
-clean_tree && echo "   git tree: clean" || echo "   git tree: ${YEL}dirty${RST} — the stages that need a clean tree will be skipped"
+clean_tree && TREE="clean" || TREE="dirty: the stages that need a clean tree are skipped"
+printf "\n"
+{ printf 'run\t%s\n' "check_all"
+  printf 'mode\t%s\n' "$MODE${CASE:+ $CASE}"
+  printf 'estimated\t%s\n' "$EST"
+  printf 'memory\t%s GB\n' "$memgb"
+  printf 'git tree\t%s\n' "$TREE"
+  printf 'commit\t%s\n' "$(git rev-parse --short HEAD 2>/dev/null || echo —)"
+  printf 'logs\t%s\n' "${LOGDIR#$ROOT/}"; } | table
+[ "$memgb" -lt 16 ] && [ "$MODE" != quick ] && printf "  ${YEL}warning${RST}: less than 16 GB of memory; the A64 Lean build may not fit\n"
 
 # The family members, read from their single source (cases/exact_coords.jl).
 family_list() { sed -n "s/^const $1 = (\(.*\))/\1/p" cases/exact_coords.jl | tr -d ','; }
@@ -130,7 +284,7 @@ case)
       skip "lean-family-A$CASE" "Lean or the Mathlib cache is missing (make lean-cache)"
       stage "stress-A$CASE" "8 planted defects, refused by the generator" env STRESS_CASES="$CASE" tools/stress_family.sh generator
     fi
-    [ "$CASE" = 16 ] && echo "   note: A16 also has its dedicated certificate — make verify (Julia) and make lean (Lean)"
+    [ "$CASE" = 16 ] && printf "\n  ${DIM}note: A16 also has its dedicated certificate: make verify (Julia) and make lean (Lean)${RST}\n"
   fi
   ;;
 
@@ -184,15 +338,11 @@ fast)
   N="$CASE"
   stage "certificate-A$N" "the family certificate of A$N: 10 gates, incl. the published source run exactly, root uniqueness, side length, box nesting" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl "$N"
-  # the gates themselves, one line each, so the bounds are on screen and not only in the log
-  grep -E '^[a-z_]+ +(PASS|FAIL) ' "$LOGDIR/certificate-A$N.log" | cut -c1-150 | sed 's/^/      /'
-  grep -E '^FAMILY CERTIFICATE A' "$LOGDIR/certificate-A$N.log" | sed 's/^/      /'
   if [ "$N" = 16 ]; then
     stage "dedicated-julia-A16" "the article's dedicated A16 interval certificate: eight gates (nothing recorded)" \
       env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
-    grep -E '^FINAL FIRST-ORDER CERTIFICATE' "$LOGDIR/dedicated-julia-A16.log" | sed 's/^/      /'
   fi
-  echo "   note: this is the Julia certificate only; make a$N-complete adds the suite, Lean, controls and planted defects"
+  printf "\n  ${DIM}note: the Julia certificate only; make a%s-complete adds the suite, Lean, controls and planted defects${RST}\n" "$N"
   ;;
 
 candidate)
@@ -268,18 +418,20 @@ candidate)
 esac
 
 # --- summary ------------------------------------------------------------------
-printf "\n${BLD}%-26s %-6s %7s   %s${RST}\n" "stage" "result" "time" "notes"
+printf "\n"; rule "═"; printf "  ${BLD}SUMMARY${RST}\n"; rule "═"
 nf=0; ns=0; total=0
-for i in "${!NAMES[@]}"; do
-  r="${RESULTS[$i]}"; c="$GRN"; [ "$r" = FAIL ] && c="$RED" && nf=$((nf + 1)); [ "$r" = SKIP ] && c="$YEL" && ns=$((ns + 1))
-  total=$((total + TIMES[$i]))
-  printf "%-26s ${c}%-6s${RST} %6ss   %s\n" "${NAMES[$i]}" "$r" "${TIMES[$i]}" "${NOTES[$i]}"
-done
-printf "total %d min %d s; logs in %s\n\n" $((total / 60)) $((total % 60)) "${LOGDIR#$ROOT/}"
+{ printf 'stage\tresult\ttime\tnotes\n'
+  for i in "${!NAMES[@]}"; do
+    r="${RESULTS[$i]}"; [ "$r" = FAIL ] && nf=$((nf + 1)); [ "$r" = SKIP ] && ns=$((ns + 1))
+    total=$((total + TIMES[$i]))
+    printf '%s\t%s\t%ss\t%s\n' "${NAMES[$i]}" "$r" "${TIMES[$i]}" "${NOTES[$i]}"
+  done; } > "$LOGDIR/summary.tsv"
+table < "$LOGDIR/summary.tsv"
+printf "  ${DIM}total %d min %d s · logs in %s${RST}\n\n" $((total / 60)) $((total % 60)) "${LOGDIR#$ROOT/}"
 if [ "$nf" -gt 0 ]; then
-  printf "${RED}FAIL${RST} — %d stage(s) failed\n" "$nf"; exit 1
+  printf "  ${RED}${BLD}FAIL${RST} — %d stage(s) failed\n\n" "$nf"; exit 1
 elif [ "$ns" -gt 0 ]; then
-  printf "${YEL}INCOMPLETE${RST} — nothing failed, but %d stage(s) were skipped; this is not a full pass\n" "$ns"; exit 3
+  printf "  ${YEL}${BLD}INCOMPLETE${RST} — nothing failed, but %d stage(s) were skipped; this is not a full pass\n\n" "$ns"; exit 3
 else
-  printf "${GRN}ALL CHECKS PASS${RST} — every stage of '%s' ran and passed\n" "$MODE${CASE:+ $CASE}"
+  printf "  ${GRN}${BLD}ALL CHECKS PASS${RST} — every stage of '%s' ran and passed\n\n" "$MODE${CASE:+ $CASE}"
 fi

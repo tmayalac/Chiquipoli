@@ -54,6 +54,13 @@ All notable changes to this project are recorded here. The format follows
   during a run captured a planted defect, which the `git checkout` restore could
   then no longer remove. `tools/mutation_check.sh` now records HEAD at the start
   and fails, loudly, if it changed.
+- **check_all.sh and chiquipoli.jl, laid out for a reader.** The banner once at
+  the start and a table of the run; each stage between rules, its result as
+  `[stage]  PASS`, and under it every check it reports as `[check]  PASS  detail`,
+  the A16 checks with the place in the article they establish; a moving progress
+  bar on an interactive terminal (expected fraction and time left, or a sweep);
+  Ctrl-C stops the running stage; a summary table at the end. Presentation only:
+  no stage changed.
 
 ### Article audit (after release, 2026-10-02)
 

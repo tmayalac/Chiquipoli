@@ -243,34 +243,98 @@ end
 # ── running the scripts ─────────────────────────────────────────────────────
 const RESULTS = Any[]                 # (task, verdict, seconds, log)
 
-# The checks a script reports, condensed into rows: its own "X PASS = true"
-# lines, the gates of a family certificate, the exact identities counted as one
-# row, the test totals, and every failure of the records check.
+# The checks a script reports, one per line as [name]  PASS  detail: its own
+# "X PASS = true" lines, the gates of a family certificate (with their detail),
+# the exact identities counted once, the test totals, every failure of the
+# records check; and the verdict lines the script prints.
+# Where in the article each check of the A16 certificate is stated.
+const REF = Dict(
+    "strict monotonicity on search interval" => "Prop 6.2(1) · 0 ∉ F′(I_search)",
+    "domain" => "Prop 6.2(1) · Z_root ⊂ I_search",
+    "derivative" => "Prop 6.2(1) · 0 ∉ F′(Z_root)",
+    "Newton" => "Prop 6.2(1) · N(Z_root) ⊂ int Z_root",
+    "unique root in box" => "Prop 6.2(1)",
+    "unique root in whole search interval" => "Prop 6.2(1)",
+    "strict convexity" => "Prop 6.2(3) · 224 support determinants > 0",
+    "inactive" => "Prop 6.2(4) · 105 inactive pairs at distance < 1",
+    "minor regular" => "Prop 6.2(6) · ‖I − CM‖∞ < 1",
+    "rank 30" => "Prop 6.2(6) · rank D(e,d) = 30",
+    "normalized matrix" => "§6.4 · the normalised system M₀ is regular",
+    "Krawczyk" => "Prop 6.2(5) · the multipliers are enclosed",
+    "all lambdas positive" => "Prop 6.2(5) · every λ_ij > 0",
+    "omitted equations recovered" => "§6.4 · the three omitted equations hold",
+    "nominal ell inside its certified enclosure" => "Prop 6.2(2)",
+    "root box inside the interior of the boxes of 03, 04, 05" => "§6.3 · Z_root ⊂ int Z_cert")
+
 function condensed(out)
     rows = Any[]; seen = Set{String}(); heads = String[]
     nid = 0; nidok = 0; nok = 0
-    add(name, ok) = (name in seen || (push!(seen, name); push!(rows, [name, ok ? "PASS" : "FAIL"])))
-    for l in split(out, '\n')
+    add(name, ok, d = "") = (k = lowercase(name); k in seen || (push!(seen, k); push!(rows, (name, ok, isempty(d) ? get(REF, name, "") : d))))
+    for l in split(replace(out, r"\e\[[0-9;]*m" => ""), '\n')
         if (m = match(r"^\s*(.+?) PASS = (true|false)\s*$", l)) !== nothing
             add(m.captures[1], m.captures[2] == "true")
-        elseif (m = match(r"^([a-z_]+)\s{2,}(PASS|FAIL)\s", l)) !== nothing
-            add(replace(m.captures[1], "_" => " "), m.captures[2] == "PASS")
+        elseif (m = match(r"^([a-z_]+)\s{2,}(PASS|FAIL)\s+(.*)$", l)) !== nothing
+            add(m.captures[1], m.captures[2] == "PASS", m.captures[3])
         elseif occursin(r"^(edge|diam) \(\d+,\d+\):", l)
             nid += 1; occursin("PROVED", l) && (nidok += 1)
         elseif (m = match(r"^Chiquipoli\s+\|\s+(\d+)\s+(\d+)", l)) !== nothing
-            add("test assertions: $(m.captures[1]) of $(m.captures[2])", m.captures[1] == m.captures[2])
+            add("test suite", m.captures[1] == m.captures[2], "$(m.captures[1]) of $(m.captures[2]) assertions")
         elseif occursin(r"\s+ok$", l)
             nok += 1
-        elseif occursin("***", l)
-            add(strip(first(split(l, "***"))), false)
-        elseif occursin(r"^(FINAL |ROOT UNIQUENESS|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|GLOBAL OPTIMALITY)", l)
+        elseif (m = match(r"^\s*(.+?)\s+\*\*\*\s*(.*?)\s*\*\*\*\s*$", l)) !== nothing
+            add(m.captures[1], false, m.captures[2])
+        elseif occursin(r"^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE)", l)
             push!(heads, strip(l))
         end
     end
-    nid > 0 && push!(rows, ["exact side and diameter identities in ℚ[c]: $nidok of $nid", nidok == nid ? "PASS" : "FAIL"])
-    nok > 0 && push!(rows, ["checks reported ok: $nok", "PASS"])
+    if nid > 0
+        filter!(r -> lowercase(r[1]) != "exact identities", rows)
+        push!(rows, ("exact identities", nidok == nid, "Lemma 6.1 · $nidok of $nid equalities, exact in ℚ[c]"))
+    end
+    nok > 0 && push!(rows, ("checks reported ok", true, "$nok"))
     return rows, heads
 end
+
+function print_checks(rows, heads)
+    cols = something(tryparse(Int, get(ENV, "COLUMNS", "")), displaysize(stdout)[2])
+    cols = clamp(cols, 60, 140)
+    nw = min(maximum((width(r[1]) + 2 for r in rows); init = 0), 44)
+    for (n, ok, d) in rows
+        b = "[" * n * "]"
+        width(b) > nw && (b = first(b, nw - 2) * "…]")
+        room = max(cols - 4 - nw - 2 - 4 - 2 - 2, 10)
+        d = string(d); width(d) > room && (d = first(d, room - 1) * "…")
+        println("    ", pad(b, nw), "  ", ok ? sty("PASS", :green) : sty("FAIL", :red), "  ", d)
+    end
+    foreach(h -> println("    ", sty("→ ", :dim), verdict(h)), heads)
+end
+
+# A moving bar while a script runs: filled to the expected fraction (never full
+# before it ends) with the time left, or a block sweeping back and forth when the
+# duration is unknown. Only on an interactive terminal.
+function await(p, label, est)
+    if !COLOR
+        wait(p); return p
+    end
+    spin = collect("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"); w = 26; i = 0; t0 = time()
+    while process_running(p)
+        el = time() - t0
+        if est > 0
+            f = min(floor(Int, el / est * w), w - 1)
+            bar = "█"^f * "░"^(w - f); eta = el < est ? "~$(round(Int, est - el)) s left" : "nearly done"
+        else
+            span = w - 5; q = i % (2span); q >= span && (q = 2span - q)
+            bar = "░"^q * "█"^5 * "░"^(w - 5 - q); eta = ""
+        end
+        print("\r  ", sty(spin[i % 10 + 1], :cyan), " ", rpad(label, 24), " ", sty(bar, :cyan),
+              @sprintf(" %4ds ", el), sty(eta, :dim), "\e[K")
+        i += 1; sleep(0.12)
+    end
+    print("\r\e[K"); wait(p); return p
+end
+
+const ESTIMATE = Dict("verify" => 6, "radius" => 5, "test" => 42, "records" => 6,
+                      "family_A32" => 11, "family_A64" => 12)
 
 function run!(task, cmd, ok_pattern; dir = ROOT, verbose = false, show = "",
               key = replace(first(split(task)), r"[^A-Za-z0-9]" => ""))
@@ -283,19 +347,18 @@ function run!(task, cmd, ok_pattern; dir = ROOT, verbose = false, show = "",
     okrun = open(logf, "w") do io
         c = setenv(Cmd(cmd; dir = dir), env)
         verbose ? success(pipeline(c; stdout = stdout, stderr = stderr)) :
-                  success(pipeline(c; stdout = io, stderr = io))
+                  success(await(run(pipeline(c; stdout = io, stderr = io); wait = false), key, get(ESTIMATE, key, 0)))
     end
     dt = time() - t0
     out = isfile(logf) ? read(logf, String) : ""
     good = okrun && (verbose || ok_pattern === nothing || occursin(ok_pattern, out))
-    if !verbose
-        rows, heads = condensed(out)
-        isempty(rows) || table(["check", "result"], [[r[1], verdict(r[2])] for r in rows])
-        foreach(h -> println("  ", verdict(h)), heads)
-    end
     v = good ? "PASS" : "FAIL"
     rel = relpath(logf, ROOT)
-    println("  ", sty("→ ", :dim), verdict(v), sty(@sprintf("  (%.0f s)   full output: %s", dt, rel), :dim))
+    println("  ", pad("[" * replace(key, "_" => " ") * "]", 36), " ", verdict(v), "  ", sty(@sprintf("%.0f s · %s", dt, rel), :dim))
+    if !verbose
+        rows, heads = condensed(out)
+        isempty(rows) && isempty(heads) || print_checks(rows, heads)
+    end
     push!(RESULTS, (replace(key, "_" => " "), v, dt, rel))
     return good
 end
