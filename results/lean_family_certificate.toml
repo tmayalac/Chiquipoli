@@ -75,15 +75,15 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "4db7d1177c0395e5b528a3d8d3ca1fff566e9c23"
+git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
 package = "A16Certificate v1.3.1"
-utc = "2026-10-01T02:07:17Z"
-verify_seconds = 267
+utc = "2026-10-04T21:37:35Z"
+verify_seconds = 228
 
 [scope]
 formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
@@ -394,7 +394,7 @@ file = "lean/ChiquipoliFamily/Polynomial/A16/Main.lean"
 sha256 = "bc3ce02d8a5a02eadab28f7fc6f088816474b49a085a96fd472e3461c4da8b97"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A16/Poly.lean"
-sha256 = "a3f11985d51c4b334a06e42969de8bb46f1ec416b179ced588bc37591bab7c55"
+sha256 = "ce963932238cd526c8c2eec42628502d64276bf6d633ec962b353acf94db50ae"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A16/Published.lean"
 sha256 = "3fccc2986da406090b6a841fd60be84e88925d2a63b73c13c1e00f8fd9a9da42"
@@ -520,7 +520,7 @@ file = "lean/ChiquipoliFamily/Polynomial/A32/Main.lean"
 sha256 = "1476675324c3c8afe04184efe931b18874faa4fcbe19b3031e73308294ea1525"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A32/Poly.lean"
-sha256 = "d4f5e9377ad0a696ef1bce250be9873cabca43839959f194e4e0bc6deb19ad32"
+sha256 = "37f97b8ef3360fd8ae30165fc21ed32f72557a9ed80cac43275948a97710bb58"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A32/Published.lean"
 sha256 = "5c81acd8f1910aae6e85564adb39fada858b49a8fe4700e8a6941b379ec66319"
@@ -886,7 +886,7 @@ file = "lean/ChiquipoliFamily/Polynomial/A64/Main.lean"
 sha256 = "805554418e8fdfa3eaa17031c7be389c08274e38afc86f8460fec571716eef7b"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A64/Poly.lean"
-sha256 = "113b1aafa710ec0af1b0217911f19196c37966d5115621f600823fc8502b887b"
+sha256 = "2447c1129a74a1df1d73420451be01ca578ea40ecb02672e5a897ce7deb2d1a1"
 [[source_sha256]]
 file = "lean/ChiquipoliFamily/Polynomial/A64/Published.lean"
 sha256 = "1d7dd1457769c38793f0ce78ab1963acad4cdd9dff9a7b7c6730bf9d871cac21"
@@ -976,7 +976,7 @@ file = "lean/ChiquipoliFamily/Polynomial/A64/Unique.lean"
 sha256 = "94d125bf67ce0e9c44adab758708297a7c2a6750c20d6bc754e0ca1fc68641cf"
 [[source_sha256]]
 file = "lean/generators/family/gen_family.jl"
-sha256 = "895a919265706e14faf419e2e913a840b43475e3c7e4f6159ffdfcd717c621d4"
+sha256 = "2231ebf74dfec97c757f46752d2477b6088b836d860721683cff64662bc1e790"
 [[source_sha256]]
 file = "lean/lake-manifest.json"
 sha256 = "1d11f2d56001800312d7ce55d726636454c10dab0e5e58584b58722420c17d1e"
@@ -1195,7 +1195,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "a5e76d61f51883602689ac5bc5d8c3e53a91af5993cc6df0489ad66b2f0b36dc"
+sha256 = "386f68224062d2c1094ffd5d326ff3054eb077d9809d13942906c031be20ea57"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"

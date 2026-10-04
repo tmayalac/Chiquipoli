@@ -9,7 +9,7 @@ n = 1024
 name = "A1024-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 126.531
+seconds = 121.441
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 128
 name = "A128-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.913
+seconds = 0.871
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.19
+seconds = 0.188
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 256
 name = "A256-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 4.62
+seconds = 4.45
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -89,7 +89,7 @@ n = 32
 name = "A32-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.044
+seconds = 0.043
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -109,7 +109,7 @@ n = 512
 name = "A512-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 22.04
+seconds = 21.361
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -129,7 +129,7 @@ n = 64
 name = "A64-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.155
+seconds = 0.15
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -149,7 +149,7 @@ n = 4
 name = "n4-regular-square"
 negative_control = false
 reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.057
+seconds = 0.053
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -169,7 +169,7 @@ n = 6
 name = "n6-reinhardt-R36"
 negative_control = false
 reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
-seconds = 0.123
+seconds = 0.118
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -189,7 +189,7 @@ n = 8
 name = "n8-ahmp2004-H8"
 negative_control = false
 reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.179
+seconds = 0.174
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -209,7 +209,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.027
+seconds = 0.026
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -229,7 +229,7 @@ n = 16
 name = "neg-broken-equilateral"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.017
+seconds = 0.016
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -249,7 +249,7 @@ n = 16
 name = "neg-wrong-diameter"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.017
+seconds = 0.016
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -264,12 +264,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "4db7d1177c0395e5b528a3d8d3ca1fff566e9c23"
+git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 154.957
-utc = "2026-10-01T01:56:53Z"
+total_seconds = 148.952
+utc = "2026-10-04T21:28:06Z"
 
 [[source_sha256]]
 file = "cases/exact_coords.jl"
@@ -321,28 +321,28 @@ file = "cases/upstream/optigon/cstrt_audet_ngon.jl"
 sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
 [[source_sha256]]
 file = "pipeline/certify_a16.jl"
-sha256 = "d14cf1910b23a5949102bd541ca25be5a55a135fc97f7eb2a92bcac5c2854517"
+sha256 = "4bfc6bd4bbc22aa343097108323d52b5f41ca477451765cf1733fc3864cd6c65"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
-sha256 = "ac1bf8d50a31e8262436dce07991a13002ef28492113b49fa85bae10900170b3"
+sha256 = "4f344c838e1c85cefc576df4815820026331e98c44ba72275e80c94b8fe99060"
 [[source_sha256]]
 file = "pipeline/certify_literature.jl"
 sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 [[source_sha256]]
 file = "pipeline/certify_radius.jl"
-sha256 = "a128af5f1d0f257df502862a22dcc7389839ae8afa28028883276afd32f0142b"
+sha256 = "cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd"
 [[source_sha256]]
-file = "pipeline/check_paper.jl"
-sha256 = "944493db9906b1be104e4f97af7d249aba34d38be699dc026b40ccb5da117ec2"
+file = "pipeline/check_records.jl"
+sha256 = "88a5c239157b1b81d3981cf9343d89165a8921d08cdc2845ef50a793d96a6746"
 [[source_sha256]]
 file = "pipeline/family_table.jl"
-sha256 = "84bf3d2783bc614836249d8459337246cfaacefe683f71b88dfb1204198f8177"
+sha256 = "c62fa1545161cdcacf072311a86ea5236cd22e829567c8fea1d0e1572631f7c6"
 [[source_sha256]]
 file = "pipeline/record_lean_certificate.jl"
 sha256 = "0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216"
 [[source_sha256]]
 file = "pipeline/record_lean_family_certificate.jl"
-sha256 = "f2ff63a1a89e42f1a6443b68b9c682677e2c87bd6061f9afbad27376bbaf638c"
+sha256 = "334c3a50c9ebb95c6cbc58cd5d3f7adbb265136f65bffa86df9168a7092bf18d"
 [[source_sha256]]
 file = "pipeline/stages/01_nominal_configuration.jl"
 sha256 = "66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c"
@@ -357,7 +357,7 @@ file = "pipeline/stages/04_certify_rank.jl"
 sha256 = "4c52bf4530d4403aacdc718f2bf41171ade6f11c5e7540bb92bd8ac85372855b"
 [[source_sha256]]
 file = "pipeline/stages/05_certify_multipliers.jl"
-sha256 = "c289addd92ed3d271cdece7cf22b7940451d5ad5a68ee5e5b22f277b9b5c516d"
+sha256 = "ba4eecfff247179dd1d519152f05fd6e3ace7d920f8397cfa29151139e1bd8aa"
 [[source_sha256]]
 file = "pipeline/stages/06_prove_exact_identities.jl"
 sha256 = "be25d69eb5a18a4f508fd2c532576a3b4cd5b5b41d991c1fc1149c530cfd74de"
@@ -372,7 +372,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "a5e76d61f51883602689ac5bc5d8c3e53a91af5993cc6df0489ad66b2f0b36dc"
+sha256 = "386f68224062d2c1094ffd5d326ff3054eb077d9809d13942906c031be20ea57"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"

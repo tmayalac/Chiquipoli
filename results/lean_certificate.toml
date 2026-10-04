@@ -13,7 +13,7 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib formalization of the A16 certificate's computational hypotheses"
-git_commit = "4db7d1177c0395e5b528a3d8d3ca1fff566e9c23"
+git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
@@ -21,7 +21,7 @@ mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "kernel-checked theorems; no interval arithmetic, no floating point"
 package = "A16Certificate v1.3.1"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-10-01T02:02:17Z"
+utc = "2026-10-04T21:33:16Z"
 
 [scope]
 formalized = ["Chebyshev multiple-angle reduction, k = 1..7", "hand-written trigonometric constructor equals the exact polynomial coordinates", "Fc(cos z) = F(z)", "Lemma 6.1: 16 side equalities + 15 active-diameter equalities", "existence of a constructor root, with sin z > 0 and cos z in a narrow rational bracket", "Prop 6.2(1): exactly one root of the constructor equation in the article's search interval I_search = (2 arcsin(sin(pi/16)/2), pi/16), via uniqueness of cos z on [49/50, 491/500] and the inclusion cos(I_search) in that bracket (Chiquipoli.constructor_root_existsUnique_article_search)", "strict convexity and labelled cyclic order: all 224 cross products strictly positive (Prop 6.2(3))", "the 89 strict inactive-diameter bounds, hence diameter exactly 1 (Prop 6.2(4)); the remaining 16 of the paper's 105 inactive pairs are the sides, covered by the equilateral identity", "stationarity at every vertex with all 15 active-diameter multipliers strictly positive (Prop 6.2(5))", "I_eq = R_eq: every admissible infinitesimal variation is a rigid motion — the conclusion the rank-30 computation of Prop 6.2(6) exists to supply", "Prop 6.2(6): rank D(e,d) = 30, by rank-nullity from the exact kernel, with no minor and no preconditioner (Chiquipoli.FirstOrder.rank_eq_thirty)", "Theorem 3.5, the abstract first-order criterion, in full: the feasible set, openness of convexity and the inactive margin, the first-order limits, invariance under Euclidean motions with the slice normalisation, and the blow-up (Chiquipoli.Feasible.thm_3_5)", "Theorem 6.3: the certified configuration is a strict local maximiser of the perimeter modulo orientation-preserving Euclidean motions (Chiquipoli.Feasible.A16_locally_maximal)", "Proposition 4.2: the square is a strict local maximiser, by the same route (Chiquipoli.Feasible.square_strict_local_max)"]
@@ -38,7 +38,7 @@ file = "lean/ChiquipoliLean/Certificate.lean"
 sha256 = "7b9cd7449e1786007fe59032dfb3c0e601a059677407a7affcb7a93d97610fb5"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Constructor/A16Exists.lean"
-sha256 = "a2d2b5ca9d898fd57626cea5a2c8e2366fa3de8fb047aa192891aae2079bbfbd"
+sha256 = "05fab6832af2d33acef22894219e29995d4ff6caeeceb02d5624cae23c08f079"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Constructor/Chebyshev.lean"
 sha256 = "f72994b899acfee3feee9d3980a63fe9b6bb29887f4ce7d8715f52773fd42da3"
@@ -68,7 +68,7 @@ file = "lean/ChiquipoliLean/Generated/InactiveMargin.lean"
 sha256 = "ba81bcc1f8b9953dbce7768187749eba60c424119c2e81b34859d8c1157442d8"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Generated/Multipliers.lean"
-sha256 = "633cf71586489e014ac1e64f501ce2d19b58ecab44475ed9b4149aeded65d0f7"
+sha256 = "1199e9a61b4f92b0fd13ff3818ebf9f3f2a6db34286091a6afac4364758655ca"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Generated/Polynomials.lean"
 sha256 = "7344575443f039af96e7b49db918e09c370999443043183a7b3575a53d41780a"
@@ -95,7 +95,7 @@ file = "lean/ChiquipoliLean/Instances/SquareLocalMax.lean"
 sha256 = "278fa12024abbb33d417fdbb80276ccb8c7650b6d18aade25e7518aed7f83937"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Theory/Feasible.lean"
-sha256 = "054120ff9d0b5b645698fb53822465bacfaecde9fc9c9b61e72ffc369001dda0"
+sha256 = "5f0f77160ef33bf9c1aaf1714a7aaabafec135f99cd8c1381d5b8eee7d1c74ad"
 [[source_sha256]]
 file = "lean/ChiquipoliLean/Theory/FeasibleMain.lean"
 sha256 = "fa66d592fa2e7ab3dbd596e2db75bd70bfab5688b7317642aef402d730c4dafd"
@@ -128,7 +128,7 @@ file = "lean/generators/extract_polys.jl"
 sha256 = "437585d33c529e1912f4815fe6b3a544dceefb537b57ab4d5071dac0d9128dd8"
 [[source_sha256]]
 file = "lean/generators/family/gen_family.jl"
-sha256 = "895a919265706e14faf419e2e913a840b43475e3c7e4f6159ffdfcd717c621d4"
+sha256 = "2231ebf74dfec97c757f46752d2477b6088b836d860721683cff64662bc1e790"
 [[source_sha256]]
 file = "lean/generators/gen_convexity.jl"
 sha256 = "4224bbb026f4efd2fa255cba95e2978406072ea577a794503b77bbdeeb0e6086"
@@ -140,7 +140,7 @@ file = "lean/generators/gen_inactive.jl"
 sha256 = "03ad9da026d12c373fbffbc3f47b22b70d44afbee0a37c05e6248c6a9d41e7b5"
 [[source_sha256]]
 file = "lean/generators/gen_multipliers.jl"
-sha256 = "05f67a950127d319be8485bb9f5871eced7a1b4d7002db71062226a74d215ba5"
+sha256 = "396f83be656ee10c16d23c2fcaae33f47022b0bfee02fb13a89a67a1176fae08"
 [[source_sha256]]
 file = "lean/generators/gen_positivity.jl"
 sha256 = "0c83343121f7d1938a8ad6dfeb3b75cbef7b4a935850679b3e070df8a63607ec"
@@ -200,7 +200,7 @@ file = "lean/negative_controls/nc21_slice_needs_rotation.lean"
 sha256 = "054cab931a3b771c979f4ea30532e20298aa5ec3920f4961b58773aaf76bf1fc"
 [[source_sha256]]
 file = "lean/negative_controls/nc22_blowup_needs_strict_multipliers.lean"
-sha256 = "f366aaa029fc27c4479622a9a8cc8fb236bb1da4c3002b00344a8751f9243a88"
+sha256 = "cef7e6a872503a14cb42bb4c99d0e53a8d07adb6826fd64f6a79042f36304a17"
 [[source_sha256]]
 file = "lean/negative_controls/nc23_blowup_needs_ascent_direction.lean"
 sha256 = "2f82f0fa4685d0612a9f4ceaf043bcbd3a570cc7a8103c14e78111ac3b0ec0e6"
