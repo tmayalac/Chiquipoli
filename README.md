@@ -11,7 +11,7 @@ consumes for the Bingane–Audet hexadecagon $A_{16}$.
 
 ```
 julia --project=. chiquipoli.jl            # what is certified, read from results/ (seconds)
-julia --project=. chiquipoli.jl all        # re-run the certificates and the tests (~2 min)
+julia --project=. chiquipoli.jl all        # re-run the certificates and the tests
 julia --project=. chiquipoli.jl help       # every task
 ```
 
@@ -132,11 +132,11 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 
 | What it does | macOS / Linux | Windows (Git Bash or WSL) |
 |---|---|---|
-| Quick check: Julia only, writes nothing (~5 min) | `make check` | `bash tools/check_all.sh quick` |
-| Everything, in order, refreshing every record in `results/` (~65 min, 16 GB) | `make check-all` | `bash tools/check_all.sh all` |
+| Quick check: Julia only, writes nothing | `make check` | `bash tools/check_all.sh quick` |
+| Everything, in order, refreshing every record in `results/` (16 GB of memory) | `make check-all` | `bash tools/check_all.sh all` |
 | Both Lean layers, verified and recorded | `make check-lean` | `bash tools/check_all.sh lean` |
 | One case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress) | `make check-case N=32` | `bash tools/check_all.sh case 32` |
-| One candidate, every layer: A16 (~18 min), A32 (~10 min), A64 (~32 min) | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
+| One candidate, every layer: A16, A32, A64 | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
 | One polygon, its Julia certificate only, in seconds (A16 … A1024; A1024 a few minutes) | `make a16`, `make a32`, …, `make a1024` | `bash tools/check_all.sh fast 256` |
 | One polygon, every layer incl. Lean (Lean for A16 … A256; A512, A1024 end `INCOMPLETE`) | `make a16-complete`, …, `make a1024-complete` | `bash tools/check_all.sh candidate 256` |
 

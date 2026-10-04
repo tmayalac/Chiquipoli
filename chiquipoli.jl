@@ -275,7 +275,7 @@ function status()
         ["the records against the tree", "julia --project=. chiquipoli.jl records"],
         ["the Lean layer (needs lake)", "julia --project=. chiquipoli.jl lean"],
         ["all of the above but Lean", "julia --project=. chiquipoli.jl all"]])
-    note("None of these writes a record. To regenerate them: make check-all (~35 min).")
+    note("None of these writes a record. To regenerate them: make check-all.")
     return true
 end
 
@@ -348,36 +348,43 @@ function print_checks(rows, heads)
     foreach(h -> println("    ", sty("→ ", :dim), verdict(h)), heads)
 end
 
-# A moving bar while a script runs: filled to the expected fraction (never full
-# before it ends) with the time left, or a block sweeping back and forth when the
-# duration is unknown. Only on an interactive terminal.
-function await(p, label, est)
+# What a running script has done so far, read from its log: checks passed,
+# gates passed, records checks reported ok. Only what it has printed.
+function live_detail(logf)
+    isfile(logf) || return ""
+    t = replace(read(logf, String), r"\e\[[0-9;]*m" => "")
+    k = count(r"PASS = true", t) + count(r"(?m)^[a-z_]+\s{2,}PASS\s", t)
+    k > 0 && return "$k checks passed so far"
+    k = count(r"(?m)\s+ok$", t)
+    k > 0 && return "$k checks ok so far"
+    return ""
+end
+
+# While a script runs: which task of how many, a block sweeping back and forth
+# (the process is alive), the time elapsed, and what its log says it has done.
+# Only on an interactive terminal; nothing here is predicted.
+const STEP = Ref(0); const STEPS = Ref(0)
+function await(p, label, logf)
     if !COLOR
         wait(p); return p
     end
-    spin = collect("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"); w = 26; i = 0; t0 = time()
+    spin = collect("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"); w = 20; i = 0; t0 = time(); det = ""
     while process_running(p)
         el = time() - t0
-        if est > 0
-            f = min(floor(Int, el / est * w), w - 1)
-            bar = "█"^f * "░"^(w - f); eta = el < est ? "~$(round(Int, est - el)) s left" : "nearly done"
-        else
-            span = w - 5; q = i % (2span); q >= span && (q = 2span - q)
-            bar = "░"^q * "█"^5 * "░"^(w - 5 - q); eta = ""
-        end
-        print("\r  ", sty(spin[i % 10 + 1], :cyan), " ", rpad(label, 24), " ", sty(bar, :cyan),
-              @sprintf(" %4ds ", el), sty(eta, :dim), "\e[K")
+        span = w - 5; q = i % (2span); q >= span && (q = 2span - q)
+        bar = "░"^q * "█"^5 * "░"^(w - 5 - q)
+        i % 8 == 0 && (det = live_detail(logf))
+        print("\r  ", sty(spin[i % 10 + 1], :cyan), " ", sty("[$(STEP[])/$(STEPS[])]", :dim), " ",
+              rpad(label, 14), " ", sty(bar, :cyan), @sprintf(" %4ds  ", el), sty(det, :dim), "\e[K")
         i += 1; sleep(0.12)
     end
     print("\r\e[K"); wait(p); return p
 end
 
-const ESTIMATE = Dict("verify" => 6, "radius" => 5, "test" => 42, "records" => 6,
-                      "family_A32" => 11, "family_A64" => 12)
-
 function run!(task, cmd, ok_pattern; dir = ROOT, verbose = false, show = "",
               key = replace(first(split(task)), r"[^A-Za-z0-9]" => ""))
-    section(uppercase(task))
+    STEP[] += 1
+    section("[$(STEP[])/$(STEPS[])] " * uppercase(task))
     println("  ", sty("\$ " * (isempty(show) ? join(cmd.exec, " ") : show), :dim))
     mkpath(joinpath(ROOT, "logs", "ui"))
     logf = joinpath(ROOT, "logs", "ui", key * ".log")
@@ -386,7 +393,7 @@ function run!(task, cmd, ok_pattern; dir = ROOT, verbose = false, show = "",
     okrun = open(logf, "w") do io
         c = setenv(Cmd(cmd; dir = dir), env)
         verbose ? success(pipeline(c; stdout = stdout, stderr = stderr)) :
-                  success(await(run(pipeline(c; stdout = io, stderr = io); wait = false), key, get(ESTIMATE, key, 0)))
+                  success(await(run(pipeline(c; stdout = io, stderr = io); wait = false), replace(key, "_" => " "), logf))
     end
     dt = time() - t0
     out = isfile(logf) ? read(logf, String) : ""
@@ -442,15 +449,15 @@ end
 
 function help()
     section("USAGE · julia --project=. chiquipoli.jl [task] [--verbose]")
-    table(["task", "what it does", "time"], [
-        ["status", "what is certified, read from results/ (the default)", "seconds"],
-        ["verify", "re-run the A₁₆ certificate (Theorem 6.3)", "~10 s"],
-        ["radius", "re-run the explicit radius (Theorem 6.4)", "~10 s"],
-        ["family", "re-run A₃₂ and A₆₄ (Theorem 6.6)", "~20 s"],
-        ["test", "the Julia test suite", "~45 s"],
-        ["records", "every record against the tree and the Lean layer", "~10 s"],
-        ["lean", "the A₁₆ Lean layer (needs lake and the Mathlib cache)", "minutes"],
-        ["all", "test, verify, radius, family, records", "~2 min"]])
+    table(["task", "what it does"], [
+        ["status", "what is certified, read from results/ (the default; no computation)"],
+        ["verify", "re-run the A₁₆ certificate (Theorem 6.3)"],
+        ["radius", "re-run the explicit radius (Theorem 6.4)"],
+        ["family", "re-run A₃₂ and A₆₄ (Theorem 6.6)"],
+        ["test", "the Julia test suite"],
+        ["records", "every record against the tree and the Lean layer"],
+        ["lean", "the A₁₆ Lean layer (needs lake and the Mathlib cache)"],
+        ["all", "test, verify, radius, family, records"]])
     note("--verbose streams each script's own output. Nothing here writes a record.")
 end
 
@@ -464,12 +471,14 @@ function main(args)
     elseif task == "status"
         status(); return 0
     elseif task == "all"
+        STEPS[] = 6                       # test, verify, radius, family A32 and A64, records
         ok = true
         for t in ("test", "verify", "radius", "family", "records")
             ok &= tasks[t](verbose)
         end
         summary(); return ok ? 0 : 1
     elseif haskey(tasks, task)
+        STEPS[] = task == "family" ? 2 : 1
         ok = tasks[task](verbose); summary(); return ok ? 0 : 1
     else
         println("\n  unknown task '$task'"); help(); return 2

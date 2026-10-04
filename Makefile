@@ -13,15 +13,14 @@ help:
 	@echo "Chiquipoli — interval and exact verification package for A16"
 	@echo
 	@echo "  EVERYTHING, WITH A SUMMARY TABLE (tools/check_all.sh)"
-	@echo "  make check             quick: Julia only, no Lean (~5 min)"
-	@echo "  make check-all         every check and every record, in order (~35 min, 16 GB)"
+	@echo "  make check             quick: Julia only, no Lean"
+	@echo "  make check-all         every check and every record, in order (16 GB of memory)"
 	@echo "  make check-lean        both Lean layers, verified and recorded"
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
 	@echo
 	@echo "  ONE POLYGON, QUICKLY: its Julia certificate only (writes no record)"
 	@echo "  make a16  a32  a64  a128  a256  a512  a1024"
 	@echo "                         the family certificate (10 gates); a16 also the article's own"
-	@echo "                         (~10 s each up to a256, ~35 s a512, a few minutes a1024)"
 	@echo
 	@echo "  ONE POLYGON, EVERY LAYER: suite, Julia, Lean, controls, planted defects (writes no record)"
 	@echo "  make a16-complete ... a1024-complete"
@@ -56,7 +55,7 @@ help:
 	@echo "  make check-records     every record against the tree, the hashes and the Lean layer"
 	@echo
 	@echo "  make mutation-check    break the package on purpose; the checks must catch it"
-	@echo "  make stress-family     the same for A16/A32/A64: generator, Lean and harness (~15 min)"
+	@echo "  make stress-family     the same for A16/A32/A64: generator, Lean and harness"
 	@echo "  make stress-family-generator   only the generator's pre-checks (Julia, ~2 min)"
 	@echo
 	@echo "  make clean             remove editor and build leftovers"

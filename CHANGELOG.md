@@ -63,6 +63,15 @@ All notable changes to this project are recorded here. The format follows
   no stage changed.
   Long cells (the notes of a stage, a statement) wrap between words to the
   terminal width instead of being cut; file names are never split.
+- **Nothing predicted, only what is measured.** The run table no longer shows a
+  duration estimate, and the progress bar no longer a time left: it shows which
+  stage of how many is running (counted by a planning pass under the same
+  conditions), a sweep while the process is alive, the time elapsed, and what the
+  stage's own log reports so far (planted defects caught, family members
+  certified, benchmark cases, Lean steps). Memory is this machine's total against
+  what the mode needs (about 13 GB for the A64 Lean steps), with a warning when
+  it may not fit. Hard-coded durations are gone from the help, the README and
+  the script header.
 
 ### Article audit (after release, 2026-10-02)
 

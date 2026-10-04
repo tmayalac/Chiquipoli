@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Every check of the package, from one command, with a summary at the end.
 #
-#     tools/check_all.sh              everything (make check-all)             ~35 min, 16 GB
-#     tools/check_all.sh quick        Julia only, no Lean (make check)         ~5 min
+#     tools/check_all.sh              everything (make check-all)             16 GB of memory
+#     tools/check_all.sh quick        Julia only, no Lean (make check)
 #     tools/check_all.sh lean         the two Lean layers, recorded (make check-lean)
 #     tools/check_all.sh case <n>     one case: n = 4, 6, 8, 16, 32 or 64 (make check-case N=<n>)
-#     tools/check_all.sh fast <n>       ONE candidate, its Julia certificate only, in seconds (make a<n>)
+#     tools/check_all.sh fast <n>       ONE candidate, its Julia certificate only (make a<n>)
 #     tools/check_all.sh candidate <n>  ONE candidate, every layer incl. Lean (make a<n>-complete; A16 = a16-complete)
 #
 # The candidates are the members of the Bingane–Audet family listed in
@@ -55,7 +55,7 @@ rule() { local s="" k; for ((k = 0; k < COLS - 2; k++)); do s+="$1"; done; print
 upper() { printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
 # The heading of a stage, cut to the terminal width (characters, not bytes).
 heading() {
-  printf '%s · %s' "$(upper "$1")" "$2" | perl -CSD -Mutf8 -ne '
+  printf '%s · %s' "$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]')" "$2" | perl -CSD -Mutf8 -ne '
     my ($w,$B,$D,$Z) = ($ENV{CA_COLS} - 4, @ENV{qw(CA_BLD CA_DIM CA_RST)});
     $_ = substr($_,0,$w-1)."…" if length($_) > $w;
     my ($a,$b) = split / · /, $_, 2; print "  $B$a$Z $D·$Z $b\n"'
@@ -148,38 +148,42 @@ details() {
       print "$_\n" for @H }' "$1"
 }
 
-# Typical durations (seconds), for the progress bar; 0 = unknown, the bar then
-# moves without promising a fraction.
-est_for() {
-  case "$1" in
-    test) echo 42 ;;   certify-a16|dedicated-julia-A16) echo 6 ;;   radius|radius-A16) echo 5 ;;
-    certificate-A16|certificate-A32|certificate-A64|certificate-A128) echo 11 ;;
-    records|family-record) echo 6 ;;   literature) echo 160 ;;   family-certs) echo 420 ;;
-    mutation-check) echo 900 ;;   stress-family) echo 900 ;;
-    *) echo 0 ;;
+# What a stage has done so far, read from its own log: planted defects caught,
+# family members certified, benchmark cases, Lean steps. Only facts the stage has
+# printed; nothing is predicted.
+live_detail() {
+  local name="$1" log="$2" k m last
+  [ -f "$log" ] || return 0
+  case "$name" in
+    mutation*|stress*|harness*|dedicated-mutations*)
+      k=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -c 'CAUGHT'); m=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -c 'MISSED')
+      [ "$k" -gt 0 ] && printf '%s planted defects caught' "$k"; [ "$m" -gt 0 ] && printf ', %s MISSED' "$m" ;;
+    family-certs|certificate-*)
+      last=$(grep -oE '^FAMILY CERTIFICATE A[0-9]+' "$log" | tail -1); k=$(grep -cE '^FAMILY CERTIFICATE A[0-9]+:' "$log")
+      [ -n "$last" ] && printf '%s done (%s so far)' "${last#FAMILY CERTIFICATE }" "$k" ;;
+    literature*|general-*)
+      last=$(grep -oE '── Certify: [^ ]+' "$log" | tail -1); k=$(grep -c '── Certify: ' "$log")
+      [ -n "$last" ] && printf 'case %s: %s' "$k" "${last#── Certify: }" ;;
+    lean*|dedicated-lean*)
+      last=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -E '^=== [0-9]+\. ' | tail -1)
+      [ -n "$last" ] && printf 'step %s' "$(printf '%s' "$last" | sed -E 's/^=== ([0-9]+)\. (.*) ===$/\1: \2/')" ;;
   esac
 }
 
-# A moving bar while the stage runs: filled to the expected fraction (never
-# 100 % before it ends) with the time left, or a block sweeping back and forth.
+# While a stage runs: which stage of how many, a block sweeping back and forth
+# (the process is alive), the time elapsed, and what the log says it has done.
 PROGRESS_PID=""
 progress() {
-  local pid="$1" name="$2" est="$3" t0 el i=0 w=26 k f p bar eta
+  local pid="$1" name="$2" log="$3" t0 el i=0 w=20 k p bar det=""
   local spin=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
   t0=$(date +%s)
   while kill -0 "$pid" 2>/dev/null; do
     el=$(( $(date +%s) - t0 )); bar=""
-    if [ "$est" -gt 0 ]; then
-      # fraction from the frame counter (one frame = 0.12 s): smooth, no subprocess
-      f=$(( i * 12 * w / (est * 100) )); [ "$f" -gt $((w - 1)) ] && f=$((w - 1))
-      for ((k = 0; k < w; k++)); do [ "$k" -lt "$f" ] && bar+="█" || bar+="░"; done
-      [ "$el" -lt "$est" ] && eta="~$((est - el)) s left" || eta="nearly done"
-    else
-      p=$(( i % (2 * (w - 5)) )); [ "$p" -ge $((w - 5)) ] && p=$(( 2 * (w - 5) - p ))
-      for ((k = 0; k < w; k++)); do { [ "$k" -ge "$p" ] && [ "$k" -lt $((p + 5)) ]; } && bar+="█" || bar+="░"; done
-      eta=""
-    fi
-    printf "\r  ${CYN}%s${RST} %-24s ${CYN}%s${RST} %4ds ${DIM}%s${RST}\033[K" "${spin[$((i % 10))]}" "$name" "$bar" "$el" "$eta"
+    p=$(( i % (2 * (w - 5)) )); [ "$p" -ge $((w - 5)) ] && p=$(( 2 * (w - 5) - p ))
+    for ((k = 0; k < w; k++)); do { [ "$k" -ge "$p" ] && [ "$k" -lt $((p + 5)) ]; } && bar+="█" || bar+="░"; done
+    [ $((i % 8)) -eq 0 ] && det=$(live_detail "$name" "$log")
+    printf "\r  ${CYN}%s${RST} ${DIM}[%d/%d]${RST} %-20s ${CYN}%s${RST} %4ds  ${DIM}%s${RST}\033[K" \
+      "${spin[$((i % 10))]}" "$STAGE_I" "$STAGE_N" "$name" "$bar" "$el" "$det"
     i=$((i + 1)); sleep 0.12
   done
   printf "\r\033[K"
@@ -196,15 +200,21 @@ declare -a NAMES=() RESULTS=() TIMES=() NOTES=()
 record() { NAMES+=("$1"); RESULTS+=("$2"); TIMES+=("$3"); NOTES+=("$4"); }
 
 # stage <name> <what it establishes> <command...>
+# The modes run twice: a planning pass (PLAN=1) that only counts the stages the
+# mode will run, under the same conditions, then the real pass, which numbers
+# them "k of N".
+PLAN=0; STAGE_N=0; STAGE_I=0
 stage() {
   local name="$1" what="$2"; shift 2
+  if [ "$PLAN" = 1 ]; then STAGE_N=$((STAGE_N + 1)); return 0; fi
+  STAGE_I=$((STAGE_I + 1))
   local log="$LOGDIR/$name.log" t0 dt rc
-  printf "\n"; rule "═"; heading "$name" "$what"; rule "═"
+  printf "\n"; rule "═"; heading "[$STAGE_I/$STAGE_N] $name" "$what"; rule "═"
   t0=$(date +%s)
   if [ "$TTY" = 1 ]; then
     "$@" >"$log" 2>&1 &
     PROGRESS_PID=$!
-    progress "$PROGRESS_PID" "$name" "$(est_for "$name")"
+    progress "$PROGRESS_PID" "$name" "$log"
     wait "$PROGRESS_PID"; rc=$?; PROGRESS_PID=""
   else
     "$@" >"$log" 2>&1; rc=$?
@@ -223,7 +233,9 @@ stage() {
   fi
 }
 skip() {
-  printf "\n"; rule "═"; printf "  ${BLD}%s${RST}\n" "$(upper "$1")"; rule "═"
+  if [ "$PLAN" = 1 ]; then STAGE_N=$((STAGE_N + 1)); return 0; fi
+  STAGE_I=$((STAGE_I + 1))
+  printf "\n"; rule "═"; printf "  ${BLD}[%d/%d] %s${RST}\n" "$STAGE_I" "$STAGE_N" "$(upper "$1")"; rule "═"
   printf "  %-36s ${YEL}${BLD}SKIP${RST}  %s\n" "[$1]" "$2"; record "$1" SKIP 0 "$2"
 }
 
@@ -235,25 +247,27 @@ lean_ready() { have lake && [ -d lean/.lake/packages/mathlib ]; }
 banner
 have julia || { echo "julia is not on PATH; nothing can run"; exit 2; }
 if [ "$(uname)" = Darwin ]; then memgb=$(( $(sysctl -n hw.memsize) / 1073741824 )); else memgb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1048576 )); fi
+# Memory: this machine's total, against what the selected mode needs. The Lean
+# layer of A64 is the only step that needs more than a few GB.
 case "$MODE" in
-  all)   EST="~35 min; the A64 Lean steps need ~13 GB" ;;
-  lean)  EST="~10 min if the Lean libraries are built, ~30 min from scratch; ~13 GB" ;;
-  quick) EST="~5 min; Julia only" ;;
-  case)  EST="1-15 min depending on the case" ;;
-  fast)  EST="10 s (n <= 256) to a few minutes (n = 1024); Julia only" ;;
-  candidate) EST="on a clean tree: A16 ~18 min, A32 ~10 min, A64 ~32 min" ;;
-  *) EST="—" ;;
+  all|lean) NEED=13 ;;
+  candidate|case) [ "$CASE" = 64 ] && NEED=13 || NEED=0 ;;
+  *) NEED=0 ;;
 esac
+if [ "$NEED" -gt 0 ]; then
+  MEM="$memgb GB total; the A64 Lean steps need about $NEED GB"
+  [ "$memgb" -lt $((NEED + 3)) ] && MEM="$MEM (WARNING: may not fit)"
+else
+  MEM="$memgb GB total; Julia only, about 1.5 GB per certificate"
+fi
 clean_tree && TREE="clean" || TREE="dirty: the stages that need a clean tree are skipped"
 printf "\n"
 { printf 'run\t%s\n' "check_all"
   printf 'mode\t%s\n' "$MODE${CASE:+ $CASE}"
-  printf 'estimated\t%s\n' "$EST"
-  printf 'memory\t%s GB\n' "$memgb"
+  printf 'memory\t%s\n' "$MEM"
   printf 'git tree\t%s\n' "$TREE"
   printf 'commit\t%s\n' "$(git rev-parse --short HEAD 2>/dev/null || echo —)"
   printf 'logs\t%s\n' "${LOGDIR#$ROOT/}"; } | table
-[ "$memgb" -lt 16 ] && [ "$MODE" != quick ] && printf "  ${YEL}warning${RST}: less than 16 GB of memory; the A64 Lean build may not fit\n"
 
 # The family members, read from their single source (cases/exact_coords.jl).
 family_list() { sed -n "s/^const $1 = (\(.*\))/\1/p" cases/exact_coords.jl | tr -d ','; }
@@ -268,6 +282,7 @@ family_case() { (cd lean && FAMILY_CASES="$1" ./verify_family.sh); }
 trig_case() { (cd lean && TRIG_CASES="$1" ./verify_general.sh); }
 
 # --- the modes ----------------------------------------------------------------
+run_mode() {
 case "$MODE" in
 quick)
   stage test         "the Julia suite (A16 certificate stages, framework, literature, family)" julia_run test/runtests.jl
@@ -437,6 +452,10 @@ candidate)
 
 *) echo "usage: $0 [all|quick|lean|case <n>|candidate <16|32|64>]"; exit 2 ;;
 esac
+}
+# Counted in a subshell, so an invalid argument is reported by the real pass.
+STAGE_N=$(PLAN=1; run_mode >/dev/null 2>&1; echo "$STAGE_N"); STAGE_N="${STAGE_N:-0}"
+run_mode
 
 # --- summary ------------------------------------------------------------------
 printf "\n"; rule "═"; printf "  ${BLD}SUMMARY${RST}\n"; rule "═"
