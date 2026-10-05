@@ -45,8 +45,9 @@ function _source_hashes(projroot)
     # source, change this number deliberately.
     # 32 since pipeline/record_lean_family_certificate.jl, 33 since
     # pipeline/certify_family.jl (both 2026-09-24), 35 since
-    # pipeline/certify_radius.jl and pipeline/family_table.jl (2026-09-29).
-    @assert length(hashed) == 35 "provenance covers $(length(hashed)) files, expected 35 - a load-bearing source moved, was added, or was removed"
+    # pipeline/certify_radius.jl and pipeline/family_table.jl (2026-09-29), 36 since
+    # pipeline/certify_z.jl (2026-10-05).
+    @assert length(hashed) == 36 "provenance covers $(length(hashed)) files, expected 36 - a load-bearing source moved, was added, or was removed"
     return hashed
 end
 
