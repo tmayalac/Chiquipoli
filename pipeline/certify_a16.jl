@@ -105,7 +105,7 @@ function print_provenance()
     # Asserted, not only printed: 1/3 is not a binary number, so an interval
     # library that rounds both endpoints the same way returns a thin interval,
     # and every enclosure below would silently lose its guarantee. The article
-    # (Subsection 6.1) says the rounding mode is verified at run time; this
+    # (Proposition 6.5 and Online Resource 1) says the rounding mode is verified at run time; this
     # assert is what makes that true.
     r = interval(BigFloat(1)) / 3
     println("directed-rounding self-check (interval(1)/3 has inf<sup) = ",

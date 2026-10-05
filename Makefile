@@ -168,7 +168,7 @@ check-lean:
 a16 a32 a64 a128 a256 a512 a1024:
 	tools/check_all.sh fast $(@:a%=%)
 
-# Z32 and Z64 (Bingane-Audet): the 8-gate certificate and the Python cross-check
+# Z32 and Z64 (Bingane-Audet): the 9-gate certificate and the Python cross-check
 z32 z64:
 	tools/check_all.sh z $(@:z%=%)
 

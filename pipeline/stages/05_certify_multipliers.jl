@@ -47,8 +47,8 @@ function run_multipliers_interval(; radius=big"1e-28")
     positivity_pass = lambda_lower > 0
 
     # DIAGNOSTIC ONLY, NOT A CERTIFICATE PILLAR (see docs/guide/provenance-mapping.md,
-    # Bloque (C)). The paper itself calls sum(alpha)=-n "a useful diagnostic
-    # in numerical multiplier computations" (Section 3, remark after
+    # Bloque (C)). The paper itself calls sum(alpha)=-n "a check on computed
+    # multipliers" (Section 3, remark after
     # prop:first-order-no-ascent), not a hypothesis of any theorem. It is
     # also not an independent fact to verify here: column 33 of D(e,d) (the
     # ell-row) is -1 on every side row and 0 on every diameter row, and that
