@@ -9,7 +9,7 @@ n = 1024
 name = "A1024-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 124.993
+seconds = 122.635
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 128
 name = "A128-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 1.341
+seconds = 0.902
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.189
+seconds = 0.19
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 256
 name = "A256-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 4.749
+seconds = 4.329
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -109,7 +109,7 @@ n = 512
 name = "A512-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 21.985
+seconds = 21.894
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -129,67 +129,7 @@ n = 64
 name = "A64-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.151
-verdict = "structural PASS"
-
-    [benchmark.blocks]
-    "active_graph+margin" = "CERTIFIED"
-    convexity = "CERTIFIED"
-    equilaterality = "CONSISTENT"
-    exact_identities = "PROVEN"
-    existence = "CERTIFIED"
-    multipliers = "CERTIFIED"
-    rank = "CERTIFIED"
-[[benchmark]]
-doi = "(pre-DOI)"
-expectation_met = true
-licq_defect = 0
-literature_status = "PROVEN global optimum (theorem); unique"
-n = 4
-name = "n4-regular-square"
-negative_control = false
-reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.055
-verdict = "structural PASS"
-
-    [benchmark.blocks]
-    "active_graph+margin" = "CERTIFIED"
-    convexity = "CERTIFIED"
-    equilaterality = "CONSISTENT"
-    exact_identities = "PROVEN"
-    existence = "NA"
-    multipliers = "CERTIFIED"
-    rank = "CERTIFIED"
-[[benchmark]]
-doi = "(pre-DOI)"
-expectation_met = true
-licq_defect = 2
-literature_status = "PROVEN global optimum (theorem); unique"
-n = 6
-name = "n6-reinhardt-R36"
-negative_control = false
-reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
-seconds = 0.121
-verdict = "structural PASS"
-
-    [benchmark.blocks]
-    "active_graph+margin" = "CERTIFIED"
-    convexity = "CERTIFIED"
-    equilaterality = "CONSISTENT"
-    exact_identities = "PROVEN"
-    existence = "NA"
-    multipliers = "CERTIFIED"
-    rank = "CERTIFIED"
-[[benchmark]]
-doi = "10.1016/j.jcta.2004.06.009"
-expectation_met = true
-licq_defect = 0
-literature_status = "PROVEN global optimum (theorem); unique"
-n = 8
-name = "n8-ahmp2004-H8"
-negative_control = false
-reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.175
+seconds = 0.147
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -209,7 +149,7 @@ n = 32
 name = "z32-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 1"
-seconds = 0.176
+seconds = 0.187
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -229,7 +169,67 @@ n = 64
 name = "z64-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 2"
-seconds = 0.281
+seconds = 0.748
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CONSISTENT"
+    exact_identities = "PROVEN"
+    existence = "CERTIFIED"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "(pre-DOI)"
+expectation_met = true
+licq_defect = 0
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 4
+name = "n4-regular-square"
+negative_control = false
+reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
+seconds = 0.051
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CONSISTENT"
+    exact_identities = "PROVEN"
+    existence = "NA"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "(pre-DOI)"
+expectation_met = true
+licq_defect = 2
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 6
+name = "n6-reinhardt-R36"
+negative_control = false
+reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
+seconds = 0.122
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CONSISTENT"
+    exact_identities = "PROVEN"
+    existence = "NA"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "10.1016/j.jcta.2004.06.009"
+expectation_met = true
+licq_defect = 0
+literature_status = "PROVEN global optimum (theorem); unique"
+n = 8
+name = "n8-ahmp2004-H8"
+negative_control = false
+reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
+seconds = 0.176
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -249,7 +249,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.028
+seconds = 0.027
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -304,12 +304,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "fa45b9bbdacc8428c85e6551804cdd5181b307d4"
+git_commit = "e4f0c149334096ba5678bee70a8ff7035c7333a5"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 154.364
-utc = "2026-10-05T00:36:16Z"
+total_seconds = 151.526
+utc = "2026-10-05T15:26:35Z"
 
 [[source_sha256]]
 file = "cases/exact_coords.jl"
@@ -336,6 +336,12 @@ sha256 = "907acfecc2d06af334e4e9d0ccd570e8bad883f8b92b5ede879b108f609246a5"
 file = "cases/family/A64/candidate.jl"
 sha256 = "d98a21cd1e9a400a9140580b6024f71cb6da625d7a66e623ff0521dad305d095"
 [[source_sha256]]
+file = "cases/family/Z32/candidate.jl"
+sha256 = "49af5e34b2bbe2b1747dcfba46edb4c90ece3d70c2e7231f746ee76c480cd926"
+[[source_sha256]]
+file = "cases/family/Z64/candidate.jl"
+sha256 = "e2170933f9f9118286bfccac5032e61fb678da70672e7de5c4016ca46d497eef"
+[[source_sha256]]
 file = "cases/literature/n4_regular/candidate.jl"
 sha256 = "1bd3691164445376f3aa02e7cec1729dd105b1c6a6017416ddeb6a21ccc12e82"
 [[source_sha256]]
@@ -344,12 +350,6 @@ sha256 = "de8d62b2ba22c01fe2ff9f18e19795387288b04e3070e30120c1fc550045a94a"
 [[source_sha256]]
 file = "cases/literature/n8_ahmp2004/candidate.jl"
 sha256 = "6bcda397d6ebbf5fb50fd11b8d58d374c799975b33bcbd2b2884e407aab481a0"
-[[source_sha256]]
-file = "cases/literature/z32_bingane_audet/candidate.jl"
-sha256 = "27f57f97406982121ddfaf2917da077118acc0babd6e580e8d0184932cb301e3"
-[[source_sha256]]
-file = "cases/literature/z64_bingane_audet/candidate.jl"
-sha256 = "fb14fdbbbafaf3f7d4da26c777c7f2b598d2d867f36fe2a401cd74c5c560d445"
 [[source_sha256]]
 file = "cases/negative/broken_convexity/candidate.jl"
 sha256 = "0cb434ca3922a4dde472e5412f5ef297a4477dca00b698921667ba0f38c6696e"
@@ -367,7 +367,7 @@ file = "cases/upstream/optigon/cstrt_audet_ngon.jl"
 sha256 = "376e838b87009f749c19dbee0407419f3c58b30021c406a952a01671aaf6d0ff"
 [[source_sha256]]
 file = "pipeline/certify_a16.jl"
-sha256 = "4bfc6bd4bbc22aa343097108323d52b5f41ca477451765cf1733fc3864cd6c65"
+sha256 = "6ee8ec9a136ba8756c32c05ac4d05f643c58a9d2dcf3b7cc872133437af440c3"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
 sha256 = "4f344c838e1c85cefc576df4815820026331e98c44ba72275e80c94b8fe99060"
@@ -378,8 +378,11 @@ sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
 file = "pipeline/certify_radius.jl"
 sha256 = "cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd"
 [[source_sha256]]
+file = "pipeline/certify_z.jl"
+sha256 = "28f392e68764d82207571ff134b90dd4149c3bbba6a1cdb2e986957f2ab6e791"
+[[source_sha256]]
 file = "pipeline/check_records.jl"
-sha256 = "daf7cdf8cff117daf7d125536adb52b7cb0ee0ff0eada223708ca6f4b1d44f4f"
+sha256 = "674b00f8d28304f210f037ef323a16c77cccabdea2a997afd81eb6ed3d1c7eb5"
 [[source_sha256]]
 file = "pipeline/family_table.jl"
 sha256 = "c62fa1545161cdcacf072311a86ea5236cd22e829567c8fea1d0e1572631f7c6"
@@ -454,7 +457,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "c020019c5ec4dfb2962964b530b3e2dfabaffd161b66327895c7007dc8f5f2c4"
+sha256 = "08ab4106cf2c1c9c52d7baecce72fd8bc04204e4a7575995381804bba01404b3"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"

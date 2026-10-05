@@ -50,15 +50,15 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "certificate of Z32 (Bingane–Audet)"
-git_commit = "bd3b9f8026907d76f1dfe7b01c0385b50bce0635"
-git_source_clean = false
+git_commit = "e4f0c149334096ba5678bee70a8ff7035c7333a5"
+git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 matmul_mode = "Float64 intervals, :fast product (sentinel verified on this machine)"
 n = 32
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-10-05T02:09:56Z"
+utc = "2026-10-05T15:30:46Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"

@@ -60,7 +60,7 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A32 (Bingane–Audet)"
-git_commit = "fa45b9bbdacc8428c85e6551804cdd5181b307d4"
+git_commit = "e4f0c149334096ba5678bee70a8ff7035c7333a5"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
@@ -68,7 +68,7 @@ matmul_mode = "Float64 intervals, :fast product (sentinel verified on this machi
 n = 32
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-10-05T00:36:39Z"
+utc = "2026-10-05T15:26:58Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
