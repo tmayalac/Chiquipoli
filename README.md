@@ -143,10 +143,12 @@ use:
 
 The exact dependency versions are pinned in `Manifest.toml`, resolved by Julia
 1.12, which reproduces the recorded environment bit for bit; every recorded
-certificate was produced with it. Julia 1.10 and 1.11 also work, but not with
-this Manifest (Pkg cannot instantiate a 1.12 Manifest on older Julia): delete
-`Manifest.toml` first so Pkg re-resolves from `Project.toml`. CI runs the test
-suite, the certificate and the literature benchmark that way on both.
+certificate was produced with it. `Project.toml` also admits Julia 1.10 and 1.11,
+but not with this Manifest (Pkg cannot instantiate a 1.12 Manifest on older Julia):
+delete `Manifest.toml` first so Pkg re-resolves from `Project.toml`. Those two
+versions were exercised that way (test suite, certificate, literature benchmark) by
+the CI workflows, which have since been removed; nothing in this repository runs
+remotely, and the recorded results come from Julia 1.12 only.
 
 Once, after cloning, from the repository root (same command on every system):
 
