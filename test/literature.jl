@@ -4,7 +4,7 @@
 
 @testset "Literature positive cases certify (local first-order structure)" begin
     for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
-              "family/A32", "family/A64", "literature/z32_bingane_audet", "literature/z64_bingane_audet")
+              "family/A32", "family/A64", "family/Z32", "family/Z64")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         @test structural_pass(r)
@@ -28,7 +28,7 @@ end
     # paper reports for Z32, above that of A32. A transcription error in an index
     # would not give this number (the sides and diameters would not even be equal).
     setprecision(BigFloat, 256) do
-        z = loadcand("literature/z32_bingane_audet").root.nominal
+        z = loadcand("family/Z32").root.nominal
         a = loadcand("family/A32").root.nominal
         PZ = 32 * 2 * sin(z / 2); PA = 32 * 2 * sin(a / 2)
         @test big"3.1403202339665" < PZ < big"3.1403202339666"
@@ -39,12 +39,29 @@ end
 
 @testset "Z64 is the Bingane–Audet polygon of larger perimeter than A64" begin
     setprecision(BigFloat, 256) do
-        z = loadcand("literature/z64_bingane_audet").root.nominal
+        z = loadcand("family/Z64").root.nominal
         a = loadcand("family/A64").root.nominal
         PZ = 64 * 2 * sin(z / 2); PA = 64 * 2 * sin(a / 2)
         @test big"3.1412752155113" < PZ < big"3.1412752155114"
         @test PZ > PA
         @test PZ < 2 * 64 * sin(BigFloat(π) / 128)         # Reinhardt's bound L_64
+    end
+end
+
+@testset "Z32 and Z64: the analytic derivative is the derivative of F" begin
+    # pipeline/certify_z.jl runs its interval Newton step on Fp; a wrong Fp would
+    # not be noticed by the sign change that proves existence, so compare it with
+    # a central difference at 256 bits.
+    setprecision(BigFloat, 256) do
+        for d in ("family/Z32", "family/Z64")
+            c = loadcand(d); z = c.root.nominal; h = big"1e-40"
+            # the candidate was just include()d: call it in the newest world
+            F(x) = Base.invokelatest(c.root.F, interval(BigFloat, x))
+            fd = (F(z + h) - F(z - h)) / interval(BigFloat, 2h)
+            an = Base.invokelatest(c.root.Fp, interval(BigFloat, z))
+            @test abs(mid(fd) - mid(an)) < big"1e-30"
+            @test !in_interval(0, an)
+        end
     end
 end
 
@@ -127,7 +144,7 @@ end
 
 @testset "R1+R2 general: certified multipliers and PROVEN exact identities" begin
     for d in ("literature/n4_regular", "literature/n6_reinhardt", "literature/n8_ahmp2004", "family/A16",
-              "family/A32", "family/A64", "literature/z32_bingane_audet", "literature/z64_bingane_audet")
+              "family/A32", "family/A64", "family/Z32", "family/Z64")
         cand = loadcand(d)
         r = certify(cand; radius = cand.root === nothing ? big"0" : big"1e-24")
         mult = findfirst(b -> b.name == "multipliers", r.blocks)

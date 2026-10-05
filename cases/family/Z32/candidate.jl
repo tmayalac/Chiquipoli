@@ -62,10 +62,19 @@ let
         return p
     end
     Ffun = z -> z32_F(k -> sin(II(k)*z), k -> cos(II(k)*z), q -> II(q) + zero(z), ops)
+    # F32'(t) = 2 u u' - 30 C15 S15 - 2 S1, with u = 2(S5 - S13 + S14) - S15 and
+    # u' = 2(5 C5 - 13 C13 + 14 C14) - 15 C15. Checked against a finite difference in
+    # test/literature.jl; the interval Newton step of pipeline/certify_z.jl uses it.
+    Fprime = function (z)
+        S = k -> sin(II(k)*z); C = k -> cos(II(k)*z)
+        u  = II(2)*(S(5) - S(13) + S(14)) - S(15)
+        du = II(2)*(II(5)*C(5) - II(13)*C(13) + II(14)*C(14)) - II(15)*C(15)
+        return II(2)*u*du - II(30)*C(15)*S(15) - II(2)*S(1)
+    end
 
     Candidate(
         "z32-bingane-audet", n, coords,
-        (F = Ffun, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
+        (F = Ffun, Fp = Fprime, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
         active,
         Dict{Symbol,Any}(
             :reference => "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 1",

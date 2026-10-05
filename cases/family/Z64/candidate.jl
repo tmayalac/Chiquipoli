@@ -87,6 +87,19 @@ let
         w = ysolve(z)
         return (w.a + w.S(29) - w.C(1))^2 + (w.C(29) - w.S(1) - w.r)^2 - w.e2
     end
+    # H64'(t): the vertices differentiated through the same builder (sin kt ->
+    # k cos kt, cos kt -> -k sin kt, constants -> 0), r' = (e2' - 2 a a')/(2 r).
+    # Only defined where the radicand is positive on the box. Checked against a
+    # finite difference in test/literature.jl.
+    function Fprime(z)
+        w = ysolve(z)
+        dS = k -> II(k)*cos(II(k)*z); dC = k -> -II(k)*sin(II(k)*z); K0 = q -> zero(z)
+        da = z64_vertices(dS, dC, K0, K0(0))[52][1]            # x51', the same for a
+        de2 = II(2)*sin(z)
+        dr = (de2 - II(2)*w.a*da) / (II(2)*w.r)
+        return II(2)*(w.a + w.S(29) - w.C(1))*(da + dS(29) - dC(1)) +
+               II(2)*(w.C(29) - w.S(1) - w.r)*(dC(29) - dS(1) - dr) - de2
+    end
     function coords(z)
         w = ysolve(z)
         Pv = z64_vertices(w.S, w.C, w.K, w.p0[52][2] + w.r)
@@ -149,7 +162,7 @@ let
 
     Candidate(
         "z64-bingane-audet", n, coords,
-        (F = Ffun, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
+        (F = Ffun, Fp = Fprime, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
         active,
         Dict{Symbol,Any}(
             :reference => "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 2",

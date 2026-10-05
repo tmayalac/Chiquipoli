@@ -9,6 +9,9 @@
 #                                        member (FAMILY_N, or one n), which the family
 #                                        certificate (pipeline/certify_family.jl)
 #                                        must reject
+#     tools/mutation_check.sh z          defects planted in Z32 and Z64, which the
+#                                        certificate of each (pipeline/certify_z.jl)
+#                                        must reject
 #
 # WHY THIS EXISTS
 #
@@ -248,6 +251,20 @@ run_julia_mutation \
   cases/family/A32/candidate.jl \
   '(7, 24)' \
   '(7, 25)'
+
+# The interval Newton step of certify_z.jl would accept a wrong derivative (its
+# residual is tiny), so only the suite's finite-difference test guards F'.
+run_julia_mutation \
+  "Z32 derivative: the sign of the last term" \
+  cases/family/Z32/candidate.jl \
+  'return II(2)*u*du - II(30)*C(15)*S(15) - II(2)*S(1)' \
+  'return II(2)*u*du - II(30)*C(15)*S(15) + II(2)*S(1)'
+
+run_julia_mutation \
+  "Z64 derivative: the sign of r'" \
+  cases/family/Z64/candidate.jl \
+  'dr = (de2 - II(2)*w.a*da) / (II(2)*w.r)' \
+  'dr = (de2 + II(2)*w.a*da) / (II(2)*w.r)'
 note ""
 fi
 
@@ -358,6 +375,37 @@ for n in $FAMN; do
     'return sub(add(mul(u, u), mul(v, v)), sub(K(2), mul(K(2), C(1))))' \
     'return sub(add(mul(u, u), mul(v, v)), sub(K(2), mul(K(3), C(1))))'
 done
+note ""
+fi
+
+# --- Z32 and Z64: the defects their certificate must reject ---------------------
+# A digit of the root, one active diameter, one index of the construction, one
+# index of the defining equation (and, for Z64, one pendant angle). Caught means
+# pipeline/certify_z.jl RAN and printed NOT CERTIFIED -- a crash is not a rejection.
+if [ "$WHICH" = "all" ] || [ "$WHICH" = "z" ]; then
+note "=== Z32 and Z64: the same kind of defects, rejected by pipeline/certify_z.jl ==="
+dim  "    pipeline/certify_z.jl <n> must print NOT CERTIFIED for every one"
+z_rejects() {
+  local out
+  out=$(CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$1" 2>&1) && return 1
+  printf '%s' "$out" | grep -q "FAMILY CERTIFICATE Z$1: NOT CERTIFIED"
+}
+run_z_mutation() {  # run_z_mutation <n> <label> <old> <new>
+  local n="$1" label="Z$1 $2" f="cases/family/Z$1/candidate.jl"
+  if ! patch_once "$f" "$3" "$4"; then bad "$label (could not apply)"; return; fi
+  if z_rejects "$n"; then ok "$label"; else bad "$label — certify_z.jl accepted it (or crashed)"; fi
+  git checkout -- "$f"
+}
+run_z_mutation 32 "root literal: one digit altered" 'big"0.09817442866964279340015033' 'big"0.09817442866964279340025033'
+run_z_mutation 32 "active graph: one diameter moved" '(11, 30), (11, 31)]' '(11, 30), (11, 29)]'
+run_z_mutation 32 "construction: p10 = p24 + (S14, C14) -> (S13, C13)" \
+  'p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))' 'p[11] = (add(p[25][1], S(13)), add(p[25][2], C(13)))'
+run_z_mutation 32 "defining equation: S13 -> S12" 'x = add(sub(S(5), S(13)), S(14))' 'x = add(sub(S(5), S(12)), S(14))'
+run_z_mutation 64 "root literal: one digit altered" 'big"0.0490873533992997825741651747179' 'big"0.0490873533992997825742651747179'
+run_z_mutation 64 "active graph: one diameter moved" '(30, 63), (31, 63)]' '(30, 63), (31, 62)]'
+run_z_mutation 64 "construction: one angle of the half-path" 'ANGLES = [1,2,3,5,' 'ANGLES = [1,2,4,5,'
+run_z_mutation 64 "construction: one pendant angle" '(30,62,4,-1)' '(30,62,5,-1)'
+run_z_mutation 64 "defining equation: S29 -> S28" 'return (w.a + w.S(29) - w.C(1))^2' 'return (w.a + w.S(28) - w.C(1))^2'
 note ""
 fi
 
