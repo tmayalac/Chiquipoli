@@ -4,7 +4,7 @@
         check check-all check-lean check-case literature-case lean-family-case \
         stress-case lean-family-certificate lean-family-record A16 A32 A64 \
         lean-general lean-general-case \
-        a16 a32 a64 a128 a256 a512 a1024 z32 z64 \
+        a16 a32 a64 a128 a256 a512 a1024 z32 z64 z32-complete z64-complete Z32 Z64 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
         check-records status radius independent
@@ -29,6 +29,9 @@ help:
 	@echo "                         per-case Lean also for $(shell sed -n 's/^const FAMILY_LEAN_N = (\(.*\))/\1/p' cases/exact_coords.jl);"
 	@echo "                         for the others the Lean stages are SKIP and the verdict INCOMPLETE"
 	@echo "  make A16 / A32 / A64   the same as a16-complete / a32-complete / a64-complete"
+	@echo "  make z32-complete / z64-complete  (or Z32 / Z64)"
+	@echo "                         the suite, the general certifier, the 9-gate certificate, the Python"
+	@echo "                         cross-check and the planted defects of Z<n>; there is no Lean for Z_n"
 	@echo
 	@echo "  ONE CASE, ONE LAYER"
 	@echo "  make literature-case N=32   the general certifier on one case"
@@ -174,6 +177,14 @@ z32 z64:
 
 a16-complete a32-complete a64-complete a128-complete a256-complete a512-complete a1024-complete:
 	tools/check_all.sh candidate $(patsubst a%-complete,%,$@)
+
+# Z32 / Z64 with everything: suite, general certifier, 9-gate certificate, independent
+# cross-check, planted defects (no Lean for Z_n). Writes no record.
+z32-complete z64-complete:
+	tools/check_all.sh zcomplete $(patsubst z%-complete,%,$@)
+
+Z32: z32-complete
+Z64: z64-complete
 
 A16: a16-complete
 A32: a32-complete

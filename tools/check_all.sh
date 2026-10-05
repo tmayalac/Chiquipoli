@@ -421,6 +421,25 @@ z)
   printf "\n"; note "note: Lean does not cover Z$N; make mutation-check plants defects in it"
   ;;
 
+zcomplete)
+  # Everything that certifies Z32 or Z64, as `candidate` does for A_n except Lean (there is
+  # none for Z_n): the suite, the general certifier, the 9-gate certificate, the independent
+  # cross-check and the planted defects. Writes no record in results/.
+  case "$CASE" in 32|64) ;; *) echo "usage: $0 zcomplete <32|64>"; exit 2 ;; esac
+  N="$CASE"
+  stage test "the Julia suite (incl. Z$N: perimeter, derivative of the defining equation, root uniqueness)" julia_run test/runtests.jl
+  stage "general-Z$N" "the general certifier on Z$N (seven blocks)" env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_literature.jl "z$N"
+  stage "certificate-Z$N" "the certificate of Z$N: 9 gates (root, root uniqueness, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
+    env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
+  CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
+  if clean_tree; then
+    stage "mutation-Z$N" "the planted defects of Z$N (root digit, active edge, construction, defining equation, pendant angle), each refused by its certificate" tools/mutation_check.sh z "$N"
+  else
+    skip "mutation-Z$N" "needs a clean git tree (it edits tracked files and restores them from git)"
+  fi
+  printf "\n"; note "note: Lean does not cover Z$N; make z$N is the quick version of this"
+  ;;
+
 candidate)
   # Everything that certifies ONE candidate, in every layer, and nothing about
   # the others -- and the SAME stages for A16, A32 and A64: the standard is one
@@ -493,7 +512,7 @@ candidate)
   fi
   ;;
 
-*) echo "usage: $0 [all|quick|lean|case <n>|fast <n>|z <32|64>|candidate <16|32|64>]"; exit 2 ;;
+*) echo "usage: $0 [all|quick|lean|case <n>|fast <n>|z <32|64>|zcomplete <32|64>|candidate <16|32|64>]"; exit 2 ;;
 esac
 }
 # Counted in a subshell, so an invalid argument is reported by the real pass.

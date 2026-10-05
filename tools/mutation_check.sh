@@ -9,7 +9,7 @@
 #                                        member (FAMILY_N, or one n), which the family
 #                                        certificate (pipeline/certify_family.jl)
 #                                        must reject
-#     tools/mutation_check.sh z          defects planted in Z32 and Z64, which the
+#     tools/mutation_check.sh z [n]      defects planted in Z32 and Z64 (or only Z<n>), which the
 #                                        certificate of each (pipeline/certify_z.jl)
 #                                        must reject
 #
@@ -390,8 +390,10 @@ z_rejects() {
   out=$(CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$1" 2>&1) && return 1
   printf '%s' "$out" | grep -q "FAMILY CERTIFICATE Z$1: NOT CERTIFIED"
 }
+ZN="${2:-}"      # optional: only the defects of Z<ZN>
 run_z_mutation() {  # run_z_mutation <n> <label> <old> <new>
   local n="$1" label="Z$1 $2" f="cases/family/Z$1/candidate.jl"
+  [ -z "$ZN" ] || [ "$ZN" = "$n" ] || return 0
   if ! patch_once "$f" "$3" "$4"; then bad "$label (could not apply)"; return; fi
   if z_rejects "$n"; then ok "$label"; else bad "$label — certify_z.jl accepted it (or crashed)"; fi
   git checkout -- "$f"
