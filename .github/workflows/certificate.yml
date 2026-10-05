@@ -72,6 +72,13 @@ jobs:
           julia --project=. pipeline/certify_literature.jl | tee /tmp/lit.txt
           grep -q 'ALL EXPECTATIONS MET' /tmp/lit.txt
 
+      - name: the certificates of Z32 and Z64
+        run: |
+          for n in 32 64; do
+            julia --project=. pipeline/certify_z.jl $n | tee /tmp/z$n.txt
+            grep -q "FAMILY CERTIFICATE Z$n: CERTIFIED" /tmp/z$n.txt
+          done
+
       - name: the independent cross-check (a second implementation, Python)
         #
         # No Julia, no IntervalArithmetic.jl: the numerical gates of A16, A32,
