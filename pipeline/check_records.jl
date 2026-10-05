@@ -363,10 +363,10 @@ for n in (32, 64)
     rec = TOML.parsefile(path)
     local zg = get(rec, "gate", Any[])
     chk("Z$n: certificate CERTIFIED, all $(length(zg)) gates passed, exact identities included",
-        get(rec, "certified", false) && length(zg) == 8 && all(g -> get(g, "passed", false), zg) &&
+        get(rec, "certified", false) && length(zg) == 9 && all(g -> get(g, "passed", false), zg) &&
         any(g -> get(g, "id", "") == "exact_identities", zg))
-    chk("Z$n: the record states what it does not claim (published constructor, uniqueness on the search interval, Lean)",
-        length(get(rec, "not_claimed", [])) == 3 && get(rec, "global_optimality", "") == "NOT CLAIMED")
+    chk("Z$n: the record states what it does not claim (published constructor, Lean)",
+        length(get(rec, "not_claimed", [])) == 2 && get(rec, "global_optimality", "") == "NOT CLAIMED")
     stale = [e["file"] for e in get(rec, "source_sha256", Any[])
              if !isfile(joinpath(ROOT, e["file"])) || bytes2hex(open(sha256, joinpath(ROOT, e["file"]))) != e["sha256"]]
     chk("Z$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))

@@ -11,6 +11,8 @@
 #   root              interval Newton on Z_root: 0 ∉ F'(Z), N(Z) ⊂ int Z; F' is the
 #                     analytic derivative stored with the candidate (Fp), checked
 #                     against a finite difference in test/literature.jl
+#   root_unique_search  no other zero on (0, π/n], where the polygon exists, by
+#                     interval bisection (SmallPolygons.no_other_root)
 #   side_length       ℓ = 2 sin(z/2) and nℓ enclosed over Z_root
 #   exact_identities  every side and every active diameter, exactly: in Q[c] for Z32,
 #                     in Q[c,s,y] modulo s²+c²-1 for Z64
@@ -23,9 +25,9 @@
 # WHAT IS NOT HERE, on purpose, and said in the record. There is no published
 # constructor to run unchanged (OPTIGON ships only the A_n; Z_n is rebuilt from
 # Propositions 1 and 2 of Bingane and Audet), so no `published_constructor` gate.
-# Uniqueness of the root on the whole search interval is not claimed (for A_n it
-# comes from F = LEAD·Fc(cos z) with Fc monotone, which has no analogue here; the
-# root is unique in Z_root). There is no Lean statement for Z_n.
+# There is no Lean statement for Z_n. Root uniqueness on (0, π/n] is proved by
+# bisection (gate root_unique_search), not by the monotonicity argument of the A_n
+# certificate, which has no analogue here.
 
 const ROOT = normpath(joinpath(@__DIR__, ".."))
 include(joinpath(ROOT, "src", "A16Certificate.jl"));  using .A16Certificate
@@ -62,6 +64,18 @@ newton_ok = !in_interval(0, Dz) && isinterior(Nz, Zroot) && isguaranteed(Nz) && 
 gate("root", newton_ok,
      "interval Newton on Z_root (radius 1e-30): 0 ∉ F'(Z) = $(Dz), N(Z) ⊂ int Z = $(isinterior(Nz, Zroot)); " *
      "F' is the analytic derivative of the defining equation, checked against a finite difference in the tests")
+
+# --- root_unique_search: no other zero on (0, pi/n] -----------------------------
+# Interval bisection discards every box where the equation is nonzero or the
+# polygon does not exist (Z64 needs a real square root); what is left is Z_root,
+# in which Newton above shows exactly one zero. So t_n is the only zero in the
+# interval (0, pi/n) that Bingane and Audet name, at which Z_n exists.
+hiS = sup(interval(BigFloat, π) / interval(BigFloat, n))
+uq = no_other_root(cand.root.Fs, Zroot, zero(BigFloat), hiS)
+gate("root_unique_search", newton_ok && uq.ok,
+     uq.ok ? "no zero of the defining equation in (0, π/$n] outside Z_root, by bisection ($(uq.boxes) boxes; boxes where " *
+             "the polygon does not exist are discarded), and exactly one inside it (Newton above): t_n is the only zero in (0, π/$n)" :
+             "NOT PROVED: $(uq.why)")
 
 # --- side_length ----------------------------------------------------------------
 nI = interval(BigFloat, n)
@@ -113,7 +127,6 @@ else
         "verdict" => final_pass ? "CERTIFIED" : "NOT CERTIFIED",
         "global_optimality" => "NOT CLAIMED",
         "not_claimed" => ["a constructor published as code (Z_n is rebuilt from Propositions 1 and 2 of Bingane and Audet)",
-                          "uniqueness of the root on the whole search interval (it is unique in Z_root)",
                           "a Lean statement for Z_n"],
         "source_sha256" => [Dict("file" => f, "sha256" => bytes2hex(open(sha256, joinpath(ROOT, f)))) for f in files])
     mkpath(joinpath(ROOT, "results", "family"))

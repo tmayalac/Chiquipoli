@@ -315,7 +315,7 @@ quick)
   QUICK_N=$(for n in $FAMILY_N; do [ "$n" -le 512 ] && printf '%s ' "$n"; done)
   stage family-certs "the family certificates of $(echo $QUICK_N | sed 's/[0-9]*/A&/g') (10 gates each; nothing recorded)" \
     bash -c "for n in $QUICK_N; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
-  stage z-certs      "the certificates of Z32 and Z64 (8 gates each; nothing recorded)" \
+  stage z-certs      "the certificates of Z32 and Z64 (9 gates each; nothing recorded)" \
     bash -c 'for n in 32 64; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl $n || exit 1; done'
   stage stress-gen   "the family generator refuses 24 planted defects" tools/stress_family.sh generator
   stage family-record "results/lean_family_certificate.toml still describes this tree" julia_run pipeline/record_lean_family_certificate.jl --check
@@ -411,11 +411,11 @@ fast)
   ;;
 
 z)
-  # Z32 or Z64: its certificate (8 gates) and the independent cross-check.
+  # Z32 or Z64: its certificate (9 gates) and the independent cross-check.
   # Writes no record in results/.
   case "$CASE" in 32|64) ;; *) echo "usage: $0 z <32|64>"; exit 2 ;; esac
   N="$CASE"
-  stage "certificate-Z$N" "the certificate of Z$N: 8 gates (root, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
+  stage "certificate-Z$N" "the certificate of Z$N: 9 gates (root, root uniqueness, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
   CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
   printf "\n"; note "note: Lean does not cover Z$N; make mutation-check plants defects in it"

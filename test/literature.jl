@@ -65,6 +65,24 @@ end
     end
 end
 
+@testset "Z32 and Z64: root uniqueness on (0, pi/n] by bisection" begin
+    # pipeline/certify_z.jl proves that no zero lies outside Z_root. The procedure
+    # must be able to fail: shift Z_root off the root and the box that holds the
+    # root stays undecided.
+    setprecision(BigFloat, 256) do
+        for (d, n) in (("family/Z32", 32), ("family/Z64", 64))
+            c = loadcand(d); z = c.root.nominal
+            hi = sup(interval(BigFloat, BigFloat(π)) / interval(BigFloat, n))
+            Zr = interval(z - big"1e-30", z + big"1e-30")
+            good = Base.invokelatest(no_other_root, c.root.Fs, Zr, zero(BigFloat), hi)
+            @test good.ok && good.boxes > 10
+            Zoff = interval(z + big"1e-6" - big"1e-30", z + big"1e-6" + big"1e-30")
+            bad = Base.invokelatest(no_other_root, c.root.Fs, Zoff, zero(BigFloat), hi)
+            @test !bad.ok
+        end
+    end
+end
+
 @testset "Literature negative controls are rejected" begin
     for d in ("negative/broken_convexity", "negative/broken_equilateral", "negative/wrong_diameter")
         cand = loadcand(d)

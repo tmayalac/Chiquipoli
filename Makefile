@@ -19,7 +19,7 @@ help:
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
 	@echo
 	@echo "  ONE POLYGON, QUICKLY: its Julia certificate only (writes no record)"
-	@echo "  make z32  z64          Z32 or Z64: its certificate (8 gates) and the Python cross-check"
+	@echo "  make z32  z64          Z32 or Z64: its certificate (9 gates) and the Python cross-check"
 	@echo "  make a16  a32  a64  a128  a256  a512  a1024"
 	@echo "                         the family certificate (10 gates); a16 also the article's own"
 	@echo

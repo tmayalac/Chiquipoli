@@ -106,9 +106,10 @@ use:
   $3.1412752\ldots$, against $3.1402461\ldots$ and $3.1412717\ldots$ for $A_{32}$
   and $A_{64}$): the same blocks as every candidate, including the exact
   identities (`cases/family/Z32/`, `Z64/`; `make z32`, `make z64`; records in
-  `results/family/Z32.toml`, `Z64.toml`, eight gates each, `pipeline/certify_z.jl`).
-  Not claimed, and said in each record: a published constructor to run unchanged,
-  uniqueness of the root on the whole search interval, and a Lean statement. They
+  `results/family/Z32.toml`, `Z64.toml`, nine gates each, `pipeline/certify_z.jl`, root uniqueness on (0, π/n)
+  included).
+  Not claimed, and said in each record: a published constructor to run unchanged
+  and a Lean statement. They
   are rebuilt from their Propositions 1 and 2, not from OPTIGON, which ships only
   the $A_n$ constructor, so that they are the polygons of the paper is a
   comparison with the paper that no program makes. $Z_{64}$ has two unknowns,

@@ -668,4 +668,41 @@ function structural_pass(r::CertifyReport)
 end
 export structural_pass
 
+# ---------------------------------------------------------------------------
+# Root uniqueness on a search interval.
+# ---------------------------------------------------------------------------
+
+"""
+    no_other_root(Fs, Zroot, lo, hi; maxboxes = 100_000, minwidth = big"1e-60")
+        -> (ok, boxes, why)
+
+Prove, by interval bisection, that the defining equation has no zero in
+`[lo, hi]` outside `Zroot`. `Fs(B)` encloses the equation over the interval `B`,
+or returns `nothing` where the configuration does not exist on all of `B` (a
+polygon needs a real square root there, and none exists); a box is discarded
+when `Fs` returns `nothing` or an enclosure that excludes 0. Together with a
+Newton step that shows exactly one zero in `Zroot`, `ok = true` makes that zero
+the only one in `[lo, hi]` at which the configuration exists. The search stops
+with `ok = false` (never with a guess) at `minwidth` or after `maxboxes`: a
+zero outside `Zroot`, or an enclosure too wide to decide, leaves a box undecided.
+"""
+function no_other_root(Fs, Zroot, lo, hi; maxboxes = 100_000, minwidth = big"1e-60")
+    stack = [interval(lo, inf(Zroot)), interval(sup(Zroot), hi)]
+    boxes = 0
+    while !isempty(stack)
+        B = pop!(stack); boxes += 1
+        boxes > maxboxes && return (ok = false, boxes = boxes, why = "more than $maxboxes boxes")
+        G = Fs(B)
+        G === nothing && continue
+        isguaranteed(G) || return (ok = false, boxes = boxes, why = "an enclosure lost its guarantee flag")
+        in_interval(0, G) || continue
+        diam(B) < minwidth && return (ok = false, boxes = boxes,
+            why = "undecided on a box of width $(Float64(diam(B))) about $(Float64(mid(B)))")
+        m = mid(B)
+        push!(stack, interval(inf(B), m)); push!(stack, interval(m, sup(B)))
+    end
+    return (ok = true, boxes = boxes, why = "")
+end
+export no_other_root
+
 end # module

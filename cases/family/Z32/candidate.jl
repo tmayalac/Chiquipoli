@@ -74,7 +74,7 @@ let
 
     Candidate(
         "z32-bingane-audet", n, coords,
-        (F = Ffun, Fp = Fprime, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
+        (F = Ffun, Fp = Fprime, Fs = Ffun, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
         active,
         Dict{Symbol,Any}(
             :reference => "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 1",

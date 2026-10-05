@@ -100,6 +100,21 @@ let
         return II(2)*(w.a + w.S(29) - w.C(1))*(da + dS(29) - dC(1)) +
                II(2)*(w.C(29) - w.S(1) - w.r)*(dC(29) - dS(1) - dr) - de2
     end
+    # The equation over a box B for the root-uniqueness search of certify_z.jl: nothing
+    # where the radicand is negative on all of B (no polygon exists there), else an
+    # enclosure with the square root taken of the non-negative part of the radicand.
+    # Sound for the search, which only discards boxes: a zero of the equation at a
+    # t in B at which the polygon exists has r in [0, sqrt(sup rad)].
+    function Fsearch(B)
+        S = k -> sin(II(k)*B); C = k -> cos(II(k)*B); K = q -> II(numerator(q)) / II(denominator(q)) + zero(B)
+        p0 = z64_vertices(S, C, K, K(0))
+        a = p0[52][1] + K(1//2)
+        e2 = II(2) - II(2)*cos(B)
+        rad = e2 - a*a
+        sup(rad) < 0 && return nothing
+        r = sqrt(interval(max(inf(rad), zero(inf(rad))), sup(rad)))
+        return (a + S(29) - C(1))^2 + (C(29) - S(1) - r)^2 - e2
+    end
     function coords(z)
         w = ysolve(z)
         Pv = z64_vertices(w.S, w.C, w.K, w.p0[52][2] + w.r)
@@ -162,7 +177,7 @@ let
 
     Candidate(
         "z64-bingane-audet", n, coords,
-        (F = Ffun, Fp = Fprime, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
+        (F = Ffun, Fp = Fprime, Fs = Fsearch, lo = 2*asin(sin(P/n)/2), hi = P/n, nominal = z_nom),
         active,
         Dict{Symbol,Any}(
             :reference => "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 2",

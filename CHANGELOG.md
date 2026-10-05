@@ -15,11 +15,12 @@ All notable changes to this project are recorded here. The format follows
   constructor file ships only the A_n. Test: its perimeter, above A32's and
   below Reinhardt's bound.
 - **A certificate of its own for each** (`pipeline/certify_z.jl`, `make z32`,
-  `make z64`, `results/family/Z32.toml`, `Z64.toml`): eight gates (root by interval
-  Newton with the analytic derivative, side length, exact identities, convexity,
+  `make z64`, `results/family/Z32.toml`, `Z64.toml`): nine gates (root by interval
+  Newton with the analytic derivative, its uniqueness on (0, π/n) by interval
+  bisection (`SmallPolygons.no_other_root`; where Z64 does not exist the box is
+  discarded), side length, exact identities, convexity,
   inactive margin, rank, multipliers, box nesting), and a record that says what is
-  not claimed (a published constructor, root uniqueness on the search interval,
-  Lean). Nine planted defects in them are rejected (`tools/mutation_check.sh z`),
+  not claimed (a published constructor, Lean). Nine planted defects in them are rejected (`tools/mutation_check.sh z`),
   and so are two wrong derivatives, by the test suite. The numbers of the
   article's Table 5 come from these records.
 - **Z64** (`cases/family/Z64/`), the same, from Proposition 2.
