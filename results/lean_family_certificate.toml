@@ -75,15 +75,15 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib certificate of the Bingane–Audet family layer"
-git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
+git_commit = "fa45b9bbdacc8428c85e6551804cdd5181b307d4"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
 mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point"
 package = "A16Certificate v1.3.1"
-utc = "2026-10-04T21:37:35Z"
-verify_seconds = 228
+utc = "2026-10-05T00:46:11Z"
+verify_seconds = 241
 
 [scope]
 formalized = ["for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)", "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)", "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress built by the Henneberg recursion)", "I_eq = R_eq, by a Henneberg construction", "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Chiquipoli.Feasible.thm_3_5)", "the identification with the published polygon: ChiquipoliFamily/Optigon.lean transcribes the upstream OPTIGON constructor statement for statement for every n; for each case, every vertex it builds equals the certified vertex and its equation F equals a constant times Fc(cos z) wherever cos 2z != 0 (A<n>.Q_eq_P, A<n>.F_eq), and the headline result is stated about upstream's own F, bracket and polygon (A<n>.published_locally_maximal)"]
@@ -1195,7 +1195,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "386f68224062d2c1094ffd5d326ff3054eb077d9809d13942906c031be20ea57"
+sha256 = "be907cca24426cc8af1300155f9c990723f75a6afffc7e074c81d9665f873d76"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"
@@ -1219,7 +1219,7 @@ file = "test/fixtures/optigon_reference.jl"
 sha256 = "7915c4c3370b485d405b357048df769c76649c9e96e9f27fbb05a489d70096bf"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "943ec611b8276a1540d201aff90daa76397b7be91bb85768351b188b2a0b944e"
+sha256 = "c020019c5ec4dfb2962964b530b3e2dfabaffd161b66327895c7007dc8f5f2c4"
 
 [theorems]
 axiom_audited_theorems = 65

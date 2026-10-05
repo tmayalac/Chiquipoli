@@ -8,7 +8,7 @@ t_enclosure = ["0.049087298576449606088149", "0.049087298576449606088150"]
 active_diameter_edges = [[0, 31], [0, 32], [0, 33], [1, 33], [2, 33], [2, 34], [3, 34], [3, 35], [3, 36], [4, 36], [4, 37], [5, 37], [6, 37], [6, 38], [7, 38], [7, 39], [7, 40], [8, 40], [8, 41], [9, 41], [10, 41], [10, 42], [11, 42], [11, 43], [11, 44], [12, 44], [12, 45], [13, 45], [14, 45], [14, 46], [15, 46], [15, 47], [15, 48], [16, 49], [17, 49], [18, 49], [18, 50], [19, 50], [19, 51], [19, 52], [20, 52], [20, 53], [21, 53], [22, 53], [22, 54], [23, 54], [23, 55], [23, 56], [24, 56], [24, 57], [25, 57], [26, 57], [26, 58], [27, 58], [27, 59], [27, 60], [28, 60], [28, 61], [29, 61], [30, 61], [30, 62], [31, 62], [31, 63]]
 omitted_ambient_coordinates = [0, 1, 64]
 conclusion = "Strict local maximality modulo orientation-preserving Euclidean motions among convex equilateral small polygons. Global maximality is not established."
-verifier_sha256 = "2140ae953acc4142ce72332632d11e655fcb150a9d4878f30388215b431116da"
+verifier_sha256 = "7dce2b853732ba16496165fd0aa6e29bff8a3679eb582834e1f73aa88a03a5e1"
 
 [sources]
 constructor = "OPTIGON cstrt_ngon/cstrt_audet_ngon.jl, ported line by line"

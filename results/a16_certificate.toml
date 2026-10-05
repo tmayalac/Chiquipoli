@@ -209,13 +209,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
+git_commit = "fa45b9bbdacc8428c85e6551804cdd5181b307d4"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.3.1 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-10-04T21:25:33Z"
+utc = "2026-10-05T00:33:37Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -233,7 +233,7 @@ file = "pipeline/certify_radius.jl"
 sha256 = "cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd"
 [[source_sha256]]
 file = "pipeline/check_records.jl"
-sha256 = "88a5c239157b1b81d3981cf9343d89165a8921d08cdc2845ef50a793d96a6746"
+sha256 = "daf7cdf8cff117daf7d125536adb52b7cb0ee0ff0eada223708ca6f4b1d44f4f"
 [[source_sha256]]
 file = "pipeline/family_table.jl"
 sha256 = "c62fa1545161cdcacf072311a86ea5236cd22e829567c8fea1d0e1572631f7c6"
@@ -272,7 +272,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "386f68224062d2c1094ffd5d326ff3054eb077d9809d13942906c031be20ea57"
+sha256 = "be907cca24426cc8af1300155f9c990723f75a6afffc7e074c81d9665f873d76"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"
@@ -308,7 +308,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "943ec611b8276a1540d201aff90daa76397b7be91bb85768351b188b2a0b944e"
+sha256 = "c020019c5ec4dfb2962964b530b3e2dfabaffd161b66327895c7007dc8f5f2c4"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"

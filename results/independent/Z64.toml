@@ -8,7 +8,7 @@ t_enclosure = ["0.049087353399299782574165", "0.049087353399299782574166"]
 active_diameter_edges = [[0, 31], [0, 32], [0, 33], [1, 33], [1, 34], [2, 34], [3, 34], [3, 35], [4, 35], [4, 36], [5, 36], [6, 36], [6, 37], [7, 37], [7, 38], [8, 38], [8, 39], [9, 39], [9, 40], [10, 40], [10, 41], [11, 41], [11, 42], [11, 43], [12, 43], [12, 44], [12, 45], [13, 45], [13, 46], [13, 47], [13, 48], [14, 49], [14, 50], [15, 50], [16, 51], [17, 51], [18, 51], [19, 51], [19, 52], [20, 52], [21, 52], [21, 53], [22, 53], [23, 53], [23, 54], [24, 54], [24, 55], [25, 55], [25, 56], [26, 56], [26, 57], [27, 57], [27, 58], [28, 58], [28, 59], [28, 60], [29, 60], [29, 61], [30, 61], [30, 62], [30, 63], [31, 63]]
 omitted_ambient_coordinates = [0, 1, 64]
 conclusion = "Strict local maximality modulo orientation-preserving Euclidean motions among convex equilateral small polygons. Global maximality is not established."
-verifier_sha256 = "2140ae953acc4142ce72332632d11e655fcb150a9d4878f30388215b431116da"
+verifier_sha256 = "7dce2b853732ba16496165fd0aa6e29bff8a3679eb582834e1f73aa88a03a5e1"
 
 [sources]
 constructor = "Bingane and Audet, Arch. Math. 119 (2022), Section 4, Props. 1 and 2; reconstructed from the stated paths, pendant edges and reflection"

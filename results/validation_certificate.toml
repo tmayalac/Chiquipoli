@@ -9,7 +9,7 @@ n = 1024
 name = "A1024-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 121.441
+seconds = 124.993
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -29,7 +29,7 @@ n = 128
 name = "A128-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.871
+seconds = 1.341
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -49,7 +49,7 @@ n = 16
 name = "A16-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.188
+seconds = 0.189
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -69,7 +69,7 @@ n = 256
 name = "A256-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 4.45
+seconds = 4.749
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -109,7 +109,7 @@ n = 512
 name = "A512-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 21.361
+seconds = 21.985
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -129,7 +129,7 @@ n = 64
 name = "A64-bingane-audet"
 negative_control = false
 reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336"
-seconds = 0.15
+seconds = 0.151
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -149,7 +149,7 @@ n = 4
 name = "n4-regular-square"
 negative_control = false
 reference = "Vincze 1950, Acta Sci. Math. (Szeged) 12:136–142"
-seconds = 0.053
+seconds = 0.055
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -169,7 +169,7 @@ n = 6
 name = "n6-reinhardt-R36"
 negative_control = false
 reference = "Reinhardt 1922, Jahresber. DMV 31:251–270"
-seconds = 0.118
+seconds = 0.121
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -189,7 +189,47 @@ n = 8
 name = "n8-ahmp2004-H8"
 negative_control = false
 reference = "Audet–Hansen–Messine–Perron 2004, JCTA 108(1):63–75"
-seconds = 0.174
+seconds = 0.175
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CONSISTENT"
+    exact_identities = "PROVEN"
+    existence = "CERTIFIED"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "10.1007/s00013-022-01745-x"
+expectation_met = true
+licq_defect = 1
+literature_status = "OPEN — Bingane–Audet polygon of larger perimeter than A32, NOT proven optimal"
+n = 32
+name = "z32-bingane-audet"
+negative_control = false
+reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 1"
+seconds = 0.176
+verdict = "structural PASS"
+
+    [benchmark.blocks]
+    "active_graph+margin" = "CERTIFIED"
+    convexity = "CERTIFIED"
+    equilaterality = "CONSISTENT"
+    exact_identities = "PROVEN"
+    existence = "CERTIFIED"
+    multipliers = "CERTIFIED"
+    rank = "CERTIFIED"
+[[benchmark]]
+doi = "10.1007/s00013-022-01745-x"
+expectation_met = true
+licq_defect = 0
+literature_status = "OPEN — Bingane–Audet polygon of larger perimeter than A64, NOT proven optimal"
+n = 64
+name = "z64-bingane-audet"
+negative_control = false
+reference = "Bingane & Audet 2022, Archiv der Math. 119:325–336, Proposition 2"
+seconds = 0.281
 verdict = "structural PASS"
 
     [benchmark.blocks]
@@ -209,7 +249,7 @@ n = 16
 name = "neg-broken-convexity"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.026
+seconds = 0.028
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -229,7 +269,7 @@ n = 16
 name = "neg-broken-equilateral"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.016
+seconds = 0.017
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -249,7 +289,7 @@ n = 16
 name = "neg-wrong-diameter"
 negative_control = true
 reference = "perturbation of A16 (negative control)"
-seconds = 0.016
+seconds = 0.017
 verdict = "REJECTED (as expected)"
 
     [benchmark.blocks]
@@ -264,12 +304,12 @@ verdict = "REJECTED (as expected)"
 [meta]
 all_expectations_met = true
 bigfloat_precision_bits = 256
-git_commit = "fb2f33562e940f1c7f534b3fe0af10fd49874e2c"
+git_commit = "fa45b9bbdacc8428c85e6551804cdd5181b307d4"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-total_seconds = 148.952
-utc = "2026-10-04T21:28:06Z"
+total_seconds = 154.364
+utc = "2026-10-05T00:36:16Z"
 
 [[source_sha256]]
 file = "cases/exact_coords.jl"
@@ -305,6 +345,12 @@ sha256 = "de8d62b2ba22c01fe2ff9f18e19795387288b04e3070e30120c1fc550045a94a"
 file = "cases/literature/n8_ahmp2004/candidate.jl"
 sha256 = "6bcda397d6ebbf5fb50fd11b8d58d374c799975b33bcbd2b2884e407aab481a0"
 [[source_sha256]]
+file = "cases/literature/z32_bingane_audet/candidate.jl"
+sha256 = "27f57f97406982121ddfaf2917da077118acc0babd6e580e8d0184932cb301e3"
+[[source_sha256]]
+file = "cases/literature/z64_bingane_audet/candidate.jl"
+sha256 = "fb14fdbbbafaf3f7d4da26c777c7f2b598d2d867f36fe2a401cd74c5c560d445"
+[[source_sha256]]
 file = "cases/negative/broken_convexity/candidate.jl"
 sha256 = "0cb434ca3922a4dde472e5412f5ef297a4477dca00b698921667ba0f38c6696e"
 [[source_sha256]]
@@ -333,7 +379,7 @@ file = "pipeline/certify_radius.jl"
 sha256 = "cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd"
 [[source_sha256]]
 file = "pipeline/check_records.jl"
-sha256 = "88a5c239157b1b81d3981cf9343d89165a8921d08cdc2845ef50a793d96a6746"
+sha256 = "daf7cdf8cff117daf7d125536adb52b7cb0ee0ff0eada223708ca6f4b1d44f4f"
 [[source_sha256]]
 file = "pipeline/family_table.jl"
 sha256 = "c62fa1545161cdcacf072311a86ea5236cd22e829567c8fea1d0e1572631f7c6"
@@ -372,7 +418,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "386f68224062d2c1094ffd5d326ff3054eb077d9809d13942906c031be20ea57"
+sha256 = "be907cca24426cc8af1300155f9c990723f75a6afffc7e074c81d9665f873d76"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"
@@ -408,7 +454,7 @@ file = "test/framework_guards.jl"
 sha256 = "9e7266b554c2e6b96add88afa057a45cf99a007daa74a399a8013e66e4994fd5"
 [[source_sha256]]
 file = "test/literature.jl"
-sha256 = "943ec611b8276a1540d201aff90daa76397b7be91bb85768351b188b2a0b944e"
+sha256 = "c020019c5ec4dfb2962964b530b3e2dfabaffd161b66327895c7007dc8f5f2c4"
 [[source_sha256]]
 file = "test/optigon.jl"
 sha256 = "bcd54cd08ac2451e365399340c26fab11240b476f0be4ffa185cabbd3c97e9ff"
