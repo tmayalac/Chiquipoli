@@ -163,6 +163,8 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 | Both Lean layers, verified and recorded | `make check-lean` | `bash tools/check_all.sh lean` |
 | One case: N = 4, 6, 8 (certifier) or 16, 32, 64 (certifier, Lean, stress) | `make check-case N=32` | `bash tools/check_all.sh case 32` |
 | One candidate, every layer: A16, A32, A64 | `make A16`, `make A32`, `make A64` | `bash tools/check_all.sh candidate 16` (32, 64) |
+| One of the Z polygons, every check (suite, general certifier, 9-gate certificate, Python cross-check, planted defects; no Lean for Z), ~1.5 min | `make Z32`, `make Z64` (or `z32-complete`) | `bash tools/check_all.sh zcomplete 32` (64) |
+| One of the Z polygons, its certificate and the Python cross-check, in seconds | `make z32`, `make z64` | `bash tools/check_all.sh z 32` (64) |
 | One polygon, its Julia certificate only, in seconds (A16 … A1024; A1024 a few minutes) | `make a16`, `make a32`, …, `make a1024` | `bash tools/check_all.sh fast 256` |
 | One polygon, every layer incl. Lean (Lean for A16 … A256; A512, A1024 end `INCOMPLETE`) | `make a16-complete`, …, `make a1024-complete` | `bash tools/check_all.sh candidate 256` |
 

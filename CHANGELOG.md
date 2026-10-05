@@ -23,6 +23,10 @@ All notable changes to this project are recorded here. The format follows
   not claimed (a published constructor, Lean). Nine planted defects in them are rejected (`tools/mutation_check.sh z`),
   and so are two wrong derivatives, by the test suite. The numbers of the
   article's Table 5 come from these records.
+- **Their own commands**, as for the A_n: `make z32`, `make z64` (certificate and
+  Python cross-check, seconds) and `make Z32`, `make Z64` (also the suite, the general
+  certifier and the planted defects of that polygon, about a minute and a half; there
+  is no Lean for Z_n); `tools/mutation_check.sh z [n]` takes the polygon.
 - **Z64** (`cases/family/Z64/`), the same, from Proposition 2.
   Its two unknowns (t, y) become one: the first equation is solved for y in
   closed form, the second is the root. Exact identities in Q[c,s,y] with a ring
