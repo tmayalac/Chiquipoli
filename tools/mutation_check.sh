@@ -397,7 +397,7 @@ run_z_mutation() {  # run_z_mutation <n> <label> <old> <new>
   git checkout -- "$f"
 }
 run_z_mutation 32 "root literal: one digit altered" 'big"0.09817442866964279340015033' 'big"0.09817442866964279340025033'
-run_z_mutation 32 "active graph: one diameter moved" '(11, 30), (11, 31)]' '(11, 30), (11, 29)]'
+run_z_mutation 32 "active graph: one diameter moved" '(11, 30), (11, 31)]' '(11, 30), (10, 31)]'
 run_z_mutation 32 "construction: p10 = p24 + (S14, C14) -> (S13, C13)" \
   'p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))' 'p[11] = (add(p[25][1], S(13)), add(p[25][2], C(13)))'
 run_z_mutation 32 "defining equation: S13 -> S12" 'x = add(sub(S(5), S(13)), S(14))' 'x = add(sub(S(5), S(12)), S(14))'
