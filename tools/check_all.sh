@@ -141,7 +141,7 @@ details() {
     elsif (/^(edge|diam) \(\d+,\d+\):/) { $ni++; $nok++ if /PROVED/ }
     elsif (/^Chiquipoli\s+\|\s+(\d+)\s+(\d+)/) { add("test suite", $1 == $2, "$1 of $2 assertions") }
     elsif (/^\s*(.+?)\s+\*\*\*\s*(.*?)\s*\*\*\*\s*$/) { add($1, 0, $2) }
-    elsif (/^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE A|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|LEAN FAMILY CERTIFICATE)/) {
+    elsif (/^(FINAL FIRST-ORDER CERTIFICATE|FAMILY CERTIFICATE [AZ]|EXPLICIT RADIUS|RECORDS CHECK|LEAN CERTIFICATE|LEAN FAMILY CERTIFICATE)/) {
       my $c = /FAIL|NOT /i ? $R : $G; my @p = wrapw($_, $W - 6);
       push @H, "    $D→$Z $c" . shift(@p) . "$Z"; push @H, "      $c$_$Z" for @p }
     END {
@@ -168,8 +168,8 @@ live_detail() {
     mutation*|stress*|harness*|dedicated-mutations*)
       k=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -c 'CAUGHT'); m=$(sed $'s/\033\\[[0-9;]*m//g' "$log" | grep -c 'MISSED')
       [ "$k" -gt 0 ] && printf '%s planted defects caught' "$k"; [ "$m" -gt 0 ] && printf ', %s MISSED' "$m" ;;
-    family-certs|certificate-*)
-      last=$(grep -oE '^FAMILY CERTIFICATE A[0-9]+' "$log" | tail -1); k=$(grep -cE '^FAMILY CERTIFICATE A[0-9]+:' "$log")
+    family-certs|certificate-*|z-certs)
+      last=$(grep -oE '^FAMILY CERTIFICATE [AZ][0-9]+' "$log" | tail -1); k=$(grep -cE '^FAMILY CERTIFICATE [AZ][0-9]+:' "$log")
       [ -n "$last" ] && printf '%s done (%s so far)' "${last#FAMILY CERTIFICATE }" "$k" ;;
     literature*|general-*)
       last=$(grep -oE '── Certify: [^ ]+' "$log" | tail -1); k=$(grep -c '── Certify: ' "$log")
@@ -315,6 +315,8 @@ quick)
   QUICK_N=$(for n in $FAMILY_N; do [ "$n" -le 512 ] && printf '%s ' "$n"; done)
   stage family-certs "the family certificates of $(echo $QUICK_N | sed 's/[0-9]*/A&/g') (10 gates each; nothing recorded)" \
     bash -c "for n in $QUICK_N; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
+  stage z-certs      "the certificates of Z32 and Z64 (8 gates each; nothing recorded)" \
+    bash -c 'for n in 32 64; do CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl $n || exit 1; done'
   stage stress-gen   "the family generator refuses 24 planted defects" tools/stress_family.sh generator
   stage family-record "results/lean_family_certificate.toml still describes this tree" julia_run pipeline/record_lean_family_certificate.jl --check
   stage records     "every record agrees with the tree and the Lean layer" julia_run pipeline/check_records.jl
@@ -353,7 +355,7 @@ all)
   stage test "the Julia suite" julia_run test/runtests.jl
   if clean_tree; then
     if lean_ready; then
-      stage mutation-check "16 planted defects in Julia and the A16 Lean layer, and 5 per candidate in the family certificates" tools/mutation_check.sh
+      stage mutation-check "planted defects in Julia and the A16 Lean layer, 5 per candidate in the family certificates, and 9 in Z32 and Z64" tools/mutation_check.sh
       stage stress-family  "63 planted defects in the family layer: generator, Lean, harness, transcription" tools/stress_family.sh all
     else
       stage mutation-julia "the 11 Julia mutations (the Lean ones need the Mathlib cache)" tools/mutation_check.sh julia
@@ -376,6 +378,8 @@ all)
   stage radius       "an explicit radius of strict local maximality of A16 -> results/radius_certificate.toml" julia_run pipeline/certify_radius.jl
   stage family-certs "the family certificates of $(echo $FAMILY_N | sed 's/[0-9]*/A&/g') -> results/family/A<n>.toml" \
     bash -c "for n in $FAMILY_N; do julia --project=. pipeline/certify_family.jl \$n || exit 1; done"
+  stage z-certs      "the certificates of Z32 and Z64 -> results/family/Z<n>.toml" \
+    bash -c 'for n in 32 64; do julia --project=. pipeline/certify_z.jl $n || exit 1; done'
   if lean_ready; then
     stage lean-a16     "A16 Lean layer -> results/lean_certificate.toml" julia_run pipeline/record_lean_certificate.jl
     stage lean-family  "family Lean layer -> results/lean_family_certificate.toml" julia_run pipeline/record_lean_family_certificate.jl
@@ -404,6 +408,17 @@ fast)
       env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_a16.jl
   fi
   printf "\n"; note "note: the Julia certificate only; make a$N-complete adds the suite, Lean, controls and planted defects"
+  ;;
+
+z)
+  # Z32 or Z64: its certificate (8 gates) and the independent cross-check.
+  # Writes no record in results/.
+  case "$CASE" in 32|64) ;; *) echo "usage: $0 z <32|64>"; exit 2 ;; esac
+  N="$CASE"
+  stage "certificate-Z$N" "the certificate of Z$N: 8 gates (root, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
+    env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
+  CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
+  printf "\n"; note "note: Lean does not cover Z$N; make mutation-check plants defects in it"
   ;;
 
 candidate)
@@ -470,7 +485,7 @@ candidate)
       skip "dedicated-lean-A16" "Lean or the Mathlib cache is missing (make lean-cache)"
     fi
     if clean_tree && lean_ready; then
-      stage "dedicated-mutations-A16" "16 planted defects in the dedicated A16 Julia and Lean layers" \
+      stage "dedicated-mutations-A16" "18 planted defects in the dedicated A16 Julia and Lean layers" \
         bash -c 'tools/mutation_check.sh julia && tools/mutation_check.sh lean'
     else
       skip "dedicated-mutations-A16" "needs a clean git tree and the Mathlib cache"
@@ -478,7 +493,7 @@ candidate)
   fi
   ;;
 
-*) echo "usage: $0 [all|quick|lean|case <n>|candidate <16|32|64>]"; exit 2 ;;
+*) echo "usage: $0 [all|quick|lean|case <n>|fast <n>|z <32|64>|candidate <16|32|64>]"; exit 2 ;;
 esac
 }
 # Counted in a subshell, so an invalid argument is reported by the real pass.

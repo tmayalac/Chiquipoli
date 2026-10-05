@@ -4,7 +4,7 @@
         check check-all check-lean check-case literature-case lean-family-case \
         stress-case lean-family-certificate lean-family-record A16 A32 A64 \
         lean-general lean-general-case \
-        a16 a32 a64 a128 a256 a512 a1024 \
+        a16 a32 a64 a128 a256 a512 a1024 z32 z64 \
         a16-complete a32-complete a64-complete a128-complete a256-complete \
         a512-complete a1024-complete \
         check-records status radius independent
@@ -19,6 +19,7 @@ help:
 	@echo "  make check-case N=32   one case (N = 4, 6, 8, 16, 32, 64): certifier, Lean, stress"
 	@echo
 	@echo "  ONE POLYGON, QUICKLY: its Julia certificate only (writes no record)"
+	@echo "  make z32  z64          Z32 or Z64: its certificate (8 gates) and the Python cross-check"
 	@echo "  make a16  a32  a64  a128  a256  a512  a1024"
 	@echo "                         the family certificate (10 gates); a16 also the article's own"
 	@echo
@@ -166,6 +167,10 @@ check-lean:
 # FAMILY_N in cases/exact_coords.jl.
 a16 a32 a64 a128 a256 a512 a1024:
 	tools/check_all.sh fast $(@:a%=%)
+
+# Z32 and Z64 (Bingane-Audet): the 8-gate certificate and the Python cross-check
+z32 z64:
+	tools/check_all.sh z $(@:z%=%)
 
 a16-complete a32-complete a64-complete a128-complete a256-complete a512-complete a1024-complete:
 	tools/check_all.sh candidate $(patsubst a%-complete,%,$@)

@@ -145,6 +145,7 @@ function status()
     leanf = rec("results/lean_family_certificate.toml")
     val = rec("results/validation_certificate.toml")
     fam = Dict(n => rec("results/family/A$n.toml") for n in SCOPE)
+    famz = Dict(n => rec("results/family/Z$n.toml") for n in (32, 64))
     vd(r, key = "certified") = r === nothing ? "absent" :
         (get(r, key, get(get(r, "verdict", Dict()), "certified", false)) === true ? "CERTIFIED" : "NOT CERTIFIED")
 
@@ -169,11 +170,9 @@ function status()
         push!(rows, ["benchmark", "known optima + $neg broken controls",
                      ok == length(bs) ? "PASS $ok/$(length(bs))" : "FAIL $ok/$(length(bs))", "validation_certificate.toml"])
     end
-    for (zn, sub) in (("z32", "₃₂"), ("z64", "₆₄"))
-        zb = val === nothing ? nothing : let bs = get(val, "benchmark", Any[]); i = findfirst(b -> get(b, "name", "") == "$zn-bingane-audet", bs); i === nothing ? nothing : bs[i] end
-        push!(rows, ["new", "Z$sub strict local maximiser · Julia, general certifier",
-                     zb === nothing ? "absent" : (get(zb, "expectation_met", false) === true && all(v -> v in ("CERTIFIED", "PROVEN", "CONSISTENT"), values(get(zb, "blocks", Dict()))) ? "CERTIFIED" : "NOT CERTIFIED"),
-                     "validation_certificate.toml"])
+    for (n, sub) in ((32, "₃₂"), (64, "₆₄"))
+        push!(rows, ["new", "Z$sub strict local maximiser · Julia",
+                     famz[n] === nothing ? "absent" : get(famz[n], "verdict", "?"), "family/Z$n.toml"])
     end
     ind = Dict(nm => rec("results/independent/$nm.toml") for nm in ("A16", "A32", "A64", "Z32", "Z64"))
     nind = count(r -> r !== nothing && startswith(get(r, "status", ""), "CERTIFIED"), values(ind))
@@ -238,7 +237,21 @@ function status()
             num(detail(gate(f, "multipliers"), r"λ_ij ≥ ([0-9.e+-]+)")),
             verdict(get(f, "verdict", "?"))])
     end
+    for n in (32, 64)                       # Z_n: not in the article's theorem, same table
+        f = famz[n]
+        f === nothing && (push!(rows, ["Z$n", "—", "—", "—", "—", "—", "absent"]); continue)
+        zl = detail(gate(f, "box_nesting"), r"Z_root = \[([0-9.e+-]+)")
+        P = get(something(gate(f, "side_length"), Dict()), "perimeter", nothing)
+        push!(rows, ["Z$n",
+            zl === nothing ? "—" : @sprintf("%.10f", Float64(big(zl))),
+            P === nothing ? "—" : @sprintf("%.10f", Float64(big(P))),
+            num(detail(gate(f, "convexity"), r"min inf = ([0-9.e+-]+)")),
+            num(detail(gate(f, "inactive_margin"), r"margin≥([0-9.e+-]+)")),
+            num(detail(gate(f, "multipliers"), r"λ_ij ≥ ([0-9.e+-]+)")),
+            verdict(get(f, "verdict", "?"))])
+    end
     table(["polygon", "root z_n", "perimeter nℓ", "min det ≥", "δ_inact ≥", "min λ ≥", "verdict"], rows; right = 2:6)
+    note("Z₃₂, Z₆₄ (Bingane–Audet, larger perimeter): certified like A₃₂, A₆₄, but no Lean statement covers them.")
 
     section("THE INDEPENDENT CROSS-CHECK · the same gates, a second implementation")
     rows = Any[]
@@ -283,6 +296,7 @@ function status()
     for (name, r) in [("a16_certificate.toml", a16), ("radius_certificate.toml", rad),
                       ("validation_certificate.toml", val),
                       [("family/A$n.toml", fam[n]) for n in SCOPE]...,
+                      [("family/Z$n.toml", famz[n]) for n in (32, 64)]...,
                       ("lean_certificate.toml", lean), ("lean_family_certificate.toml", leanf)]
         m = r === nothing ? Dict() : get(r, "meta", Dict())
         push!(rows, [name, short(get(m, "git_commit", "")), yesno(get(m, "git_source_clean", nothing)),
@@ -298,6 +312,7 @@ function status()
         ["the A₁₆ certificate (Theorem 6.3)", "julia --project=. chiquipoli.jl verify"],
         ["the explicit radius (Theorem 6.4)", "julia --project=. chiquipoli.jl radius"],
         ["A₃₂ and A₆₄ (Theorem 6.6)", "julia --project=. chiquipoli.jl family"],
+        ["Z₃₂ and Z₆₄ (Theorem 6.8)", "julia --project=. chiquipoli.jl z"],
         ["the test suite", "julia --project=. chiquipoli.jl test"],
         ["the records against the tree", "julia --project=. chiquipoli.jl records"],
         ["the Lean layer (needs lake)", "julia --project=. chiquipoli.jl lean"],
@@ -454,6 +469,9 @@ tasks = Dict{String,Function}(
     "family"  => v -> all(n -> run!("family · A$n", julia("pipeline/certify_family.jl", string(n)),
                                     Regex("FAMILY CERTIFICATE A$n: CERTIFIED"); verbose = v,
                                     show = "julia --project=. pipeline/certify_family.jl $n", key = "family_A$n"), (32, 64)),
+    "z"       => v -> all(n -> run!("z · Z$n", julia("pipeline/certify_z.jl", string(n)),
+                                    Regex("FAMILY CERTIFICATE Z$n: CERTIFIED"); verbose = v,
+                                    show = "julia --project=. pipeline/certify_z.jl $n", key = "z_Z$n"), (32, 64)),
     "independent" => v -> run!("independent · a second implementation, in Python", `python3 pipeline/independent/verify.py`,
                            r"INDEPENDENT CROSS-CHECK: PASSED"; verbose = v,
                            show = "python3 pipeline/independent/verify.py", key = "independent"),
@@ -490,11 +508,12 @@ function help()
         ["verify", "re-run the A₁₆ certificate (Theorem 6.3)"],
         ["radius", "re-run the explicit radius (Theorem 6.4)"],
         ["family", "re-run A₃₂ and A₆₄ (Theorem 6.6)"],
+        ["z", "re-run Z₃₂ and Z₆₄ (Theorem 6.8)"],
         ["independent", "re-check A₁₆, A₃₂, A₆₄, Z₃₂, Z₆₄ with a second implementation (Python, no Julia)"],
         ["test", "the Julia test suite"],
         ["records", "every record against the tree and the Lean layer"],
         ["lean", "the A₁₆ Lean layer (needs lake and the Mathlib cache)"],
-        ["all", "test, verify, radius, family, independent, records"]])
+        ["all", "test, verify, radius, family, z, independent, records"]])
     note("--verbose streams each script's own output. Nothing here writes a record.")
 end
 
@@ -508,14 +527,14 @@ function main(args)
     elseif task == "status"
         status(); return 0
     elseif task == "all"
-        STEPS[] = 7                       # test, verify, radius, family A32 and A64, independent, records
+        STEPS[] = 9                       # test, verify, radius, family A32 and A64, z Z32 and Z64, independent, records
         ok = true
-        for t in ("test", "verify", "radius", "family", "independent", "records")
+        for t in ("test", "verify", "radius", "family", "z", "independent", "records")
             ok &= tasks[t](verbose)
         end
         summary(); return ok ? 0 : 1
     elseif haskey(tasks, task)
-        STEPS[] = task == "family" ? 2 : 1
+        STEPS[] = task in ("family", "z") ? 2 : 1
         ok = tasks[task](verbose); summary(); return ok ? 0 : 1
     else
         println("\n  unknown task '$task'"); help(); return 2

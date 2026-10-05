@@ -7,14 +7,22 @@ All notable changes to this project are recorded here. The format follows
 
 ### Z32, Z64 and an independent cross-check
 
-- **Z32** (`cases/literature/z32_bingane_audet/`): the Bingane–Audet 32-gon of
+- **Z32** (`cases/family/Z32/`): the Bingane–Audet 32-gon of
   larger perimeter (3.1403202…, against 3.1402461… for A32), through the
   general certifier: root, equilaterality, active graph and margin, convexity,
   rank, positive multipliers, and the exact identities (32 sides and 31 active
   diameters in Q(c,s)). Rebuilt from their Proposition 1; the paper's own
   constructor file ships only the A_n. Test: its perimeter, above A32's and
   below Reinhardt's bound.
-- **Z64** (`cases/literature/z64_bingane_audet/`), the same, from Proposition 2.
+- **A certificate of its own for each** (`pipeline/certify_z.jl`, `make z32`,
+  `make z64`, `results/family/Z32.toml`, `Z64.toml`): eight gates (root by interval
+  Newton with the analytic derivative, side length, exact identities, convexity,
+  inactive margin, rank, multipliers, box nesting), and a record that says what is
+  not claimed (a published constructor, root uniqueness on the search interval,
+  Lean). Nine planted defects in them are rejected (`tools/mutation_check.sh z`),
+  and so are two wrong derivatives, by the test suite. The numbers of the
+  article's Table 5 come from these records.
+- **Z64** (`cases/family/Z64/`), the same, from Proposition 2.
   Its two unknowns (t, y) become one: the first equation is solved for y in
   closed form, the second is the root. Exact identities in Q[c,s,y] with a ring
   of the candidate's own (62 diameters identically 1, 60 sides identically ℓ²,

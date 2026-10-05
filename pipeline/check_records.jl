@@ -353,6 +353,25 @@ for n in FAMILY_N
     chk("A$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))
 end
 
+section("the certificates of Z32 and Z64 (pipeline/certify_z.jl), against the tree")
+for n in (32, 64)
+    path = joinpath(ROOT, "results", "family", "Z$n.toml")
+    if !isfile(path)
+        skip("results/family/Z$n.toml is CERTIFIED and describes the tree")
+        continue
+    end
+    rec = TOML.parsefile(path)
+    local zg = get(rec, "gate", Any[])
+    chk("Z$n: certificate CERTIFIED, all $(length(zg)) gates passed, exact identities included",
+        get(rec, "certified", false) && length(zg) == 8 && all(g -> get(g, "passed", false), zg) &&
+        any(g -> get(g, "id", "") == "exact_identities", zg))
+    chk("Z$n: the record states what it does not claim (published constructor, uniqueness on the search interval, Lean)",
+        length(get(rec, "not_claimed", [])) == 3 && get(rec, "global_optimality", "") == "NOT CLAIMED")
+    stale = [e["file"] for e in get(rec, "source_sha256", Any[])
+             if !isfile(joinpath(ROOT, e["file"])) || bytes2hex(open(sha256, joinpath(ROOT, e["file"]))) != e["sha256"]]
+    chk("Z$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))
+end
+
 # ---------------------------------------------------------------------------
 # The independent cross-check (pipeline/independent/verify.py): the same gates
 # computed a second time, in another language and with another interval
@@ -379,11 +398,16 @@ let verifier = joinpath(ROOT, "pipeline", "independent", "verify.py"),
             chk("$name: it read the active graph and the root from the tree, and ported the vendored OPTIGON file",
                 isfile(gf) && get(src, "graph_and_nominal_root_sha256", "") == bytes2hex(open(sha256, gf)) &&
                 get(src, "upstream_sha256", "") == bytes2hex(open(sha256, upstream)))
-            fam = TOML.parsefile(joinpath(ROOT, "results", "family", "$name.toml"))
+        end
+        fp = joinpath(ROOT, "results", "family", "$name.toml")
+        if isfile(fp)
+            fam = TOML.parsefile(fp)
             per = parse(BigFloat, only(g["perimeter"] for g in fam["gate"] if g["id"] == "side_length"))
             enc = get(get(rec, "geometry", Dict()), "perimeter_enclosure", ["1", "0"])
             chk("$name: Python's perimeter enclosure contains the Julia one ($(enc[1])…)",
                 parse(BigFloat, enc[1]) <= per <= parse(BigFloat, enc[2]))
+        else
+            skip("$name: Python's perimeter agrees with the Julia record (results/family/$name.toml is absent)")
         end
     end
 end

@@ -105,7 +105,10 @@ use:
   report for $n = 32$ and $64$ (perimeters $3.1403202\ldots$ and
   $3.1412752\ldots$, against $3.1402461\ldots$ and $3.1412717\ldots$ for $A_{32}$
   and $A_{64}$): the same blocks as every candidate, including the exact
-  identities (`cases/literature/z32_bingane_audet/`, `z64_bingane_audet/`). They
+  identities (`cases/family/Z32/`, `Z64/`; `make z32`, `make z64`; records in
+  `results/family/Z32.toml`, `Z64.toml`, eight gates each, `pipeline/certify_z.jl`).
+  Not claimed, and said in each record: a published constructor to run unchanged,
+  uniqueness of the root on the whole search interval, and a Lean statement. They
   are rebuilt from their Propositions 1 and 2, not from OPTIGON, which ships only
   the $A_n$ constructor, so that they are the polygons of the paper is a
   comparison with the paper that no program makes. $Z_{64}$ has two unknowns,
@@ -287,8 +290,8 @@ rejecting anything.
 make mutation-check
 ```
 
-This plants 16 known defects and requires the verification to reject each
-one: eleven that the Julia suite must reject — a transcription error in the
+This plants 18 known defects and requires the verification to reject each
+one: thirteen that the Julia suite must reject — a transcription error in the
 constructor, one in the constructor equation, a sign error in one vertex, one
 digit of the root literal, one wrong active edge, a Krawczyk enclosure rebuilt
 with round-to-nearest instead of outward rounding, and a derivative `Fprime`
@@ -296,13 +299,20 @@ that is wrong but keeps its sign (interval Newton still passes with it; only
 the chain-rule test against `Fc` catches it), the root-uniqueness gate dropped
 from the verdict, and three in the Bingane–Audet
 family (a sign error in the generic constructor that only exists for n ≥ 32,
-one digit of the A64 root, one wrong A32 active edge); and five weakenings of the Lean
+one digit of the A64 root, one wrong A32 active edge), and a flipped sign in the derivative of the defining
+equation of Z32 and of Z64 (their certificate would accept it, as with `Fprime`;
+only the finite-difference test catches it); and five weakenings of the Lean
 layer — an admitted
 goal, an unresolvable name in the axiom audit, a deleted negative control, a
 wrong factor in the bridge tying the Theorem 3.5 layer to the certified
 arithmetic, and one digit off in the tight root bracket — which `verify.sh`
 must reject. Each is restored afterwards, and the run
 asserts the working tree comes back clean.
+
+It also plants nine further defects in Z32 and Z64 (`tools/mutation_check.sh z`: a
+digit of the root, one active edge, one index of the construction, one of the
+defining equation, one pendant angle of Z64), which `pipeline/certify_z.jl` must
+reject, and which the figure above does not count.
 
 The first three Lean mutations were all reported as PASS before the harness
 was fixed; they are in the script so that failure mode cannot return unnoticed.
@@ -372,7 +382,8 @@ pipeline/                     THE CERTIFICATES: programs that write results/
 
 cases/                        THE INPUTS: one candidate.jl per polygon
   family/A16 ... A1024/         the Bingane-Audet family (FAMILY_N)
-  literature/                   n4_regular, n6_reinhardt, n8_ahmp2004, z32_bingane_audet, z64_bingane_audet
+  literature/                   n4_regular, n6_reinhardt, n8_ahmp2004
+  family/Z32, Z64/              the Bingane-Audet polygons of larger perimeter (certify_z.jl)
   negative/                     3 broken controls, which must be rejected
   upstream/optigon/             OPTIGON's cstrt_audet_ngon.jl, byte for byte (MIT)
   exact_coords.jl               exact coordinates, the family lists, the constructor for any n = 8m

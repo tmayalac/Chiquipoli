@@ -219,7 +219,7 @@ make lean-family                                              # family layer (A1
 make lean-family-certificate                                  # writes results/lean_family_certificate.toml
 
 make check-records                                            # every record vs the tree, the hashes and Lean
-tools/mutation_check.sh                                     # 16 planted defects, all must be rejected
+tools/mutation_check.sh                                     # 18 planted defects, all must be rejected
 tools/stress_family.sh all                                    # 63 planted defects in the family layer
 
 make check-all                                                # all of the above, in order, with a summary
