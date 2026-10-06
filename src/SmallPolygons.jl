@@ -166,12 +166,18 @@ end
 _eye(T, n) = [i == j ? one(T) : zero(T) for i in 1:n, j in 1:n]
 
 """
-    f64_enclosure(M) -> Matrix or nothing
+    f64_enclosure(M, n) -> Matrix or nothing
 
-A `Float64` interval copy of the interval array `M`, each entry rounded OUTWARD
-(`interval(Float64, inf, sup)`), so the copy ENCLOSES the original entry by
-entry; `nothing` if some entry is not guaranteed (the caller then keeps the
-original, so an NG flag is never lost in the conversion).
+For `n ≥ F64_FROM_N` (= 65): a `Float64` interval copy of the interval array `M`,
+each entry rounded OUTWARD (`interval(Float64, inf, sup)`), so the copy ENCLOSES
+the original entry by entry. `nothing` if `n < F64_FROM_N`, or if some entry is
+not guaranteed (the caller then keeps the original BigFloat matrix, so an NG flag
+is never lost in the conversion).
+
+For `n ≤ 64` (A16, A32, A64, Z32, Z64: every polygon the article claims) the rank
+and multiplier blocks therefore run in 256-bit BigFloat intervals, with no
+Float64 and no BLAS product, and nothing rests on the sentinel below; they take
+seconds. The Float64 path remains for the larger members of the family.
 
 Why. The rank and multiplier blocks are dense linear algebra: a preconditioned
 regularity test and a Krawczyk step, O(n³) interval operations each. In 256-bit
@@ -183,7 +189,9 @@ regular, and a Krawczyk inclusion for the wider system encloses the solution of
 the true one. The only price is width, and the margins these blocks certify
 (‖I - CM‖ ≪ 1, λ_min ≫ 10⁻¹⁵) are far above it.
 """
-f64_enclosure(M) = all(isguaranteed, M) ? map(x -> interval(Float64, inf(x), sup(x)), M) : nothing
+const F64_FROM_N = 65
+use_f64(n) = n >= F64_FROM_N
+f64_enclosure(M, n) = use_f64(n) && all(isguaranteed, M) ? map(x -> interval(Float64, inf(x), sup(x)), M) : nothing
 
 # ---------------------------------------------------------------------------
 # Interval matrix products. For Float64 intervals, IntervalArithmetic offers a
@@ -264,6 +272,8 @@ function imul(A, B)
 end
 matmul_mode() = fastmul_verified() ? "Float64 intervals, :fast product (sentinel verified on this machine)" :
                                      "Float64 intervals, :slow product (the :fast sentinel failed here)"
+"The arithmetic the rank and multiplier blocks use for an `n`-gon (recorded in the family records)."
+matmul_mode(n) = use_f64(n) ? matmul_mode() : "BigFloat intervals, 256 bits (no Float64, no BLAS product)"
 
 "Preconditioned interval regularity test: ||I - inv(mid M)·M||_inf < 1 ⇒ M regular."
 function regularity_test(MI)
@@ -357,7 +367,7 @@ rigid-invariance argument).
 """
 function general_multipliers(p, n, active, ell)
     D = build_jacobian(p, n, active, ell)
-    Df = f64_enclosure(D)
+    Df = f64_enclosure(D, n)
     D = Df === nothing ? D : Df                    # see f64_enclosure
     T = typeof(inf(first(D)))
     nconstr = n + length(active); amb = 2n + 1
@@ -563,7 +573,7 @@ function _certify(cand::Candidate, radius)
     else
         M0 = BigFloat.(mid.(A))
         rows, cols = select_minor(M0, rank_target)
-        Af = f64_enclosure(A[rows, cols])                     # see f64_enclosure
+        Af = f64_enclosure(A[rows, cols], n)                     # see f64_enclosure
         reg, bound = regularity_test(Af === nothing ? A[rows, cols] : Af)   # rigorous lower bound
         rx, ry, rr = rigid_vectors(p, n)
         maxann = maximum(interval_abs_bound.(vcat(A*rx, A*ry, A*rr)))  # sanity only

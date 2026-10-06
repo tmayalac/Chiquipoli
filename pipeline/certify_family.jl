@@ -197,7 +197,7 @@ else
             "utc" => Dates.format(now(UTC), "yyyy-mm-ddTHH:MM:SS") * "Z", "julia_version" => string(VERSION),
             "git_commit" => commit, "git_source_clean" => clean, "precision_bits" => 256,
             "intervalarithmetic_version" => string(pkgversion(IntervalArithmetic)),
-            "matmul_mode" => SmallPolygons.matmul_mode(),
+            "matmul_mode" => SmallPolygons.matmul_mode(n),
             "root_radius" => string(ROOT_RADIUS), "cert_radius" => string(CERT_RADIUS), "n" => n),
         "gate" => gates,
         "certified" => final_pass,

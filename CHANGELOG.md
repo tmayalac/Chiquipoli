@@ -5,6 +5,15 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Pure BigFloat arithmetic for every polygon of the article
+
+- The rank and multiplier steps of A32, A64, Z32 and Z64 now run in 256-bit BigFloat intervals,
+  like those of A16 (`f64_enclosure(M, n)` returns a Float64 copy only for `n >= F64_FROM_N = 65`).
+  No Float64 interval and no BLAS matrix product, and so no run-time sentinel, enter the
+  certificate of any polygon the article claims; each takes seconds. The Float64 `:fast` path
+  remains for A128 to A1024. The regularity bounds are finer (A32: 2e-24 instead of 3e-14) and the
+  records state the arithmetic used (`matmul_mode`).
+
 ### Lean for Z32 and Z64
 
 - **Z32 and Z64 in Lean** (`lean/ChiquipoliFamily/Polynomial/Z32/`, `Z64/`, generators
