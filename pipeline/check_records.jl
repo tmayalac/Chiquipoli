@@ -365,8 +365,9 @@ for n in (32, 64)
     chk("Z$n: certificate CERTIFIED, all $(length(zg)) gates passed, exact identities included",
         get(rec, "certified", false) && length(zg) == 9 && all(g -> get(g, "passed", false), zg) &&
         any(g -> get(g, "id", "") == "exact_identities", zg))
-    chk("Z$n: the record states what it does not claim (published constructor, Lean)",
-        length(get(rec, "not_claimed", [])) == 2 && get(rec, "global_optimality", "") == "NOT CLAIMED")
+    chk("Z$n: the record states what it does not claim (published constructor) and where Lean covers it",
+        length(get(rec, "not_claimed", [])) == 1 && get(rec, "global_optimality", "") == "NOT CLAIMED" &&
+        occursin("locally_maximal_at", get(rec, "lean", "")))
     stale = [e["file"] for e in get(rec, "source_sha256", Any[])
              if !isfile(joinpath(ROOT, e["file"])) || bytes2hex(open(sha256, joinpath(ROOT, e["file"]))) != e["sha256"]]
     chk("Z$n: its recorded source hashes match the tree" * (isempty(stale) ? "" : " (stale: $(join(stale, ", ")))"), isempty(stale))
@@ -426,7 +427,13 @@ let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
         rec = TOML.parsefile(fam)
         chk("the record covers $(join(("A$n" for n in FAMILY_LEAN_N), ", "))",
             all(haskey(get(rec, "cases", Dict()), "A$n") for n in FAMILY_LEAN_N))
+        chk("the record covers Z32 and Z64, with their headline theorems",
+            all(haskey(get(rec, "zcases", Dict()), "Z$n") && occursin("locally_maximal_at", get(get(rec["zcases"], "Z$n", Dict()), "headline", "")) for n in (32, 64)))
         sc = get(rec, "scope", Dict())
+        chk("the record states what Lean proves for Z32 and Z64, and keeps their identification with the published polygons and the uniqueness of the root as not formalised",
+            any(x -> occursin("locally_maximal_at", x), get(sc, "formalized_Z", String[])) &&
+            any(x -> occursin("Propositions 1 and 2", x), get(sc, "not_formalized_Z", String[])) &&
+            any(x -> occursin("uniqueness of the root", x), get(sc, "not_formalized_Z", String[])))
         chk("the record states the Lean identification with the published constructor",
             any(x -> occursin("published_locally_maximal", x), get(sc, "formalized", String[])))
         chk("the record keeps the one step no kernel can check (transcription fidelity) as not formalised",

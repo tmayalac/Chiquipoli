@@ -5,6 +5,34 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Lean for Z32 and Z64
+
+- **Z32 and Z64 in Lean** (`lean/ChiquipoliFamily/Polynomial/Z32/`, `Z64/`, generators
+  `lean/generators/family/gen_z.jl`, `gen_z64.jl`, lemmas `ChiquipoliFamily/BasicZ.lean`): the
+  same statement as for the other three polygons, at every root of the polygon's equation in a
+  certified bracket (`Z<n>.locally_maximal_at`) and with a root existing there
+  (`Z<n>.locally_maximal`): strictly convex, equilateral, small, a strict local maximiser of the
+  perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5.
+  Not proved in Lean, and said so in the record: that the polygons are those of Bingane and
+  Audet (rebuilt from their Propositions 1 and 2) and the uniqueness of the root in (0, π/n)
+  (interval bisection, in Julia and Python).
+- **Z64 is not of the form of the other polygons**: four vertices carry the unknown `y` of
+  Proposition 2, a square root. Everything is a function of `c = cos t` alone (`sn c = √(1−c²)`,
+  `rr c = √(rad c)`, `yv c = y₅₁(c) + rr c`), square roots are enclosed by `enc_sqrt`, and the sign of the
+  root equation at the ends of the bracket is certified by enclosure arithmetic. The vertices
+  14, 15, 49, 50 are reached by no Henneberg step (one pinned neighbour each, five bars among
+  them): they are pinned as a unit (`block_pin`) and their stresses solved as a unit (`cramer_lin`,
+  `blockA`); the self-stress space is one-dimensional, as the rank 2n−2 requires.
+- **The single source** of the Z32 and Z64 constructions is now `cases/exact_coords.jl`
+  (`z32_generic`, `z64_vertices`, `z64_equations`): the interval candidates, the exact
+  certifier and the Lean generators all call it.
+- `verify_family.sh` checks Z32 and Z64 (`FAMILY_ZCASES`), with nine negative controls and twins
+  each, the axiom audit and byte-for-byte regeneration; `make lean-family-case N=Z64`;
+  `make Z64` includes the Lean check; the record `results/lean_family_certificate.toml` has a
+  `zcases` section and `formalized_Z` / `not_formalized_Z` scope entries; the Z records no longer list
+  "a Lean statement" among what they do not claim.
+
+
 ### Z32, Z64 and an independent cross-check
 
 - **Z32** (`cases/family/Z32/`): the Bingane–Audet 32-gon of

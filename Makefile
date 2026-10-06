@@ -31,7 +31,7 @@ help:
 	@echo "  make A16 / A32 / A64   the same as a16-complete / a32-complete / a64-complete"
 	@echo "  make z32-complete / z64-complete  (or Z32 / Z64)"
 	@echo "                         the suite, the general certifier, the 9-gate certificate, the Python"
-	@echo "                         cross-check and the planted defects of Z<n>; there is no Lean for Z_n"
+	@echo "                         cross-check, the Lean certificate of Z<n> and the planted defects"
 	@echo
 	@echo "  ONE CASE, ONE LAYER"
 	@echo "  make literature-case N=32   the general certifier on one case"
@@ -49,7 +49,7 @@ help:
 	@echo "  make lean-cache        download prebuilt Mathlib oleans (~7 GB, once)"
 	@echo "  make lean              full five-check verification of the Lean layer"
 	@echo "  make lean-certificate  record those checks as results/lean_certificate.toml"
-	@echo "  make lean-family       the same five checks for the family layer (A16, A32, A64)"
+	@echo "  make lean-family       the same five checks for the family layer (A16, A32, A64, Z32, Z64)"
 	@echo "  make lean-general      the five checks for the general Lean theorem (A16 ... A256)"
 	@echo "  make lean-general-case N=256  the same, one case"
 	@echo "  make lean-family-certificate  record them as results/lean_family_certificate.toml"
@@ -179,7 +179,7 @@ a16-complete a32-complete a64-complete a128-complete a256-complete a512-complete
 	tools/check_all.sh candidate $(patsubst a%-complete,%,$@)
 
 # Z32 / Z64 with everything: suite, general certifier, 9-gate certificate, independent
-# cross-check, planted defects (no Lean for Z_n). Writes no record.
+# cross-check, the Lean certificate of Z<n> (partial run), planted defects. Writes no record.
 z32-complete z64-complete:
 	tools/check_all.sh zcomplete $(patsubst z%-complete,%,$@)
 
@@ -199,8 +199,8 @@ literature-case:
 	julia --project=. pipeline/certify_literature.jl $(N)
 
 lean-family-case:
-	@test -n "$(N)" || { echo "usage: make lean-family-case N=<16|32|64>"; exit 2; }
-	cd lean && FAMILY_CASES=$(N) ./verify_family.sh
+	@test -n "$(N)" || { echo "usage: make lean-family-case N=<16|32|64|Z32|Z64>"; exit 2; }
+	cd lean && case "$(N)" in Z*) FAMILY_CASES=" " FAMILY_ZCASES="$(N:Z%=%)" ./verify_family.sh ;; *) FAMILY_CASES="$(N)" FAMILY_ZCASES=" " ./verify_family.sh ;; esac
 
 stress-case:
 	@test -n "$(N)" || { echo "usage: make stress-case N=<16|32|64>"; exit 2; }

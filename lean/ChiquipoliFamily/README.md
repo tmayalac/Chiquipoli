@@ -197,6 +197,47 @@ The unguarded switch refuses to run without a planted defect, and a mutated run
 refuses to write anywhere but a scratch directory, so the switch cannot
 produce an unchecked certificate.
 
+## Z32 and Z64
+
+The two further polygons of Bingane and Audet (Propositions 1 and 2 of their paper),
+`Z32` and `Z64`, have larger perimeter than `A32`, `A64`. There is no published
+constructor for them, so they are *rebuilt* from the statements of those propositions
+(`cases/exact_coords.jl`: `z32_generic`, `z64_vertices`, `z64_equations`; the one source for
+the interval candidate, the exact certifier, the independent Python verifier's reading and the
+Lean generators). What Lean proves is the same statement as for the other polygons, stated at
+every root of the polygon's equation in the certified bracket:
+
+| Lean name | statement |
+|---|---|
+| `Chiquipoli.Family.Z<n>.locally_maximal_at` | for every root `c` of the equation in `(clo, chi)`, `P c` is a strictly convex equilateral small `n`-gon and a strict local maximiser of the perimeter, modulo orientation-preserving Euclidean motions |
+| `Chiquipoli.Family.Z<n>.locally_maximal` | a root exists in the bracket (intermediate value theorem), so the polygon exists and the conclusion holds |
+
+What it does **not** prove is stated in the record and in the article: that `Z<n>` is the polygon
+of Bingane and Audet (no published code to transcribe; the check is the agreement of `t` and of
+the perimeter with the published values to ten digits and an independent Python
+reconstruction), and that the root is the only one in `(0, π/n)` (interval bisection, in Julia and
+in Python).
+
+* **Z32** (`Polynomial/Z32/`, generator `gen_z.jl`) is the case of `A32`: every vertex is
+  `(sin z · X(c), Y(c))`, the root equation is a polynomial `Fc`, and the same Henneberg
+  construction pins every vertex.
+* **Z64** (`Polynomial/Z64/`, generator `gen_z64.jl`, lemmas `BasicZ.lean`) is not of that
+  form: four vertices carry the unknown `y` of Proposition 2, a square root, and the constant `1/2`
+  enters two abscissae. Everything is a function of `c = cos t` alone: `sn c = √(1 − c²)`,
+  `rad c`, `rr c = √(rad c)`, `yv c = y₅₁(c) + rr c`, and each coordinate is
+  `A(c) + sn c · B(c) + yv c · D(c)`. The two equations of Proposition 2 are `E1e`, which holds at
+  every `c` because `y` is defined as its solution, and `E2e`, whose zero is the root;
+  `G c = E2e c (sn c) (yv c)`. Square roots are enclosed by `enc_sqrt` from an enclosure of the
+  radicand, and the sign of `G` at the ends of the bracket by enclosure arithmetic. Sides 15 and 48 hold
+  only where `G = 0`.
+  No Henneberg step reaches the four vertices 14, 15, 49, 50 (each has one pinned neighbour and they
+  are joined by five more bars): they are pinned as a unit (`block_pin`) and their stresses are solved as
+  a unit (`cramer_lin`, `blockA`, with the free stress `t` of the bar 15–50), so the self-stress
+  space is one-dimensional, as the rank `2n − 2` of the 126 bars requires.
+
+Both have nine negative controls with twins (`negative_controls_family/Z<n>/`): the same as
+`fnc01`–`fnc09` above, with `fnc03` about the sides that need the root equation.
+
 ## Where the data comes from
 
 `lean/generators/family/gen_family.jl <n>` writes `ChiquipoliFamily/Polynomial/A<n>/`. Its

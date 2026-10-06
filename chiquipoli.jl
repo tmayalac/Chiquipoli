@@ -251,7 +251,7 @@ function status()
             verdict(get(f, "verdict", "?"))])
     end
     table(["polygon", "root z_n", "perimeter nℓ", "min det ≥", "δ_inact ≥", "min λ ≥", "verdict"], rows; right = 2:6)
-    note("Z₃₂, Z₆₄ (Bingane–Audet, larger perimeter): certified like A₃₂, A₆₄, but no Lean statement covers them.")
+    note("Z₃₂, Z₆₄ (Bingane–Audet, larger perimeter): certified like A₃₂, A₆₄; Lean proves their local maximality at every root of the equation in the certified bracket, not the uniqueness of the root.")
 
     section("THE INDEPENDENT CROSS-CHECK · the same gates, a second implementation")
     rows = Any[]

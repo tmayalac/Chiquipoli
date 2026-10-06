@@ -1,4 +1,4 @@
-# Lean 4 / Mathlib certificate of the Bingane–Audet family layer (A16, A32, A64).
+# Lean 4 / Mathlib certificate of the Bingane–Audet family layer (A16, A32, A64, Z32, Z64).
 #
 #   julia --project=. pipeline/record_lean_family_certificate.jl          # run + record
 #   julia --project=. pipeline/record_lean_family_certificate.jl --check  # compare only
@@ -23,6 +23,7 @@ const ROOT = normpath(joinpath(@__DIR__, ".."))
 const LEAN = joinpath(ROOT, "lean")
 const OUT  = joinpath(ROOT, "results", "lean_family_certificate.toml")
 const CASES = (16, 32, 64)
+const ZCASES = (32, 64)
 using Dates, TOML, SHA
 
 # Every file the verdict depends on, relative to the repository root: the Lean
@@ -45,6 +46,7 @@ tracked_files() = sort!(unique(vcat(
      "test/fixtures/optigon_reference.jl", "test/literature.jl",
      "cases/optigon_exact.jl", "cases/upstream/optigon/cstrt_audet_ngon.jl"],
     ["cases/family/A$(n)/candidate.jl" for n in CASES],
+    ["cases/family/Z$(n)/candidate.jl" for n in ZCASES],
     walk("lean/ChiquipoliFamily", ".lean"),
     walk("lean/negative_controls_family", ".lean"),
     walk("lean/generators/family", ".jl"),
@@ -96,7 +98,7 @@ function mathlib_rev()
 end
 
 println("="^78)
-println("LEAN 4 / MATHLIB CERTIFICATE — the Bingane–Audet family (A16, A32, A64)")
+println("LEAN 4 / MATHLIB CERTIFICATE — the Bingane–Audet polygons (A16, A32, A64, Z32, Z64)")
 println("="^78)
 t0 = time()
 out = IOBuffer()
@@ -146,6 +148,35 @@ function case_numbers(n)
     )
 end
 
+
+# The same for Z32 (gen_z.jl) and Z64 (gen_z64.jl).
+function z_case_numbers(n)
+    scratch = mktempdir()
+    gen = n == 64 ? "gen_z64.jl" : "gen_z.jl"
+    txt = try
+        read(setenv(Cmd(`julia --project=. lean/generators/family/$gen $n`; dir = ROOT),
+                    merge(Dict(ENV), Dict("CHIQUI_OUTDIR" => scratch))), String)
+    finally
+        rm(scratch; recursive = true, force = true)
+    end
+    g(re) = (m = match(re, txt); m === nothing ? "?" : m.captures[1])
+    Dict{String,Any}(
+        "clo" => replace(g(r"\[clo,chi\] = \[([^,]+),"), "//" => "/"),
+        "chi" => replace(g(r"\[clo,chi\] = \[[^,]+, ([^\]]+)\]"), "//" => "/"),
+        "bracket_width" => g(r"width ([0-9.e+-]+)"),
+        "enclosure_radius_rho" => g(r"ρ = ([0-9.e+-]+)"),
+        "support_determinants" => parse(Int, g(r"convexity: (\d+) determinants")),
+        "worst_support_margin" => g(r"worst certified margin ([0-9.e+-]+)"),
+        "inactive_pairs" => parse(Int, g(r"inactive:\s+(\d+) pairs")),
+        "worst_inactive_bound" => g(r"worst certified bound ([0-9.e+-]+)"),
+        "henneberg_steps" => parse(Int, g(r"Henneberg: (\d+) steps")),
+        "min_diameter_stress_lower_bound" => g(r"worst certified λ ≥ ([0-9.e+-]+)"),
+        "side_stress_sum_upper_bound" => g(r"Σα ≤ ([0-9.e+-]+)"),
+        "generated_files" => length(filter(f -> endswith(f, ".lean"), readdir(joinpath(LEAN, "ChiquipoliFamily", "Polynomial", "Z$n")))),
+        "headline" => "Chiquipoli.Family.Z$n.locally_maximal_at",
+    )
+end
+
 checks = Dict{String,Any}(
     "build" => haspass("lake build ChiquipoliFamily"),
     "no_sorry" => haspass("no 'sorry', 'admit' or 'native_decide'"),
@@ -159,6 +190,15 @@ for n in CASES
     checks["A$(n)_regeneration"] = gen
     println("reading the certified numbers of A$n from the generator ...")
     cases["A$n"] = case_numbers(n)
+end
+zcases = Dict{String,Any}()
+for n in ZCASES
+    ctl = haspass("Z$n: all \\d+ controls rejected by Lean, all \\d+ twins compile")
+    gen = haspass("Z$n: \\d+ certificate files, the root module and \\d+ control/twin files reproduce byte for byte")
+    checks["Z$(n)_controls_and_twins"] = ctl
+    checks["Z$(n)_regeneration"] = gen
+    println("reading the certified numbers of Z$n from the generator ...")
+    zcases["Z$n"] = z_case_numbers(n)
 end
 all_pass = verify_ok && all(values(checks)) && occursin("FAMILY LEAN CERTIFICATE PASS", report)
 
@@ -174,17 +214,29 @@ doc = Dict{String,Any}(
         "git_commit" => commit,
         "git_source_clean" => srcclean,
         "verify_seconds" => seconds,
-        "method" => "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point",
+        "method" => "vertex enclosures + sign lemmas proved once for every n; Henneberg rigidity; multipliers as a Henneberg self-stress; kernel-checked rational arithmetic, no floating point (Z64: square roots by enclosures, one block step)",
     ),
     "checks" => checks,
     "cases" => cases,
+    "zcases" => zcases,
     "theorems" => Dict{String,Any}(
         "axioms" => ["propext", "Classical.choice", "Quot.sound"],
         "axiom_audited_theorems" => axm === nothing ? 0 : parse(Int, axm.captures[1]),
         "negative_controls_per_case" => parse(Int, match(r"NEGATIVE_CONTROLS_PER_CASE=(\d+)", read(joinpath(LEAN, "verify_family.sh"), String)).captures[1]),
+        "negative_controls_per_zcase" => parse(Int, match(r"NEGATIVE_CONTROLS_PER_ZCASE=(\d+)", read(joinpath(LEAN, "verify_family.sh"), String)).captures[1]),
+        "headline_per_zcase" => ["locally_maximal_at", "locally_maximal"],
         "headline_per_case" => ["published_locally_maximal", "locally_maximal_unique", "locally_maximal_at", "locally_maximal"],
     ),
     "scope" => Dict{String,Any}(
+        "formalized_Z" => [
+            "for each of Z32 and Z64 (Bingane and Audet, Propositions 1 and 2, rebuilt in cases/exact_coords.jl): a root of the equation of the polygon exists in a rational bracket of width about 1e-17 (Z64: the sign of G at both ends, by enclosure arithmetic on exact values and square-root enclosures), and at EVERY root c in the bracket the configuration is equilateral (the sides 9 and 22 of Z32, and the sides 15 and 48 of Z64, only at a root; the sides 13 and 50 of Z64 because y solves the first equation of Proposition 2), has its active diameters equal to 1, is strictly convex in labelled cyclic order and small",
+            "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress; for Z64 the 4 vertices 14, 15, 49, 50 that no Henneberg step reaches are solved as a unit), and I_eq = R_eq (Henneberg steps; for Z64 also one block step)",
+            "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Z<n>.locally_maximal_at, Z<n>.locally_maximal)",
+        ],
+        "not_formalized_Z" => [
+            "that Z32 and Z64 are the polygons of Bingane and Audet: there is no published constructor to transcribe, so the polygons are rebuilt from the statements of their Propositions 1 and 2; this is bounded by the agreement of t and of the perimeter with the published values to ten digits and by an independent Python reconstruction, not by Lean",
+            "the uniqueness of the root of the equation of Z32 in (0, pi/32) and of Z64 in (0, pi/64): proved by interval bisection in Julia and in Python (pipeline/certify_z.jl, pipeline/independent/verify.py), not in Lean",
+        ],
         "formalized" => [
             "for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)",
             "the configuration built from it is equilateral, has its n-1 active diameters equal to 1, is strictly convex in labelled cyclic order (all n(n-2) support determinants positive) and small (every other pair below 1)",
@@ -203,7 +255,7 @@ doc = Dict{String,Any}(
     "source_sha256" => [Dict{String,Any}("file" => f, "sha256" => filehash(f)) for f in tracked_files()],
     "certified" => all_pass,
     "verdict" => all_pass ?
-        "LEAN FAMILY CERTIFICATE PASS — A16, A32 and A64 are kernel-verified strict local maximisers" :
+        "LEAN FAMILY CERTIFICATE PASS — A16, A32, A64, Z32 and Z64 are kernel-verified strict local maximisers" :
         "LEAN FAMILY CERTIFICATE FAIL",
 )
 open(OUT, "w") do io

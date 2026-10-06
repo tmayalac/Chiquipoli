@@ -301,7 +301,12 @@ indep_stage() {   # <stage name> <what> <polygons...>; a skip when there is no p
   local name="$1" what="$2"; shift 2
   if have python3; then stage "$name" "$what" indep "$@"; else skip "$name" "python3 is not on PATH"; fi
 }
-family_case() { (cd lean && FAMILY_CASES="$1" ./verify_family.sh); }
+family_case() {   # a case is a number (A_n) or Z<n>
+  case "$1" in
+    Z*) (cd lean && FAMILY_CASES=" " FAMILY_ZCASES="${1#Z}" ./verify_family.sh) ;;
+    *)  (cd lean && FAMILY_CASES="$1" FAMILY_ZCASES=" " ./verify_family.sh) ;;
+  esac
+}
 trig_case() { (cd lean && TRIG_CASES="$1" ./verify_general.sh); }
 
 # --- the modes ----------------------------------------------------------------
@@ -325,7 +330,7 @@ quick)
 lean)
   if lean_ready; then
     stage lean-a16     "A16 Lean layer: five checks, recorded in results/lean_certificate.toml" julia_run pipeline/record_lean_certificate.jl
-    stage lean-family  "family Lean layer (A16, A32, A64): five checks, recorded in results/lean_family_certificate.toml" julia_run pipeline/record_lean_family_certificate.jl
+    stage lean-family  "family Lean layer (A16, A32, A64, Z32, Z64): five checks, recorded in results/lean_family_certificate.toml" julia_run pipeline/record_lean_family_certificate.jl
     stage lean-general "the general Lean theorem ($(echo $FAMILY_TRIG_N | sed 's/[0-9]*/A&/g')): five checks, 12 tampered-data controls per case" trig_case "$FAMILY_TRIG_N"
   else
     skip lean-a16    "Lean or the Mathlib cache is missing (make lean-cache)"
@@ -418,13 +423,14 @@ z)
   stage "certificate-Z$N" "the certificate of Z$N: 9 gates (root, root uniqueness, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
   CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
-  printf "\n"; note "note: Lean does not cover Z$N; make mutation-check plants defects in it"
+  printf "\n"; note "note: make z$N-complete adds Z$N in Lean; make mutation-check plants defects in its Julia certificate"
   ;;
 
 zcomplete)
-  # Everything that certifies Z32 or Z64, as `candidate` does for A_n except Lean (there is
-  # none for Z_n): the suite, the general certifier, the 9-gate certificate, the independent
-  # cross-check and the planted defects. Writes no record in results/.
+  # Everything that certifies Z32 or Z64, as `candidate` does for A_n: the suite, the general
+  # certifier, the 9-gate certificate, the independent cross-check, the Lean certificate of
+  # the polygon (a partial run of verify_family.sh: build, no sorry, axioms, 9 controls and
+  # twins, regeneration) and the planted defects. Writes no record in results/.
   case "$CASE" in 32|64) ;; *) echo "usage: $0 zcomplete <32|64>"; exit 2 ;; esac
   N="$CASE"
   stage test "the Julia suite (incl. Z$N: perimeter, derivative of the defining equation, root uniqueness)" julia_run test/runtests.jl
@@ -432,12 +438,17 @@ zcomplete)
   stage "certificate-Z$N" "the certificate of Z$N: 9 gates (root, root uniqueness, side length, exact identities, convexity, inactive margin, rank, multipliers, box nesting)" \
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
   CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
+  if lean_ready; then
+    stage "lean-family-Z$N" "Z$N in Lean: build, no sorry, axioms, 9 controls + twins, regeneration (partial run)" family_case "Z$N"
+  else
+    skip "lean-family-Z$N" "Lean or the Mathlib cache is missing (make lean-cache)"
+  fi
   if clean_tree; then
     stage "mutation-Z$N" "the planted defects of Z$N (root digit, active edge, construction, defining equation, pendant angle), each refused by its certificate" tools/mutation_check.sh z "$N"
   else
     skip "mutation-Z$N" "needs a clean git tree (it edits tracked files and restores them from git)"
   fi
-  printf "\n"; note "note: Lean does not cover Z$N; make z$N is the quick version of this"
+  printf "\n"; note "note: make z$N is the quick version of this (no Lean)"
   ;;
 
 candidate)

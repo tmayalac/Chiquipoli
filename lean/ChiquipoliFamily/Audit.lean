@@ -80,3 +80,32 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.A64.F_eq
 #print axioms Chiquipoli.Family.A64.Q_eq_P
 #print axioms Chiquipoli.Family.A64.published_locally_maximal
+
+-- Z32 (Bingane-Audet, Proposition 1; no published constructor, no uniqueness theorem)
+#print axioms Chiquipoli.Family.Z32.Fc_root
+#print axioms Chiquipoli.Family.Z32.convexOrdered
+#print axioms Chiquipoli.Family.Z32.small
+#print axioms Chiquipoli.Family.Z32.equilateral
+#print axioms Chiquipoli.Family.Z32.active_eq
+#print axioms Chiquipoli.Family.Z32.stationary
+#print axioms Chiquipoli.Family.Z32.lam_pos
+#print axioms Chiquipoli.Family.Z32.Ieq_imp_R
+#print axioms Chiquipoli.Family.Z32.locally_maximal_at
+#print axioms Chiquipoli.Family.Z32.locally_maximal
+
+-- Z64 (Bingane-Audet, Proposition 2; two unknowns, a square root; no published constructor)
+#print axioms Chiquipoli.Family.Z64.G_root
+#print axioms Chiquipoli.Family.Z64.convexOrdered
+#print axioms Chiquipoli.Family.Z64.small
+#print axioms Chiquipoli.Family.Z64.equilateral
+#print axioms Chiquipoli.Family.Z64.active_eq
+#print axioms Chiquipoli.Family.Z64.stationary
+#print axioms Chiquipoli.Family.Z64.lam_pos
+#print axioms Chiquipoli.Family.Z64.Ieq_imp_R
+#print axioms Chiquipoli.Family.Z64.locally_maximal_at
+#print axioms Chiquipoli.Family.Z64.locally_maximal
+#print axioms Chiquipoli.Family.block_pin
+#print axioms Chiquipoli.Family.blockA
+#print axioms Chiquipoli.Family.cramer_lin
+#print axioms Chiquipoli.Family.enc_sqrt
+#print axioms Chiquipoli.Family.sqd_ub0

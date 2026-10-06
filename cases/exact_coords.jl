@@ -235,3 +235,126 @@ function audet_cs(n, z)
     Fc, _ = audet_Fc(n)
     return audet_coords_cs(n), Fc, _R([2,-2]), _R([1]), interval(z-big"1e-30", z+big"1e-30")
 end
+
+# ---- Z32 (Bingane-Audet, Proposition 1; rebuilt, no upstream constructor) ----
+# Generic over the arithmetic, like audet_generic: `S(k)`, `C(k)` are sin/cos of
+# k t, `K(q)` a rational constant, `ops = (add, sub, mul, dvd, neg)`. Vertices
+# p_0..p_31 with p_0 at the origin; p_{32-i} = (-x_i, y_i). Single source of
+# truth: cases/family/Z32/candidate.jl (interval instance), the exact certifier
+# and lean/generators/family/gen_z.jl (Lean) all call these two functions.
+function z32_generic(S, C, K, ops)
+    add, sub, mul, dvd, neg = ops
+    p = Vector{Any}(nothing, 32)
+    p[1] = (K(0), K(0)); p[17] = (K(0), K(1))              # p_0, p_16
+    for k in 1:5;  p[16-k+1] = (S(k), C(k)); end           # p_{16-k}, k = 1..5
+    for k in 6:13; p[37-k+1] = (sub(p[12][1], S(k)), sub(p[12][2], C(k))); end   # p_{37-k} = p_11 - (S_k, C_k)
+    p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))   # p_10 = p_24 + (S_14, C_14)
+    p[24] = (sub(p[11][1], S(15)), sub(p[11][2], C(15)))   # p_23 = p_10 - (S_15, C_15)
+    for i in 1:31                                          # p_{32-i} = (-x_i, y_i)
+        q = p[i+1]; q === nothing && continue
+        p[32-i+1] === nothing && (p[32-i+1] = (neg(q[1]), q[2]))
+    end
+    all(!isnothing, p) || error("Z32: a vertex is undefined")
+    return p
+end
+function z32_F_generic(S, C, K, ops)
+    add, sub, mul, dvd, neg = ops
+    x = add(sub(S(5), S(13)), S(14))
+    u = sub(mul(K(2), x), S(15))
+    return sub(add(mul(u, u), mul(C(15), C(15))), sub(K(2), mul(K(2), C(1))))
+end
+z32_coords_cs() = z32_generic(cs_sin, cs_cos, cs_const, _AUDET_CS_OPS)
+"""
+    z32_Fc() -> Fc
+
+The equation of Z32 in c = cos t, monic. F32 has no s-part (checked).
+"""
+function z32_Fc()
+    F = z32_F_generic(cs_sin, cs_cos, cs_const, _AUDET_CS_OPS)
+    EI.iszeropoly(F.B) || error("Z32: F has an s-part")
+    return _R(F.A ./ F.A[end])
+end
+
+# ---- Z64 (Bingane-Audet, Proposition 2; rebuilt, no upstream constructor) ----
+# Two unknowns (t, y); see cases/family/Z64/candidate.jl for the construction. Single
+# source of truth for the vertices (the interval instance, the exact certifier and
+# lean/generators/family/gen_z64.jl all call z64_vertices).
+const Z64_PATH   = [0,31,63,30,61,29,60,28,58,27,57,26,56,25,55,24,54,23,53,21,52,19,51,16]
+const Z64_ANGLES = [1,2,3,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,22,23,25,26,29]
+const Z64_PEND   = [(30,62,4,-1), (28,59,9,-1), (53,22,21,1), (52,20,24,1), (51,18,27,1), (51,17,28,1)]
+
+# The vertices, generic over the number type. S, C: k -> sin(kt), cos(kt);
+# K: Rational -> a constant; y: the y coordinate shared by v14, v15, v49, v50.
+function z64_vertices(S, C, K, y)
+    n = 64
+    p = Vector{Any}(nothing, n)
+    p[1] = (K(0), K(0)); p[33] = (K(0), K(1))
+    for (k, ((a, b), m)) in enumerate(zip(zip(Z64_PATH, Z64_PATH[2:end]), Z64_ANGLES))
+        sg = isodd(k) ? 1 : -1                              # alternating, starting with +
+        p[b+1] = (sg > 0 ? p[a+1][1] + S(m) : p[a+1][1] - S(m),
+                  sg > 0 ? p[a+1][2] + C(m) : p[a+1][2] - C(m))
+    end
+    for (a, b, m, sg) in Z64_PEND
+        p[b+1] = (sg > 0 ? p[a+1][1] + S(m) : p[a+1][1] - S(m),
+                  sg > 0 ? p[a+1][2] + C(m) : p[a+1][2] - C(m))
+    end
+    for i in 1:n-1                                         # p_{64-i} = (-x_i, y_i)
+        q = p[i+1]; q === nothing && continue
+        p[n-i+1] === nothing && (p[n-i+1] = (-q[1], q[2]))
+    end
+    h = K(1//2)
+    p[51] = (-h, y); p[15] = (h, y)                        # v50, v14
+    p[16] = (-h + C(1), y + S(1)); p[50] = (h - C(1), y + S(1))   # v15, v49
+    all(!isnothing, p) || error("Z64: a vertex is undefined")
+    return p
+end
+
+# Exact identities in Q[c,s,y]/(s^2 + c^2 - 1), y an indeterminate (the engine of
+# src/ExactIdentity.jl has no square roots, so Z64 carries its own small ring).
+# Monomials are exponent triples (c, s, y).
+const _Z64QQ = Rational{BigInt}
+struct Z64Poly; t::Dict{NTuple{3,Int},_Z64QQ}; end
+_z64clean(d) = Z64Poly(Dict(k => v for (k, v) in d if v != 0))
+Z64Poly(v::Integer) = Z64Poly(Dict{NTuple{3,Int},_Z64QQ}(v == 0 ? () : ((0, 0, 0) => _Z64QQ(v),)))
+Z64Poly(v::Rational) = _z64clean(Dict{NTuple{3,Int},_Z64QQ}((0, 0, 0) => _Z64QQ(v)))
+Base.:+(a::Z64Poly, b::Z64Poly) = (d = copy(a.t); for (k, v) in b.t; d[k] = get(d, k, _Z64QQ(0)) + v; end; _z64clean(d))
+Base.:-(a::Z64Poly) = Z64Poly(Dict(k => -v for (k, v) in a.t))
+Base.:-(a::Z64Poly, b::Z64Poly) = a + (-b)
+function Base.:*(a::Z64Poly, b::Z64Poly)
+    r = Dict{NTuple{3,Int},_Z64QQ}()
+    for ((c1, s1, y1), v) in a.t, ((c2, s2, y2), w) in b.t
+        k = (c1 + c2, s1 + s2, y1 + y2)
+        if k[2] >= 2                                       # s^2 = 1 - c^2, repeatedly
+            e = k[2]; base = (k[1], e - 2, k[3])
+            r[base] = get(r, base, _Z64QQ(0)) + v*w
+            base2 = (k[1] + 2, e - 2, k[3])
+            r[base2] = get(r, base2, _Z64QQ(0)) - v*w
+        else
+            r[k] = get(r, k, _Z64QQ(0)) + v*w
+        end
+    end
+    _z64clean(r)
+end
+z64_iszero(a::Z64Poly) = isempty(a.t)
+Base.:(==)(a::Z64Poly, b::Z64Poly) = z64_iszero(a - b)
+const Z64_Cx = Z64Poly(Dict{NTuple{3,Int},_Z64QQ}((1, 0, 0) => _Z64QQ(1)))
+const Z64_Sx = Z64Poly(Dict{NTuple{3,Int},_Z64QQ}((0, 1, 0) => _Z64QQ(1)))
+const Z64_Yx = Z64Poly(Dict{NTuple{3,Int},_Z64QQ}((0, 0, 1) => _Z64QQ(1)))
+const Z64_TC = Z64Poly[Z64Poly(1), Z64_Cx]
+const Z64_TS = Z64Poly[Z64Poly(0), Z64_Sx]
+for _k in 2:29
+    push!(Z64_TC, Z64Poly(2) * Z64_Cx * Z64_TC[end] - Z64_TC[end-1])
+    push!(Z64_TS, Z64Poly(2) * Z64_Cx * Z64_TS[end] - Z64_TS[end-1])
+end
+"The 64 vertices as polynomials in (c, s, y) modulo s^2 + c^2 - 1."
+z64_poly_vertices() = z64_vertices(k -> Z64_TS[k+1], k -> Z64_TC[k+1], q -> Z64Poly(_Z64QQ(q)), Z64_Yx)
+"The two defining equations E1, E2 of Z64 as polynomials in (c, s, y), written independently of the vertices."
+function z64_equations()
+    p = z64_poly_vertices()
+    S = k -> Z64_TS[k+1]; C = k -> Z64_TC[k+1]
+    e2 = Z64Poly(2) - Z64Poly(2) * Z64_Cx
+    y51 = p[52][2]; a = p[52][1] + Z64Poly(1//2); r = Z64_Yx - y51
+    E1 = r * r + a * a - e2
+    E2 = (a + S(29) - C(1)) * (a + S(29) - C(1)) + (C(29) - S(1) - r) * (C(29) - S(1) - r) - e2
+    return (E1 = E1, E2 = E2, e2 = e2, a = a, y51 = y51)
+end

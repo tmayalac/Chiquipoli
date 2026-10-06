@@ -31,28 +31,9 @@ let
     # active diameters (i, j), 0-based: n - 1 of them, LICQ defect 1 (as for A_n)
     active = Tuple{Int,Int}[(0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17), (0, 18), (0, 19), (0, 20), (0, 21), (1, 21), (2, 21), (3, 21), (4, 21), (5, 21), (6, 21), (7, 21), (8, 21), (8, 22), (9, 22), (10, 23), (10, 24), (11, 24), (11, 25), (11, 26), (11, 27), (11, 28), (11, 29), (11, 30), (11, 31)]
 
-    # Generic over the arithmetic, as audet_generic in cases/exact_coords.jl.
-    function z32_generic(S, C, K, ops)
-        add, sub, mul, dvd, neg = ops
-        p = Vector{Any}(nothing, 32)
-        p[1] = (K(0), K(0)); p[17] = (K(0), K(1))              # p_0, p_16
-        for k in 1:5;  p[16-k+1] = (S(k), C(k)); end           # p_{16-k}, k = 1..5
-        for k in 6:13; p[37-k+1] = (sub(p[12][1], S(k)), sub(p[12][2], C(k))); end   # p_{37-k} = p_11 - (S_k, C_k)
-        p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))   # p_10 = p_24 + (S_14, C_14)
-        p[24] = (sub(p[11][1], S(15)), sub(p[11][2], C(15)))   # p_23 = p_10 - (S_15, C_15)
-        for i in 1:31                                          # p_{32-i} = (-x_i, y_i)
-            q = p[i+1]; q === nothing && continue
-            p[32-i+1] === nothing && (p[32-i+1] = (neg(q[1]), q[2]))
-        end
-        all(!isnothing, p) || error("Z32: a vertex is undefined")
-        return p
-    end
-    function z32_F(S, C, K, ops)
-        add, sub, mul, dvd, neg = ops
-        x = add(sub(S(5), S(13)), S(14))
-        u = sub(mul(K(2), x), S(15))
-        return sub(add(mul(u, u), mul(C(15), C(15))), sub(K(2), mul(K(2), C(1))))
-    end
+    # z32_generic and z32_F_generic (generic over the arithmetic, as audet_generic)
+    # are in cases/exact_coords.jl, the one source shared with the exact certifier
+    # and the Lean generator.
     II(k) = interval(BigFloat, k)
     ops = (+, -, *, /, -)
     coords = function (z)
@@ -61,7 +42,7 @@ let
         for i in 1:n; p[i, 1] = Pv[i][1]; p[i, 2] = Pv[i][2]; end
         return p
     end
-    Ffun = z -> z32_F(k -> sin(II(k)*z), k -> cos(II(k)*z), q -> II(q) + zero(z), ops)
+    Ffun = z -> z32_F_generic(k -> sin(II(k)*z), k -> cos(II(k)*z), q -> II(q) + zero(z), ops)
     # F32'(t) = 2 u u' - 30 C15 S15 - 2 S1, with u = 2(S5 - S13 + S14) - S15 and
     # u' = 2(5 C5 - 13 C13 + 14 C14) - 15 C15. Checked against a finite difference in
     # test/literature.jl; the interval Newton step of pipeline/certify_z.jl uses it.
@@ -86,9 +67,7 @@ let
             :exact => (sbox) -> begin
                 cops = (csadd, cssub, csmul, csdiv, csneg)
                 co = z32_generic(cs_sin, cs_cos, cs_const, cops)
-                F = z32_F(cs_sin, cs_cos, cs_const, cops)
-                EI.iszeropoly(F.B) || error("Z32: F has an s-part")
-                Fc = _R(F.A ./ F.A[end])
+                Fc = z32_Fc()
                 zb = interval(z_nom - big"1e-30", z_nom + big"1e-30")
                 EI.prove_all(co, n, active, _R([2,-2]), _R([1]), Fc, sbox === nothing ? zb : sbox)
             end,

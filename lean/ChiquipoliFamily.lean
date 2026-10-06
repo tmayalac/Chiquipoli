@@ -14,3 +14,5 @@ import ChiquipoliFamily.Chebyshev
 import ChiquipoliFamily.Polynomial.A16
 import ChiquipoliFamily.Polynomial.A32
 import ChiquipoliFamily.Polynomial.A64
+import ChiquipoliFamily.Polynomial.Z32
+import ChiquipoliFamily.Polynomial.Z64

@@ -203,7 +203,7 @@ else
   trap restore EXIT INT TERM
   verify_rejects() {  # verify_rejects <steps> <cases> <expected message regex>
     local out
-    out=$(cd lean && FAMILY_STEPS="$1" FAMILY_CASES="$2" ./verify_family.sh 2>&1) && return 1
+    out=$(cd lean && FAMILY_STEPS="$1" FAMILY_CASES="$2" FAMILY_ZCASES=" " ./verify_family.sh 2>&1) && return 1
     out=$(printf '%s' "$out" | sed $'s/\033\\[[0-9;]*m//g')
     printf '%s' "$out" | grep -q 'partial run, not a certification) FAIL' || return 1
     printf '%s' "$out" | grep -qE "$3"
