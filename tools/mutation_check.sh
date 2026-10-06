@@ -391,8 +391,8 @@ z_rejects() {
   printf '%s' "$out" | grep -q "FAMILY CERTIFICATE Z$1: NOT CERTIFIED"
 }
 ZN="${2:-}"      # optional: only the defects of Z<ZN>
-run_z_mutation() {  # run_z_mutation <n> <label> <old> <new>
-  local n="$1" label="Z$1 $2" f="cases/family/Z$1/candidate.jl"
+run_z_mutation() {  # run_z_mutation <n> <label> <old> <new> [file]; the construction lives in cases/exact_coords.jl
+  local n="$1" label="Z$1 $2" f="${5:-cases/family/Z$1/candidate.jl}"
   [ -z "$ZN" ] || [ "$ZN" = "$n" ] || return 0
   if ! patch_once "$f" "$3" "$4"; then bad "$label (could not apply)"; return; fi
   if z_rejects "$n"; then ok "$label"; else bad "$label — certify_z.jl accepted it (or crashed)"; fi
@@ -401,12 +401,12 @@ run_z_mutation() {  # run_z_mutation <n> <label> <old> <new>
 run_z_mutation 32 "root literal: one digit altered" 'big"0.09817442866964279340015033' 'big"0.09817442866964279340025033'
 run_z_mutation 32 "active graph: one diameter moved" '(11, 30), (11, 31)]' '(11, 30), (10, 31)]'
 run_z_mutation 32 "construction: p10 = p24 + (S14, C14) -> (S13, C13)" \
-  'p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))' 'p[11] = (add(p[25][1], S(13)), add(p[25][2], C(13)))'
-run_z_mutation 32 "defining equation: S13 -> S12" 'x = add(sub(S(5), S(13)), S(14))' 'x = add(sub(S(5), S(12)), S(14))'
+  'p[11] = (add(p[25][1], S(14)), add(p[25][2], C(14)))' 'p[11] = (add(p[25][1], S(13)), add(p[25][2], C(13)))' cases/exact_coords.jl
+run_z_mutation 32 "defining equation: S13 -> S12" 'x = add(sub(S(5), S(13)), S(14))' 'x = add(sub(S(5), S(12)), S(14))' cases/exact_coords.jl
 run_z_mutation 64 "root literal: one digit altered" 'big"0.0490873533992997825741651747179' 'big"0.0490873533992997825742651747179'
 run_z_mutation 64 "active graph: one diameter moved" '(30, 63), (31, 63)]' '(30, 63), (31, 62)]'
-run_z_mutation 64 "construction: one angle of the half-path" 'ANGLES = [1,2,3,5,' 'ANGLES = [1,2,4,5,'
-run_z_mutation 64 "construction: one pendant angle" '(30,62,4,-1)' '(30,62,5,-1)'
+run_z_mutation 64 "construction: one angle of the half-path" 'Z64_ANGLES = [1,2,3,5,' 'Z64_ANGLES = [1,2,4,5,' cases/exact_coords.jl
+run_z_mutation 64 "construction: one pendant angle" '(30,62,4,-1)' '(30,62,5,-1)' cases/exact_coords.jl
 run_z_mutation 64 "defining equation: S29 -> S28" 'return (w.a + w.S(29) - w.C(1))^2' 'return (w.a + w.S(28) - w.C(1))^2'
 note ""
 fi

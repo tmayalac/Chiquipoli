@@ -60,7 +60,7 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A32 (Bingane–Audet)"
-git_commit = "94e03f7d783d083711cbdd711cd84a9846e72842"
+git_commit = "8272711baaf03d2753c8b4a27f21dbd6250922a7"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
@@ -68,7 +68,7 @@ matmul_mode = "Float64 intervals, :fast product (sentinel verified on this machi
 n = 32
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-10-05T22:05:38Z"
+utc = "2026-10-06T15:46:55Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -81,7 +81,7 @@ file = "src/SmallPolygons.jl"
 sha256 = "8c8be4787412c6c5c45a9fa38590375f0f5c0bfd472094a75fce1f3204ce90fb"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
-sha256 = "cf5485829686d09562b0a77da417fbe6d0215cbf8da0f900d2dbe4ddbb318fb9"
+sha256 = "a5283fc742c8d872d41bd70ce349886babe1df00fcab4cd7dfbf9abbf9c8c7a9"
 [[source_sha256]]
 file = "cases/optigon_exact.jl"
 sha256 = "8d3ba4bd6283f6dc59583b850662a8a85aaeb96fcfaea040c8926f1d8909de6e"
