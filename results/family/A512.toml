@@ -60,7 +60,7 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "family certificate of A512 (Bingane–Audet)"
-git_commit = "8272711baaf03d2753c8b4a27f21dbd6250922a7"
+git_commit = "150798ec0d36c29d9acccf9c65d7c5795cf87cfd"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
@@ -68,7 +68,7 @@ matmul_mode = "Float64 intervals, :fast product (sentinel verified on this machi
 n = 512
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-10-06T15:48:03Z"
+utc = "2026-10-06T21:56:42Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -78,7 +78,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "8c8be4787412c6c5c45a9fa38590375f0f5c0bfd472094a75fce1f3204ce90fb"
+sha256 = "65950e56284e3f09a8991af9ed3314a2e31c0ee241cd85a7a803ab3da22b719d"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
 sha256 = "a5283fc742c8d872d41bd70ce349886babe1df00fcab4cd7dfbf9abbf9c8c7a9"
@@ -93,7 +93,7 @@ file = "cases/family/A512/candidate.jl"
 sha256 = "907acfecc2d06af334e4e9d0ccd570e8bad883f8b92b5ede879b108f609246a5"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
-sha256 = "4f344c838e1c85cefc576df4815820026331e98c44ba72275e80c94b8fe99060"
+sha256 = "5a94c31f17d5027d1a24738a350337fb773b9f9927decc314132fc47666026c3"
 [[source_sha256]]
 file = "Project.toml"
 sha256 = "2100267870e08277f0761433f1b4805d92bd17988d043a6611b60376a8617607"

@@ -209,13 +209,13 @@ status = "CERTIFIED"
 bigfloat_precision_bits = 256
 certificate = "dedicated A16 first-order certificate (pipeline/certify_a16.jl)"
 git_available = true
-git_commit = "8272711baaf03d2753c8b4a27f21dbd6250922a7"
+git_commit = "150798ec0d36c29d9acccf9c65d7c5795cf87cfd"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
 package = "A16Certificate v1.3.1 [AH26]"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-10-06T15:43:46Z"
+utc = "2026-10-06T21:52:19Z"
 z_cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 z_root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
 
@@ -224,7 +224,7 @@ file = "pipeline/certify_a16.jl"
 sha256 = "db6375037e18a8469aeee021a4c6debd5211aaf4b766cab1d3decbb0ace6605c"
 [[source_sha256]]
 file = "pipeline/certify_family.jl"
-sha256 = "4f344c838e1c85cefc576df4815820026331e98c44ba72275e80c94b8fe99060"
+sha256 = "5a94c31f17d5027d1a24738a350337fb773b9f9927decc314132fc47666026c3"
 [[source_sha256]]
 file = "pipeline/certify_literature.jl"
 sha256 = "df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742"
@@ -233,7 +233,7 @@ file = "pipeline/certify_radius.jl"
 sha256 = "cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd"
 [[source_sha256]]
 file = "pipeline/certify_z.jl"
-sha256 = "8944ddd0264f4e426815ace2269615545234b7ba4917fcdc06822277f4527d24"
+sha256 = "2c172f33b9317145a412a4ec071a0879a62650594f60da83cbe9abbd717880cf"
 [[source_sha256]]
 file = "pipeline/check_records.jl"
 sha256 = "b9272144b063f92c8641ebbb690a0862a194002cfe70dc8abf6d5b3905f68915"
@@ -275,7 +275,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "8c8be4787412c6c5c45a9fa38590375f0f5c0bfd472094a75fce1f3204ce90fb"
+sha256 = "65950e56284e3f09a8991af9ed3314a2e31c0ee241cd85a7a803ab3da22b719d"
 [[source_sha256]]
 file = "src/a16/constructor.jl"
 sha256 = "108db41f60bf278e01eb1d93072998c103eb4c7c50be6bcda09b5e1248232a50"

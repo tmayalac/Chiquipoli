@@ -38,12 +38,12 @@ id = "inactive_margin"
 passed = true
 status = "CERTIFIED"
 [[gate]]
-detail = "regular 62×62 minor (‖I-CM‖∞=2.3430180625546225e-14<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=62, I_eq=R_eq [numerical sanity max|Aρ|=2.95344585042539488848015008945460690159038612664424787259899050762605126422692e-25] [Float64 intervals, :fast product (sentinel verified on this machine)]"
+detail = "regular 62×62 minor (‖I-CM‖∞=1.567756153621859322769088399834654094121992244448107519076149029819985168020739e-24<1) ⇒ rank≥2n-2; exact annihilation theorem + Lemma L1 (distinct vertices from certified convexity) ⇒ rank≤2n-2; hence rank=2n-2=62, I_eq=R_eq [numerical sanity max|Aρ|=2.95344585042539488848015008945460690159038612664424787259899050762605126422692e-25] [BigFloat intervals]"
 id = "rank"
 passed = true
 status = "CERTIFIED"
 [[gate]]
-detail = "LICQ fails by 1; multipliers form a 1-parameter affine family; certified KKT multipliers with all active-diameter multipliers λ_ij ≥ 0.004069819237741554 > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q) [Float64 intervals, :fast product (sentinel verified on this machine)]"
+detail = "LICQ fails by 1; multipliers form a 1-parameter affine family; certified KKT multipliers with all active-diameter multipliers λ_ij ≥ 0.004069819237743384437321591875356588251649325105039575328827903149914608764260021 > 0 (Krawczyk-enclosed; omitted equations recovered via regular Q) [BigFloat intervals]"
 id = "multipliers"
 passed = true
 status = "CERTIFIED"
@@ -56,15 +56,15 @@ status = "CERTIFIED"
 [meta]
 cert_radius = "9.999999999999999999999999999999999999999999999999999999999999999999999999999979e-29"
 certificate = "certificate of Z32 (Bingane–Audet)"
-git_commit = "8272711baaf03d2753c8b4a27f21dbd6250922a7"
+git_commit = "150798ec0d36c29d9acccf9c65d7c5795cf87cfd"
 git_source_clean = true
 intervalarithmetic_version = "0.22.36"
 julia_version = "1.12.6"
-matmul_mode = "Float64 intervals, :fast product (sentinel verified on this machine)"
+matmul_mode = "BigFloat intervals, 256 bits (no Float64, no BLAS product)"
 n = 32
 precision_bits = 256
 root_radius = "1.000000000000000000000000000000000000000000000000000000000000000000000000000007e-30"
-utc = "2026-10-06T15:50:53Z"
+utc = "2026-10-06T21:59:20Z"
 
 [[source_sha256]]
 file = "src/A16Certificate.jl"
@@ -74,7 +74,7 @@ file = "src/ExactIdentity.jl"
 sha256 = "a707dcc7e24be3d84252561e5f27d3b6746b3a79f5023f949fe7034752291a82"
 [[source_sha256]]
 file = "src/SmallPolygons.jl"
-sha256 = "8c8be4787412c6c5c45a9fa38590375f0f5c0bfd472094a75fce1f3204ce90fb"
+sha256 = "65950e56284e3f09a8991af9ed3314a2e31c0ee241cd85a7a803ab3da22b719d"
 [[source_sha256]]
 file = "cases/exact_coords.jl"
 sha256 = "a5283fc742c8d872d41bd70ce349886babe1df00fcab4cd7dfbf9abbf9c8c7a9"
@@ -83,7 +83,7 @@ file = "cases/family/Z32/candidate.jl"
 sha256 = "db3ebd36c07994bfa455bc9e50149852813d34479f007b777ce8b6269bf5c970"
 [[source_sha256]]
 file = "pipeline/certify_z.jl"
-sha256 = "8944ddd0264f4e426815ace2269615545234b7ba4917fcdc06822277f4527d24"
+sha256 = "2c172f33b9317145a412a4ec071a0879a62650594f60da83cbe9abbd717880cf"
 [[source_sha256]]
 file = "Project.toml"
 sha256 = "2100267870e08277f0761433f1b4805d92bd17988d043a6611b60376a8617607"
