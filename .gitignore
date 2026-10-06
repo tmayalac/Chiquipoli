@@ -60,3 +60,6 @@ __pycache__/
 
 # Working notes (Spanish), not part of the package
 /docs/notes/
+
+# Private project brief for Claude Code (internal notes)
+/CLAUDE.md
