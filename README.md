@@ -107,7 +107,7 @@ use:
   and $A_{64}$): the same blocks as every candidate, including the exact
   identities (`cases/family/Z32/`, `Z64/`; `make z32`, `make z64`; records in
   `results/family/Z32.toml`, `Z64.toml`, nine gates each, `pipeline/certify_z.jl`, root uniqueness on (0, π/n)
-  included).
+  included; in Lean too).
   Not claimed, and said in each record: a published constructor to run unchanged
   and a Lean statement. They
   are rebuilt from their Propositions 1 and 2, not from OPTIGON, which ships only

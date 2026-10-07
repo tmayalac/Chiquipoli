@@ -430,10 +430,13 @@ let fam = joinpath(ROOT, "results", "lean_family_certificate.toml")
         chk("the record covers Z32 and Z64, with their headline theorems",
             all(haskey(get(rec, "zcases", Dict()), "Z$n") && occursin("locally_maximal_at", get(get(rec["zcases"], "Z$n", Dict()), "headline", "")) for n in (32, 64)))
         sc = get(rec, "scope", Dict())
-        chk("the record states what Lean proves for Z32 and Z64, and keeps their identification with the published polygons and the uniqueness of the root as not formalised",
+        chk("the record states what Lean proves for Z32 and Z64, and keeps their identification with the published polygons as not formalised",
             any(x -> occursin("locally_maximal_at", x), get(sc, "formalized_Z", String[])) &&
-            any(x -> occursin("Propositions 1 and 2", x), get(sc, "not_formalized_Z", String[])) &&
-            any(x -> occursin("uniqueness of the root", x), get(sc, "not_formalized_Z", String[])))
+            any(x -> occursin("Propositions 1 and 2", x), get(sc, "not_formalized_Z", String[])))
+        chk("the record states that the root of Z32 and of Z64 is unique in the search interval, in Lean (locally_maximal_unique)",
+            all(get(get(get(rec, "zcases", Dict()), "Z$n", Dict()), "headline_unique", "") == "Chiquipoli.Family.Z$n.locally_maximal_unique" for n in (32, 64)) &&
+            any(x -> occursin("Z32.locally_maximal_unique", x), get(sc, "formalized_Z", String[])) &&
+            any(x -> occursin("Z64.locally_maximal_unique", x), get(sc, "formalized_Z", String[])))
         chk("the record states the Lean identification with the published constructor",
             any(x -> occursin("published_locally_maximal", x), get(sc, "formalized", String[])))
         chk("the record keeps the one step no kernel can check (transcription fidelity) as not formalised",

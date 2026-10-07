@@ -81,7 +81,7 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.A64.Q_eq_P
 #print axioms Chiquipoli.Family.A64.published_locally_maximal
 
--- Z32 (Bingane-Audet, Proposition 1; no published constructor, no uniqueness theorem)
+-- Z32 (Bingane-Audet, Proposition 1; no published constructor; the root is unique in (0, pi/32])
 #print axioms Chiquipoli.Family.Z32.Fc_root
 #print axioms Chiquipoli.Family.Z32.convexOrdered
 #print axioms Chiquipoli.Family.Z32.small
@@ -91,6 +91,7 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.Z32.lam_pos
 #print axioms Chiquipoli.Family.Z32.Ieq_imp_R
 #print axioms Chiquipoli.Family.Z32.locally_maximal_at
+#print axioms Chiquipoli.Family.Z32.locally_maximal_unique
 #print axioms Chiquipoli.Family.Z32.locally_maximal
 
 -- Z64 (Bingane-Audet, Proposition 2; two unknowns, a square root; no published constructor)
@@ -104,6 +105,7 @@ import ChiquipoliFamily
 #print axioms Chiquipoli.Family.Z64.Ieq_imp_R
 #print axioms Chiquipoli.Family.Z64.locally_maximal_at
 #print axioms Chiquipoli.Family.Z64.locally_maximal
+#print axioms Chiquipoli.Family.Z64.locally_maximal_unique
 #print axioms Chiquipoli.Family.block_pin
 #print axioms Chiquipoli.Family.blockA
 #print axioms Chiquipoli.Family.cramer_lin

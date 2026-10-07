@@ -6,11 +6,11 @@
 # relies on are in lean/ChiquipoliFamily/Basic.lean, proved once for all n.
 #
 # This is gen_family.jl (the generator of A32 and A64) applied to Z32, with the
-# differences that Z32 has no published constructor to transcribe (no Published.lean:
-# OPTIGON ships only the A_n) and no analytic uniqueness argument on the search
-# interval (Unique.lean): uniqueness of the root of Z32 in (0, pi/32) is proved by
-# interval bisection in Julia and in Python, not in Lean. What Lean proves is the
-# statement `locally_maximal_at`: at EVERY root c of Fc in the certified bracket the
+# difference that Z32 has no published constructor to transcribe (no Published.lean:
+# OPTIGON ships only the A_n). Its Unique.lean is not analytic in the search interval of
+# the article but in (0, pi/32] (Fc is strictly increasing on [cos(pi/32), 1]); the
+# bisection of the Julia certificate and of the Python cross-check proves it again.
+# What Lean proves is first the statement `locally_maximal_at`: at EVERY root c of Fc in the certified bracket the
 # polygon P z is a strictly convex equilateral small 32-gon and a strict local
 # maximiser, and a root exists in the bracket.
 #
@@ -1001,9 +1001,197 @@ prev = "$MOD.Main"
 
 
 
+# ---------------------------------------------------------------------------
+# Unique.lean (Z32 only) — the root is the only one in (0, π/32]
+# ---------------------------------------------------------------------------
+# The search interval of the article is (0, π/32]. In c = cos z it is [cos(π/32), 1).
+# Fc is strictly increasing on [slo, 1], where slo < cos(π/32): its derivative is
+# bounded below by a centred Taylor bound on each of KP sub-brackets (one bracket is
+# not enough: the derivative is of order 1e-7 against coefficients of order 1e1, so the
+# remainder of a single expansion over the whole interval exceeds it). Unlike A_n, the
+# interval reaches c = 1 (z → 0), so there is no upper end to compute: shi = 1.
+# cos(π/32) = sqrtTwoAddSeries 0 4 / 2 (Mathlib), bounded level by level.
+if n == 32
+global prev
+kk = Int(log2(n)) - 1
+GS = big(10)^24
+lvl_lo = QQ[]; lvl_hi = QQ[]
+let lo = QQ(0), hi = QQ(0)
+    for j in 1:kk
+        l_ = QQ(floor(BigInt, sqrt(BigFloat(2 + lo)) * GS), GS)
+        u_ = QQ(ceil(BigInt, sqrt(BigFloat(2 + hi)) * GS), GS)
+        @assert l_^2 < 2 + lo && u_^2 > 2 + hi
+        push!(lvl_lo, l_); push!(lvl_hi, u_); lo, hi = l_, u_
+    end
+end
+cosHi_lo = lvl_lo[end] / 2; cosHi_hi = lvl_hi[end] / 2      # bounds on cos(π/n)
+SLO = cosHi_lo; SHI = QQ(1)
+guard(cosHi_hi <= CLO, "the certified bracket does not lie above cos(π/n)")
+dF = QQ[Fc[k+1] * k for k in 1:length(Fc)-1]
+sgn = Int(sign(peval(dF, cstar)))
+guard(sgn > 0, "Fc is not increasing at the root; Unique.lean is written for an increasing Fc")
+KP = 4                                                      # sub-brackets of [slo, 1]
+brk = QQ[SLO]
+for k in 1:KP-1
+    x = SLO + (SHI - SLO) * k // KP
+    d = (SHI - SLO) / (8KP)
+    push!(brk, simplest(x - d, x + d))
+end
+push!(brk, SHI)
+@assert issorted(brk) && length(unique(brk)) == KP + 1
+pc = QQ[]; pr = QQ[]; pdl = QQ[]
+for k in 1:KP
+    a, b = brk[k], brk[k+1]
+    c_ = simplest((a + b) / 2 - (b - a) / 16, (a + b) / 2 + (b - a) / 16)
+    r_ = max(c_ - a, b - c_)
+    t_ = taylor(dF, c_)
+    d_ = t_[1] - sum(abs(t_[j+1]) * r_^j for j in 1:length(t_)-1)
+    guard(d_ > 0, "Fc' is not certified positive on the sub-bracket $k of [slo, 1]")
+    push!(pc, c_); push!(pr, r_); push!(pdl, d_)
+end
+DLB = QQ(floor(BigInt, minimum(pdl) * 9 / 10 * big(10)^18), big(10)^18)
+guard(DLB > 0, "the derivative bound is not positive")
+println("  uniqueness: search bracket [$(Float64(SLO)), 1] in $KP pieces, Fc' ≥ $(Float64(DLB)) (worst piece: $(Float64(minimum(pdl))))")
+
+function deriv_chain(p)
+    p = QQ.(EI.ptrim(p)); d = length(p) - 1
+    t = "((hasDerivAt_id' (x := c)).const_mul ($(lr(p[d+1])) : ℝ))"
+    p[d] != 0 && (t = "($t.add_const ($(lr(p[d])) : ℝ))")
+    for k in d-2:-1:0
+        t = "($t.mul (hasDerivAt_id' (x := c)))"
+        p[k+1] != 0 && (t = "($t.add_const ($(lr(p[k+1])) : ℝ))")
+    end
+    t
+end
+Ek(j) = j == 1 ? "√2" : "√(2 + $(Ek(j-1)))"
+lo_name(k) = k == 1 ? "slo" : "b$(k-1)"; hi_name(k) = k == KP ? "shi" : "b$k"
+global buf = IOBuffer()
+print(buf, header("""**Z$n: the root is unique in the article's search interval `(0, π/$n]`.** `Fc` is
+strictly increasing on the rational bracket `[slo, 1]` (its derivative is bounded below on
+each of $KP sub-brackets by a centred Taylor bound), and the search interval maps into that
+bracket under `cos`, using `cos(π/2^(k+1)) = sqrtTwoAddSeries 0 k / 2` from Mathlib, bounded
+level by level by exact rationals. Here `Fc` is the exact reduction to `c = cos z` of the
+equation of `Z$n` (see `Poly.lean`).""", [prev, "Mathlib.Analysis.Calculus.Deriv.MeanValue"]))
+println(buf, """
+open Set Real
+
+noncomputable def slo : ℝ := $(lr(SLO))
+noncomputable def shi : ℝ := 1
+$(join(["noncomputable def b$k : ℝ := $(lr(brk[k+1]))" for k in 1:KP-1], "\n"))
+$(join(["noncomputable def cs$k : ℝ := $(lr(pc[k]))\nnoncomputable def rs$k : ℝ := $(lr(pr[k]))" for k in 1:KP], "\n"))
+
+$(join(["lemma nears$k (c : ℝ) (h₁ : $(lo_name(k)) ≤ c) (h₂ : c ≤ $(hi_name(k))) : |c - cs$k| ≤ rs$k :=\n  near_of (by unfold cs$k rs$k $(lo_name(k)); norm_num) (by unfold cs$k rs$k $(hi_name(k)); norm_num) h₁ h₂\n" for k in 1:KP], "\n"))
+/-- The derivative of `Fc`, as an explicit polynomial. -/
+noncomputable def dFc (c : ℝ) : ℝ := $(lp(dF))
+
+theorem hasDerivAt_Fc (c : ℝ) : HasDerivAt Fc (dFc c) c := by
+  unfold Fc dFc
+  exact $(deriv_chain(Fc)).congr_deriv (by simp only [Pi.mul_apply]; ring)
+""")
+for k in 1:KP
+    print(buf, lb_lemma("dFc_lb$k", "dFc", dF, DLB; lo = lo_name(k), hi = hi_name(k), cn = "cs$k", rn = "rs$k", nr = "nears$k", C = pc[k], R = pr[k]))
+end
+println(buf, """
+/-- `Fc'` is bounded below on the whole bracket `[slo, 1]`, by the pieces. -/
+lemma dFc_lb (c : ℝ) (h₁ : slo ≤ c) (h₂ : c ≤ shi) : ($(lr(DLB)) : ℝ) ≤ dFc c := by""")
+for k in 1:KP-1
+    prevh = k == 1 ? "h₁" : "(le_of_lt (not_le.mp e$(k-1)))"
+    println(buf, "  by_cases e$k : c ≤ b$k\n  · exact dFc_lb$k c $prevh e$k")
+end
+println(buf, "  exact dFc_lb$KP c (le_of_lt (not_le.mp e$(KP-1))) h₂")
+println(buf, """
+
+theorem Fc_mono_search : StrictMonoOn Fc (Icc slo shi) := by
+  refine strictMonoOn_of_deriv_pos (convex_Icc _ _) Fc_continuous.continuousOn ?_
+  intro x hx
+  rw [interior_Icc] at hx
+  rw [(hasDerivAt_Fc x).deriv]
+  have := dFc_lb x hx.1.le hx.2.le
+  linarith
+
+/-- `Fc` has at most one root on `[slo, 1]`. -/
+theorem Fc_root_unique_search {x y : ℝ} (hx : x ∈ Icc slo shi) (hy : y ∈ Icc slo shi)
+    (hfx : Fc x = 0) (hfy : Fc y = 0) : x = y := by
+  rcases lt_trichotomy x y with h | h | h
+  · have := Fc_mono_search hx hy h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)
+  · exact h
+  · have := Fc_mono_search hy hx h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)
+
+/-- The article's search interval, upper end: `(0, searchHi]`. -/
+noncomputable def searchHi : ℝ := π / $n
+
+/-- `cos(π/$n)`, bounded through Mathlib's nested radical. -/
+lemma cos_searchHi : ($(lr(cosHi_lo)) : ℝ) < Real.cos searchHi ∧ Real.cos searchHi < $(lr(cosHi_hi)) := by
+  have e : searchHi = π / 2 ^ ($kk + 1) := by unfold searchHi; norm_num
+  rw [e, Real.cos_pi_over_two_pow]
+  simp only [Real.sqrtTwoAddSeries, add_zero]""")
+for j in 1:kk
+    prevlo = j == 1 ? "0" : lr(lvl_lo[j-1]); prevhi = j == 1 ? "0" : lr(lvl_hi[j-1])
+    println(buf, "  have hl$j : ($(lr(lvl_lo[j])) : ℝ) < $(Ek(j)) := by\n" *
+        "    rw [Real.lt_sqrt (by norm_num)]\n" *
+        (j == 1 ? "    norm_num" : "    have : ($(lr(lvl_lo[j])) : ℝ) ^ 2 < 2 + $prevlo := by norm_num\n    linarith [hl$(j-1)]"))
+    println(buf, "  have hu$j : $(Ek(j)) < ($(lr(lvl_hi[j])) : ℝ) := by\n" *
+        "    rw [Real.sqrt_lt' (by norm_num)]\n" *
+        (j == 1 ? "    norm_num" : "    have : 2 + $prevhi < ($(lr(lvl_hi[j])) : ℝ) ^ 2 := by norm_num\n    linarith [hu$(j-1)]"))
+end
+println(buf, """  constructor <;> linarith
+
+lemma searchHi_le_pi : searchHi ≤ π := by
+  unfold searchHi; have := Real.pi_pos; linarith
+
+/-- Every angle of the search interval has its cosine in `[slo, 1]`. -/
+theorem cos_mem_of_search {z : ℝ} (hz : z ∈ Ioc 0 searchHi) : Real.cos z ∈ Icc slo shi := by
+  obtain ⟨h1, h2⟩ := hz
+  have hHi := searchHi_le_pi
+  have hc1 : Real.cos searchHi ≤ Real.cos z := Real.cos_le_cos_of_nonneg_of_le_pi h1.le hHi h2
+  obtain ⟨b1, b2⟩ := cos_searchHi
+  constructor
+  · unfold slo; linarith
+  · unfold shi; exact Real.cos_le_one z
+
+/-- The certified bracket `(clo, chi)` lies inside the search interval, in `c`. -/
+lemma bracket_in_search : Real.cos searchHi < clo := by
+  obtain ⟨b1, b2⟩ := cos_searchHi
+  unfold clo; linarith
+
+/-- **Z$n, with the uniqueness of the root.** The certified configuration comes from a root
+of the equation of `Z$n` that lies in the search interval `(0, π/$n]` and is the only root
+there; it is a strictly convex equilateral small `$n`-gon and a strict local maximiser of the
+perimeter, modulo Euclidean motions. -/
+theorem locally_maximal_unique :
+    ∃ z l : ℝ, 0 < l ∧ z ∈ Ioo 0 searchHi ∧ Fc (Real.cos z) = 0 ∧
+      (∀ z' ∈ Ioc 0 searchHi, Fc (Real.cos z') = 0 → z' = z) ∧
+      IsFeasibleConvex (P z, l) ∧
+      (∀ᶠ y in nhds ((P z, l) : Amb $n), IsFeasible y → l ≤ y.2 → Congruent y.1 (P z) ∧ y.2 = l) ∧
+      (∀ᶠ y in nhds ((P z, l) : Amb $n), IsFeasible y → y.2 ≤ l) := by
+  obtain ⟨c, hc, hFc⟩ := Fc_root
+  obtain ⟨hl, hfeas, hev, hle⟩ := locally_maximal_at hc hFc
+  have bH := bracket_in_search
+  have hcm1 : (-1 : ℝ) ≤ c := by have := hc.1; have := clo_pos; linarith
+  have hc1 : c < 1 := by have := hc.2; have := chi_lt_one; linarith
+  have hcos : Real.cos (Real.arccos c) = c := Real.cos_arccos hcm1 hc1.le
+  have hmem : Real.arccos c ∈ Ioo 0 searchHi := by
+    constructor
+    · exact Real.arccos_pos.mpr hc1
+    · have h := Real.arccos_lt_arccos (Real.neg_one_le_cos searchHi) (by linarith [hc.1]) hc1.le
+      rwa [Real.arccos_cos (by unfold searchHi; positivity) searchHi_le_pi] at h
+  refine ⟨Real.arccos c, L (Real.arccos c), hl, hmem, by rw [hcos]; exact hFc, ?_, hfeas, hev, hle⟩
+  intro z' hz' hF'
+  have hc' := cos_mem_of_search hz'
+  have hcz := cos_mem_of_search (Ioo_subset_Ioc_self hmem)
+  have heq : Real.cos z' = Real.cos (Real.arccos c) :=
+    Fc_root_unique_search hc' hcz hF' (by rw [hcos]; exact hFc)
+  have hsub : ∀ w ∈ Ioc 0 searchHi, w ∈ Icc 0 π := fun w hw =>
+    ⟨hw.1.le, by linarith [hw.2, searchHi_le_pi]⟩
+  exact Real.injOn_cos (hsub z' hz') (hsub _ (Ioo_subset_Ioc_self hmem)) heq""")
+print(buf, footer())
+emit("Unique", String(take!(buf)))
+prev = "$MOD.Unique"
+end  # n == 32
+
 # root module of the case
 open(joinpath(LEANOUT, "ChiquipoliFamily", "Polynomial", "Z$n.lean"), "w") do io
-    print(io, "/-\nAUTO-GENERATED by `lean/generators/family/gen_z.jl $n` — do not edit by hand.\n\nThe Lean certificate of Z$n: at every root of its equation in the certified bracket the\npolygon is a strict local maximiser of the perimeter; see `ChiquipoliFamily/Polynomial/Z$n/Main.lean`.\n-/\nimport $MOD.Main\n")
+    print(io, "/-\nAUTO-GENERATED by `lean/generators/family/gen_z.jl $n` — do not edit by hand.\n\nThe Lean certificate of Z$n: at every root of its equation in the certified bracket the\npolygon is a strict local maximiser of the perimeter; see `ChiquipoliFamily/Polynomial/Z$n/Main.lean`$(n == 32 ? " and, for the uniqueness of the root, `ChiquipoliFamily/Polynomial/Z32/Unique.lean`" : "").\n-/\nimport $(n == 32 ? "$MOD.Unique" : "$MOD.Main")\n")
 end
 files = sort(filter(f -> endswith(f, ".lean"), readdir(OUTDIR)))
 println("wrote $(length(files)) files to lean/ChiquipoliFamily/Polynomial/Z$n/: ", join(files, " "))
@@ -1114,5 +1302,19 @@ MUTATE == "" && let
         replace(encl_text("THM", "XC$ke", tE..., cx[ke], lr(eps)), r"^\n?lemma" => "theorem"),
         replace(encl_text("THM", "XC$ke", tE..., cx[ke], "rho"), r"^\n?lemma" => "theorem"))
 
-    println("wrote 9 negative controls and their twins to lean/negative_controls_family/Z$n/")
+    # 10 (Z32 only, the case that has Unique.lean). Uniqueness is local.
+    if n == 32
+        grid = [QQ(k, 20000) for k in 0:20000]
+        sg = [sign(peval(Fc, x)) for x in grid]
+        nroots = count(k -> sg[k] * sg[k+1] < 0, 1:length(grid)-1)
+        @assert nroots >= 2                                # two sign changes: two distinct roots in [0, 1]
+        uqS(iv) = "theorem THM {x y : ℝ} (hx : x ∈ Set.Icc $iv) (hy : y ∈ Set.Icc $iv)\n    (hfx : Fc x = 0) (hfy : Fc y = 0) : x = y := by\n" *
+            "  rcases lt_trichotomy x y with h | h | h\n" *
+            "  · have := Fc_mono_search hx hy h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)\n  · exact h\n" *
+            "  · have := Fc_mono_search hy hx h; rw [hfx, hfy] at this; exact absurd this (lt_irrefl 0)"
+        control("fnc10_uniqueness_is_local",
+            "Fc has at least $nroots roots in [0, 1] (exact sign changes on a rational grid);\nthe certified root is the only one in the search bracket [slo, 1] of the article's\ninterval (0, π/32], not in [0, 1]. Uniqueness claimed on [0, 1] with the certificate's proof.",
+            uqS("0 1"), uqS("slo shi"))
+    end
+    println("wrote $(n == 32 ? 10 : 9) negative controls and their twins to lean/negative_controls_family/Z$n/")
 end

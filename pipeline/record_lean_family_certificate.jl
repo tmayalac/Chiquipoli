@@ -199,6 +199,7 @@ for n in ZCASES
     checks["Z$(n)_regeneration"] = gen
     println("reading the certified numbers of Z$n from the generator ...")
     zcases["Z$n"] = z_case_numbers(n)
+    zcases["Z$n"]["headline_unique"] = "Chiquipoli.Family.Z$n.locally_maximal_unique"
 end
 all_pass = verify_ok && all(values(checks)) && occursin("FAMILY LEAN CERTIFICATE PASS", report)
 
@@ -225,6 +226,7 @@ doc = Dict{String,Any}(
         "negative_controls_per_case" => parse(Int, match(r"NEGATIVE_CONTROLS_PER_CASE=(\d+)", read(joinpath(LEAN, "verify_family.sh"), String)).captures[1]),
         "negative_controls_per_zcase" => parse(Int, match(r"NEGATIVE_CONTROLS_PER_ZCASE=(\d+)", read(joinpath(LEAN, "verify_family.sh"), String)).captures[1]),
         "headline_per_zcase" => ["locally_maximal_at", "locally_maximal"],
+        "headline_unique_per_zcase" => ["locally_maximal_unique"],
         "headline_per_case" => ["published_locally_maximal", "locally_maximal_unique", "locally_maximal_at", "locally_maximal"],
     ),
     "scope" => Dict{String,Any}(
@@ -232,10 +234,12 @@ doc = Dict{String,Any}(
             "for each of Z32 and Z64 (Bingane and Audet, Propositions 1 and 2, rebuilt in cases/exact_coords.jl): a root of the equation of the polygon exists in a rational bracket of width about 1e-17 (Z64: the sign of G at both ends, by enclosure arithmetic on exact values and square-root enclosures), and at EVERY root c in the bracket the configuration is equilateral (the sides 9 and 22 of Z32, and the sides 15 and 48 of Z64, only at a root; the sides 13 and 50 of Z64 because y solves the first equation of Proposition 2), has its active diameters equal to 1, is strictly convex in labelled cyclic order and small",
             "the multiplier identity with every active-diameter multiplier strictly positive and kappa > 0 (a self-stress; for Z64 the 4 vertices 14, 15, 49, 50 that no Henneberg step reaches are solved as a unit), and I_eq = R_eq (Henneberg steps; for Z64 also one block step)",
             "strict local maximality of the perimeter modulo orientation-preserving Euclidean motions, through the general Theorem 3.5 (Z<n>.locally_maximal_at, Z<n>.locally_maximal)",
+            "the root of the equation of Z32 is unique in the search interval (0, pi/32] (Z32.locally_maximal_unique; Fc is strictly increasing on [cos(pi/32), 1], by a centred Taylor bound of its derivative on four sub-brackets)",
+            "the root of the equation of Z64 is unique in the search interval (0, pi/64] among the configurations that exist, i.e. with a nonnegative radicand (Z64.locally_maximal_unique): with a = sn*pl1 + 1/2, a' = N/sn with N > 0 by a Taylor bound and a(slo) > 0, so the radicand 2 - 2c - a^2 is strictly decreasing and negative from cB on, and on the rest G' = alpha - w*rad'/rr with alpha > 0 by centred enclosures on four sub-brackets",
         ],
         "not_formalized_Z" => [
             "that Z32 and Z64 are the polygons of Bingane and Audet: there is no published constructor to transcribe, so the polygons are rebuilt from the statements of their Propositions 1 and 2; this is bounded by the agreement of t and of the perimeter with the published values to ten digits and by an independent Python reconstruction, not by Lean",
-            "the uniqueness of the root of the equation of Z32 in (0, pi/32) and of Z64 in (0, pi/64): proved by interval bisection in Julia and in Python (pipeline/certify_z.jl, pipeline/independent/verify.py), not in Lean",
+            "that Fc (Z32) and G (Z64), the functions the Z theorems are about, are the exact reductions to c = cos t of the equations of Propositions 1 and 2: asserted by exact division in the generators and in the Julia certificates (exact identities), not re-derived in Lean",
         ],
         "formalized" => [
             "for each of A16, A32, A64: a root of the constructor equation Fc exists in a rational bracket of width about 1e-17, and it is the only root in the article's search interval (2 arcsin(sin(pi/n)/2), pi/n)",

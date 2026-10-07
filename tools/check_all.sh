@@ -429,7 +429,7 @@ z)
 zcomplete)
   # Everything that certifies Z32 or Z64, as `candidate` does for A_n: the suite, the general
   # certifier, the 9-gate certificate, the independent cross-check, the Lean certificate of
-  # the polygon (a partial run of verify_family.sh: build, no sorry, axioms, 9 controls and
+  # the polygon (a partial run of verify_family.sh: build, no sorry, axioms, 10 controls and
   # twins, regeneration) and the planted defects. Writes no record in results/.
   case "$CASE" in 32|64) ;; *) echo "usage: $0 zcomplete <32|64>"; exit 2 ;; esac
   N="$CASE"
@@ -439,7 +439,7 @@ zcomplete)
     env CHIQUI_NO_RECORD=1 julia --project=. pipeline/certify_z.jl "$N"
   CHIQUI_NO_RECORD=1 indep_stage "independent-Z$N" "Z$N cross-checked by a second implementation (Python, no Julia) and its own planted defects (nothing recorded)" "Z$N"
   if lean_ready; then
-    stage "lean-family-Z$N" "Z$N in Lean: build, no sorry, axioms, 9 controls + twins, regeneration (partial run)" family_case "Z$N"
+    stage "lean-family-Z$N" "Z$N in Lean: build, no sorry, axioms, 10 controls + twins, regeneration (partial run)" family_case "Z$N"
   else
     skip "lean-family-Z$N" "Lean or the Mathlib cache is missing (make lean-cache)"
   fi
