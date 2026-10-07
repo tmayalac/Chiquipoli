@@ -26,9 +26,10 @@
 # constructor to run unchanged (OPTIGON ships only the A_n; Z_n is rebuilt from
 # Propositions 1 and 2 of Bingane and Audet), so no `published_constructor` gate.
 # Lean covers Z_n (lean/ChiquipoliFamily/Polynomial/Z<n>; the record
-# results/lean_family_certificate.toml), but not the uniqueness of the root of Z_n in
-# (0, π/n]: that is proved by bisection (gate root_unique_search), in Julia and in Python,
-# not by the monotonicity argument of the A_n certificate, which has no analogue here.
+# results/lean_family_certificate.toml), including the uniqueness of the root of Z_n in
+# (0, π/n] (Z<n>.locally_maximal_unique; for Z64 among the configurations that exist, those
+# with a nonnegative radicand). This certificate proves it again by bisection (gate
+# root_unique_search), in Julia and in Python, independently of Lean.
 
 const ROOT = normpath(joinpath(@__DIR__, ".."))
 include(joinpath(ROOT, "src", "A16Certificate.jl"));  using .A16Certificate
@@ -128,7 +129,7 @@ else
         "verdict" => final_pass ? "CERTIFIED" : "NOT CERTIFIED",
         "global_optimality" => "NOT CLAIMED",
         "not_claimed" => ["a constructor published as code (Z_n is rebuilt from Propositions 1 and 2 of Bingane and Audet)"],
-        "lean" => "lean/ChiquipoliFamily/Polynomial/Z$n: strict local maximality at every root of the defining equation in the certified bracket, and a root exists there (Chiquipoli.Family.Z$n.locally_maximal_at); not the uniqueness of the root in (0, pi/$n]",
+        "lean" => "lean/ChiquipoliFamily/Polynomial/Z$n: strict local maximality at every root of the defining equation in the certified bracket, and a root exists there (Chiquipoli.Family.Z$n.locally_maximal_at); that root is the only one in (0, pi/$n]$(n == 64 ? " among the configurations that exist, those with a nonnegative radicand" : "") (Chiquipoli.Family.Z$n.locally_maximal_unique)",
         "source_sha256" => [Dict("file" => f, "sha256" => bytes2hex(open(sha256, joinpath(ROOT, f)))) for f in files])
     mkpath(joinpath(ROOT, "results", "family"))
     open(joinpath(ROOT, "results", "family", "Z$n.toml"), "w") do io
