@@ -1,21 +1,21 @@
 ============================================================
 PROVENANCE / REPRODUCIBILITY HEADER
 ============================================================
-UTC timestamp        = 2026-10-07T16:22:44Z
+UTC timestamp        = 2026-10-20T18:04:27Z
 Julia version        = 1.12.6
 IntervalArithmetic   = v0.22.36
 BigFloat precision   = 256 bits
 directed-rounding self-check (interval(1)/3 has inf<sup) = true   [0.3333333333333333333333333333333333333333333333333333333333333333333333333333305, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333348]
-git commit           = 00432cc826a4b2db966139f4a5ac702adef25f33  (source clean — log matches this commit)
+git commit           = 93e6f9e51d6cf55affa3b8ba7b389270e082b581  (source clean — log matches this commit)
 SHA256 of source files:
   db6375037e18a8469aeee021a4c6debd5211aaf4b766cab1d3decbb0ace6605c  pipeline/certify_a16.jl
   5a94c31f17d5027d1a24738a350337fb773b9f9927decc314132fc47666026c3  pipeline/certify_family.jl
   df58404c644a7e1cfe0e03fff7a1dea897f370ead65e9b334361e5c085c6a742  pipeline/certify_literature.jl
   cce381ae78e9af0ceb80c343be5f477d96829f5304fb37f8161caaa30be76cdd  pipeline/certify_radius.jl
   1e9b1ca7b4ea83e93e439b2410c4ecf007e33b45abe5e4054c84dec0b62f0376  pipeline/certify_z.jl
-  eae6b5928d862f64d770cb6b7c2e9d2f7ad8651aa292b9fb09d67c17c83d22f4  pipeline/check_records.jl
+  2cf486b5cc0a43beb7c570cbf30594429fe49ca6307bfdedc5ece2b61fc69897  pipeline/check_records.jl
   c62fa1545161cdcacf072311a86ea5236cd22e829567c8fea1d0e1572631f7c6  pipeline/family_table.jl
-  0bd663869b210f50c73c7d1cbf5b310710cfb3ecf82d0f4ee83b0b485b67c216  pipeline/record_lean_certificate.jl
+  34599c6b712ea63f9d8324b9cc541cd5cf827dc9d7d7e6a681d9f72c373a1616  pipeline/record_lean_certificate.jl
   23a5a363d3c337c2ebe0c1c31d73c525d115978c32b42a33948fcb2244cf96ea  pipeline/record_lean_family_certificate.jl
   66bab15d76fa76bcb5ade49cde123b294756fc2e30375ac07ade26ca29ead20c  pipeline/stages/01_nominal_configuration.jl
   ba67a843ab61e14fb0e66575ca4b730a707ca8f746492a2070d15717dcef9a82  pipeline/stages/02_certify_root.jl
