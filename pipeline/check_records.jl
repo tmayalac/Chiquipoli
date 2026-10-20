@@ -327,6 +327,11 @@ let lcpath = joinpath(ROOT, "results", "lean_certificate.toml")
         end
         chk("the recorded Lean scope no longer calls Theorem 3.5 unformalised",
             !any(x -> occursin("Theorem 3.5", x), get(get(lc, "scope", Dict()), "not_formalized", String[])))
+        # Theorem 6.4 (the explicit radius at A16) has been a Lean theorem since
+        # 2026-10-19 (Chiquipoli.Feasible.A16_radius); keep the record saying so.
+        chk("the recorded Lean scope lists Theorem 6.4 (A16_radius) as formalised",
+            any(x -> occursin("Theorem 6.4", x) && occursin("A16_radius", x),
+                get(get(lc, "scope", Dict()), "formalized", String[])))
     end
 end
 

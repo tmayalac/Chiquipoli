@@ -86,8 +86,11 @@ These are limits of the formalisation, not defects, and the article states them 
 * **Global optimality.** Nothing here says a global maximiser exists or what it is. In fact, for
   `n = 32, 64` the polygons `Z_n` have larger perimeter than `A_n`, so `A_32` and `A_64` are local
   but not global maximisers.
-* **The radius of Theorem 6.4.** The explicit radius `r ≥ 6.63·10⁻⁴` for `A₁₆` is a certificate of the
-  Julia pipeline (interval Cholesky); Lean proves only that some neighbourhood exists.
+* **No radius beyond `A₁₆`.** Theorem 6.4 is a Lean theorem twice: `Chiquipoli.Feasible.A16_radius`
+  (Lean's own constants) and `Chiquipoli.Feasible.A16_radius_printed` (the printed argument, with the printed
+  constants `‖α‖₂ < 4.004`, `λ_min > 0.09186`, `s₃₀(B)² ≥ 0.09119` in the form `‖Bh‖² ≥ 0.09119‖h‖²` on
+  `R_eq^⊥`, and `ℓ > 0.1959`, all proved, for the multipliers of Table S2). No radius is proved for `A₃₂`,
+  `A₆₄`, `Z₃₂`, `Z₆₄`, and the article claims none.
 * **That `Z₃₂` and `Z₆₄` are the polygons of Bingane and Audet.** There is no published constructor to
   transcribe; the polygons are rebuilt from the statements of their Propositions 1 and 2. This is
   checked against the published `t` and perimeter to ten digits, not in Lean.

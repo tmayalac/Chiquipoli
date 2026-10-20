@@ -12,7 +12,7 @@
 #      statements are not vacuous, and the two "conditional" side identities
 #      genuinely need the constructor equation.
 #
-# Check 5 re-runs the seven Julia generators (generators/) and requires every
+# Check 5 re-runs the nine Julia generators (generators/) and requires every
 # file under ChiquipoliLean/Generated/ to be byte-identical to the committed
 # one, so the Lean layer cannot silently drift from the certified Julia
 # arithmetic.
@@ -24,9 +24,9 @@ cd "$(dirname "$0")"
 # disk cannot notice material being removed; these two numbers make a silent
 # reduction in coverage a FAIL. Update them deliberately when adding theorems
 # to the audit, new negative controls, or new source files.
-AXIOM_AUDIT_MIN=107
-NEGATIVE_CONTROLS_EXPECTED=26
-LEAN_SOURCES_MIN=31   # ChiquipoliLean.lean + the 30 modules under ChiquipoliLean/
+AXIOM_AUDIT_MIN=137
+NEGATIVE_CONTROLS_EXPECTED=32
+LEAN_SOURCES_MIN=38   # ChiquipoliLean.lean + the 37 modules under ChiquipoliLean/
 
 RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; RST=$'\033[0m'
 fail=0
@@ -152,7 +152,13 @@ else
       Chiquipoli.Feasible.A16_isFeasibleConvex \
       Chiquipoli.Feasible.A16_strict_local_max \
       Chiquipoli.Feasible.A16_locally_maximal \
-      Chiquipoli.Feasible.square_strict_local_max
+      Chiquipoli.Feasible.square_strict_local_max \
+      Chiquipoli.Feasible.radius_of_certificate \
+      Chiquipoli.Feasible.A16_coercive \
+      Chiquipoli.Feasible.A16_radius \
+      Chiquipoli.Feasible.radius_of_certificate_unit \
+      Chiquipoli.Feasible.A16_radius_printed \
+      Chiquipoli.Feasible.A16_printed_constants
     do
       nwant=$((nwant + 1))
       printf '%s\n' "$axout" | grep -qF "'$want' depends on axioms" || missing="$missing $want"
@@ -229,6 +235,8 @@ if command -v julia >/dev/null 2>&1; then
   check_generated Generated/Convexity.lean      gen_convexity.jl
   check_generated Generated/Multipliers.lean    gen_multipliers.jl
   check_generated Generated/Rank.lean           gen_rank.jl
+  check_generated Generated/Radius.lean         gen_radius.jl
+  check_generated Generated/RadiusPrinted.lean  gen_radius_printed.jl
 else
   skip "julia not on PATH — cannot re-derive the generated files"
 fi

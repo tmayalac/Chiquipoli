@@ -239,9 +239,15 @@ side length, arbitrarily close to it.
 Global optimality. Theorem 3.5 and this formalisation are local: they exclude
 competitors in *some* neighbourhood, and the proof is by contradiction from a
 convergent sequence, so it yields no lower bound on the radius. The paper says
-this explicitly (Remark after Theorem 3.5), and making the radius explicit would
-need quantitative versions of the slice, the openness, and the first-order
-limits. None of that is done here.
+this explicitly (Remark after Theorem 3.5).
+
+For `A16` the radius is supplied by a separate theorem, Theorem 6.4, which is
+now formalised by its own route (`Theory/Radius.lean`, `Theory/Coercive.lean`,
+`Generated/Radius.lean`, `Instances/A16Radius.lean`; headline
+`Chiquipoli.Feasible.A16_radius`). That route uses that the constraints are
+quadratic, so it needs no quantitative slice, openness or first-order limits;
+it does not make Theorem 3.5 itself quantitative, and it gives no radius for any
+other polygon.
 
 ## Scope note
 

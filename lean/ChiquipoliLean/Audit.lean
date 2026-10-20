@@ -171,4 +171,39 @@ namespace Chiquipoli
 #print axioms Chiquipoli.Feasible.square_isFeasibleConvex
 #print axioms Chiquipoli.Feasible.square_strict_local_max
 
+-- Theorem 6.4: the explicit radius at A16. The abstract step (Radius.lean,
+-- Coercive.lean) and its instantiation (A16Radius.lean, Generated/Radius.lean).
+#print axioms Chiquipoli.Feasible.exists_optimal_motion
+#print axioms Chiquipoli.Feasible.distMod_attained
+#print axioms Chiquipoli.Feasible.radius_of_certificate
+#print axioms Chiquipoli.Feasible.Qform_perturb
+#print axioms Chiquipoli.Feasible.gram_lower
+#print axioms Chiquipoli.gram_rows
+#print axioms Chiquipoli.Qhat_lower
+#print axioms Chiquipoli.Feasible.A16_enclosure
+#print axioms Chiquipoli.Feasible.A16_alpha_ge
+#print axioms Chiquipoli.Feasible.A16_lam_ge
+#print axioms Chiquipoli.Feasible.A16_coercive
+#print axioms Chiquipoli.Feasible.A16_radius_at
+#print axioms Chiquipoli.Feasible.A16_radius
+
+-- Theorem 6.4 again, by the printed argument from the printed constants
+-- (RadiusPrinted.lean, Generated/RadiusPrinted.lean, A16RadiusPrinted.lean).
+#print axioms Chiquipoli.Feasible.MultiplierIdentity_affine
+#print axioms Chiquipoli.Feasible.MultiplierIdentity_unit
+#print axioms Chiquipoli.Feasible.radius_of_certificate_unit
+#print axioms Chiquipoli.gram_rowsU
+#print axioms Chiquipoli.QhatU_lower
+#print axioms Chiquipoli.alphaP_sq
+#print axioms Chiquipoli.FirstOrder.A16_multiplier_identityN
+#print axioms Chiquipoli.Feasible.A16_multiplier_identity_printed
+#print axioms Chiquipoli.Feasible.A16_lamP_pin
+#print axioms Chiquipoli.Feasible.A16_alphaP_sum
+#print axioms Chiquipoli.Feasible.A16_lamP_gt
+#print axioms Chiquipoli.Feasible.A16_alphaP_sq
+#print axioms Chiquipoli.Feasible.A16_coercive_unit
+#print axioms Chiquipoli.Feasible.A16_radius_printed_at
+#print axioms Chiquipoli.Feasible.A16_radius_printed
+#print axioms Chiquipoli.Feasible.A16_printed_constants
+
 end Chiquipoli

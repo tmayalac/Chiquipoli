@@ -21,7 +21,7 @@ Paths are relative to the repository root. Lean paths are under
 | δ_inact > 0.00809 | `pipeline/stages/03_certify_geometry.jl` | `inactive_margin` | `sqd_le_one` (`Generated/Diameter.lean`) |
 | ‖Id − C₀M₀‖ < 2·10⁻²⁵; min λ > 0.09186 | `pipeline/stages/05_certify_multipliers.jl` | `multipliers` | `multipliers_certified` (`Generated/Multipliers.lean`) |
 | ‖Id − CM‖ < 1.5·10⁻²⁵ | `pipeline/stages/04_certify_rank.jl` | `rank` | `rank_eq_thirty` (`Instances/A16Rank30.lean`), by another route |
-| ‖α‖₂ < 4.004; s₃₀(A)² ≥ 0.09119; r ≥ 6.63·10⁻⁴ | `pipeline/certify_radius.jl` | `results/radius_certificate.toml` | not formalised |
+| ‖α‖₂ < 4.004; s₃₀(A)² ≥ 0.09119; r ≥ 6.63·10⁻⁴ | `pipeline/certify_radius.jl` | `results/radius_certificate.toml` | `A16_printed_constants`, `A16_radius_printed` (`Instances/A16RadiusPrinted.lean`); also `A16_radius` with Lean's own constants |
 | I_eq = R_eq, Theorem 6.3 | (consequence) | — | `A16_Ieq_imp_R` (`Instances/A16FirstOrder.lean`); `A16_locally_maximal` (`Instances/A16LocalMax.lean`) |
 | Theorem 3.5 | (not computed) | — | `thm_3_5` (`Theory/FeasibleMain.lean`) |
 | Table 4, Proposition 6.5 and Theorem 6.6: A32 and A64 | `pipeline/certify_family.jl 32` / `64` | `results/family/A32.toml`, `A64.toml` | `Chiquipoli.Family.A32.published_locally_maximal`, `…A64…` (`lean/ChiquipoliFamily/Polynomial/`) |

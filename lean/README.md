@@ -45,6 +45,8 @@ Everything here is machine-checked. Nothing is admitted (`sorry`-free), and
 | 26 | **Euclidean invariance and the slice normalisation** — the constraints and the orientation do not see a motion; `g(q)·q` stays feasible, still converges, and lands in `R(p)^⊥` | `isFeasible_move`, `tendsto_normCfg`, `eventually_phiGeom_zero`, `slice_of_generators` |
 | **27** | **Theorem 3.5 itself** — the blow-up argument, and the conclusion stated about the competitor rather than its normalised representative | **`thm_3_5`**, `thm_3_5_le`, `eventually_congruent_of_no_worse` |
 | **28** | **Theorem 6.3** — the certified configuration is a strict local maximiser of the perimeter, modulo orientation-preserving Euclidean motions | **`A16_locally_maximal`**, `A16_bridge`, `A16_isFeasibleConvex` |
+| **29** | **Theorem 6.4** — the explicit radius: every equilateral 16-gon of diameter at most 1, with side length `m ≥ ℓ`, no convexity or cyclic order assumed, within distance `6.63 × 10⁻⁴` of `A16` modulo orientation-preserving motions (distance (6.1), including the `(m − ℓ)²` term), has `m = ℓ` and is congruent to `A16` | **`A16_radius`**, `radius_of_certificate`, `A16_coercive`, `distMod_attained` |
+| **30** | **Theorem 6.4 by the printed argument from the printed constants** — Table S2's multipliers (`λ_(0,9) = 1/5`), `λ_e > 0.09186`, `‖α‖₂ < 4.004`, `‖Bh‖² ≥ 0.09119‖h‖²` on `R_eq^⊥`, `ℓ > 0.1959`, and the printed radius condition | **`A16_radius_printed`**, **`A16_printed_constants`**, `radius_of_certificate_unit` |
 
 `A16_locally_maximal` is the statement to read first; `A16_certificate` is the
 one to read second. Everything else is a lemma feeding them. Without the
@@ -291,7 +293,67 @@ outside is:
   article's Proposition 4.2. And the theorem remains
   **local and non-quantitative**: it excludes competitors in *some*
   neighbourhood, and since the proof is by contradiction from a convergent
-  sequence it yields no lower bound on the radius.
+  sequence it yields no lower bound on the radius. For `A16` that bound is
+  supplied separately, by Theorem 6.4 (next item); for the square and for the
+  family members of `ChiquipoliFamily/` it is not.
+
+- **Theorem 6.4, the explicit radius `6.63 × 10⁻⁴` at `A16`** — proved, not
+  assumed. `Theory/Radius.lean` formalises the article's argument for an
+  arbitrary configuration: the distance modulo motions (`distMod`, with the
+  minimising motion constructed explicitly — centroids for the translation, an
+  argument of a complex number for the rotation — so no compactness is needed,
+  `exists_optimal_motion`, `distMod_attained`), the exact second-order
+  expansion of the quadratic constraints, and the closing inequality
+  (`radius_of_certificate`). `Theory/Coercive.lean` and
+  `Generated/Radius.lean` give the coercivity bound on the slice: the Gram form
+  is moved from `A16` to a rational configuration `phR` at the cost of a vertex
+  enclosure `radEps = 663/50000000` (`Qform_perturb`), and at `phR` an
+  approximate `LDLᵀ` factorisation is certified by checking its exact rational
+  residual with `decide +kernel` (`gram_rows`, `Qhat_lower`). Floating point
+  only proposed `L` and `d`.
+
+  What differs from the printed proof is the bookkeeping, not the argument or
+  the radius. Lean works in the squared normalisation with its own multiplier
+  witness (that of `A16_multiplier_identity`, not Table S2), bounds `−αᵢ ≤ 67/1000`
+  componentwise rather than `‖α‖₂`, and uses `Λ = 3/2500` and the coercivity
+  constant `σ2 = 17/625` of the squared-form Jacobian. With these the radius
+  condition `16 r² (Λ² + A²) ≤ σ2 Λ²` holds at `r = 663/1000000` with about 24%
+  to spare and fails at `r = 1/1000` (`nc27`).
+
+  **And again, by the printed argument from the printed constants**
+  (`A16_radius_printed`, `A16_printed_constants`). `Theory/RadiusPrinted.lean`
+  follows the printed proof in the article's normalisation (unit Jacobian
+  `B = D(e,d)`, objective coefficient `16`): `‖w‖₂ ≤ 4‖h‖²`, Cauchy–Schwarz
+  with `‖α‖₂`, the `ℓ¹` bound on `B_d h`, and the printed condition
+  `r ≤ σℓ/(2(1 + ‖α‖₂/λ_min))`, written as `4r²(λ_min + ‖α‖₂)² ≤ σ²ℓ²λ_min²`
+  (it holds at the printed values with a factor `1.0011` to spare). Its
+  hypotheses are exactly the printed constants, and each is proved:
+
+  * the multipliers are those of Table S2: the representative pinned at
+    `λ_(0,9) = 1/5` (`A16_lamP_pin`), obtained as the exact combination
+    `(1 − θ)·M0 + θ·W1`, `θ = 75ℓ/16`, of the witness `W1` of
+    `Generated/Multipliers.lean` and a second witness `M0` (pinned at `0`) with
+    its own stationarity identities (`Generated/RadiusPrinted.lean`); the identity
+    `16η = α·B_e h + λ·B_d h` is `A16_multiplier_identity_printed` and
+    `Σαᵢ = −16` is `A16_alphaP_sum`. In floating point the combination reproduces
+    every one of the 31 printed entries of Table S2 to its eight digits;
+  * `λ_e > 0.09186` (`A16_lamP_gt`; the certified minimum is `0.0918667777`, on
+    `{6,13}`) and `‖α‖₂ < 4.004` (`A16_alphaP_sq`; `‖α‖₂² ≤ 16.0285`), by
+    Bernstein bounds on a bracket of width `10⁻¹⁶` containing the `10⁻²²` root
+    bracket of `SideLength.lean`;
+  * `‖Bh‖² ≥ 0.09119‖h‖²` on `R_eq^⊥` (`A16_coercive_unit`), the form of
+    `s₃₀(B)² ≥ 0.09119` the proof uses: exactly
+    `‖Bh‖² = ¼[Q₁ + (1/ℓ² − 1)Q₀]` on the slice, with `Q₁`, `Q₀` the `Qform` with
+    and without diameters, so `Qform_perturb` and an `LDLᵀ` certificate at `phR`
+    (`gram_rowsU`, `σ̂² = 0.0919`) give `0.091583` available;
+  * `ℓ > 0.1959` from the same tight bracket.
+
+  The Julia interval certificate (`pipeline/certify_radius.jl`) remains the
+  source the article cites; this is an independent kernel check of the same
+  numbers. One step is written without square roots: Lean uses
+  `‖Bh‖₂² ≤ ‖B_e h‖₂² + ‖B_d h‖₁²`, sharper than the printed
+  `‖Bh‖₂ ≤ ‖B_e h‖₂ + ‖B_d h‖₁`, and then relaxes it to the printed factor.
+  Nothing is proved about a radius for `A32`, `A64`, `Z32`, `Z64` or the square.
 
 - **The paper's sharpest constants in Proposition 6.2(3) and (4).** Both
   propositions are Lean theorems — strict convexity holds at all 224 support
@@ -332,9 +394,10 @@ the published code implements the construction described in their paper; that
 is their attribution.
 
 The other limits are unchanged and are mathematical, not architectural. The
-theorem is **local**: it excludes competitors in *some* neighbourhood, and since
-the proof is by contradiction from a convergent sequence it yields no lower
-bound on the radius. Global optimality is untouched. This is stated plainly so
+theorem is **local**: it excludes competitors in *some* neighbourhood. The proof
+of Theorem 6.3 is by contradiction and yields no radius; the explicit radius
+`6.63 × 10⁻⁴` of Theorem 6.4 is a separate theorem, `A16_radius`, and exists
+for `A16` only. Global optimality is untouched. This is stated plainly so
 that no reader can take "verified in Lean" to mean more than it does.
 
 ---
@@ -379,7 +442,7 @@ Expected output ends with `LEAN CERTIFICATE PASS`. The five checks are:
 3. every headline theorem depends only on `[propext, Classical.choice,
    Quot.sound]` — Lean's three standard axioms, and in particular **not**
    `sorryAx`;
-4. all twenty-six files in `negative_controls/` — deliberately false variants —
+4. all thirty-two files in `negative_controls/` — deliberately false variants —
    **fail** to compile, and the count is pinned, so deleting one is a failure
    rather than a silently smaller check;
 5. every file in `ChiquipoliLean/Generated/` reproduces byte-for-byte from its
@@ -419,6 +482,12 @@ constants are wrong.
 | `nc24_blowup_needs_activity.lean` | Theorem 3.5 with multipliers on merely feasible diameters | a multiplier on a slack diameter carries no information (Definition 2.4) |
 | `nc25_bridge_needs_chain_rule.lean` | the squared and unsquared normalisations identified without the factor `2ℓ` | a silent unit error that would rescale every side multiplier |
 | `nc26_conclusion_is_modulo_motions.lean` | `A16` locally unique outright, not modulo motions | translating or rotating `A16` gives a feasible competitor arbitrarily close |
+| `nc27_radius_overclaim.lean` | Theorem 6.4 at radius `1/1000` by the same proof | the radius condition `16 r²(Λ² + A²) ≤ σ2 Λ²` is false there: `7.18·10⁻⁸ > 3.92·10⁻⁸` |
+| `nc28_coercive_needs_slice.lean` | the coercivity bound without `v ⊥ R(p)` | false: a common translation annihilates every differential while `‖v‖² = 16` |
+| `nc29_radius_needs_ascent.lean` | Theorem 6.4 without `m ≥ ℓ` | false: `A16` shrunk by `1 − ε` is feasible, arbitrarily close and not congruent |
+| `nc30_printed_lambda_overclaim.lean` | Table S2's `λ_e > 0.09187` for every diameter | false: `λ_{6,13} = 0.0918668` |
+| `nc31_printed_alpha_overclaim.lean` | Table S2's `‖α‖₂ < 4.003` | false: `‖α‖₂ = 4.00356` |
+| `nc32_printed_coercivity_overclaim.lean` | `‖Bh‖² ≥ 0.0922‖h‖²` on `R_eq^⊥` | false: `s₃₀(B)² ≈ 0.09211` (floating point) |
 
 `nc4` is the sharpest of the constant-checking ones: if it compiled, the "29
 unconditional vs 2 conditional" split — a headline finding of the certificate —
@@ -461,6 +530,9 @@ ChiquipoliLean/
     FeasibleTangent.lean       step C: the first-order limits
     FeasibleRigid.lean         step D: invariance under Euclidean motions, the slice
     FeasibleMain.lean          step E: the blow-up; Theorem 3.5 in full (thm_3_5)
+    Coercive.lean              coercivity on the slice: perturbation and LDLᵀ lemmas
+    Radius.lean                Theorem 6.4's argument for any configuration
+    RadiusPrinted.lean         Theorem 6.4's printed argument, in the article's normalisation
 
   Constructor/                 the A16 constructor and its root
     Chebyshev.lean             multiple-angle reduction, k = 1..7
@@ -479,6 +551,8 @@ ChiquipoliLean/
     Convexity.lean             224 support determinants, strict convexity
     Multipliers.lean           stationarity with positive multipliers
     Rank.lean                  I_eq = R_eq, both inclusions
+    Radius.lean                rational certificate of Theorem 6.4 (gen_radius.jl)
+    RadiusPrinted.lean         Table S2's multipliers and the printed constants (gen_radius_printed.jl)
 
   Instances/                   the theory applied to explicit configurations
     A16FirstOrder.lean         Theorem 3.5's core with both hypotheses discharged at A16
@@ -486,7 +560,9 @@ ChiquipoliLean/
     A16LocalMax.lean           Theorem 6.3: A16_locally_maximal
     SquareAndRhombus.lean      Section 4: the square and the rhombus, first order
     SquareLocalMax.lean        Proposition 4.2: the square is a strict local maximum
-negative_controls/             twenty-six files that MUST fail to compile
+    A16Radius.lean             Theorem 6.4: A16_radius
+    A16RadiusPrinted.lean      Theorem 6.4 from the printed constants: A16_radius_printed
+negative_controls/             thirty-two files that MUST fail to compile
 generators/                    the Julia programs that write ChiquipoliLean/Generated/,
                                and their helpers (bernstein.jl, multipliers.jl, rank.jl)
 ```

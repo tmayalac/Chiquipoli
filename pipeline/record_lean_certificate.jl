@@ -24,7 +24,7 @@ end
 
 # Every file the Lean verdict depends on, relative to lean/. Recursive, because
 # the modules live in subdirectories of ChiquipoliLean/; a flat `readdir` would
-# hash only the two top-level files and still look complete. All seven
+# hash only the two top-level files and still look complete. All nine
 # generators and their helpers are included, not only extract_polys.jl: check 5
 # of verify.sh runs every one of them.
 function lean_files(sub, ext)
@@ -83,7 +83,7 @@ axiom_m = match(r"PASS\s+(\d+) theorems depend only on", clean)
 nc_pass = count(m -> true, eachmatch(r"PASS\s+nc\d+_", clean))
 nc_total = length(filter(f -> endswith(f, ".lean"),
                         readdir(joinpath(LEAN, "negative_controls"))))
-const GENERATED_FILES = 7
+const GENERATED_FILES = 9
 gen_pass = count(m -> true, eachmatch(r"PASS\s+Generated/\w+\.lean reproduces byte-for-byte", clean))
 
 checks = Dict{String,Any}(
@@ -91,7 +91,7 @@ checks = Dict{String,Any}(
     "no_sorry"                 => haspass("no 'sorry' in any of the \\d+ source files"),
     "axiom_audit"              => axiom_m !== nothing,
     "negative_controls"        => (nc_pass == nc_total && nc_total > 0),
-    # All seven, not only Generated/Polynomials.lean: this field used to look at
+    # All nine, not only Generated/Polynomials.lean: this field used to look at
     # that one file, so a drift in the other six still recorded `true`.
     "generated_matches_julia"  => gen_pass == GENERATED_FILES,
 )
@@ -146,11 +146,13 @@ doc = Dict{String,Any}(
             "Theorem 3.5, the abstract first-order criterion, in full: the feasible set, openness of convexity and the inactive margin, the first-order limits, invariance under Euclidean motions with the slice normalisation, and the blow-up (Chiquipoli.Feasible.thm_3_5)",
             "Theorem 6.3: the certified configuration is a strict local maximiser of the perimeter modulo orientation-preserving Euclidean motions (Chiquipoli.Feasible.A16_locally_maximal)",
             "Proposition 4.2: the square is a strict local maximiser, by the same route (Chiquipoli.Feasible.square_strict_local_max)",
+            "Theorem 6.4: the explicit radius 6.63e-4 at A16, modulo orientation-preserving motions, against every equilateral polygon of diameter at most 1 with side length at least that of A16, with no convexity or cyclic order assumed, distance as in (6.1) including the (m - l)^2 term; proved twice: with Lean's own constants (Chiquipoli.Feasible.A16_radius) and by the printed argument from the printed constants (Chiquipoli.Feasible.A16_radius_printed)",
+            "the printed constants of the proof of Theorem 6.4, for the multipliers of Table S2 (lambda_(0,9) = 1/5): the identity 16 eta = alpha.B_e h + lambda.B_d h, sum alpha = -16, lambda_e > 0.09186, |alpha|_2 < 4.004 (Prop 6.2(5)), |Bh|^2 >= 0.09119 |h|^2 on R_eq^perp (Prop 6.2(7), in the form the proof uses), l > 0.1959 (Chiquipoli.Feasible.A16_printed_constants)",
         ],
         "not_formalized" => [
             "the sharper constants of Prop 6.2(3)-(5): Lean proves the same strict inequalities with coarser rational margins (3/100 on the support determinants over sin z, 1/100 on 1 - d^2, 1/1000 on the multipliers), and with a different representative of the one-parameter multiplier family",
             "the identification of the certified configuration with the published Bingane-Audet polygon; that is an attribution, checked by running the upstream OPTIGON constructor and comparing coordinates, and no proof assistant can close it",
-            "any lower bound on the radius of the neighbourhood of Theorem 6.3; the proof is by contradiction from a convergent sequence and yields none",
+            "a radius from the proof of Theorem 6.3 itself; that proof is by contradiction from a convergent sequence and yields none. The explicit radius of Theorem 6.4 is proved separately (see formalized); no radius is formalized for A32, A64, Z32 or Z64",
             "global optimality, which is not addressed anywhere in this package",
             "every interval-arithmetic step of the Julia certificate; Lean re-proves the exact-algebra and positivity layers by kernel-checked rational arithmetic rather than re-running it",
         ],

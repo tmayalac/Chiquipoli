@@ -5,6 +5,7 @@
 
 # Claude Code local settings / agent state
 .claude/
+/Claude
 
 # Julia
 /*.jl.cov

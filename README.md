@@ -269,9 +269,9 @@ no interval arithmetic, no floating point.
 
 Run it with `make lean-cache` once and then `make lean` (commands for every
 system are in the table above). The five checks are: the development builds; no source admits a goal with
-`sorry`; all 108 audited theorems depend only on Lean's three standard axioms;
-26 deliberately false variants **fail** to compile, so the true statements
-are not vacuous; and seven generated files reproduce byte for byte from the
+`sorry`; all 137 audited theorems depend only on Lean's three standard axioms;
+32 deliberately false variants **fail** to compile, so the true statements
+are not vacuous; and nine generated files reproduce byte for byte from the
 Julia source, so the Lean layer cannot silently drift from the certified
 arithmetic.
 
@@ -432,7 +432,7 @@ To find the code behind a statement of the article:
 | Prop 6.2(6), rank 30 | `pipeline/stages/04_certify_rank.jl` | `Generated/Rank.lean`, `Instances/A16Rank30.lean` |
 | Theorem 3.5 | (not computed) | `Theory/FirstOrder.lean` … `Theory/FeasibleMain.lean` |
 | Theorem 6.3, A16 is a strict local maximum | (not computed) | `Instances/A16LocalMax.lean` |
-| Theorem 6.4, an explicit radius | `pipeline/certify_radius.jl` | (not formalised) |
+| Theorem 6.4, an explicit radius | `pipeline/certify_radius.jl` | `Instances/A16Radius.lean` (`A16_radius`, Lean's own constants); `Instances/A16RadiusPrinted.lean` (`A16_radius_printed`, the printed argument and constants) |
 | Proposition 4.2, the square | (not computed) | `Instances/SquareLocalMax.lean` |
 
 Lean paths are under `lean/ChiquipoliLean/`. `docs/guide/provenance-mapping.md`
