@@ -1,0 +1,27 @@
+{
+  "title": "Chiquipoli: exact, interval and formal verification of the local maximality of A16, A32, A64, Z32 and Z64",
+  "upload_type": "software",
+  "version": "1.3.1",
+  "publication_date": "2026-10-28",
+  "license": "mit",
+  "description": "<p>Exact-arithmetic, interval-arithmetic (256-bit) and Lean 4 certification that the Bingane-Audet equilateral small polygons A16, A32 and A64, and the larger-perimeter polygons Z32 and Z64 rebuilt from their description, are strict local maximisers of the perimeter among convex equilateral polygons of diameter at most one, modulo orientation-preserving Euclidean motions. It accompanies the article <em>First-Order Geometry of Equilateral Small Polygons</em> (J. Ayala Hoffmann, T. Ayala Coppola).</p><p><strong>What this archive is.</strong> Release 1.3.1 contains the certified sources (<code>src/</code>, <code>pipeline/</code>, <code>test/</code>, <code>cases/</code>, <code>lean/</code>), the run records (<code>results/</code>, <code>logs/</code>) and the documentation. The records in <code>results/</code> were produced by <code>make check-all</code> (13 of 13 stages passed) from Git commit 93e6f9e51d6cf55affa3b8ba7b389270e082b581 with a clean working tree. This release commit differs from that commit only in <code>results/</code>, <code>logs/</code> and the metadata files <code>CITATION.cff</code>, <code>.zenodo.json</code> and <code>CHANGELOG.md</code>; every source file whose SHA-256 is recorded is byte-identical.</p><p><strong>Toolchain.</strong> Julia 1.12.6 with IntervalArithmetic.jl 0.22.36 (256-bit BigFloat intervals); Lean 4 toolchain <code>leanprover/lean4:v4.33.0-rc1</code> with Mathlib revision <code>ae0d973d69b779efa724095bd41793b8cf233831</code> (pinned in <code>lean/lean-toolchain</code> and <code>lean/lake-manifest.json</code>).</p><p><strong>What it does not establish.</strong> Global optimality; that Z32 and Z64 are the polygons of Bingane and Audet (they are rebuilt from the description in their Propositions 1 and 2); the fidelity of the transcription of the OPTIGON constructor beyond the checks documented in the article.</p>",
+  "creators": [
+    {
+      "name": "Ayala Hoffmann, José",
+      "affiliation": "Universidad de Tarapacá, Iquique, Chile"
+    },
+    {
+      "name": "Ayala Coppola, Tomás",
+      "affiliation": "Universidad de Tarapacá, Iquique, Chile"
+    }
+  ],
+  "keywords": [
+    "computer-assisted proof",
+    "interval arithmetic",
+    "Lean 4",
+    "discrete geometry",
+    "small polygons",
+    "equilateral polygons",
+    "perimeter maximisation"
+  ]
+}
