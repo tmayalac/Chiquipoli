@@ -13,7 +13,7 @@ no_sorry = true
 
 [meta]
 certificate = "Lean 4 / Mathlib formalization of the A16 certificate's computational hypotheses"
-git_commit = "93e6f9e51d6cf55affa3b8ba7b389270e082b581"
+git_commit = "e9ca4095c5ae563e1cc25b321be1b1a3823a7567"
 git_source_clean = true
 julia_version = "1.12.6"
 lean_toolchain = "leanprover/lean4:v4.33.0-rc1"
@@ -21,7 +21,7 @@ mathlib_rev = "ae0d973d69b779efa724095bd41793b8cf233831"
 method = "kernel-checked theorems; no interval arithmetic, no floating point"
 package = "A16Certificate v1.3.1"
 paper = "First Order Geometry of Equilateral Small Polygons (accompanying article)"
-utc = "2026-10-20T19:19:48Z"
+utc = "2026-10-28T22:51:50Z"
 
 [scope]
 formalized = ["Chebyshev multiple-angle reduction, k = 1..7", "hand-written trigonometric constructor equals the exact polynomial coordinates", "Fc(cos z) = F(z)", "Lemma 6.1: 16 side equalities + 15 active-diameter equalities", "existence of a constructor root, with sin z > 0 and cos z in a narrow rational bracket", "Prop 6.2(1): exactly one root of the constructor equation in the article's search interval I_search = (2 arcsin(sin(pi/16)/2), pi/16), via uniqueness of cos z on [49/50, 491/500] and the inclusion cos(I_search) in that bracket (Chiquipoli.constructor_root_existsUnique_article_search)", "strict convexity and labelled cyclic order: all 224 cross products strictly positive (Prop 6.2(3))", "the 89 strict inactive-diameter bounds, hence diameter exactly 1 (Prop 6.2(4)); the remaining 16 of the paper's 105 inactive pairs are the sides, covered by the equilateral identity", "stationarity at every vertex with all 15 active-diameter multipliers strictly positive (Prop 6.2(5))", "I_eq = R_eq: every admissible infinitesimal variation is a rigid motion — the conclusion the rank-30 computation of Prop 6.2(6) exists to supply", "Prop 6.2(6): rank D(e,d) = 30, by rank-nullity from the exact kernel, with no minor and no preconditioner (Chiquipoli.FirstOrder.rank_eq_thirty)", "Theorem 3.5, the abstract first-order criterion, in full: the feasible set, openness of convexity and the inactive margin, the first-order limits, invariance under Euclidean motions with the slice normalisation, and the blow-up (Chiquipoli.Feasible.thm_3_5)", "Theorem 6.3: the certified configuration is a strict local maximiser of the perimeter modulo orientation-preserving Euclidean motions (Chiquipoli.Feasible.A16_locally_maximal)", "Proposition 4.2: the square is a strict local maximiser, by the same route (Chiquipoli.Feasible.square_strict_local_max)", "Theorem 6.4: the explicit radius 6.63e-4 at A16, modulo orientation-preserving motions, against every equilateral polygon of diameter at most 1 with side length at least that of A16, with no convexity or cyclic order assumed, distance as in (6.1) including the (m - l)^2 term; proved twice: with Lean's own constants (Chiquipoli.Feasible.A16_radius) and by the printed argument from the printed constants (Chiquipoli.Feasible.A16_radius_printed)", "the printed constants of the proof of Theorem 6.4, for the multipliers of Table S2 (lambda_(0,9) = 1/5): the identity 16 eta = alpha.B_e h + lambda.B_d h, sum alpha = -16, lambda_e > 0.09186, |alpha|_2 < 4.004 (Prop 6.2(5)), |Bh|^2 >= 0.09119 |h|^2 on R_eq^perp (Prop 6.2(7), in the form the proof uses), l > 0.1959 (Chiquipoli.Feasible.A16_printed_constants)"]
