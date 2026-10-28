@@ -9,8 +9,8 @@ All notable changes to this project are recorded here. The format follows
 
 The tag `v1.3.1` first pointed at `3095ba3` (2026-09-30). On 2026-10-28 it was moved to the release
 commit, so that it matches the certificates cited by the article. The records in `results/` were
-produced by `make check-all` (13 of 13 stages) from commit `93e6f9e` with a clean tree; the release
-commit differs from `93e6f9e` only in `results/`, `logs/` and the metadata files `CITATION.cff`,
+produced by `make check-all` (13 of 13 stages) from the commit named in the `git_commit` field of every
+record, with a clean tree; the release commit differs from it only in `results/`, `logs/` and the metadata files `CITATION.cff`,
 `.zenodo.json` and this changelog, so every source file whose SHA-256 is recorded is byte-identical.
 Everything listed under this heading and under 1.3.1 below belongs to the release. The Lean toolchain
 (`leanprover/lean4:v4.33.0-rc1`) and the Mathlib revision (`ae0d973d69b779efa724095bd41793b8cf233831`)
