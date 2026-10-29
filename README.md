@@ -1,11 +1,19 @@
-# Chiquipoli — interval and exact verification package for $A_{16}$
+# Chiquipoli — exact, interval and formal verification of the local maximality of $A_{16}$, $A_{32}$, $A_{64}$, $Z_{32}$ and $Z_{64}$
 
-Supplementary computational material for the article *First Order Geometry of
-Equilateral Small Polygons*, which cites this package as **[AH26]**.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23749398.svg)](https://doi.org/10.5281/zenodo.23749398)
 
-The package certifies, by rigorous interval arithmetic and exact rational
-algebra, the computational hypotheses that the article's first-order criterion
-consumes for the Bingane–Audet hexadecagon $A_{16}$.
+Supplementary computational material for the article *First-Order Geometry of
+Equilateral Small Polygons* (J. Ayala Hoffmann, T. Ayala Coppola), which cites
+this package. How to cite it, and which release the article cites, is under
+[Citation](#citation).
+
+The package certifies, by exact rational algebra, rigorous interval arithmetic
+and a Lean 4 formalisation, the computational hypotheses that the article's
+first-order criterion consumes for the equilateral small polygons $A_{16}$,
+$A_{32}$, $A_{64}$ (Bingane–Audet) and $Z_{32}$, $Z_{64}$ (rebuilt from the
+description of Bingane and Audet). The next section describes the dedicated
+certificate of $A_{16}$ in detail; [Beyond the article](#beyond-the-article)
+says how the other polygons are covered.
 
 ## Start here
 
@@ -26,8 +34,9 @@ record still matches the sources. `chiquipoli.jl` only presents: it reads
 ## What is certified
 
 The article's abstract criterion (Theorem 3.5) has exactly two hypotheses. This
-package establishes both for $A_{16}$ (what else it carries, which the article
-does not use, is under [Beyond the article](#beyond-the-article)):
+package establishes both for $A_{16}$, in detail below, and, with the same
+blocks, for $A_{32}$, $A_{64}$, $Z_{32}$ and $Z_{64}$ (see
+[Beyond the article](#beyond-the-article)):
 
 1. **A multiplier identity holds with every active-diameter multiplier
    strictly positive.**
@@ -88,10 +97,12 @@ own adversarial review of this package.
 
 ## Beyond the article
 
-The article concerns $A_{16}$, $A_{32}$ and $A_{64}$ (its Theorem A; the
-explicit radius is for $A_{16}$). The package also carries, and checks on every
-`make check-all`, results that the article does not state and its proofs do not
-use:
+The article's main theorem concerns $A_{16}$, $A_{32}$ and $A_{64}$ (the
+explicit radius is for $A_{16}$), and a further theorem concerns $Z_{32}$ and
+$Z_{64}$; this package certifies the hypotheses of both with the same blocks.
+It also carries, and checks on every `make check-all`, the items below. The
+article uses only the certificates of $Z_{32}$ and $Z_{64}$ among them; it does
+not state the rest, and none of its proofs depends on it:
 
 - the same first-order certificate for $A_{128},\dots,A_{1024}$
   (`pipeline/certify_family.jl`, `results/family/`);
@@ -107,10 +118,11 @@ use:
   and $A_{64}$): the same blocks as every candidate, including the exact
   identities (`cases/family/Z32/`, `Z64/`; `make z32`, `make z64`; records in
   `results/family/Z32.toml`, `Z64.toml`, nine gates each, `pipeline/certify_z.jl`, root uniqueness on (0, π/n)
-  included; in Lean too).
-  Not claimed, and said in each record: a published constructor to run unchanged
-  and a Lean statement. They
-  are rebuilt from their Propositions 1 and 2, not from OPTIGON, which ships only
+  included). Lean proves both polygons and the uniqueness of the root too
+  (`Chiquipoli.Family.Z32.locally_maximal_unique`, `Z64`; for $Z_{64}$ among the
+  configurations with a nonnegative radicand).
+  Not claimed, and said in each record: a published constructor to run unchanged.
+  They are rebuilt from their Propositions 1 and 2, not from OPTIGON, which ships only
   the $A_n$ constructor, so that they are the polygons of the paper is a
   comparison with the paper that no program makes. $Z_{64}$ has two unknowns,
   $t$ and $y$; the first equation is solved for $y$ in closed form, which leaves
@@ -208,7 +220,7 @@ Bash or, better, WSL.
 | Download the Mathlib cache (once, about 7 GB) | `make lean-cache` | `cd lean; lake exe cache get` |
 | The five Lean checks of the A16 layer | `make lean` | bash: `cd lean && ./verify.sh` |
 | The same, recorded → `results/lean_certificate.toml` | `make lean-certificate` | bash: `julia --project=. pipeline/record_lean_certificate.jl` |
-| The five Lean checks of the family layer (A16, A32, A64) | `make lean-family` | bash: `cd lean && ./verify_family.sh` |
+| The five Lean checks of the family layer (A16, A32, A64, Z32, Z64) | `make lean-family` | bash: `cd lean && ./verify_family.sh` |
 | The same, recorded → `results/lean_family_certificate.toml` | `make lean-family-certificate` | bash: `julia --project=. pipeline/record_lean_family_certificate.jl` |
 | Does that record still describe the tree? (hashes only, seconds) | `make lean-family-record` | `julia --project=. pipeline/record_lean_family_certificate.jl --check` |
 | One case of the family in Lean (a partial run) | `make lean-family-case N=32` | bash: `cd lean && FAMILY_CASES=32 ./verify_family.sh` |
@@ -406,7 +418,7 @@ lean/                         THE VERIFIER (see lean/README.md)
       T16 ... T256/                 per case (verify_general.sh)
     AllN/                         the proof for every n = 16k, no data:
                                   Main.published_all_n (see AllN/README.md)
-  negative_controls/            26 false statements that must not compile
+  negative_controls/            32 false statements that must not compile
   negative_controls_family/     11 per polynomial case, each with a twin that must compile
   negative_controls_interval/   12 per interval case, each with a twin that must compile
   generators/                   Julia/Python -> Lean, the bridge between the layers
@@ -462,8 +474,33 @@ integer arithmetic.
 ## Citation
 
 If you use this package, please cite the accompanying article together with this
-software, giving the version you used. The version the article cites is the one
-in `Project.toml` and `CITATION.cff`, and its Git tag is `v<version>`.
+software, giving the version you used. The version the article cites is **1.3.1**
+(Git tag `v1.3.1`), archived at Zenodo:
+
+- version DOI, the one to cite: [10.5281/zenodo.23749398](https://doi.org/10.5281/zenodo.23749398)
+- concept DOI, which always points to the latest version: [10.5281/zenodo.23749397](https://doi.org/10.5281/zenodo.23749397)
+- repository: <https://github.com/tmayalac/Chiquipoli>
+
+```bibtex
+@software{chiquipoli2026,
+  author    = {Ayala Hoffmann, Jos{\'e} and Ayala Coppola, Tom{\'a}s},
+  title     = {Chiquipoli: exact, interval and formal verification of the local
+               maximality of A16, A32, A64, Z32 and Z64},
+  version   = {1.3.1},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23749398},
+  url       = {https://github.com/tmayalac/Chiquipoli}
+}
+```
+
+`CITATION.cff` carries the same data, and GitHub's *Cite this repository* button
+reads it. The records in `results/` declare, in their `git_commit` field, the
+commit they were produced from; the release commit differs from it only in
+`results/`, `logs/` and metadata files (see `CHANGELOG.md`), so every recorded
+source hash still matches. The Lean toolchain (`leanprover/lean4:v4.33.0-rc1`)
+and the Mathlib revision (`ae0d973d69b779efa724095bd41793b8cf233831`) are pinned
+in `lean/lean-toolchain` and `lean/lake-manifest.json`.
 
 ## License
 
